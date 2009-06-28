@@ -181,7 +181,7 @@ if($PHORUM['cache_messages'] &&
     $cache_key.= $PHORUM['threaded_list']."-".$PHORUM['threaded_read']."-".$PHORUM["language"];
     $cache_key.= "-".$PHORUM["count_views"]."-".($bodies_in_list?"1":"0")."-".$PHORUM['float_to_top'];
     $cache_key.= "-".$PHORUM['user']['tz_offset'];
-    $rows = phorum_cache_get('message_list',$cache_key);
+    $rows = phorum_api_cache_get('message_list',$cache_key);
 }
 
 if($rows == null)
@@ -369,7 +369,7 @@ if($rows == null)
     if($PHORUM['cache_messages'] &&
        (!$PHORUM['DATA']['LOGGEDIN'] || $PHORUM['use_cookies']) &&
        !$PHORUM['count_views']) {
-        phorum_cache_put('message_list',$cache_key,$rows);
+        phorum_api_cache_put('message_list',$cache_key,$rows);
     }
 }
 

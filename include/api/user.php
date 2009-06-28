@@ -734,7 +734,7 @@ function phorum_api_user_save($user, $flags = 0)
 
     // If user caching is enabled, we invalidate the cache for this user.
     if (!empty($PHORUM['cache_users'])) {
-        phorum_cache_remove('user', $dbuser['user_id']);
+        phorum_api_cache_remove('user', $dbuser['user_id']);
     }
 
     // Are we handling the active Phorum user? Then refresh the user data.
@@ -793,7 +793,7 @@ function phorum_api_user_save_raw($user)
 
         // Invalidate the cache, if there are non-activity tracking fields.
         if ($count != count($user)) {
-            phorum_cache_remove('user', $user['user_id']);
+            phorum_api_cache_remove('user', $user['user_id']);
         }
     }
 }
@@ -852,7 +852,7 @@ function phorum_api_user_save_settings($settings)
 
     // If user caching is enabled, we remove the user from the cache.
     if (!empty($PHORUM['cache_users'])) {
-        phorum_cache_remove('user', $user_id);
+        phorum_api_cache_remove('user', $user_id);
     }
 }
 // }}}
@@ -909,7 +909,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
     // if user caching is enabled.
     if (!empty($PHORUM['cache_users']))
     {
-        $cached_users = phorum_cache_get('user', $user_ids);
+        $cached_users = phorum_api_cache_get('user', $user_ids);
         if (is_array($cached_users))
         {
             foreach ($cached_users as $id => $user) {
@@ -964,7 +964,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
             // the cache. For non-detailed information, we do not cache the
             // data, because there is not much to gain there by caching.
             if ($detailed && !empty($PHORUM['cache_users'])) {
-                phorum_cache_put('user', $id, $user);
+                phorum_api_cache_put('user', $id, $user);
             }
 
             // Store the results in the users array.
@@ -1452,7 +1452,7 @@ function phorum_api_user_delete($user_id)
 
     // If user caching is enabled, we remove the user from the cache.
     if (!empty($PHORUM['cache_users'])) {
-        phorum_cache_remove('user', $user_id);
+        phorum_api_cache_remove('user', $user_id);
     }
 
     // Remove the user and user related data from the database.
@@ -2701,7 +2701,7 @@ function phorum_api_user_save_groups($user_id, $groups)
     global $PHORUM;
 
     if (!empty($PHORUM['cache_users'])) {
-        phorum_cache_remove('user', $user_id);
+        phorum_api_cache_remove('user', $user_id);
     }
 
     $dbgroups = array();

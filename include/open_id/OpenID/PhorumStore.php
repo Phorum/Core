@@ -60,7 +60,7 @@ class Auth_OpenID_PhorumStore extends Auth_OpenID_OpenIDStore {
 
         $removed = 0;
 
-        $cacheobj = phorum_cache_get("openid", $server_url);
+        $cacheobj = phorum_api_cache_get("openid", $server_url);
 
         if(isset($cacheobj->nonces)){
 
@@ -77,7 +77,7 @@ class Auth_OpenID_PhorumStore extends Auth_OpenID_OpenIDStore {
                 }
             }
             if($removed){
-                if(!phorum_cache_put("openid", $server_url, $cacheobj)){
+                if(!phorum_api_cache_put("openid", $server_url, $cacheobj)){
                     // save failed, none removed
                     $removed = 0;
                 }
@@ -99,11 +99,11 @@ class Auth_OpenID_PhorumStore extends Auth_OpenID_OpenIDStore {
             return false;
         }
 
-        $cacheobj = phorum_cache_get("openid", $server_url);
+        $cacheobj = phorum_api_cache_get("openid", $server_url);
 
         $cacheobj->associations[$association->handle] = $association;
 
-        return phorum_cache_put("openid", $server_url, $cacheobj);
+        return phorum_api_cache_put("openid", $server_url, $cacheobj);
     }
 
     /**
@@ -119,7 +119,7 @@ class Auth_OpenID_PhorumStore extends Auth_OpenID_OpenIDStore {
             return null;
         }
 
-        $cacheobj = phorum_cache_get("openid", $server_url);
+        $cacheobj = phorum_api_cache_get("openid", $server_url);
 
         // find the highest issued param
         if(empty($handle)){
@@ -151,13 +151,13 @@ class Auth_OpenID_PhorumStore extends Auth_OpenID_OpenIDStore {
             return null;
         }
 
-        $cacheobj = phorum_cache_get("openid", $server_url);
+        $cacheobj = phorum_api_cache_get("openid", $server_url);
 
         $ret = true;
 
         if(isset($cacheobj->associations[$handle])){
             unset($cacheobj->associations[$handle]);
-            $ret = phorum_cache_put("openid", $server_url, $cacheobj);
+            $ret = phorum_api_cache_put("openid", $server_url, $cacheobj);
         }
 
         return $ret;
@@ -182,13 +182,13 @@ class Auth_OpenID_PhorumStore extends Auth_OpenID_OpenIDStore {
             return False;
         }
 
-        $cacheobj = phorum_cache_get("openid", $server_url);
+        $cacheobj = phorum_api_cache_get("openid", $server_url);
 
         $ret = true;
 
         if(!isset($cacheobj->nonces[$salt])){
             $cacheobj->nonces[$salt]=$timestamp;
-            $ret = phorum_cache_put("openid", $server_url, $cacheobj);
+            $ret = phorum_api_cache_put("openid", $server_url, $cacheobj);
         } else {
             $ret = false;
         }
@@ -205,7 +205,7 @@ class Auth_OpenID_PhorumStore extends Auth_OpenID_OpenIDStore {
             return null;
         }
 
-        $cacheobj = phorum_cache_get("openid", $server_url);
+        $cacheobj = phorum_api_cache_get("openid", $server_url);
 
         $change = false;
         $ret = true;
@@ -221,7 +221,7 @@ class Auth_OpenID_PhorumStore extends Auth_OpenID_OpenIDStore {
         }
 
         if($change){
-            $ret = phorum_cache_put("openid", $server_url, $cacheobj);
+            $ret = phorum_api_cache_put("openid", $server_url, $cacheobj);
         }
 
         return $ret;
@@ -233,7 +233,7 @@ class Auth_OpenID_PhorumStore extends Auth_OpenID_OpenIDStore {
     {
         $removed = 0;
 
-        $cacheobj = phorum_cache_get("openid", $server_url);
+        $cacheobj = phorum_api_cache_get("openid", $server_url);
 
         if(!empty($cacheobj->associations)){
 
@@ -245,7 +245,7 @@ class Auth_OpenID_PhorumStore extends Auth_OpenID_OpenIDStore {
             }
 
             if($removed){
-                if(!phorum_cache_put("openid", $server_url, $cacheobj)){
+                if(!phorum_api_cache_put("openid", $server_url, $cacheobj)){
                     // save failed, none removed
                     $removed = 0;
                 }

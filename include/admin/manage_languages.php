@@ -45,7 +45,7 @@ if ($action == 'download_lang')
     $fullfile = $basename . '-' . PHORUM . '.php';
     header ("Content-Type: application/download; filename=$fullfile");
     header ("Content-Disposition: attachment; filename=\"$fullfile\"");
-    $langfile = phorum_cache_get('updated_language', $filename);
+    $langfile = phorum_api_cache_get('updated_language', $filename);
     print $langfile;
 
     exit();
@@ -410,7 +410,7 @@ function phorum_write_language_file($lang, $CURRENT)
         "\n" .
         "?>\n";
 
-    phorum_cache_put('updated_language', $lang, $langfile);
+    phorum_api_cache_put('updated_language', $lang, $langfile);
 }
 
 

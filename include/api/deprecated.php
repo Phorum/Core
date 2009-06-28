@@ -291,4 +291,38 @@ function phorum_check_posting_token($page = NULL) {
     return phorum_api_request_check_token($page);
 }
 
+/**
+ * @deprecated Replaced by {@link phorum_api_cache_get()}.
+ */
+function phorum_cache_get($type,$key,$version=NULL) {
+        return phorum_api_cache_get($type,$key,$version);
+}
+
+/**
+ * @deprecated Replaced by {@link phorum_api_cache_put()}.
+ */
+function phorum_cache_put($type,$key,$data,$ttl=phorum_api_cache_DEFAULT_TTL,$version=NULL) {
+	   return phorum_api_cache_put($type,$key,$data,$ttl,$version);
+}
+
+/**
+ * @deprecated Replaced by {@link phorum_api_cache_remove()}.
+ */
+function phorum_cache_remove($type,$key) {
+	   return phorum_api_cache_remove($type,$key);
+}
+
+/**
+ * @deprecated Replaced by {@link phorum_api_cache_purge()}.
+ */
+function phorum_cache_purge($full = false) {
+	   return phorum_api_cache_purge($full);
+}
+
+/**
+ * @deprecated Replaced by {@link phorum_api_cache_clear()}.
+ */
+function phorum_cache_clear() {
+	   return phorum_api_cache_clear();
+}
 ?>

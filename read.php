@@ -184,7 +184,7 @@ if($PHORUM['cache_messages'] &&
         $approved = 0;
     }
 
-    $message_index=phorum_cache_get('message_index',$PHORUM['forum_id']."-$thread-$approved");
+    $message_index=phorum_api_cache_get('message_index',$PHORUM['forum_id']."-$thread-$approved");
 
     $skip_cache = 0;
 
@@ -218,7 +218,7 @@ if($PHORUM['cache_messages'] &&
             sort($message_index);
 
             // put it in the cache now
-            phorum_cache_put('message_index',$PHORUM['forum_id']."-$thread-$approved",$message_index);
+            phorum_api_cache_put('message_index',$PHORUM['forum_id']."-$thread-$approved",$message_index);
 
         } else {
             $skip_cache = 1;
@@ -257,7 +257,7 @@ if($PHORUM['cache_messages'] &&
         }
 
 
-        $cache_messages = phorum_cache_get('message', $message_ids_page);
+        $cache_messages = phorum_api_cache_get('message', $message_ids_page);
 
         // check the returned messages if they were found in the cache
         $db_messages=array();
@@ -281,7 +281,7 @@ if($PHORUM['cache_messages'] &&
             // store the found messages in the cache
 
             foreach($db_messages as $mid => $message) {
-                phorum_cache_put('message',$PHORUM["forum_id"]."-".$mid,$message);
+                phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$mid,$message);
                 $data[$mid]=$message;
                 $data['users'][] = $data[$mid]['user_id'];
             }

@@ -87,12 +87,12 @@ foreach($subscr_array as $id => $data)
         $PHORUM['user']['newinfo'][$data["forum_id"]] = null;
         if ($PHORUM['cache_newflags']) {
             $newflagkey = $data["forum_id"]."-".$PHORUM['user']['user_id'];
-            $PHORUM['user']['newinfo'][$data["forum_id"]] = phorum_cache_get('newflags',$newflagkey,$forums[$data["forum_id"]]['cache_version']);
+            $PHORUM['user']['newinfo'][$data["forum_id"]] = phorum_api_cache_get('newflags',$newflagkey,$forums[$data["forum_id"]]['cache_version']);
         }
         if ($PHORUM['user']['newinfo'][$data["forum_id"]] == null) {
             $PHORUM['user']['newinfo'][$data["forum_id"]] = phorum_db_newflag_get_flags($data["forum_id"]);
             if($PHORUM['cache_newflags']) {
-                phorum_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'][$data["forum_id"]],86400,$forums[$data["forum_id"]]['cache_version']);
+                phorum_api_cache_put('newflags',$newflagkey,$PHORUM['user']['newinfo'][$data["forum_id"]],86400,$forums[$data["forum_id"]]['cache_version']);
             }
         }
     }

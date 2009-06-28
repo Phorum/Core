@@ -27,11 +27,11 @@ if(count($_POST))
 
     // The standard cache system that is in use should handle its own
     // cache cleanup if needed. It can do so by implementing the
-    // phorum_cache_purge() function. If the required function is not
+    // phorum_api_cache_purge() function. If the required function is not
     // available, then the caching layer purge will be ignored.
-    if (function_exists("phorum_cache_purge")) {
+    if (function_exists("phorum_api_cache_purge")) {
         $full_purge = isset($_POST["purge_all"]) && $_POST["purge_all"];
-        $report = phorum_cache_purge($full_purge);
+        $report = phorum_api_cache_purge($full_purge);
         print $report . "<br/>";
     }
 

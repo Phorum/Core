@@ -101,13 +101,13 @@ if ($finish && ($mode == 'edit' || $mode == 'reply'))
     
     $origmessage = null;
     if($PHORUM['cache_messages']) {
-        $origmessage = phorum_cache_get('message',$PHORUM["forum_id"]."-".$message[$id]);
+        $origmessage = phorum_api_cache_get('message',$PHORUM["forum_id"]."-".$message[$id]);
     }
     
     if($origmessage == null) {
         $origmessage = phorum_db_get_message($message[$id]);
         if($PHORUM['cache_messages']) {
-            phorum_cache_put('message',$PHORUM["forum_id"]."-".$message[$id],$origmessage);
+            phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$message[$id],$origmessage);
         }
     }
     if (! $origmessage) {
@@ -134,12 +134,12 @@ if ($message["user_id"]) {
 if ($mode == "reply" || $mode == "edit") {
     $top_parent = null;
     if($PHORUM['cache_messages']) {
-        $top_parent = phorum_cache_get('message',$PHORUM["forum_id"]."-".$message["thread"]);
+        $top_parent = phorum_api_cache_get('message',$PHORUM["forum_id"]."-".$message["thread"]);
     } 
     if($top_parent == null) {
         $top_parent = phorum_db_get_message($message["thread"]);
         if($PHORUM['cache_messages']) {
-            phorum_cache_put('message',$PHORUM["forum_id"]."-".$message["thread"],$top_parent);
+            phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$message["thread"],$top_parent);
         }
     }
 }
@@ -151,12 +151,12 @@ if ($mode == "reply")
     if ($message["thread"] != $message["parent_id"]) {
 	    $parent = null;
 	    if($PHORUM['cache_messages']) {
-	        $parent = phorum_cache_get('message',$PHORUM["forum_id"]."-".$message["parent_id"]);
+	        $parent = phorum_api_cache_get('message',$PHORUM["forum_id"]."-".$message["parent_id"]);
 	    }  
 	    if($parent == null) {       
             $parent = phorum_db_get_message($message["parent_id"]);
             if($PHORUM['cache_messages']) {
-                phorum_cache_put('message',$PHORUM["forum_id"]."-".$message["parent_id"],$parent);
+                phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$message["parent_id"],$parent);
             }
 	    }
     } else {

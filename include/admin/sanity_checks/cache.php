@@ -99,9 +99,9 @@ function phorum_check_cache($is_install = FALSE)
 
     // All seems OK. Do a final system check where we check
     // the caching system like the Phorum system will do.
-    phorum_cache_put('sanity_checks', 'dummy', 'dummy');
-    $entry = phorum_cache_get('sanity_checks', 'dummy');
-    phorum_cache_remove('sanity_checks', 'dummy');
+    phorum_api_cache_put('sanity_checks', 'dummy', 'dummy');
+    $entry = phorum_api_cache_get('sanity_checks', 'dummy');
+    phorum_api_cache_remove('sanity_checks', 'dummy');
     if ($entry != 'dummy') return array(
         PHORUM_SANITY_WARN,
         "There might be a problem in Phorum's caching system.

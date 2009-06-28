@@ -110,7 +110,7 @@ if (count($_POST))
 
                   if(count($group_members)) {
                     foreach($group_members as $user_id => $user_status) {
-                      phorum_cache_remove('user',$user_id);
+                      phorum_api_cache_remove('user',$user_id);
                     }
                   }
                 }

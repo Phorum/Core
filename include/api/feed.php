@@ -183,7 +183,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
         $cache_key = $PHORUM['user']['user_id'] . '|' .
                      $adapter . '|' . $source_type . '|' . $cache_part . '|' .
                      $replies . '|' . $count;
-        $cache = phorum_cache_get('feed', $cache_key);
+        $cache = phorum_api_cache_get('feed', $cache_key);
         if (!empty($cache)) {
             list ($data, $content_type) = $cache;
         }
@@ -286,7 +286,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
 
         // Store the feed data in the cache for future use.
         if (!empty($PHORUM['cache_rss'])) {
-            phorum_cache_put(
+            phorum_api_cache_put(
                 'feed', $cache_key,
                 array($data, $content_type, 600)
             );

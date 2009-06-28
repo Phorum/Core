@@ -230,12 +230,12 @@ function phorum_api_thread_update_metadata($thread_id)
         // invalidate the cache, because this function is the only function
         // that fills the message index cache and it is called in any place
         // where we change something that is related to the thread.
-        phorum_cache_put(
+        phorum_api_cache_put(
             'message_index',
             $thread['forum_id']."-$thread_id-1",
             $message_ids
         );
-        phorum_cache_put(
+        phorum_api_cache_put(
             'message_index',
             $thread['forum_id']."-$thread_id-0",
             $message_ids_moderator
@@ -243,7 +243,7 @@ function phorum_api_thread_update_metadata($thread_id)
 
         // We do invalidate the thread starter message though, because
         // filling the cache will be done from another part of the system.
-        phorum_cache_remove('message', $thread['forum_id'].'-'.$thread_id);
+        phorum_api_cache_remove('message', $thread['forum_id'].'-'.$thread_id);
     }
 
     phorum_db_update_message($thread_id, $save);

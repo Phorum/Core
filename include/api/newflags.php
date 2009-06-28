@@ -139,7 +139,7 @@ function phorum_api_newflags_by_forum($forum)
         $PHORUM['user']['newflags'][$forum_id] = NULL;
         if ($PHORUM['cache_newflags']) {
             $cachekey = $forum_id.'-'.$PHORUM['user']['user_id'];
-            $PHORUM['user']['newflags'][$forum_id] = phorum_cache_get(
+            $PHORUM['user']['newflags'][$forum_id] = phorum_api_cache_get(
                 'newflags', $cachekey, $cache_version
             );
         }
@@ -152,7 +152,7 @@ function phorum_api_newflags_by_forum($forum)
             phorum_db_newflag_get_flags($forum_id);
 
         if ($PHORUM['cache_newflags']) {
-            phorum_cache_put(
+            phorum_api_cache_put(
                 'newflags', $cachekey,
                 $PHORUM['user']['newflags'][$forum_id],
                 86400, $cache_version
@@ -537,8 +537,8 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
         if ($PHORUM['cache_newflags'])
         {
             $cachekey = $forum_id.'-'.$PHORUM['user']['user_id'];
-            phorum_cache_remove('newflags',$cachekey);
-            phorum_cache_remove('newflags_index',$cachekey);
+            phorum_api_cache_remove('newflags',$cachekey);
+            phorum_api_cache_remove('newflags_index',$cachekey);
         }
     }
 }

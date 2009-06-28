@@ -270,7 +270,7 @@ if (!empty($action))
                     $redirect = true;
 
                     // Invalidate user cache, to update message counts.
-                    phorum_cache_remove('user',$user_id);
+                    phorum_api_cache_remove('user',$user_id);
                 }
             }
 
@@ -289,7 +289,7 @@ if (!empty($action))
                 }
 
                 // Invalidate user cache, to update message counts.
-                phorum_cache_remove('user',$user_id);
+                phorum_api_cache_remove('user',$user_id);
             }
 
             // Move checked messages to another folder.
@@ -502,9 +502,9 @@ if (!empty($action))
                         }
 
                         // Invalidate user cache, to update message counts.
-                        phorum_cache_remove('user', $user_id);
+                        phorum_api_cache_remove('user', $user_id);
                         foreach ($recipients as $rcpt) {
-                            phorum_cache_remove('user', $rcpt["user_id"]);
+                            phorum_api_cache_remove('user', $rcpt["user_id"]);
                         }
 
                         $redirect_message = "PMSent";
@@ -829,7 +829,7 @@ switch ($page) {
                 phorum_db_pm_setflag($message["pm_message_id"], PHORUM_PM_READ_FLAG, true);
 
                 // Invalidate user cache, to update message counts.
-                phorum_cache_remove('user',$user_id);
+                phorum_api_cache_remove('user',$user_id);
             }
 
             // Run the message through the default message formatting.

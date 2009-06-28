@@ -51,7 +51,7 @@ if (count($_POST) && $_POST["string"]!="")
                 phorum_db_update_settings(array('banlist_version'=>$PHORUM['banlist_version']));
             } else {
                 // remove the one for that forum
-                phorum_cache_remove('banlist',$_POST['forum_id']);
+                phorum_api_cache_remove('banlist',$_POST['forum_id']);
             }
         }
     } else {

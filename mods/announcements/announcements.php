@@ -71,12 +71,12 @@ function phorum_setup_announcements ()
     if ($PHORUM["DATA"]["LOGGEDIN"]) {
         $newflagkey = $ann_forum_id."-".$PHORUM['user']['user_id'];
         if ($PHORUM['cache_newflags']) {
-            $newinfo = phorum_cache_get('newflags',$newflagkey,$PHORUM['cache_version']);
+            $newinfo = phorum_api_cache_get('newflags',$newflagkey,$PHORUM['cache_version']);
         }
         if($newinfo == NULL) {
             $newinfo = phorum_db_newflag_get_flags($ann_forum_id);
             if ($PHORUM['cache_newflags']) {
-                phorum_cache_put('newflags',$newflagkey,$newinfo,86400,$PHORUM['cache_version']);
+                phorum_api_cache_put('newflags',$newflagkey,$newinfo,86400,$PHORUM['cache_version']);
             }
         }
     }

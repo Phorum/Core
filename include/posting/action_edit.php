@@ -224,7 +224,7 @@ if (isset($PHORUM["hooks"]["after_edit"])) {
 // remove the message from the cache if caching is enabled
 // no need to clear the thread-index as the message has only been changed
 if($PHORUM['cache_messages']) {
-    phorum_cache_remove('message',$PHORUM["forum_id"]."-".$message["message_id"]);
+    phorum_api_cache_remove('message',$PHORUM["forum_id"]."-".$message["message_id"]);
     phorum_db_update_forum(array('forum_id'=>$PHORUM['forum_id'],'cache_version'=>($PHORUM['cache_version']+1)));
 }
 
@@ -240,7 +240,7 @@ if (! $message["parent_id"] &&
             $msg["sort"]=$dbmessage["sort"];
             phorum_db_update_message($message_id, $msg);
             if($PHORUM['cache_messages']) {
-                phorum_cache_remove('message',$PHORUM["forum_id"]."-".$message_id);
+                phorum_api_cache_remove('message',$PHORUM["forum_id"]."-".$message_id);
             }
         }
     }

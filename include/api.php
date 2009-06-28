@@ -399,25 +399,7 @@ if (isset($PHORUM['internal_version']) &&
     phorum_db_update_settings(array('private_key' => $PHORUM['private_key']));
 }
 
-// Determine the caching layer to load.
-if (!isset($PHORUM['cache_layer']) || empty($PHORUM['cache_layer'])) {
-    $PHORUM['cache_layer'] = 'file';
-} else {
-    // Safeguard for wrongly selected cache-layers.
-    // Falling back to file-layer if descriptive functions aren't existing.
-    if ($PHORUM['cache_layer'] == 'memcached' &&
-        !function_exists('memcache_connect')) {
-        $PHORUM['cache_layer'] = 'file';
-    } elseif ($PHORUM['cache_layer'] == 'apc' &&
-        !function_exists('apc_fetch')) {
-        $PHORUM['cache_layer'] = 'file';
-    }
-}
-
-// Load the caching-layer. You can specify a different one in the settings.
-// One caching layer *needs* to be loaded.
-$PHORUM['cache_layer'] = basename($PHORUM['cache_layer']);
-require_once PHORUM_PATH."/include/cache/$PHORUM[cache_layer].php";
+require_once PHORUM_PATH.'/include/api/cache.php';
 
 // Check if the Phorum extension is loaded. If yes, then show
 // a warning. The extension is no longer supported and should

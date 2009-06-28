@@ -45,14 +45,14 @@ if ($mode != "post")
     // can't be retrieved, then return to the message list.
     $dbmessage=null;
     if($PHORUM['cache_messages']) {
-        $dbmessage = phorum_cache_get('message',$PHORUM["forum_id"]."-".$message_id);
+        $dbmessage = phorum_api_cache_get('message',$PHORUM["forum_id"]."-".$message_id);
     }
     
     if($dbmessage == null) {
         $dbmessage = phorum_db_get_message($message_id);
         
         if($PHORUM['cache_messages']) {
-            phorum_cache_put('message',$PHORUM["forum_id"]."-".$message_id,$dbmessage);
+            phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$message_id,$dbmessage);
         }
     }
     if (! $dbmessage) {

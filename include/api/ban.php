@@ -85,7 +85,7 @@ function phorum_api_ban_list($type = NULL)
         $banlists = NULL;
         if (!empty($PHORUM['cache_banlists']) &&
             !empty($PHORUM['banlist_version'])) {
-            $banlists = phorum_cache_get(
+            $banlists = phorum_api_cache_get(
                 'banlist', $PHORUM['forum_id'], $PHORUM['banlist_version']
             );
         }
@@ -111,7 +111,7 @@ function phorum_api_ban_list($type = NULL)
             // Cache the ban lists.
             if (!empty($PHORUM['cache_banlists']) &&
                 !empty($PHORUM['banlist_version'])) {
-                phorum_cache_put(
+                phorum_api_cache_put(
                     'banlist', $PHORUM['forum_id'],
                     $banlists, 7200, $PHORUM['banlist_version']
                 );
