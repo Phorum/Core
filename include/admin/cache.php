@@ -101,25 +101,24 @@ $row=$frm->addrow( "Enable Caching Messages:", $frm->select_tag( "cache_messages
 $row=$frm->addrow( "Enable Caching Banlists:", $frm->select_tag( "cache_banlists", array( "No", "Yes" ), $PHORUM["cache_banlists"] ) );
 $row=$frm->addrow( "Enable Caching RSS-Feeds:", $frm->select_tag( "cache_rss", array( "No", "Yes" ), $PHORUM["cache_rss"] ) );
 
-$frm->addbreak("Settings removed from this page");
+$frm->addbreak("Settings that are set from include/config/cache.php");
 
-$row=$frm->addrow( "Cache Directory", "Set in include/config/cache.php now." );
+$row=$frm->addrow( "Cache Directory", $PHORUM['CACHECONFIG']['directory']);
 $frm->addhelp($row, "Cache Directory",
     "Caching is used to take some load off the database and web server.
      The cache directory is used for caching preprocessed Phorum templates
-     and for caching data in case \"file system based\" is selected as
-     the cache layer below.<br/>
+     and for caching data in case \"file\" is set as the cache layer.<br/>
      <br/>
-     For most installations, it will be fine to the default temp directory
+     For most installations, it will be fine to use the default temp directory
      for the server (/tmp on UNIX systems and C:\\Windows\\Temp for Windows
-     system).<br/>
+     systems).<br/>
      <br/>
      If your server has PHP Safe Mode enabled, you will need to create a
      directory under your Phorum directory and make it writable by the web
      server (you can use the directory \"./cache\" which was included in the
      Phorum distribution for this purpose)."
 );
-$frm->addrow("Cache-Layer", "Set in include/config/cache.php now.");
+$frm->addrow("Cache-Layer", $PHORUM['CACHECONFIG']['type']);
 
 // calling mods
 $frm=phorum_api_hook("admin_cache", $frm);
