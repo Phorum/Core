@@ -29,16 +29,28 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
+global $PHORUM;
 
-// Load configuration.
+// The location of the configuration file.
 $cacheconfig = PHORUM_PATH.'/include/config/cache.php';
 
-// initialize it as an empty array to avoid parameter injection
-$PHORUM['CACHECONFIG']=array();
+// Initialize the cache config to setup the default configuration and
+// to avoid parameter injection.
+$PHORUM['CACHECONFIG'] = array(
+    'type'      => 'file',
+    'directory' => $PHORUM['cache'],
+    'server'    => '127.0.0.1',
+    'port'      => '11211',
+    'user'      => '',
+    'password'  => '',
+);
 
-if (! include_once $cacheconfig) {
-	print '<html><head><title>Phorum error</title></head><body>';
-	print '<h2>Phorum cache configuration error</h2>';
+// Load the configuration if available. If no configuration is available,
+// the default settings will be used.
+if (file_exists($cacheconfig) && ! include_once $cacheconfig)
+{
+    print '<html><head><title>Phorum error</title></head><body>';
+    print '<h2>Phorum cache configuration error</h2>';
 
 	// No database configuration found.
 	if (!file_exists($cacheconfig)) { ?>
@@ -51,10 +63,10 @@ if (! include_once $cacheconfig) {
 		$fp = fopen($cacheconfig, 'r');
 		// Unable to read the configuration file.
 		if (!$fp) { ?>
-				A cache configuration file was found in {phorum
-				dir}/include/config/cache.php,<br />
-				but Phorum was unable to read it. Please check the file 
-				permissions<br />for this file.
+            A cache configuration file was found in {phorum
+            dir}/include/config/cache.php,<br />
+            but Phorum was unable to read it. Please check the file 
+            permissions<br />for this file.
 		<?php
 		// Unknown error.
 		} else {
@@ -84,21 +96,22 @@ if ($PHORUM['CACHECONFIG']['type'] == 'memcached' &&
 	$PHORUM['CACHECONFIG']['type'] = 'file';
 }
 
-$cacheapi_filename = PHORUM_PATH.'/include/api/cache/'.$PHORUM['CACHECONFIG']['type'].'.php';
-if(file_exists($cacheapi_filename)) {
+$cacheapi_filename =
+     PHORUM_PATH.'/include/api/cache/'.$PHORUM['CACHECONFIG']['type'].'.php';
+if (file_exists($cacheapi_filename)) {
     require_once $cacheapi_filename;
 } else {
 	echo "The defined cache backend couldn't be found. Please check that you 
-	      uploaded all files and your setings in include/config/cache.php.";
+	      uploaded all files and your settings in include/config/cache.php.";
     exit();
 }
 
-// Try to setup a connection to the database.
+// Check if the cache system is working.
 if (!phorum_api_cache_check())
 {
     echo "The cache test has failed. Please check your cache configuration in 
           include/config/cache.php. If the configuration is okay, check if the 
-          applicated used for caching is running.";
+          application used for caching is running.";
     exit();
 }   
 ?>
