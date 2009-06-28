@@ -67,7 +67,7 @@ foreach( $forums as $key=>$forum ) {
         }
 
         foreach($sub_forums as $sub_forum){
-            if(!$sub_forum["folder_flag"] || ($sub_forum["folder_flag"] && $sub_forum["parent_id"]!=0)){
+            if(!$sub_forum["folder_flag"] || ($sub_forum["folder_flag"] && $sub_forum["parent_id"]!=$PHORUM['vroot'])){
                 $folder_forums[$sub_forum["parent_id"]][]=$sub_forum;
                 if($PHORUM["show_new_on_index"]!=0 && $sub_forum["folder_flag"]==0){
                     $forums_to_check[] = $sub_forum["forum_id"];
