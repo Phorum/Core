@@ -39,6 +39,11 @@ foreach( $forums as $forum ) {
 
     if ( $forum["folder_flag"] ) {
 
+        // Do not include vroot folders in the list.
+        if ($forum['vroot'] == $forum['forum_id']) {
+            continue;
+        }
+
         $forum["URL"]["LIST"] = phorum_get_url( PHORUM_INDEX_URL, $forum["forum_id"] );
 
     } else {
