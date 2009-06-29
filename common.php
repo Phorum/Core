@@ -902,7 +902,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     // Add the current forum path to the breadcrumbs.
     $index_page_url_template = phorum_get_url(PHORUM_INDEX_URL, '%forum_id%');
 
-    if(empty($PHORUM['forum_path'])) {
+    if(empty($PHORUM['forum_path']) || $PHORUM['forum_id'] == $PHORUM['vroot']) {
         $id = $PHORUM['forum_id'];
         $url = empty($id)?  phorum_get_url(PHORUM_INDEX_URL) : str_replace('%forum_id%',$id,$index_page_url_template);
 
