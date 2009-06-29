@@ -52,35 +52,35 @@ if (file_exists($cacheconfig) && ! include_once $cacheconfig)
     print '<html><head><title>Phorum error</title></head><body>';
     print '<h2>Phorum cache configuration error</h2>';
 
-	// No database configuration found.
-	if (!file_exists($cacheconfig)) { ?>
-			Phorum has been installed on this server, but the 
-			configuration<br />for the caching systen has not yet been made. 
-			Please read<br /> <a href="docs/install.txt">docs/install.txt</a>
-			for installation instructions.
-	<?php
-	} else {
-		$fp = fopen($cacheconfig, 'r');
-		// Unable to read the configuration file.
-		if (!$fp) { ?>
+    // No database configuration found.
+    if (!file_exists($cacheconfig)) { ?>
+            Phorum has been installed on this server, but the 
+            configuration<br />for the caching systen has not yet been made. 
+            Please read<br /> <a href="docs/install.txt">docs/install.txt</a>
+            for installation instructions.
+    <?php
+    } else {
+        $fp = fopen($cacheconfig, 'r');
+        // Unable to read the configuration file.
+        if (!$fp) { ?>
             A cache configuration file was found in {phorum
             dir}/include/config/cache.php,<br />
             but Phorum was unable to read it. Please check the file 
             permissions<br />for this file.
-		<?php
-		// Unknown error.
-		} else {
-			fclose($fp); ?>
-			A cache configuration file was found in 
-			{phorum	dir}/include/config/cache.php,<br />but it could not be 
-			loaded. It possibly contains one or more syntax	errors.<br />
-			Please check your configuration file.
-			<?php
-		}
-	}
+        <?php
+        // Unknown error.
+        } else {
+            fclose($fp); ?>
+            A cache configuration file was found in 
+            {phorum dir}/include/config/cache.php,<br />but it could not be 
+            loaded. It possibly contains one or more syntax errors.<br />
+            Please check your configuration file.
+            <?php
+        }
+    }
 
-	print '</body></html>';
-	exit(1);
+    print '</body></html>';
+    exit(1);
 }
 
 // Apply default cache directory if no specific directory is set
@@ -98,10 +98,10 @@ $PHORUM['CACHECONFIG']['type'] = basename($PHORUM['CACHECONFIG']['type']);
 // Falling back to file-layer if descriptive functions aren't existing.
 if ($PHORUM['CACHECONFIG']['type'] == 'memcached' &&
     !function_exists('memcache_connect')) {
-	$PHORUM['CACHECONFIG']['type'] = 'file';
+    $PHORUM['CACHECONFIG']['type'] = 'file';
 } elseif ($PHORUM['CACHECONFIG']['type'] == 'apc' &&
     !function_exists('apc_fetch')) {
-	$PHORUM['CACHECONFIG']['type'] = 'file';
+    $PHORUM['CACHECONFIG']['type'] = 'file';
 }
 
 $cacheapi_filename =
@@ -109,8 +109,8 @@ $cacheapi_filename =
 if (file_exists($cacheapi_filename)) {
     require_once $cacheapi_filename;
 } else {
-	echo "The defined cache backend couldn't be found. Please check that you 
-	      uploaded all files and your settings in include/config/cache.php.";
+    echo "The defined cache backend couldn't be found. Please check that you 
+          uploaded all files and your settings in include/config/cache.php.";
     exit();
 }
 
