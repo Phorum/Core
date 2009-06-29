@@ -67,7 +67,7 @@ function phorum_api_cache_get($type,$key,$version=NULL) {
                 $ret=$data[0];
             }
         } else {
-        	$ret = false;
+            $ret = false;
         }
     }
 
@@ -167,19 +167,19 @@ function phorum_api_cache_clear() {
  *     This function returns TRUE on success or FALSE on failure.
  */
 function phorum_api_cache_check() {
-	
-	$data = "123";
-	$ret  = false;
-	
-	phorum_api_cache_put('check','connection',$data,10);
-	
-	$gotten_data = phorum_api_cache_get('check','connection');
-	
-	if($gotten_data === $data) {
-		$ret = true;
-	}
-	
-	return $ret;
+    
+    $data = "123";
+    $ret  = false;
+    
+    phorum_api_cache_put('check','connection',$data,10);
+    
+    $gotten_data = phorum_api_cache_get('check','connection');
+    
+    if($gotten_data === $data) {
+        $ret = true;
+    }
+    
+    return $ret;
 }
 
 

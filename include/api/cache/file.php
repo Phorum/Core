@@ -255,21 +255,21 @@ function phorum_api_cache_check() {
  */
 function phorum_api_cache_purge_recursive($dir, $subdir, $total, $purged, $full) {
     
-	// return at once if the given path isn't a directory
-	if (!is_dir("$dir/$subdir")) {
-    	return array($total, $purged, false);
+    // return at once if the given path isn't a directory
+    if (!is_dir("$dir/$subdir")) {
+        return array($total, $purged, false);
     }
     
     $dh = opendir ("$dir/$subdir");
     // check if we could open that directory
     if (! $dh) {
-    	die ("Can't open the directory " . htmlspecialchars("$dir/$subdir"));
+        die ("Can't open the directory " . htmlspecialchars("$dir/$subdir"));
     }
     
     $subdirs = array();
     $did_purge = false;
     while ($entry = readdir($dh)) {
-    	// ignore the common entries
+        // ignore the common entries
         if ($entry == "." || $entry == "..") continue;
         
         // store subdirectories for later recursive deletion
