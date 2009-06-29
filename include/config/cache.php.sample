@@ -20,6 +20,7 @@ $PHORUM['CACHECONFIG']=array(
     'port'          => '11211',
     'user'          => '',
     'password'      => '',
+    'cache_settings'=> 0,    
 
 );
 
@@ -68,6 +69,10 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
 
   The password for the cache backends user.
 
+* cache_settings:
 
+  Should the settings be cached too (can't be set through the admin pages as 
+  these settings would be included in the cached settings)
+  
 */
 ?>

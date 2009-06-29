@@ -121,7 +121,7 @@ echo "\n";
 if(!phorum_db_check_connection()){
     fprintf(STDERR,
          "A database connection could not be established.\n" .
-         "Please edit include/db/config.php.\n");
+         "Please edit include/config/database.php.\n");
     exit(1);
 }
 

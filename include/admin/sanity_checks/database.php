@@ -37,8 +37,8 @@ function phorum_check_database($is_install = false) {
     if (! isset($PHORUM["DBCONFIG"])) return array(
         PHORUM_SANITY_CRIT,
         "No database configuration was found in your environment.",
-        "You probably have not copied include/db/config.php.sample
-         to include/db/config.php. Read Phorum's install.txt for
+        "You probably have not copied include/config/database.php.sample
+         to include/config/database.php. Read Phorum's install.txt for
          installation instructions."
     );
 
@@ -50,8 +50,8 @@ function phorum_check_database($is_install = false) {
         "The option \"charset\" is missing in your database configuration.
          This might indicate that you are using a config.php from an
          older Phorum version, which does not yet contain this option.
-         Please, copy include/db/config.php.sample to
-         include/db/config.php and edit this new config.php. Read
+         Please, copy include/config/database.php.sample to
+         include/config/database.php and edit this new config.php. Read
          Phorum's install.txt for installation instructions."
     );
 

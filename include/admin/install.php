@@ -26,7 +26,7 @@ require_once PHORUM_PATH.'/include/api/thread.php';
 if (!phorum_db_check_connection()){
     phorum_admin_error(
         "A database connection could not be established.<br/>" .
-        "Please check the database configuration in include/db/config.php."
+        "Please check the database configuration in include/config/database.php."
     );
     return;
 }

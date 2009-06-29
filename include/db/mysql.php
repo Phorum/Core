@@ -27,7 +27,7 @@
  *
  * The only thing to worry about is the table_prefix for the tables.
  * all tables for a Phorum install should be prefixed with the
- * table_prefix that will be entered in include/db/config.php.  This
+ * table_prefix that will be entered in include/config/database.php.  This
  * will allow multiple Phorum installations to use the same database.
  *
  * @todo
@@ -7964,8 +7964,8 @@ function phorum_db_sanitychecks()
         "The option \"charset\" is missing in your database configuration.
          This might indicate that you are using a config.php from an
          older Phorum version, which does not yet contain this option.
-         Please, copy include/db/config.php.sample to
-         include/db/config.php and edit this new config.php. Read
+         Please, copy include/config/database.php.sample to
+         include/config/database.php and edit this new config.php. Read
          Phorum's install.txt for installation instructions."
     );
 
@@ -8113,7 +8113,7 @@ if (!file_exists($extfile)) trigger_error(
    "The Phorum MySQL database layer is unable to find the extension " .
    "file $extfile on the system. Check if all Phorum files are uploaded " .
    "and if you did specify the correct \"mysql_php_extension\" in the file " .
-   "include/db/config.php (valid options are \"mysql\" and \"mysqli\").",
+   "include/config/database.php (valid options are \"mysql\" and \"mysqli\").",
    E_USER_ERROR
 );
 include $extfile;

@@ -64,7 +64,7 @@ Contents:
 
    1. Unpack Phorum into a directory below your website's document root;
    2. Create a database and a full-access database user for that database;
-   3. Edit include/db/config.php.sample, save it as include/db/config.php;
+   3. Edit include/config/database.php.sample, save it as include/config/database.php;
    4. Open {phorum url}/admin.php in your web browser and finish the install.
 
 
@@ -165,12 +165,12 @@ Contents:
 
    After setting up the database, you'll have to tell Phorum how the
    database can be accessed. This configuration is put in the file
-   include/db/config.php inside your Phorum directory. This file is
+   include/config/database.php inside your Phorum directory. This file is
    not in the distribution. Only a differently named sample file is
    included.
 
-   First, copy or rename the file "include/db/config.php.sample" to
-   "include/db/config.php". Now edit the config.php file to match the
+   First, copy or rename the file "include/config/database.php.sample" to
+   "include/config/database.php". Now edit the config.php file to match the
    access settings for the database that was created in step 4.
 
    If you run your website on a remote server, then either edit
@@ -197,7 +197,7 @@ Contents:
      connect to the database. If you are running your website with a
      hosting provider, then ask your provider;
 
-   - Is there a typo in include/db/config.php? A typo might crash PHP.
+   - Is there a typo in include/config/database.php? A typo might crash PHP.
      If you have access to your server's error logging, then please check
      for errors in there. You could ask your provider to look at the error
      log, in case you have no direct access to it;

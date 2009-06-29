@@ -26,7 +26,7 @@
       <itemizedlist>
         <listitem>Unpack Phorum into a directory below your website's document root;</listitem>
         <listitem>Create a database and a full access database user for that database;</listitem>
-        <listitem>Edit <filename>include/db/config.php.sample</filename>, save it as <filename>include/db/config.php</filename>;</listitem>
+        <listitem>Edit <filename>include/config/database.php.sample</filename>, save it as <filename>include/config/database.php</filename>;</listitem>
         <listitem>Open <filename>{phorum url}/admin.php</filename> in your web browser and finish the install.</listitem>
       </itemizedlist>
     </para>
@@ -175,13 +175,13 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO 'myuser'@'localhost' IDENTIFIED BY '
       <para>
         After setting up the database, you will have to tell Phorum how
         to access that database. The configuration for this is put in
-        the file <filename>include/db/config.php</filename> inside your
+        the file <filename>include/config/database.php</filename> inside your
         Phorum directory. This file is not included in the distribution.
         Only a differently named sample file is included (this is to
         prevent overwriting your configuration when upgrading Phorum).
         Copy or rename the sample configuration file
-        <filename>include/db/config.php.sample</filename> to
-        <filename>include/db/config.php</filename>. Then edit the
+        <filename>include/config/database.php.sample</filename> to
+        <filename>include/config/database.php</filename>. Then edit the
         <filename>config.php</filename> file to match the access
         settings for the database that was created in
         <xref linkend="installation.createdb"/>.

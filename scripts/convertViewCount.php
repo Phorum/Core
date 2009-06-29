@@ -8,7 +8,7 @@ output anything until it is completed.
 
 If you are enabling Phorum's internal viewcount setting, you should disable mod_viewcount.
 */
-include("include/db/config.php");
+include("include/config/database.php");
 mysql_connect($PHORUM["DBCONFIG"]["server"],$PHORUM["DBCONFIG"]["user"],$PHORUM["DBCONFIG"]["password"]);
 mysql_select_db($PHORUM["DBCONFIG"]["name"]);
 $query = "SELECT message_id, meta, viewcount FROM $PHORUM[DBCONFIG][table_prefix]_messages ORDER BY message_id DESC";

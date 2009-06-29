@@ -45,7 +45,7 @@ Table of contents:
    
    - Extract the files and put them on top of the current installation;
    
-   - Keep the database settings from {phorum dir}/include/db/config.php 
+   - Keep the database settings from {phorum dir}/include/config/database.php 
      the same;
 
    Now you can choose whether you want to upgrade from a webbrowser or 

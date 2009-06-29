@@ -21,7 +21,7 @@ if (!defined("PHORUM_ADMIN")) return;
 
 if (!phorum_db_check_connection()) {
     print "A database connection could not be established. " .
-          "Please edit include/db/config.php.";
+          "Please edit include/config/database.php.";
     return;
 }
 

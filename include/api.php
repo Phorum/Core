@@ -176,13 +176,17 @@ if (!empty($missing_compat)) { ?>
     exit;
 }
 
+
+// Load the caching api
+require_once PHORUM_PATH.'/include/api/cache.php';
+
 // ----------------------------------------------------------------------
 // Load the database layer and setup a connection
 // ----------------------------------------------------------------------
 
 // Get the database settings. It is possible to override the database
 // settings by defining a global variable $PHORUM_ALT_DBCONFIG which
-// overrides $PHORUM["DBCONFIG"] (from include/db/config.php). This is
+// overrides $PHORUM["DBCONFIG"] (from include/config/database.php). This is
 // only allowed if "PHORUM_WRAPPER" is defined and if the alternative
 // configuration wasn't passed as a request parameter (which could
 // set $PHORUM_ALT_DBCONFIG if register_globals is enabled for PHP).
@@ -200,7 +204,7 @@ if (empty($GLOBALS['PHORUM_ALT_DBCONFIG']) ||
     ob_start();
 
     // Load configuration.
-    $dbconfig = PHORUM_PATH.'/include/db/config.php';
+    $dbconfig = PHORUM_PATH.'/include/config/database.php';
     if (! include_once $dbconfig) {
         print '<html><head><title>Phorum error</title></head><body>';
         print '<h2>Phorum database configuration error</h2>';
@@ -216,14 +220,14 @@ if (empty($GLOBALS['PHORUM_ALT_DBCONFIG']) ||
             // Unable to read the configuration file.
             if (!$fp) { ?>
                 A database configuration file was found in
-                {phorum dir}/include/db/config.php,<br/>but Phorum was
+                {phorum dir}/include/config/database.php,<br/>but Phorum was
                 unable to read it. Please check the file permissions<br/>
                 for this file. <?php
             // Unknown error.
             } else {
                 fclose($fp); ?>
                 A database configuration file was found in
-                {phorum dir}/include/db/config.php,<br/>but it could not be
+                {phorum dir}/include/config/database.php,<br/>but it could not be
                 loaded. It possibly contains one or more syntax errors.<br/>
                 Please check your configuration file. <?php
             }
@@ -259,7 +263,7 @@ if (!phorum_db_check_connection())
     if(isset($PHORUM['DBCONFIG']['down_page'])){
         phorum_api_redirect($PHORUM['DBCONFIG']['down_page']);
     } else {
-        echo "The database connection failed. Please check your database configuration in include/db/config.php. If the configuration is okay, check if the database server is running.";
+        echo "The database connection failed. Please check your database configuration in include/config/database.php. If the configuration is okay, check if the database server is running.";
         exit();
     }
 }
@@ -399,7 +403,6 @@ if (isset($PHORUM['internal_version']) &&
     phorum_db_update_settings(array('private_key' => $PHORUM['private_key']));
 }
 
-require_once PHORUM_PATH.'/include/api/cache.php';
 
 // Check if the Phorum extension is loaded. If yes, then show
 // a warning. The extension is no longer supported and should

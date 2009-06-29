@@ -27,7 +27,7 @@
  *
  * The only thing to worry about is the table_prefix for the tables.
  * all tables for a Phorum install should be prefixed with the
- * table_prefix that will be entered in include/db/config.php.  This
+ * table_prefix that will be entered in include/config/database.php.  This
  * will allow multiple Phorum installations to use the same database.
  *
  * @todo
