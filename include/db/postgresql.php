@@ -3132,50 +3132,6 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
         }
     }
 
-    // Retrieve custom user profile fields for the requested users.
-    $custom_fields = phorum_db_interact(
-        DB_RETURN_ASSOCS,
-        "SELECT *
-         FROM   {$PHORUM['user_custom_fields_table']}
-         WHERE  $user_where",
-        NULL,
-        $flags
-    );
-
-    // Add custom user profile fields to the users.
-    foreach ($custom_fields as $fld)
-    {
-        // Skip profile fields for users which are not in our
-        // $users array. This should not happen, but it could
-        // happen in case some orphin custom user fields
-        // are lingering in the database.
-        if (!isset($users[$fld['user_id']])) continue;
-
-        // Skip unknown custom profile fields.
-        if (! isset($PHORUM['PROFILE_FIELDS'][$fld['type']])) continue;
-
-        // Fetch the name for the custom profile field.
-        $name = $PHORUM['PROFILE_FIELDS'][$fld['type']]['name'];
-
-        // For "html_disabled" fields, the data is XSS protected by
-        // replacing special HTML characters with their HTML entities.
-        if ($PHORUM['PROFILE_FIELDS'][$fld['type']]['html_disabled']) {
-            $users[$fld['user_id']][$name] = htmlspecialchars($fld['data']);
-            continue;
-        }
-
-        // Other fields can either contain raw values or serialized
-        // arrays. For serialized arrays, the field data is prefixed with
-        // a magic "P_SER:" (Phorum serialized) marker.
-        if (substr($fld['data'],0,6) == 'P_SER:') {
-            $users[$fld['user_id']][$name]=unserialize(substr($fld['data'],6));
-            continue;
-        }
-
-        // The rest of the fields contain raw field data.
-        $users[$fld['user_id']][$name] = $fld['data'];
-    }
-
     if (is_array($user_id)) {
         return $users;
     } else {

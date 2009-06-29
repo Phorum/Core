@@ -476,7 +476,6 @@ function phorum_api_custom_field_checkconfig()
 }
 // }}}
 
-
 // {{{ Function: phorum_api_custom_field_apply()
 /**
  * Retrieve custom fields and add/apply them to the given array

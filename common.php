@@ -28,8 +28,6 @@ if (basename(__FILE__) == basename($_SERVER["PHP_SELF"])) exit();
 
 require_once dirname(__FILE__).'/include/api.php';
 
-require_once PHORUM_PATH.'/include/api/request.php';
-
 phorum_api_request_parse();
 
 /*
@@ -187,7 +185,7 @@ if (!defined( "PHORUM_ADMIN" ))
         $PHORUM["DATA"]["TITLE"] = $PHORUM["title"];
         $PHORUM["DATA"]["HTML_TITLE"] = $PHORUM["title"];
 
-        if($PHORUM['vroot'] == $PHORUM['forum_id']) {
+        if ($PHORUM['vroot'] == $PHORUM['forum_id']) {
             // Unset the forum-name if we are in the vroot-index.
             // Otherwise, the NAME and TITLE would be the same and still
             // shown twice.

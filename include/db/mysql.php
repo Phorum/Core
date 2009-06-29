@@ -3538,22 +3538,6 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
         }
     }
 
-    $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_USER,$user_id,$flags);
-
-    // Add custom user profile fields to the users.
-    foreach ($custom_fields as $fld_user_id => $fields)
-    {
-        // Skip profile fields for users which are not in our
-        // $users array. This should not happen, but it could
-        // happen in case some orphan custom user fields
-        // are lingering in the database.
-        if (!isset($users[$fld_user_id])) continue;
-
-        foreach($fields as $fieldname => $fielddata) {
-            $users[$fld_user_id][$fieldname] = $fielddata;
-        }
-    }
-
     if (is_array($user_id)) {
         return $users;
     } else {

@@ -937,6 +937,13 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
     {
         $db_users = phorum_db_user_get($user_ids, $detailed, $use_write_server);
 
+        // Retrieve and apply the custom fields for users.
+        if (!empty($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_USER])) {
+            $db_users = phorum_api_custom_field_apply(
+                PHORUM_CUSTOM_FIELD_USER, $db_users
+            );
+        }
+
         foreach ($db_users as $id => $user)
         {
             // Merge the group and forum permissions into a final
