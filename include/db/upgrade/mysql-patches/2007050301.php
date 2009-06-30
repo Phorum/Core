@@ -1,6 +1,6 @@
 <?php
 
-require_once PHORUM_PATH.'/include/api/custom_fields.php';
+require_once PHORUM_PATH.'/include/api/custom_field.php';
 
 // Find out if we have an active real_name custom user profile field.
 $field = phorum_api_custom_field_byname('real_name', PHORUM_CUSTOM_FIELD_USER);
