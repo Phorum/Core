@@ -168,6 +168,7 @@ if(count($_POST)){
                 unset($forum_settings_inherit["display_order"]);
                 unset($forum_settings_inherit["cache_version"]);
                 unset($forum_settings_inherit["forum_path"]);
+                unset($forum_settings_inherit["vroot"]);
 
                 // we don't need to save the master forum
                 unset($forum_settings_inherit[$inherit_id]);
