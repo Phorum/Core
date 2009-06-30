@@ -28,10 +28,10 @@ function phorum_build_forum_list() {
 
     $order = array();
     $stack = array();
-    $curr_id = 0;
+    $curr_id = $PHORUM['vroot'];
     while(count($tmp_forums)){
         if(empty($seen[$curr_id])){
-            if($curr_id!=0){
+            if($curr_id!=$PHORUM['vroot']){
                 if ($forums[$curr_id]["active"]) {
                     $order[$curr_id] = $forums[$curr_id];
                 }
