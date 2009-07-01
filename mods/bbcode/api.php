@@ -785,8 +785,9 @@ function bbcode_api_tokenize($text)
 
                     // Strip trailing break after the open tag, if the tag
                     // is configured to do so and it is open only.
-                    if ($current_tag[BBCODE_INFO_STRIPBREAK] && $current_tag[BBCODE_INFO_OPENONLY])
-                    {
+                    if ($current_tag[BBCODE_INFO_STRIPBREAK] &&
+                        $current_tag[BBCODE_INFO_OPENONLY]) {
+
                         // First, skip any white space character that we find.
                         $peekcursor = $cursor + 1;
                         while (isset($text[$peekcursor]) &&
