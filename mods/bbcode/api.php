@@ -782,6 +782,28 @@ function bbcode_api_tokenize($text)
                     }
 
                     $tokens[++$tokenidx] = $current_token;
+
+                    // Strip trailing break after the open tag, if the tag
+                    // is configured to do so and it is open only.
+                    if ($current_tag[BBCODE_INFO_STRIPBREAK] &&
+                        $current_tag[BBCODE_INFO_OPENONLY]) {
+
+                        // First, skip any white space character that we find.
+                        $peekcursor = $cursor + 1;
+                        while (isset($text[$peekcursor]) &&
+                               ($text[$peekcursor] == " " ||
+                                $text[$peekcursor] == "\n" ||
+                                $text[$peekcursor] == "\r")) {
+                            $peekcursor++;
+                        }
+
+                        // Check for a Phorum break and strip if we find one.
+                        if (isset($text[$peekcursor]) &&
+                            substr($text,$peekcursor,14) == '<phorum break>') {
+                            $cursor = $peekcursor + 13;
+                        }
+                    }
+
                 }
 
                 $cursor++;
@@ -791,6 +813,7 @@ function bbcode_api_tokenize($text)
                 $state = 1;
                 continue;
             }
+
             // If the current tag does not take arguments, then it is
             // apparently wrong and we can continue searching for the next tag.
             // We can also continue if there is no space, indicating the start
@@ -804,6 +827,13 @@ function bbcode_api_tokenize($text)
             // Skip multiple spaces.
             while (isset($text[$cursor]) && $text[$cursor] == ' ') $cursor++;
             if ($cursor > $maxpos) break;
+
+            // If we ended up at the end of the bbcode tag by now, then
+            // restart parsing state 3 to handle this.
+            if ($text[$cursor] == ']') {
+                $state = 3;
+                continue;
+            }
 
             // Check if we can find a valid argument.
             $node = $current_tag[BBCODE_INFO_ARGPARSETREE];
