@@ -118,9 +118,6 @@ function iScramble_escape($plain)
 function iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>[Please Enable JavaScript]</i>")
 {
     global $iscramble_version;
-    static $iscramble_idx = 0;
-
-    $iscramble_idx ++;
 
     $escaped = iScramble_escape($plain);
     if ($rot13)
@@ -164,11 +161,12 @@ function iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>[Please Enab
 
     // Generate the JavaScript
     // Phorum change: make script compliant with w3 checks.
-    $javascript = "<span id=\"iscramble_{$iscramble_idx}\"></span>";
+    $id = 'iscramble_' . md5($scrambled);
+    $javascript = "<span id=\"$id\"></span>";
     $javascript .= "<script type=\"text/javascript\">\n";
     $javascript .= "//<![CDATA[\n";
 
-    $javascript .= "var box = document.getElementById('iscramble_{$iscramble_idx}');";
+    $javascript .= "var box = document.getElementById('$id');";
     $javascript .= "var a='';var b='$scrambled';var c='$password';";
     if ($rot13)
     {

@@ -4,6 +4,7 @@ if (!defined("PHORUM")) return;
 require_once("./mods/spamhurdles/lib/iscramble.php");
 require_once("./mods/spamhurdles/defaults.php");
 require_once("./mods/spamhurdles/db.php");
+require_once("./mods/event_logging/constants.php"); // for EVENTLOG_LVL_INFO
 
 define("KEY_NOTAVAIL", -1);
 define("KEY_AVAIL", 0);
@@ -81,7 +82,7 @@ function phorum_mod_spamhurdles_common()
            if (phorum_page == "post" &&
                do_spamhurdle("blockmultipost") &&
                $conf["blockaction"] == "blockerror") {
-               spamhurdle_blockerror();
+               spamhurdles_blockerror();
            }
 
            $PHORUM["SPAMHURDLES_KEY_STATUS"] = KEY_EXPIRED;
@@ -303,14 +304,14 @@ function phorum_mod_spamhurdles_build_form($type)
 
         // Replace SPOKENURL with the URL for the spoken captcha code.
         if ($conf["spoken_captcha"] && file_exists($conf["flite_location"])) {
-            $url = phorum_api_url(PHORUM_INDEX_URL, "spokencaptcha=" . $key);
+            $url = phorum_get_url(PHORUM_INDEX_URL, "spokencaptcha=" . $key);
             $captcha = str_replace(
                 "{SPOKENURL}", htmlspecialchars($url), $captcha
             );
         }
 
         // Replace IMAGE with the URL for the captcha image.
-        $url = phorum_api_url(PHORUM_INDEX_URL, "imagecaptcha=" . $key);
+        $url = phorum_get_url(PHORUM_INDEX_URL, "imagecaptcha=" . $key);
         $captcha = str_replace(
             "{IMAGEURL}", htmlspecialchars($url), $captcha
         );
@@ -347,32 +348,54 @@ function phorum_mod_spamhurdles_run_submitcheck($type)
         // They will automatically fail if they are enabled.
         if (($spamhurdles == NULL || $spamhurdles["prev_key_expired"]) &&
             do_spamhurdle("blockmultipost")) {
-            $do_block = TRUE;
-        // Initialize spamhurdles information for all other cases.
-        // If other checks are enabled, they will take over.
+            spamhurdles_log(
+                "Spam Hurdles blocked \"$type\" post",
+                "The posting form was posted without or with an expired " .
+                "Spam Hurdles key."
+            );
+            $do_block = true;
+        // initialize spamhurdles information for all other cases.
+        // if other checks are enabled, they will take over.
         } else {
-            $PHORUM["SPAMHURDLES"] = phorum_mod_spamhurdles_init($type);
-            $spamhurdles = $PHORUM["SPAMHURDLES"];
+            $phorum["spamhurdles"] = phorum_mod_spamhurdles_init($type);
+            $spamhurdles = $phorum["spamhurdles"];
         }
     }
 
-    // If the type of form in the spamhurdles data does not match the
+    // if the type of form in the spamhurdles data does not match the
     // real form type, then the key that was used for form type 1 is used
-    // in form type 2. This is defenitely data tampering. No friendly
+    // in form type 2. this is defenitely data tampering. no friendly
     // warning messages here.
     if (!$do_block && $PHORUM["SPAMHURDLES"]["form_type"] !== $type) {
-        spamhurdle_blockerror();
+        spamhurdles_log(
+            "Spam Hurdles blocked \"$type\" post",
+            "The Spam Hurdles form type that is linked to the posting key " .
+            "is \"{$PHORUM["SPAMHURDLES"]["form_type"]}\", but the real " .
+            "form type is \"$type\"."
+        );
+        spamhurdles_blockerror();
     }
 
     // Check if the minimum TTL is honoured for the message posting form.
     if (!$do_block && $type == "posting" && do_spamhurdle("blockquickpost")) {
         $delay = $conf["key_min_ttl"] - (time() - $spamhurdles["create_time"]);
-        if ($delay > 0) $do_block = TRUE;
+        if ($delay > 0) {
+            spamhurdles_log(
+                "Spam Hurdles blocked \"$type\" post",
+                "The TTL for the Spam Hurdles key expired."
+            );
+            $do_block = TRUE;
+        }
     }
 
     // Check if a HTML commented form field was submitted.
     if (!$do_block && do_spamhurdle("commentfieldcheck")) {
         if (array_key_exists("commentname", $_POST)) {
+            spamhurdles_log(
+                "Spam Hurdles blocked \"$type\" post",
+                "An HTML commented form field was submitted. This most " .
+                "probably is a badly programmed posting bot."
+            );
             $do_block = TRUE;
         }
     }
@@ -382,6 +405,17 @@ function phorum_mod_spamhurdles_run_submitcheck($type)
         $sig = md5($spamhurdles["key"] . $spamhurdles["signkey"]);
         if (!isset($_POST["spamhurdles_signature"]) ||
             $_POST["spamhurdles_signature"] != $sig) {
+            spamhurdles_log(
+                "Spam Hurdles blocked \"$type\" post",
+                "Javascript signing is enabled, but the client either " .
+                "did not sign the provided data or did sign it wrongly.\n\n" .
+                "Expected signature: $sig\n" .
+                "Received signature: " . (
+                    isset($_POST['spamhurdles_signature'])
+                    ? $_POST['spamhurdles_signature']
+                    : 'n/a'
+                )
+            );
             $do_block = TRUE;
         }
     }
@@ -392,7 +426,13 @@ function phorum_mod_spamhurdles_run_submitcheck($type)
         require_once("./mods/spamhurdles/captcha/class.{$class}.php");
         $captcha = new $class();
         $error = $captcha->check_answer($spamhurdles["captcha"]);
-        if ($error) return $error;
+        if ($error) {
+            spamhurdles_log(
+                "Spam Hurdles blocked \"$type\" post",
+                "The CAPTCHA check failed: $error"
+            );
+            return $error;
+        }
     }
 
     // Handle default blocking case. Which method of blocking to use for
@@ -402,7 +442,7 @@ function phorum_mod_spamhurdles_run_submitcheck($type)
             phorum_mod_spamhurdles_init($type, array("unapprove" => 1));
             return $PHORUM["DATA"]["LANG"]["mod_spamhurdles"]["PostingUnapproveError"];
         } else {
-            spamhurdle_blockerror();
+            spamhurdles_blockerror();
         }
     }
 
@@ -654,21 +694,29 @@ function do_spamhurdle($hurdle)
     }
 }
 
-function spamhurdle_blockerror()
+function spamhurdles_blockerror()
 {
     global $PHORUM;
-
     phorum_build_common_urls();
-
     $PHORUM["DATA"]["ERROR"] =
         $PHORUM["DATA"]["LANG"]["mod_spamhurdles"]["BlockError"];
-
-    include phorum_api_template("header");
-    phorum_api_hook("after_header");
-    include phorum_api_template("message");
-    phorum_api_hook("before_footer");
-    include phorum_api_template("footer");
+    include phorum_get_template("header");
+    phorum_hook("after_header");
+    include phorum_get_template("message");
+    phorum_hook("before_footer");
+    include phorum_get_template("footer");
     exit(0);
+}
+
+function spamhurdles_log($message, $details)
+{
+    if (function_exists('event_logging_writelog')) {
+        event_logging_writelog(array(
+            'message'   => $message,
+            'details'   => $details,
+            'loglevel'  => EVENTLOG_LVL_INFO
+        ));
+    }
 }
 
 ?>
