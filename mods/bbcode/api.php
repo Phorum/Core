@@ -812,6 +812,7 @@ function bbcode_api_tokenize($text)
                 $state = 1;
                 continue;
             }
+
             // If the current tag does not take arguments, then it is
             // apparently wrong and we can continue searching for the next tag.
             // We can also continue if there is no space, indicating the start
@@ -825,6 +826,13 @@ function bbcode_api_tokenize($text)
             // Skip multiple spaces.
             while (isset($text[$cursor]) && $text[$cursor] == ' ') $cursor++;
             if ($cursor > $maxpos) break;
+
+            // If we ended up at the end of the bbcode tag by now, then
+            // restart parsing state 3 to handle this.
+            if ($text[$cursor] == ']') {
+                $state = 3;
+                continue;
+            }
 
             // Check if we can find a valid argument.
             $node = $current_tag[BBCODE_INFO_ARGPARSETREE];
