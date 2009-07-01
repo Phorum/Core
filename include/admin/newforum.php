@@ -156,9 +156,14 @@ if(count($_POST)){
                 $forum_settings_inherit["name"] = $_POST["name"];
                 $forum_settings_inherit["description"] = $_POST["description"];
                 $forum_settings_inherit["active"] = (int)$_POST["active"];
-                $forum_settings_inherit["vroot"] = (int)$_POST["vroot"];
                 $forum_settings_inherit["parent_id"] = (int)$_POST["parent_id"];
                 $forum_settings_inherit["inherit_id"] = $_POST["inherit_id"];
+
+                if (isset($_POST['vroot'])) {
+                    $forum_settings_inherit['vroot'] = $_POST['vroot'];
+                } else {
+                    unset($forum_settings_inherit['vroot']);
+                }
 
                 // don't inherit these settings
                 unset($forum_settings_inherit["message_count"]);
@@ -168,7 +173,7 @@ if(count($_POST)){
                 unset($forum_settings_inherit["display_order"]);
                 unset($forum_settings_inherit["cache_version"]);
                 unset($forum_settings_inherit["forum_path"]);
-                unset($forum_settings_inherit["vroot"]);
+
 
                 // we don't need to save the master forum
                 unset($forum_settings_inherit[$inherit_id]);
@@ -217,6 +222,7 @@ if(count($_POST)){
                 unset($forum_settings["sticky_count"]);
                 unset($forum_settings["thread_count"]);
                 unset($forum_settings["last_post_time"]);
+                unset($forum_settings["vroot"]);
 
                 $res_inherit =phorum_db_update_forum($forum_settings);
             }
