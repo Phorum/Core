@@ -385,7 +385,20 @@ if ($smiley_id == "NEW")
             foreach ($item as $key => $val) {
                 $item[$key] = htmlspecialchars($val);
             }
-            $action_url = "$_SERVER[PHP_SELF]?module=modsettings&mod=smileys&smiley_id=$id";
+            
+            $edit_url = phorum_admin_build_url(array(
+                'module=modsettings',
+                'mod=smileys',
+                'smiley_id='.$id,
+                'edit=1'
+            ));
+
+            $delete_url = phorum_admin_build_url(array(
+                'module=modsettings',
+                'mod=smileys',
+                'smiley_id='.$id,
+                'delete=1'
+            ));
 
             print "<tr>\n";
             print "  <td class=\"PhorumAdminTableRow\">{$item["search"]}</td>\n";
@@ -399,8 +412,8 @@ if ($smiley_id == "NEW")
             print "  <td class=\"PhorumAdminTableRow\">{$item["alt"]}</td>\n";
             print "  <td class=\"PhorumAdminTableRow\" style=\"white-space:nowrap\">$used_for_txt</td>\n";
             print "  <td class=\"PhorumAdminTableRow\">" .
-                  "<a href=\"$action_url&edit=1\">Edit</a>&nbsp;&#149;&nbsp;" .
-                  "<a href=\"$action_url&delete=1\">Delete</a></td>\n";
+                  "<a href=\"$edit_url\">Edit</a>&nbsp;&#149;&nbsp;" .
+                  "<a href=\"$delete_url\">Delete</a></td>\n";
             print "</tr>\n";
         }
 
