@@ -46,7 +46,7 @@ function phorum_api_mail_message_notify($message)
 
     $recipients = phorum_api_user_list_subscribers(
         $PHORUM['forum_id'],
-        $message['tread'],
+        $message['thread'],
         PHORUM_SUBSCRIPTION_MESSAGE
     );
     
