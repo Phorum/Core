@@ -267,6 +267,7 @@ if (strpos($_SERVER['QUERY_STRING'], '&') !== FALSE &&
     foreach ($parts as $part) {
         list ($key, $val) = explode('=', rawurldecode($part), 2);
         $_GET[$key] = $val;
+        $_REQUEST[$key] = $val;
     }
 }
 
