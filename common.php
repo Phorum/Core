@@ -255,6 +255,21 @@ if ( function_exists('get_magic_quotes_gpc') &&
     }
 }
 
+// Thanks a lot for configurable argument separators :-/
+// In some cases we compose GET based URLs, with & and = as respectively
+// argument and key/value separators. On some systems, the "&" character
+// is not configured as a valid separator. For those systems, we have
+// to parse the query string ourselves.
+if (strpos($_SERVER['QUERY_STRING'], '&') !== FALSE &&
+    strpos(get_cfg_var('arg_separator.input'), '&') === FALSE) {
+    $parts = explode('&', $_SERVER['QUERY_STRING']);
+    $_GET = array();
+    foreach ($parts as $part) {
+        list ($key, $val) = explode('=', rawurldecode($part), 2);
+        $_GET[$key] = $val;
+    }
+}
+
 /*
  * [hook]
  *     parse_request
@@ -311,7 +326,6 @@ if (isset($PHORUM["hooks"]["parse_request"])) {
 if ( isset( $_REQUEST["forum_id"] ) && is_numeric( $_REQUEST["forum_id"] ) ) {
     $PHORUM["forum_id"] = $_REQUEST["forum_id"];
 }
-
 // Look for and parse the QUERY_STRING.
 // This only applies to URLs that we create using phorum_get_url().
 // Scripts using data originating from standard HTML forms (e.g. search)
