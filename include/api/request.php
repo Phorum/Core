@@ -85,6 +85,7 @@ function phorum_api_request_parse()
         foreach ($parts as $part) {
             list ($key, $val) = explode('=', rawurldecode($part), 2);
             $_GET[$key] = $val; 
+            $_REQUEST[$key] = $val;
         }   
     }   
 
