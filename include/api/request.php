@@ -73,6 +73,21 @@ function phorum_api_request_parse()
         }
     }
 
+    // Thanks a lot for configurable argument separators :-/
+    // In some cases we compose GET based URLs, with & and = as respectively
+    // argument and key/value separators. On some systems, the "&" character
+    // is not configured as a valid separator. For those systems, we have
+    // to parse the query string ourselves.
+    if (strpos($_SERVER['QUERY_STRING'], '&') !== FALSE &&
+        strpos(get_cfg_var('arg_separator.input'), '&') === FALSE) {
+        $parts = explode('&', $_SERVER['QUERY_STRING']);
+        $_GET = array();
+        foreach ($parts as $part) {
+            list ($key, $val) = explode('=', rawurldecode($part), 2);
+            $_GET[$key] = $val; 
+        }   
+    }   
+
     /*
      * [hook]
      *     parse_request
@@ -262,6 +277,8 @@ function phorum_api_request_check_token($target_page = NULL)
 
     if ($target_page === NULL) $target_page = phorum_page;
 
+    $variable = 'posting_token_' . $target_page;
+
     // Generate the posting token.
     $posting_token = md5(
         ($target_page !== NULL ? $target_page : phorum_page) . '/' .
@@ -279,14 +296,14 @@ function phorum_api_request_check_token($target_page = NULL)
 
     // Add the posting token to the {POST_VARS}.
     $PHORUM['DATA']['POST_VARS'] .=
-        "<input type=\"hidden\" name=\"posting_token:$target_page\" " .
+        "<input type=\"hidden\" name=\"$variable\" " .
         "value=\"$posting_token\"/>\n";
 
     // Check the posting token if a form post is done.
     if (!empty($_POST))
     {
-        if (!isset($_POST["posting_token:$target_page"]) ||
-            $_POST["posting_token:$target_page"] != $posting_token) {
+        if (!isset($_POST[$variable]) ||
+            $_POST[$variable] != $posting_token) {
             $PHORUM['DATA']['ERROR'] =
                 'Possible hack attempt detected. ' .
                 'The posted form data was rejected.';
