@@ -277,7 +277,7 @@ function phorum_api_request_check_token($target_page = NULL)
 
     if ($target_page === NULL) $target_page = phorum_page;
 
-    $variable = 'posting_token_' . $target_page;
+    $variable = 'posting_token:' . $target_page;
 
     // Generate the posting token.
     $posting_token = md5(
