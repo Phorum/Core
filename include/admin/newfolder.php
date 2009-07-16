@@ -95,7 +95,7 @@ if (count($_POST))
         $okmsg = "Folder \"{$folder['name']}\" was successfully saved";
 
         // The URL to redirect to.
-        $url = phorum_admin_build_url(array('module=default',"parent_id=".$folder['parent_id'],'okmsg='.urlencode($okmsg)));
+        $url = phorum_admin_build_url(array('module=default',"parent_id=".$folder['parent_id'],'okmsg='.rawurlencode($okmsg)));
 
         phorum_api_redirect($url);
         exit;
