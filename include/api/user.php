@@ -447,34 +447,17 @@ function phorum_api_user_save($user, $flags = 0)
     // Initialize storage for custom profile field data.
     $user_customfield_data = array();
 
-    // Check and format fields.
+    // Check and format the user data fields.
     foreach ($dbuser as $fld => $val)
     {
-        // Make sure that a valid field name is used. We do a strict check
-        // on this (in the spirit of defensive programming).
-        $fldtype = NULL;
-        if (!array_key_exists($fld, $PHORUM['API']['user_fields']))
-        {
-        	/** 
-        	 * @todo read this later once the reverse array is available for
-        	 *       a quick isset check 
-        	 */
-            /*$custom = phorum_api_custom_field_byname($fld, PHORUM_CUSTOM_FIELD_USER);
-            if ($custom === NULL) {
-                trigger_error(
-                    'phorum_api_user_save(): Illegal field name used in ' .
-                    'user data: ' . htmlspecialchars($fld),
-                    E_USER_ERROR
-                );
-                return NULL;
-            } else {
-            */
-                $fldtype = 'custom_profile_field';
-            //}
+        // Determine the field type.
+        if (!array_key_exists($fld, $PHORUM['API']['user_fields'])) {
+            $fldtype = 'custom_profile_field';
         } else {
             $fldtype = $PHORUM['API']['user_fields'][$fld];
         }
 
+        // Process the field data.
         switch ($fldtype)
         {
             // A field that has to be fully ignored.
@@ -721,8 +704,13 @@ function phorum_api_user_save($user, $flags = 0)
         $dbuser['user_id'] = phorum_db_user_add($dbuser);
     }
     // save his custom field data
-    if(is_array($user_customfield_data) && count($user_customfield_data) && !empty($dbuser['user_id'])) {
-        phorum_db_save_custom_fields($dbuser['user_id'],PHORUM_CUSTOM_FIELD_USER,$user_customfield_data);
+    if (is_array($user_customfield_data) && count($user_customfield_data) &&
+        !empty($dbuser['user_id'])) {
+        phorum_db_save_custom_fields(
+            $dbuser['user_id'],
+            PHORUM_CUSTOM_FIELD_USER,
+            $user_customfield_data
+        );
     }
 
     // If the display name changed for the user, then we do need to run
