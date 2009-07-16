@@ -78,16 +78,38 @@ function phorum_api_request_parse()
     // argument and key/value separators. On some systems, the "&" character
     // is not configured as a valid separator. For those systems, we have
     // to parse the query string ourselves.
-    if (strpos($_SERVER['QUERY_STRING'], '&') !== FALSE &&
-        strpos(get_cfg_var('arg_separator.input'), '&') === FALSE) {
-        $parts = explode('&', $_SERVER['QUERY_STRING']);
-        $_GET = array();
-        foreach ($parts as $part) {
-            list ($key, $val) = explode('=', rawurldecode($part), 2);
-            $_GET[$key] = $val; 
-            $_REQUEST[$key] = $val;
-        }   
-    }   
+    if (strpos($_SERVER['QUERY_STRING'], '&') !== FALSE)
+    {
+        $separator = get_cfg_var('arg_separator.input');
+        if ($separator !== FALSE && strpos($separator, '&') === FALSE)
+        {
+            $parts = explode('&', $_SERVER['QUERY_STRING']);
+            $_GET = array();
+            foreach ($parts as $part)
+            {
+                list ($key, $val) = explode('=', rawurldecode($part), 2);
+
+                // Handle array[] style GET arguments.
+                if (preg_match('/^(.+)\[(.*)\]$/', $key, $m))
+                {
+                    if (!isset($_GET[$m[1]]) || !is_array($_GET[$m[1]])) {
+                        $_GET[$m[1]] = array();
+                    }
+                    if ($m[2] == '') {
+                        $_GET[$m[1]][] = $val;
+                    } else {
+                        $_GET[$m[1]][$m[2]] = $val;
+                    }
+                }
+                // Handle standard GET arguments.
+                else
+                {
+                    $_GET[$key] = $val;
+                    $_REQUEST[$key] = $val;
+                }
+            }
+        }
+    }
 
     /*
      * [hook]
