@@ -443,22 +443,21 @@ function phorum_api_user_save($user, $flags = 0)
     // Initialize storage for custom profile field data.
     $user_data = array();
 
-    // Check and format fields.
+    // Check and format the user data fields.
     foreach ($dbuser as $fld => $val)
     {
-        // Make sure that a valid field name is used. We do a strict check
-        // on this (in the spirit of defensive programming).
+        // Determine the field type that we are handling.
         $fldtype = NULL;
         $custom  = NULL;
+        // Check if we are handling a custom profile field. We asume that any
+        // field that is not in the user_fields array is a custom profile
+        // field. If we find that it isn't such field, then we will ignore
+        // the field (it's either a field that was manually added to the
+        // user table or a custom profile field that was just deleted).
         if (!array_key_exists($fld, $PHORUM['API']['user_fields'])) {
             $custom = phorum_api_custom_profile_field_byname($fld);
             if ($custom === NULL) {
-                trigger_error(
-                    'phorum_api_user_save(): Illegal field name used in ' .
-                    'user data: ' . htmlspecialchars($fld),
-                    E_USER_ERROR
-                );
-                return NULL;
+                $fldtype = 'ignore_field';
             } else {
                 $fldtype = 'custom_profile_field';
             }
@@ -500,6 +499,10 @@ function phorum_api_user_save($user, $flags = 0)
                     $val = substr($val, 0, $custom['length']);
                 }
                 $user_data[$custom['id']] = $val;
+                unset($dbuser[$fld]);
+                break;
+
+            case 'ignore_field':
                 unset($dbuser[$fld]);
                 break;
 
