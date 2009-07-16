@@ -1031,7 +1031,7 @@ function phorum_api_forums_build_path($forum_id = NULL)
  *     This field determines the type of movement to apply to the forum
  *     or folder. This can be one of:
  *     - "up": Move the forum or folder $value positions up
- *     - "down": Move the forum or folder $value permissions down
+ *     - "down": Move the forum or folder $value positions down
  *     - "pos": Move the forum or folder to position $value
  *     - "start": Move the forum or folder to the start of the list
  *     - "end": Move the forum or folder to the end of the list
