@@ -637,7 +637,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     if ($file["link"] == PHORUM_LINK_MESSAGE && !empty($file["message_id"]))
     {
         // Retrieve the message. If retrieving the message is not possible
-        // or if the forum if of the message is different from the requested
+        // or if the forum_id of the message is different from the requested
         // forum_id, then return an error.
         $message = phorum_db_get_message($file["message_id"],"message_id",TRUE);
         if (empty($message)) return phorum_api_error_set(
