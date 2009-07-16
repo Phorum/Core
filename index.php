@@ -80,7 +80,7 @@ if ( isset( $PHORUM["forum_id"] ) ) {
     $parent_id = 0;
 }
 
-if($PHORUM["use_new_folder_style"]){
+if(!isset($PHORUM["use_new_folder_style"]) || $PHORUM["use_new_folder_style"]){
     include_once "./include/index_new.php";
 } else {
     include_once "./include/index_classic.php";
