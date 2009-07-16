@@ -176,8 +176,11 @@ if (!empty($missing_compat)) { ?>
     exit;
 }
 
+// ----------------------------------------------------------------------
+// Load the cache layer
+// ----------------------------------------------------------------------
 
-// Load the caching api
+// Load the caching API.
 require_once PHORUM_PATH.'/include/api/cache.php';
 
 // ----------------------------------------------------------------------
@@ -368,21 +371,6 @@ if (!defined('PHORUM_ADMIN'))
             exit();
         }
     }
-}
-
-// For command line scripts, disable caching.
-// The command line user is often different from the web server
-// user, possibly causing permission problems on the cache.
-if (defined('PHORUM_SCRIPT') || PHP_SAPI == 'cli')
-{
-    $PHORUM['cache_banlists']   = FALSE;
-    $PHORUM['cache_css']        = FALSE;
-    $PHORUM['cache_javascript'] = FALSE;
-    $PHORUM['cache_layer']      = FALSE;
-    $PHORUM['cache_messages']   = FALSE;
-    $PHORUM['cache_newflags']   = FALSE;
-    $PHORUM['cache_rss']        = FALSE;
-    $PHORUM['cache_users']      = FALSE;
 }
 
 // The internal_patchlevel can be unset, because this setting was

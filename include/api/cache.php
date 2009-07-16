@@ -91,6 +91,14 @@ if ($PHORUM['CACHECONFIG']['type'] == 'file' &&
         substr(__FILE__, 0, 1) == '/' ? '/tmp' : 'C:\\Windows\\Temp';
 }
 
+// For command line scripts, we use the NULL caching layer in case file
+// caching is in use. The command line user is often different from the web
+// server user, causing permission problems on the cache.
+if ((defined('PHORUM_SCRIPT') || PHP_SAPI == 'cli') &&
+    $PHORUM['CACHECONFIG']['type'] == 'file') {
+    $PHORUM['CACHECONFIG']['type'] = 'null';
+}
+
 // Load the caching layer.
 $PHORUM['CACHECONFIG']['type'] = basename($PHORUM['CACHECONFIG']['type']);
 
