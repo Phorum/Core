@@ -401,9 +401,12 @@ function phorum_api_file_store($file)
                 break;
 
             case "add_datetime":
+                $checkfile[$k] = (int)$v;
+                break;
+
             case "result":
             case "mime_type":
-                // These are some dynamic fields that might be pressent
+                // These are some dynamic fields that might be present
                 // in the data, when storing file data that was returned
                 // by the file retrieve function. We simply skip these here.
                 break;
@@ -465,23 +468,30 @@ function phorum_api_file_store($file)
     // All data was checked, so now we can continue with the checked data.
     $file = $checkfile;
 
-    // New files need a file_id.
+    // New files need a file_id and an add_datetime timestamp.
     $created_skeleton_file = FALSE;
-    if (empty($file["file_id"])) {
+    if (empty($file["file_id"]))
+    {
+      $add_datetime = time();
+
       // Insert a skeleton file record in the database. We do this, to
       // get hold of a new file_id. That file_id can be passed on to
       // the hook below, so alternative storage systems know directly
       // for what file_id they will have to store data, without having
       // to store the full data in the database already.
       $file_id = phorum_db_file_save(array(
-          "filename"   => $file["filename"],
-          "filesize"   => 0,
-          "file_data"  => "",
-          "user_id"    => 0,
-          "message_id" => 0,
-          "link"       => PHORUM_LINK_TEMPFILE
+          "filename"     => $file["filename"],
+          "filesize"     => 0,
+          "file_data"    => "",
+          "user_id"      => 0,
+          "message_id"   => 0,
+          "link"         => PHORUM_LINK_TEMPFILE,
+          "add_datetime" => $add_datetime
       ));
+
       $file["file_id"] = $file_id;
+      $file["add_datetime"] = $add_datetime;
+
       $created_skeleton_file = TRUE;
     }
 

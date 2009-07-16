@@ -4826,6 +4826,8 @@ function phorum_db_file_save($file)
     $link       = phorum_db_interact(DB_RETURN_QUOTED, $file["link"]);
     $filename   = phorum_db_interact(DB_RETURN_QUOTED, $file["filename"]);
     $file_data  = phorum_db_interact(DB_RETURN_QUOTED, $file["file_data"]);
+    $datetime   = empty($file['add_datetime'])
+                ? time() : (int)$file['add_datetime'];
 
     // Create a new file record.
     if ($file_id === NULL) {
@@ -4835,7 +4837,7 @@ function phorum_db_file_save($file)
                     (user_id, message_id, link,
                      filename, filesize, file_data, add_datetime)
              VALUES ($user_id, $message_id, '$link',
-                     '$filename', $filesize, '$file_data', ".time().")",
+                     '$filename', $filesize, '$file_data', $datetime)",
             NULL,
             DB_MASTERQUERY
         );
