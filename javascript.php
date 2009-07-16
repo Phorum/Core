@@ -174,7 +174,7 @@ foreach ($module_registrations as $id => $r)
                 // We use the mtime of the compiled template as the cache
                 // key if no specific cache key was set.
                 if (!isset($r['cache_key'])) {
-                    list ($php, $tpl) = phorum_get_template_file($m[2]);
+                    list ($m[2], $php, $tpl) = phorum_get_template_file($m[2]);
                     $mtime = @filemtime($php);
                     $r['cache_key'] = $mtime;
                     $module_registrations[$id]['cache_key'] = $mtime;

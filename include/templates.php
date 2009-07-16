@@ -154,7 +154,7 @@ function phorum_import_template_pass1($infile, $include_depth = 0, $deps = array
         if ($only_once && isset($include_once[$page])) {
             $replace = '';
         } else {
-            list ($subout, $subin) = phorum_get_template_file($page);
+            list ($page, $subout, $subin) = phorum_get_template_file($page);
             if ($subin == NULL) {
                 $replace = phorum_read_file($subout);
             } else {
