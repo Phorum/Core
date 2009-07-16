@@ -265,7 +265,7 @@ function editor_tools_construct()
         img_obj.height = iheight;
         img_obj.style.padding = '2px';
         img_obj.alt = description;
-	img_obj.title = description;
+        img_obj.title = description;
 
         // If an icon is added that is less high than our default icon
         // height, we try to make the button the same height as the
