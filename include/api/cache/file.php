@@ -54,7 +54,7 @@ function phorum_api_cache_get($type,$key,$version=NULL) {
     if(is_array($key)) {
         $ret=array();
         foreach($key as $realkey) {
-            $path=$partpath."/".wordwrap(md5($realkey), phorum_api_cache_SPLIT, "/", true)."/data.php";
+            $path=$partpath."/".wordwrap(md5($realkey), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
             if(file_exists($path)) {
                 // the data is: array($ttl_time,$data,$version)
                 // $version might not be set.
@@ -78,7 +78,7 @@ function phorum_api_cache_get($type,$key,$version=NULL) {
         if(count($ret) == 0) $ret = NULL;
 
     } else {
-        $path=$partpath."/".wordwrap(md5($key), phorum_api_cache_SPLIT, "/", true)."/data.php";
+        $path=$partpath."/".wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
         if(!file_exists($path)){
             $ret=NULL;
         } else {
@@ -130,9 +130,9 @@ function phorum_api_cache_get($type,$key,$version=NULL) {
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
-function phorum_api_cache_put($type,$key,$data,$ttl=phorum_api_cache_DEFAULT_TTL,$version = NULL) {
+function phorum_api_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version = NULL) {
 
-    $path=$GLOBALS['PHORUM']['real_cache']."/$type/".wordwrap(md5($key), phorum_api_cache_SPLIT, "/", true);
+    $path=$GLOBALS['PHORUM']['real_cache']."/$type/".wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", true);
     if(!file_exists($path)){
         phorum_api_cache_mkdir($path);
     }
@@ -161,7 +161,7 @@ function phorum_api_cache_put($type,$key,$data,$ttl=phorum_api_cache_DEFAULT_TTL
 function phorum_api_cache_remove($type,$key) {
 
     $ret  =true;
-    $path=$GLOBALS['PHORUM']['real_cache']."/$type/".wordwrap(md5($key), phorum_api_cache_SPLIT, "/", true)."/data.php";
+    $path=$GLOBALS['PHORUM']['real_cache']."/$type/".wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", true)."/data.php";
     if(file_exists($path)) {
         $ret=@unlink($path);
     }

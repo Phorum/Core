@@ -110,12 +110,12 @@ define("PHORUM_SEPARATOR", " :: ");
 /**
  * The default TTL for cache-data if not specified otherwise.
  */
-define('phorum_api_cache_DEFAULT_TTL', 3600);
+define('PHORUM_CACHE_DEFAULT_TTL', 3600);
 
 /**
  * Split-variable for the file-based caching layer.
  */
-define('phorum_api_cache_SPLIT',4);
+define('PHORUM_CACHE_SPLIT',4);
 
 /**
  * The replacement string for masking bad words.

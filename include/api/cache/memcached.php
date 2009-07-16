@@ -124,7 +124,7 @@ function phorum_api_cache_get($type,$key,$version=NULL)
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
-function phorum_api_cache_put($type,$key,$data,$ttl=phorum_api_cache_DEFAULT_TTL,$version=NULL)
+function phorum_api_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL)
 {
     if (empty($GLOBALS['PHORUM']['memcache_obj'])) return FALSE;
     return @$GLOBALS['PHORUM']['memcache_obj']->set(

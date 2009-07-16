@@ -301,7 +301,7 @@ function phorum_cache_get($type,$key,$version=NULL) {
 /**
  * @deprecated Replaced by {@link phorum_api_cache_put()}.
  */
-function phorum_cache_put($type,$key,$data,$ttl=phorum_api_cache_DEFAULT_TTL,$version=NULL) {
+function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL) {
 	   return phorum_api_cache_put($type,$key,$data,$ttl,$version);
 }
 
