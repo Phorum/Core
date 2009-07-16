@@ -620,15 +620,11 @@ img {
     text-align: center;
 }
 
-#phorum_ajax_notification {
-    position: absolute;
+.phorum_busy_message {
     border: 1px solid #cc7;
     padding: 5px 5px 5px 30px;
     background: #ff9 url({URL->TEMPLATE}/images/ajax_progress.gif) no-repeat 5px 5px;
-    zIndex: 10;
-    display: none;
 }
-
 
 /* Icon Styles */
 
