@@ -62,7 +62,7 @@ function phorum_api_format_forums($forums, $flags = 0)
             PHORUM_LIST_URL, '%forum_id%'
         );
         $markread_url_template = phorum_api_url(
-            PHORUM_INDEX_URL, '%forum_id%', 'markread', '%forum_id%'
+            PHORUM_INDEX_URL, '%forum_id%', 'markread', '%folder_id%'
         );
         $feed_url_template = phorum_api_url(
             PHORUM_FEED_URL, '%forum_id%', 'type='.$PHORUM['default_feed']
@@ -93,8 +93,11 @@ function phorum_api_format_forums($forums, $flags = 0)
 
             // A "mark forum read" URL for authenticated users.
             if ($PHORUM['user']['user_id']) {
-                $forum['URL']['MARK_READ'] =
-                    str_replace('%forum_id%',$forum_id,$markread_url_template);
+                $forum['URL']['MARK_READ'] = str_replace(
+                    array('%forum_id%','%folder_id%'),
+                    array($forum_id, $PHORUM['forum_id']),
+                    $markread_url_template
+                );
             }
 
             // A URL to the syndication feed.
