@@ -1244,12 +1244,13 @@ function phorum_get_template_file( $page )
             'page'   => $page,
             'source' => NULL
         ));
+        $page = basename($res['page']);
         if ($res['source'] !== NULL && strlen($res['source']) > 4)
         {
             // PHP source can be returned right away. These will be included
             // directly by the template handling code.
             if (substr($res['source'], -4, 4) == '.php') {
-                return array($res['source'], NULL);
+                return array($page, $res['source'], NULL);
             }
             // For .tpl files, we continue running this function, because
             // a cache file name has to be compiled for storing the
@@ -1258,7 +1259,6 @@ function phorum_get_template_file( $page )
                 $tplbase = substr($res['source'], 0, -4);
             }
         }
-        $page = basename($res['page']);
         $template = 'set_from_module';
     }
 
@@ -1310,7 +1310,7 @@ function phorum_get_template_file( $page )
 
         // check for straight PHP file
         if (file_exists("$tplbase.php")) {
-            return array("$tplbase.php", NULL);
+            return array($page, "$tplbase.php", NULL);
         }
     }
 
@@ -1322,7 +1322,7 @@ function phorum_get_template_file( $page )
     $phpfile = "{$PHORUM["cache"]}/tpl-$safetemplate-$safepage-" .
            md5(dirname(__FILE__) . $tplfile) . ".php";
 
-    return array($phpfile, $tplfile);
+    return array($page, $phpfile, $tplfile);
 }
 
 /**
@@ -1548,7 +1548,7 @@ function phorum_get_template( $page )
         exit(1);
     }
 
-    list ($phpfile, $tplfile) = phorum_get_template_file($page);
+    list ($page, $phpfile, $tplfile) = phorum_get_template_file($page);
 
     // No template to pre-process.
     if ($tplfile == NULL) return $phpfile;
