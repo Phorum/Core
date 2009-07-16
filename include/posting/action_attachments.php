@@ -123,7 +123,7 @@ elseif ($do_attach && ! empty($_FILES))
         // Check if the maximum number of attachments isn't exceeded.
         if ($attach_count >= $PHORUM["max_attachments"]) break;
 
-        // Only continue if the tempfile is really an uploaded file?
+        // Only continue if the tempfile is really an uploaded file.
         if (! is_uploaded_file($file["tmp_name"])) continue;
 
         // Handle PHP upload errors.
@@ -185,15 +185,14 @@ elseif ($do_attach && ! empty($_FILES))
          *     alternate storage system for attachments. You would need to use 
          *     the <hook>after_attach</hook> hook to complete the process as you
          *     do not yet have the <literal>file_id</literal> for the file. You
-         *     will need to use the <hook>file_retrieve</hook> hook to retreive the file 
-         *     data later.
+         *     will need to use the <hook>file_retrieve</hook> hook to retreive
+         *     the file data later.
          *
          * [category]
          *     File storage
          *
          * [when]
-         *     In 
-         *     <filename>include/posting/action_attachments.php</filename>,
+         *     In <filename>include/posting/action_attachments.php</filename>,
          *     right before a file attachment is saved in the database.
          *
          * [input]
@@ -209,11 +208,11 @@ elseif ($do_attach && ! empty($_FILES))
          *     function phorum_mod_foo_reopen_before_attach($data)
          *     {
          *         // Save the file with the amazing alternate_file_storage
-         *         // function I haven't yet created
+         *         // function I haven't yet created.
          *         alternate_file_storage($data[1]);
          *
-         *         // Remove the file data saved with the alterante_file_storage
-         *         // function
+         *         // Remove the file data saved with the
+         *         // alternate_file_storage function.
          *         $data[1]["file_data"] = "";
          *
          *         return $data;
@@ -260,8 +259,8 @@ elseif ($do_attach && ! empty($_FILES))
              *     alternate storage system for attachments. You would need to
              *     use the <hook>before_attach</hook> hook to remove the file
              *     data and in this hook it could be saved properly. You will
-             *     need to use the <hook>file_retrieve</hook> hook to retreive the file
-             *     data later.
+             *     need to use the <hook>file_retrieve</hook> hook to retreive
+             *     the file data later.
              *
              * [category]
              *     File storage
@@ -287,7 +286,7 @@ elseif ($do_attach && ! empty($_FILES))
              *         global $PHORUM;
              *
              *         // Log the messages with attachments, including the 
-             *         // attachment names
+             *         // attachment names.
              *         $PHORUM["mod_foo"]["messages_with_attachments"][$data[0]["message_id"]][$data[1]["file_id"]] = $data[1]["name"];
              *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
              *
