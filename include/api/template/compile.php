@@ -86,7 +86,7 @@ function phorum_api_template_compile($page, $infile, $outfile)
         if ($page == $new && !file_exists($infile))
         {
             // Rewrite the infile using the old template name.
-            list ($phpfile, $infile) = phorum_api_template_resolve($old);
+            list ($old, $phpfile, $infile) = phorum_api_template_resolve($old);
 
             // Just in case a .php file was used, in which case $infile
             // will be NULL. We treat that .php file as a .tpl file here.
@@ -209,7 +209,7 @@ function phorum_api_template_compile_pass1($infile, $include_depth = 0, $deps = 
         if ($only_once && isset($include_once[$page])) {
             $replace = '';
         } else {
-            list ($subout, $subin) = phorum_api_template_resolve($page);
+            list ($page, $subout, $subin) = phorum_api_template_resolve($page);
             if ($subin == NULL) {
                 $replace = phorum_api_read_file($subout);
             } else {

@@ -186,7 +186,7 @@ function phorum_api_template($page)
         exit(1);
     }
 
-    list ($phpfile, $tplfile) = phorum_api_template_resolve($page); 
+    list ($page, $phpfile, $tplfile) = phorum_api_template_resolve($page); 
 
     // No template to process. This will happen in case a .php file
     // is used for defining the template instead of a .tpl file.
@@ -210,7 +210,9 @@ function phorum_api_template($page)
  *     The template name (e.g. "header", "css", "foobar::frontpage", etc.).
  *
  * @return array
- *     This function returns an array, containing two elements:
+ *     This function returns an array, containing three elements:
+ *     - The template name, which could be different from the input template
+ *       name, because the "get_template_file" hook can override it.
  *     - The PHP file to include for rendering the template.
  *     - The file to use as the template source. When there is no
  *       pre-processing required for compiling the template source
@@ -287,17 +289,21 @@ function phorum_api_template_resolve($page)
      */
     $tplbase = NULL;
     $template = NULL;
-    if (isset($GLOBALS["PHORUM"]["hooks"]["get_template_file"])) {
+    if (isset($GLOBALS["PHORUM"]["hooks"]["get_template_file"]))
+    {
         $res = phorum_api_hook("get_template_file", array(
             'page'   => $page,
             'source' => NULL
         ));
+
+        $page = basename($res['page']);
+
         if ($res['source'] !== NULL && strlen($res['source']) > 4)
         {
             // PHP source can be returned right away. These will be included
             // directly by the template handling code.
             if (substr($res['source'], -4, 4) == '.php') {
-                return array($res['source'], NULL);
+                return array($page, $res['source'], NULL);
             }
             // For .tpl files, we continue running this function, because
             // a cache file name has to be compiled for storing the
@@ -306,7 +312,7 @@ function phorum_api_template_resolve($page)
                 $tplbase = substr($res['source'], 0, -4);
             }
         }
-        $page = basename($res['page']);
+
         $template = 'set_from_module';
     }
 
@@ -358,7 +364,7 @@ function phorum_api_template_resolve($page)
 
         // check for straight PHP file
         if (file_exists("$tplbase.php")) {
-            return array("$tplbase.php", NULL);
+            return array($page, "$tplbase.php", NULL);
         }
     }
 
@@ -370,7 +376,7 @@ function phorum_api_template_resolve($page)
     $phpfile = "{$PHORUM['CACHECONFIG']['directory']}/tpl-$safetemplate-$safepage-" .
            md5(dirname(__FILE__) . $tplfile) . ".php";
 
-    return array($phpfile, $tplfile);
+    return array($page, $phpfile, $tplfile);
 }
 // }}}
 

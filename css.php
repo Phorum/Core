@@ -142,8 +142,8 @@ $base = ob_get_contents();
 ob_end_clean();
 
 // Find the modification time for the css file and the settings file.
-list ($css_php, $css_tpl) = phorum_api_template_resolve($css);
-list ($settings_php, $settings_tpl) = phorum_api_template_resolve('settings');
+list ($css, $css_php, $css_tpl) = phorum_api_template_resolve($css);
+list ($d, $settings_php, $settings_tpl) = phorum_api_template_resolve('settings');
 $css_t = @filemtime($css_php);
 $settings_t = @filemtime($settings_php);
 
@@ -211,7 +211,7 @@ foreach ($module_registrations as $id => $r)
                 // We use the mtime of the compiled template as the cache
                 // key if no specific cache key was set.
                 if (!isset($r['cache_key'])) {
-                    list ($php, $tpl) = phorum_api_template_resolve($m[2]);
+                    list ($m[2], $php, $tpl) = phorum_api_template_resolve($m[2]);
                     $mtime = @filemtime($php);
                     $r['cache_key'] = $mtime;
                     $module_registrations[$id]['cache_key'] = $mtime;
