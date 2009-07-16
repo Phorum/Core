@@ -77,9 +77,9 @@
                 {/IF}
                 <small>
                 {IF MODE "moderation"}
-                  {LANG->YourName}:<br/>
-                {ELSE}
                   {LANG->Author}:<br />
+                {ELSE}
+                  {LANG->YourName}:<br/>
                 {/IF}
                 {IF OPTION_ALLOWED->edit_author}
                     <input type="text" name="author" size="30" value="{POSTING->author}" />
