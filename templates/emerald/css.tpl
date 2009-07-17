@@ -440,6 +440,7 @@ img {
 }
 
 #phorum div.message-options {
+    margin-top: 8px;
     text-align: right;
     font-size: {font_small};
     clear: both;
