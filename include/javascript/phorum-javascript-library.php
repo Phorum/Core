@@ -117,6 +117,7 @@ Phorum.Cache =
             return null;
         }
         var c = Phorum.Cache.data[cache_id];
+        console.debug(c[1]);
 
         // TTL set? Then check if the cache entry hasn't expired yet.
         if (c[1] != 0) {
@@ -204,8 +205,11 @@ Phorum.Ajax =
         // If the req.cache_id property is set for the request, then check
         // if the data for the request is already available in the
         // local cache. If yes, then return the data immediately.
+        console.debug(req.cache_id);
         if (req.cache_id) {
             var data = Phorum.Cache.get(req.cache_id);
+        console.debug(data);
+
             if (data != null) {
                 Phorum.debug(
                     4, 'Phorum.Ajax.call calls onSuccess with cached data ' +
@@ -243,7 +247,7 @@ Phorum.Ajax =
             if (typeof answer['error'] === 'undefined')
             {
                 // If the req.cache_id property is set, then we cache the results.
-                if (req.cache_id) Phorum.Cache.put(req.cache_id, answer, 10);
+                if (req.cache_id) Phorum.Cache.put(req.cache_id, answer);
 
                 // false = data not retrieved from cache.
                 Phorum.debug(4, 'Phorum.Ajax.call calls onSuccess with', answer);
