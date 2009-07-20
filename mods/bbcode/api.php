@@ -1299,4 +1299,21 @@ function bbcode_quote_handler($content, $args)
            '</blockquote>';
 }
 
+function bbcode_size_handler($content, $args)
+{
+	if(!preg_match('/^[A-Z0-9. ]+$/i',$args['size'])){
+		$args['size']="1em";
+	}
+
+	return '<span style="font-size:' . $args['size'] . '">' . $content . '</span>';
+}
+
+function bbcode_color_handler($content, $args)
+{
+	if(!preg_match('/^[A-Z0-9# ]+$/i',$args['color'])){
+		$args['color']="black";
+	}
+
+	return '<span style="color:' . $args['color'] . '">' . $content . '</span>';
+}
 ?>
