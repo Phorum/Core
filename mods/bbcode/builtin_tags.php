@@ -76,20 +76,16 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
         BBCODE_INFO_DESCRIPTION   => '[color=#123456]colored text[/color]',
         BBCODE_INFO_HASEDITORTOOL => TRUE,
         BBCODE_INFO_DEFAULTSTATE  => 2,
-        BBCODE_INFO_REPLACEOPEN   => '<span style="color:%color%">',
-        BBCODE_INFO_REPLACECLOSE  => '</span>',
-        BBCODE_INFO_REPLACEARGS   => array('color'),
-        BBCODE_INFO_ARGS          => array('color' => 'black')
+        BBCODE_INFO_ARGS          => array('color' => ''),
+        BBCODE_INFO_CALLBACK      => 'bbcode_color_handler'
     ),
 
     'size' => array(
         BBCODE_INFO_DESCRIPTION   => '[size=20px]text of a different size[/size]',
         BBCODE_INFO_HASEDITORTOOL => TRUE,
         BBCODE_INFO_DEFAULTSTATE  => 2,
-        BBCODE_INFO_REPLACEOPEN   => '<span style="font-size:%size%">',
-        BBCODE_INFO_REPLACECLOSE  => '</span>',
-        BBCODE_INFO_REPLACEARGS   => array('size'),
-        BBCODE_INFO_ARGS          => array('size' => '1em')
+        BBCODE_INFO_ARGS          => array('size' => ''),
+        BBCODE_INFO_CALLBACK      => 'bbcode_size_handler'
     ),
 
     'small' => array(
