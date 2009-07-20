@@ -1301,19 +1301,22 @@ function bbcode_quote_handler($content, $args)
 
 function bbcode_size_handler($content, $args)
 {
-	if(!preg_match('/^[A-Z0-9. ]+$/i',$args['size'])){
-		$args['size']="1em";
-	}
+    // Prevent XSS attacks by allowing a strict set of characters.
+    if (!preg_match('/^[A-Z0-9.\s]+$/i', $args['size'])) {
+        return $content;
+    }
 
-	return '<span style="font-size:' . $args['size'] . '">' . $content . '</span>';
+    return '<span style="font-size:' . $args['size'] . '">'.$content.'</span>';
 }
 
 function bbcode_color_handler($content, $args)
 {
-	if(!preg_match('/^[A-Z0-9# ]+$/i',$args['color'])){
-		$args['color']="black";
-	}
+    // Prevent XSS attacks by allowing a strict set of characters.
+    if (!preg_match('/^[A-Z0-9#\s]+$/i', $args['color'])) {
+        return $content;
+    }
 
-	return '<span style="color:' . $args['color'] . '">' . $content . '</span>';
+    return '<span style="color:' . $args['color'] . '">' . $content . '</span>';
 }
+
 ?>
