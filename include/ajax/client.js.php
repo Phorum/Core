@@ -141,10 +141,7 @@ Phorum.Ajax.call = function(req)
 
               } else {
 
-                  if (req.onFailure) req.onFailure(
-                      'The Ajax Phorum API call failed',
-                      xhr.status, xhr.responseText
-                  );
+                  if (req.onFailure) req.onFailure(xhr.responseText);
               }
 
               break;
