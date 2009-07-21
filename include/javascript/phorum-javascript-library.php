@@ -256,6 +256,33 @@ Phorum.Ajax =
                 if (req.onFailure) req.onFailure(answer['error']);
             }
         });
+    },
+
+    /**
+     * Parse out javascript blocks from the data to eval them. Adding them
+     * to the page using innerHTML does not invoke parsing by the browser.
+     */
+    evalJavaScript: function(data)
+    {
+        var cursor = 0;
+        var start  = 1;
+        var end    = 1;
+
+        while (cursor < data.length && start > 0 && end > 0) {
+            start = data.indexOf('<script', cursor);
+            end   = data.indexOf('</script', cursor);
+            if (end > start && end > -1) {
+                if (start > -1) {
+                    var res = data.substring(start, end);
+                    start = res.indexOf('>') + 1;
+                    res = res.substring(start);
+                    if (res.length != 0) {
+                        eval(res);
+                    }
+                }
+                cursor = end + 1;
+            }
+        }
     }
 };
 
