@@ -284,7 +284,7 @@ if (isset($_POST['username']))
                  *     </hookcode>
                  */
                 if (isset($PHORUM['hooks']['after_login'])) {
-                    $redir = phorum_api_modules_hook('after_login', $redir);
+                    $redir = phorum_api_hook('after_login', $redir);
                 }
 
                 phorum_api_redirect($redir);
@@ -360,7 +360,7 @@ if (isset($_POST['username']))
          */
         // TODO API: move to user API.
         if (isset($PHORUM['hooks']['failed_login'])) {
-            phorum_api_modules_hook('failed_login', array(
+            phorum_api_hook('failed_login', array(
                 'username' => $_POST['username'],
                 'password' => $_POST['password'],
                 'location' => 'forum'

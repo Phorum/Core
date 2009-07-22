@@ -77,7 +77,7 @@ function phorum_redirect_by_url($url) {
 }
 
 /**
- * @deprecated Replaced by {@link phorum_api_modules_hook()}.
+ * @deprecated Replaced by {@link phorum_api_hook()}.
  */
 function phorum_hook() {
     $argv = func_get_args();
