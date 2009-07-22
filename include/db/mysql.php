@@ -7518,11 +7518,8 @@ function phorum_db_sanitychecks()
          where this warning is coming from"
     );
 
-    $verstr = preg_replace('/-.*$/', '', $version);
-    $ver = explode('.', $verstr);
-
-    // Version numbering format which is not recognized.
-    if (count($ver) != 3) return array(
+    // See if we recognize the version numbering.
+    if (!preg_match('/^(\d+)\.(\d+)\.(\d+)/', $version, $ver)) return array(
         PHORUM_SANITY_WARN,
         "The database layer was unable to recognize the MySQL server's
          version number \"" . htmlspecialchars($version) . "\". Therefore,
@@ -7531,15 +7528,11 @@ function phorum_db_sanitychecks()
          version number, so the checking scripts can be updated."
     );
 
-    settype($ver[0], 'int');
-    settype($ver[1], 'int');
-    settype($ver[2], 'int');
-
     // MySQL before version 4.
-    if ($ver[0] < 4) return array(
+    if ($ver[1] < 4) return array(
         PHORUM_SANITY_CRIT,
         "The MySQL database server that is used is too old. The
-         running version is \"" . htmlspecialchars($row[0]) . "\",
+         running version is \"" . htmlspecialchars($version) . "\",
          while MySQL version 4.0.18 or higher is recommended.",
         "Upgrade your MySQL server to a newer version. If your
          website is hosted with a service provider, please contact
@@ -7549,7 +7542,7 @@ function phorum_db_sanitychecks()
     // MySQL before version 4.0.18, with full text search enabled.
     if (isset($PHORUM['DBCONFIG']['mysql_use_ft']) &&
         $PHORUM['DBCONFIG']['mysql_use_ft'] &&
-        $ver[0] == 4 && $ver[1] == 0 && $ver[2] < 18) return array(
+        $ver[2] == 4 && $ver[2] == 0 && $ver[3] < 18) return array(
         PHORUM_SANITY_WARN,
         "The MySQL database server that is used does not
          support all Phorum features. The running version is
@@ -7561,7 +7554,7 @@ function phorum_db_sanitychecks()
     );
 
     // MySQL before version 5.0
-    if ($ver[0] < 5) return array(
+    if ($ver[1] < 5) return array(
         PHORUM_SANITY_WARN,
         "The MySQL database server that is used does not
          support all Phorum features. The running version is
