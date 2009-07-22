@@ -260,7 +260,8 @@ if ( function_exists('get_magic_quotes_gpc') &&
 // argument and key/value separators. On some systems, the "&" character
 // is not configured as a valid separator. For those systems, we have
 // to parse the query string ourselves.
-if (strpos($_SERVER['QUERY_STRING'], '&') !== FALSE)
+if (isset($_SERVER['QUERY_STRING']) &&
+    strpos($_SERVER['QUERY_STRING'], '&') !== FALSE)
 {
     $separator = get_cfg_var('arg_separator.input');
     if ($separator !== FALSE && strpos($separator, '&') === FALSE)
