@@ -33,6 +33,49 @@
         header("Content-Type: text/html; " .
                "charset=".htmlspecialchars($PHORUM["DATA"]['CHARSET']));
     }
+
+    // set the path to the CSS file to pull in
+    $default_admin_css_file = 'default.css';
+    $admin_css_path = $PHORUM["http_path"].'/include/admin/css/' . $default_admin_css_file;
+
+    /**
+     * [hook]
+     *     admin_css_file
+     *
+     * [description]
+     *     This hook can be used to pull in an alternate css file for the admin screens.
+     *     That's pretty much all it's useful for. This hook is allowed to change the path to
+     *     the admin css files because if we didn't allow it, someone would request it.
+     *
+     * [category]
+     *     Admin interface
+     *
+     * [when]
+     *     Just before output begins on the admin page.
+     *
+     * [input]
+     *     A string containing the path to the css file which will be used for the admin page.
+     *
+     * [output]
+     *     The path to the actual css file to use.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_admin_css_file($cssfile)
+     *     {
+     *         // Force admin screens to use the "bar.css" style sheet.
+     *         $pieces = explode('/', $cssfile);
+     *         $pieces[count($pieces)-1] = 'bar.css';
+     *         $cssfile = implode('/', $pieces);
+     *         return $cssfile;
+     *     }
+     *     </hookcode>
+     */
+
+    if (isset($PHORUM['hooks']['admin_css_file'])) {
+        $admin_css_path = phorum_hook('admin_css_file', $admin_css_path);
+    }
+
 ?>
 <html>
 <head>
@@ -45,275 +88,9 @@ if (isset($PHORUM["DATA"]['CHARSET'])) {
 }
 
 ?>
-<style type="text/css">
 
-body
-{
-    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
-    font-size: 13px;
-}
+<link rel="stylesheet" type="text/css" href="<?php echo $admin_css_path; ?>" />
 
-input, textarea, select, td
-{
-    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
-    font-size: 13px;
-    border-color: #EEEEEE;
-}
-
-.input-form-th
-{
-    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
-    font-size: 13px;
-    padding: 3px;
-    background-color: #DDDDEA;
-}
-
-.input-form-td
-{
-    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
-    font-size: 13px;
-    padding: 3px;
-    background-color: #EEEEFA;
-}
-
-.input-form-td-break, .PhorumAdminTitle
-{
-    font-family: "Trebuchet MS",Verdana, Arial, Helvetica, sans-serif;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 3px;
-    background-color: Navy;
-    color: White;
-}
-
-.input-form-td-break, .PhorumAdminTitle a
-{
-    color: white;
-}
-
-.input-form-td-subbreak
-{
-    background-color: #CCCCDA;
-    color: black;
-}
-
-.PhorumAdminBreadcrumbs
-{
-    background-color: #CCCCDA;
-    border: 1px solid Navy;
-    color: black;
-    font-size: 14px;
-    padding: 5px;
-}
-
-.input-form-td-message
-{
-    font-family: "Trebuchet MS",Verdana, Arial, Helvetica, sans-serif;
-    font-size: 13px;
-    padding: 10px;
-    background-color: White;
-    color: Black;
-}
-
-.PhorumAdminMenu
-{
-    width: 160px;
-    border: 1px solid Navy;
-    font-size: 13px;
-    margin-bottom: 3px;
-    line-height: 18px;
-    padding: 3px;
-}
-
-.PhorumAdminMenuTitle
-{
-    width: 160px;
-    border: 1px solid Navy;
-    background-color: Navy;
-    color:  white;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 3px;
-}
-
-.PhorumAdminTableRow
-{
-    background-color: #EEEEFA;
-    color: Navy;
-    padding: 3px;
-    font-size: 13px;
-}
-
-.PhorumAdminTableRowAlt
-{
-    background-color: #d6d6e0;
-    color: Navy;
-    padding: 3px;
-    font-size: 13px;
-}
-
-.forum-title {
-    width: 100%;
-    font-weight: normal;
-}
-
-.PhorumAdminTableRow p.forum-description {
-    padding: 0px;
-    margin: 3px 0px 0px 20px;
-}
-
-.icon-folder-up {
-    width: 22px;
-    padding-left: 22px;
-    background: url(<?php print $PHORUM['http_path'] ?>/images/folder_up.png) 0 1px no-repeat;
-}
-
-.icon-folder {
-    width: 22px;
-    padding-left: 22px;
-    background: url(<?php print $PHORUM['http_path'] ?>/images/folder.png) 0 1px no-repeat;
-}
-
-.icon-forum {
-    width: 22px;
-    padding-left: 22px;
-    background: url(<?php print $PHORUM['http_path'] ?>/images/forum.png) 0 1px no-repeat;
-}
-
-.PhorumAdminTableHead
-{
-    background-color: Navy;
-    color: White;
-    padding: 3px;
-    font-weight: bold;
-    font-size: 13px;
-}
-
-.PhorumInfoMessage
-{
-    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
-    font-size: 13px;
-    padding: 3px;
-    background-color: #EEEEFA;
-    width: 300px;
-    text-align: left;
-}
-
-.PhorumAdminError
-{
-    background-image: url("./images/alert.gif");
-    background-position: 5px 5px;
-    background-repeat: no-repeat;
-    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
-    font-size: 15px;
-    padding: 12px 12px 12px 50px;
-    color: #000000;
-    border: 2px solid red;
-    margin-bottom: 3px;
-}
-
-.PhorumAdminOkMsg
-{
-    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
-    font-size: 15px;
-    padding: 12px;
-    color: #000000;
-    border: 2px solid darkgreen;
-    margin-bottom: 3px;
-}
-
-.small
-{
-    margin-bottom: 3px;
-    font-size: 10px;
-}
-
-.help-td, .help-td a
-{
-    color: White;
-    padding-bottom: 2px;
-    text-decoration: none;
-}
-
-#phorum-status
-{
-    vertical-align: middle;
-}
-
-#status-form
-{
-    display: inline;
-}
-
-img.question
-{
-    padding: 0 5px 1px 5px;
-    vertical-align: middle;
-}
-
-#helpdiv
-{
-    position: absolute;
-    display: none;
-    width: 400px;
-    border: 2px solid Navy;
-}
-
-#helpdiv-hide
-{
-    float: right;
-}
-
-#helpdiv-title
-{
-    color: White;
-    background-color: Navy;
-    padding: 1px 1px 3px 1px;
-}
-
-#helpdiv-content
-{
-    background-color: White;
-    height: 200px;
-    padding: 8px;
-    font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica;
-    font-size: 13px;
-    overflow: scroll;
-}
-
-#help-title
-{
-    font-weight: bold;
-    margin-bottom: 3px;
-}
-
-.message_prune_filtertable {
-    width: 96%;
-    margin-bottom: 5px;
-    border-collapse: collapse;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-}
-
-.message_prune_msginfo {
-    margin: 0px 0px 10px 20px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    background-color: #f0f0f0;
-    font-size: 11px;
-    display: none;
-}
-
-.message_prune_msginfo_body {
-    max-height: 100px;
-    padding: 5px;
-    overflow: auto;
-    background-color: white;
-    border: 1px inset #ccc;
-    margin-top: 1em;
-}
-
-</style>
 <script>
 
 function show_help(key)
@@ -373,9 +150,9 @@ function hide_help()
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
-    <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;">Phorum Admin<small><br />version <?php echo PHORUM; ?></small></td>
+    <td class="statusbar_edge">Phorum Admin<small><br />version <?php echo PHORUM; ?></small></td>
 <?php if(empty($module)){ // only show the versioncheck if you are on the front page of the admin ?>
-    <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="center" valign="middle">
+    <td class="statusbar_edge" align="center" valign="middle">
       <iframe scrolling="no" frameborder="0" align="top" width="400" height="35" src="versioncheck.php"></iframe>
     </td>
 <?php } else {
@@ -383,7 +160,7 @@ function hide_help()
     setcookie("phorum_upgrade_available", '', time()-86400,
               $PHORUM["session_path"], $PHORUM["session_domain"]);
 } ?>
-    <td style="border-bottom: 1px solid navy" align="center" valign="middle">
+    <td class="statusbar_edge" align="center" valign="middle">
 <?php
     require_once('./include/api/modules.php');
     $updates = phorum_api_modules_check_updated_info();
@@ -398,7 +175,7 @@ function hide_help()
     }
 ?>
     </td>
-    <td style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: Navy;" align="right">
+    <td class="statusbar_edge" align="right">
 
     <div id="phorum-status">
 <?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
