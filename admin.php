@@ -24,7 +24,7 @@
     // set a sane error level for our admin.
     // this will make the coding time faster and
     // the code run faster.
-    error_reporting  (E_ERROR | E_WARNING | E_PARSE);
+    error_reporting(E_ERROR | E_WARNING | E_PARSE | E_USER_ERROR );
 
     include_once "./common.php";
     include_once "./include/admin_functions.php";
