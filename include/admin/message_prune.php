@@ -199,7 +199,7 @@ $messages   = null;        // selected messages (based on a filter)
 $filters    = array();     // active filters
 $filtermode = "and";       // active filter mode (and / or)
 
-$read_url_template = phorum_api_url(
+$read_url_template = phorum_get_url(
     PHORUM_FOREIGN_READ_URL, '%forum_id%', '%thread_id%','%message_id%');
 
 // If there are messages to delete in the post data, then delete them
