@@ -1,6 +1,25 @@
 Changelog:
 ----------
 
+2009-07-27 v1.0.6
+
+    - Fixed bug #862: the event logs could not be downloaded if the
+      maximum number of stored log lines was set to 0 ("no limit").
+      Thanks to Markus Fischer for the bug report.
+
+    - Added a new logged event: User requests a new password.
+      Thanks to CBiLL for the idea. This feature requires a new hook
+      that is only available in Phorum 5.2.13 and up.
+
+    - Modified the failed login event: if the username that was used is
+      known to Phorum, then the user_id is set for the event. This way,
+      failed login events can be filtered by the username as long as an
+      existing username was used. Thanks to CBiLL for the idea.
+
+    - Fixed a bug: with event logging programmatically suspended,
+      not all hooks returned the correct data. This feature is not
+      widely used (if at all), so there is no real user impact.
+
 2009-05-19 v1.0.5
 
     - An option was added to download the event logs as HTML or TXT.

@@ -8,6 +8,10 @@ if (! isset($GLOBALS["PHORUM"]["mod_event_logging"]["resolve_hostnames"])) {
     $GLOBALS["PHORUM"]["mod_event_logging"]["resolve_hostnames"] = 0;
 }
 
+if (! isset($GLOBALS["PHORUM"]["mod_event_logging"]["hide_passwords"])) {
+    $GLOBALS["PHORUM"]["mod_event_logging"]["hide_passwords"] = 1;
+}
+
 if (! isset($GLOBALS["PHORUM"]["mod_event_logging"]["max_log_entries"])) {
     $GLOBALS["PHORUM"]["mod_event_logging"]["max_log_entries"] = 500;
 }
