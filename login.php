@@ -378,6 +378,8 @@ if (isset($_POST['lostpass']))
     // Trim the email address.
     $_POST['lostpass'] = trim($_POST['lostpass']);
 
+    $hook_args = NULL;
+
     // Did the user enter an email address?
     if ($_POST['lostpass'] == '') {
         $error = $PHORUM['DATA']['LANG']['ErrRequired'];
@@ -393,9 +395,17 @@ if (isset($_POST['lostpass']))
 
         // User registration not yet approved by a moderator.
         // Tell the user that we are awaiting approval.
-        if ($user['active'] == PHORUM_USER_PENDING_MOD) {
+        if ($user['active'] == PHORUM_USER_PENDING_MOD)
+        {
             $template = 'message';
             $okmsg = $PHORUM['DATA']['LANG']['RegVerifyMod'];
+
+            $hook_args = array(
+                'status' => 'unapproved',
+                'email'  => $_POST['lostpass'],
+                'user'   => $user,
+                'secret' => NULL
+            );
         }
 
         // The user registration still needs email verification.
@@ -462,6 +472,13 @@ if (isset($_POST['lostpass']))
 
             $okmsg = $PHORUM['DATA']['LANG']['RegVerifyEmail'];
             $template='message';
+
+            $hook_args = array(
+                'status' => 'new_verification',
+                'email'  => $_POST['lostpass'],
+                'user'   => $user,
+                'secret' => $tmp_user['password_temp']
+            );
         }
 
         // The user is active. We generate a new password and send
@@ -525,13 +542,130 @@ if (isset($_POST['lostpass']))
 
             $okmsg = $PHORUM['DATA']['LANG']['LostPassSent'];
 
+            $hook_args = array(
+                'status' => 'new_password',
+                'email'  => $_POST['lostpass'],
+                'user'   => $user,
+                'secret' => $newpass
+            );
         }
     }
 
     // The entered email address was not found.
-    else {
+    else
+    {
         $error = $PHORUM['DATA']['LANG']['LostPassError'];
         $focus = 'lostpass';
+
+        $hook_args = array(
+            'status' => 'user_unknown',
+            'email'  => $_POST['lostpass'],
+            'user'   => NULL,
+            'secret' => NULL
+        );
+    }
+
+    /*
+     * [hook]
+     *     password_reset
+     *
+     * [availability]
+     *     Phorum 5 >= 5.2.13
+     *
+     * [description]
+     *     This hook is called after handling a password reset request.
+     *     Based on whether a user account can be found for the
+     *     provided email address and what the account status for that
+     *     user is, different actions are performed by Phorum before
+     *     calling this hook:
+     *     <ul>
+     *       <li>If no user account can be found for the provided email
+     *           address, then nothing is done.</li>
+     *       <li>If the account is not yet approved by a moderator,
+     *           then no new password is generated for the user.</li>
+     *       <li>If the account is active, then a new password is
+     *           mailed to the user's email address.</li>
+     *       <li>If the account is new and not yet confirmed by
+     *           email, then a new account confirmation code is
+     *           generated and sent to the user's email address.</li>
+     *     </ul>
+     *     The main purpose of this hook is to log password reset
+     *     requests.
+     *
+     * [category]
+     *     Login/Logout
+     *
+     * [when]
+     *     In <filename>login.php</filename>, after handling
+     *     a password reset request.
+     *
+     * [input]
+     *     An array containing four elements:
+     *     <ul>
+     *         <li>status: the password reset status, which can be: 
+     *             "new_password" (a new password was generated and
+     *             sent for an active account),
+     *             "new_verification" (a new account verification code
+     *             was generated and sent for a new account that was
+     *             not yet confirmed by email),
+     *             "unapproved" (in case the account was not yet
+     *             approved by a moderator, no new password or
+     *             verification code was generated for the user) or
+     *             "not_found" (when the provided email address cannot
+     *             be found in the database).</li>
+     *         <li>email: the email address that the user entered
+     *             in the lost password form.</li>
+     *         <li>user: a user data array. This is the user data for
+     *             the email address that the user entered in the lost
+     *             password form. If no matching user could be found
+     *             (status = "not_found"), then this element will be
+     *             NULL.</li>
+     *         <li>The new password or verification code for
+     *             respectively the statuses "new_password" and
+     *             "new_verification". For other statuses, this
+     *             element will be NULL.</li>
+     *     </ul>
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_password_reset($data)
+     *     {
+     *         $log = NULL;
+     *         switch ($data['status'])
+     *         {
+     *             case 'new_password':
+     *                 $log = 'New password generated for ' .
+     *                        $data['user']['username'] . ': ' .
+     *                        $data['secret']; 
+     *                 break;
+     *             case 'new_verification':
+     *                 $log = 'New verification code generated for ' .
+     *                        $data['user']['username'] . ': ' .
+     *                        $data['secret']; 
+     *                 break;
+     *             case 'not_found':
+     *                 $log = 'Could not find a user for email ' .
+     *                        $data['email'];
+     *                 break;
+     *             case 'unapproved':
+     *                 $log = 'No new password generated for ' .
+     *                        'unapproved user ' . $user['username'];
+     *                 break;
+     *         }
+     *
+     *         if ($log !== NULL) {
+     *             log_the_password_reset($log);
+     *         }
+     *
+     *         return $user;
+     *     }
+     *     </hookcode>
+     */
+    if ($hook_args && isset($PHORUM['hooks']['password_reset'])) {
+        phorum_hook("password_reset", $hook_args);
     }
 }
 
