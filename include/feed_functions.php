@@ -93,8 +93,6 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
 
     foreach($messages as $message) {
 
-        if($message["thread_count"]<1) continue;
-
         $title = strip_tags($message["subject"]);
         if(empty($PHORUM["args"]["replies"])){
             switch($message["thread_count"]){
@@ -147,6 +145,8 @@ function phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed
     $buffer.= "    <div id=\"phorum_feed_title\"><a href=\"".htmlspecialchars($feed_url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\" title=\"".htmlspecialchars($feed_description, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\">".htmlspecialchars($feed_title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</div>\n";
     $buffer.= "    <div id=\"phorum_feed_date\">".htmlspecialchars(phorum_date($PHORUM['long_date'], time()), ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</lastBuildDate>\n";
     $buffer.= "    <ul>\n";
+
+    unset($messages['users']);
 
     foreach($messages as $message) {
 
