@@ -11,6 +11,11 @@ Changelog:
       Thanks to CBiLL for the idea. This feature requires a new hook
       that is only available in Phorum 5.2.13 and up.
 
+    - Passwords that are logged in log messages are now masked with "XXXX".
+      If an admin wants to have the passwords logged to the database
+      (not recommended for security reasons), then the module configuration
+      option "Hide passwords in log messages" can be disabled.
+
     - Modified the failed login event: if the username that was used is
       known to Phorum, then the user_id is set for the event. This way,
       failed login events can be filtered by the username as long as an
