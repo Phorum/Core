@@ -9,6 +9,7 @@ $eventtypes =& $GLOBALS["PHORUM"]["DATA"]["MOD_EVENT_LOGGING"]["EVENT_TYPES"];
 if (count($_POST))
 {
     $settings["resolve_hostnames"] = isset($_POST["resolve_hostnames"])?1:0;
+    $settings["hide_passwords"]    = isset($_POST["hide_passwords"])?1:0;
     $settings["max_log_entries"]   = (int) $_POST["max_log_entries"];
     $settings["min_log_level"]     = (int) $_POST["min_log_level"];
 
