@@ -620,7 +620,7 @@ if (isset($_POST['lostpass']))
      *             password form. If no matching user could be found
      *             (status = "not_found"), then this element will be
      *             NULL.</li>
-     *         <li>The new password or verification code for
+     *         <li>secret: The new password or verification code for
      *             respectively the statuses "new_password" and
      *             "new_verification". For other statuses, this
      *             element will be NULL.</li>
