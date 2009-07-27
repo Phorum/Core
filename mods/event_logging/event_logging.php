@@ -104,6 +104,29 @@ function event_logging_find_source($level = 0, $file = NULL)
     return array($source, $from_module);
 }
 
+/**
+ * This user will mask a password with "XXXX" if the hide passwords
+ * module configuration option is enabled.
+ *
+ * @param string $password
+ *     The password to mask.
+ *
+ * @return string
+ *     The masked password if the hide passwords option is enabled,
+ *     otherwise the original $password.
+ */
+function event_logging_mask_password($password)
+{
+    global $PHORUM;
+    if (empty($PHORUM["mod_event_logging"]["hide_passwords"]) &&
+        $password !== NULL) {
+        return $password;
+    } else {
+        return str_repeat('X', strlen($password));
+    }
+}
+
+
 // ------------------------------------------------------------------------
 // API functions
 // ------------------------------------------------------------------------
@@ -264,7 +287,7 @@ function phorum_mod_event_logging_after_register($data)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $data;
     }
 
     if (!$PHORUM["mod_event_logging"]["do_log_register"])
@@ -291,7 +314,7 @@ function phorum_mod_event_logging_failed_login($data)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $data;
     }
 
     if (!$PHORUM["mod_event_logging"]["do_log_login_failure"] ||
@@ -300,6 +323,12 @@ function phorum_mod_event_logging_failed_login($data)
        )
         return $data;
 
+    // Check if a user can be found for the used username.
+    // If we can find a user, then we log the user_id, so the filter by
+    // user option in the log viewer will include failed user logins as well.
+    $user = phorum_db_user_search('username', $data['username']);
+    $user_id = $user ? $user['user_id'] : NULL;
+
     $location = ucfirst($data["location"]);
     event_logging_writelog(array(
         "source"    => $data["location"] . " login",
@@ -307,11 +336,63 @@ function phorum_mod_event_logging_failed_login($data)
                        '"' . $data["username"] . '".',
         "details"   => "The user tried to login using the password " .
                        '"' . $data["password"] . '".',
+        "user_id"   => $user_id,
         "loglevel"  => EVENTLOG_LVL_WARNING,
         "category"  => EVENTLOG_CAT_SECURITY
     ));
 
     return $data;
+}
+
+function phorum_mod_event_logging_password_reset($data)
+{
+    // Check for suspended logging.
+    if (!empty($GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["SUSPEND"])) {
+        return $data;
+    }
+
+    if (!$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_password_reset"])
+        return $data;
+
+    $password = event_logging_mask_password($data['secret']);
+    $log = 'Status: ' . $data['status'];
+
+    switch ($data['status'])
+    {
+        case 'user_unknown':
+            $log = 'A new password was requested for the user with email ' .
+                   'address "'.$data['email'].'", but no matching user ' .
+                   'was found in the database.';
+            break;
+
+        case 'unapproved':
+            $log = 'A new password was requested for the user with email ' .
+                   'address "'.$data['email'].'", but this user was not ' .
+                   'yet approved by a moderator. No new password was ' .
+                   'generated.';
+            break;
+
+        case 'new_verification':
+            $log = 'A new password was requested for the user with email ' .
+                   'address "'.$data['email'].'". This user was not yet ' .
+                   'verified by email. A new verification code ' .
+                   '"'.$password.'" was generated and mailed to the user.';
+            break;
+
+        case 'new_password':
+            $log = 'A new password was requested for the user with email ' .
+                   'address "'.$data['email'].'". A new password ' .
+                   '"'.$password.'" was generated and mailed to the user.';
+            break;
+    }
+
+    event_logging_writelog(array(
+        "source"    => "forum login",
+        "message"   => 'New password request for user "'.$data['email'].'"',
+        "details"   => $log,
+        "loglevel"  => EVENTLOG_LVL_INFO,
+        "category"  => EVENTLOG_CAT_SECURITY
+    ));
 }
 
 function phorum_mod_event_logging_after_login($data)
@@ -320,7 +401,7 @@ function phorum_mod_event_logging_after_login($data)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $data;
     }
 
     if (!$PHORUM["mod_event_logging"]["do_log_login"])
@@ -380,7 +461,7 @@ function phorum_mod_event_logging_after_post($data)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $data;
     }
 
     if (!$PHORUM["mod_event_logging"]["do_log_post"])
@@ -409,7 +490,7 @@ function phorum_mod_event_logging_after_edit($data)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $data;
     }
 
     // Check if this is a user or moderator edit.
@@ -455,12 +536,12 @@ function phorum_mod_event_logging_database_error($error)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $error;
     }
 
     // Prevention against recursive logging calls.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["LOOPLOCK"])) {
-        return;
+        return $error;
     }
     $PHORUM["MOD_EVENT_LOGGING"]["LOOPLOCK"]++;
 
@@ -496,7 +577,7 @@ function phorum_mod_event_logging_before_delete($data)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $data;
     }
 
     $message = $data[3];
@@ -530,7 +611,7 @@ function phorum_mod_event_logging_report($data)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $data;
     }
 
     list ($source, $from_module) = event_logging_find_source(1);
@@ -570,7 +651,7 @@ function phorum_mod_event_logging_move_thread($message_id)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $message_id;
     }
 
     $dbmsg = phorum_db_get_message($message_id, "message_id", TRUE);
@@ -609,7 +690,7 @@ function phorum_mod_event_logging_close_thread($message_id)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $message_id;
     }
 
     $dbmsg = phorum_db_get_message($message_id, "message_id", TRUE);
@@ -641,7 +722,7 @@ function phorum_mod_event_logging_reopen_thread($message_id)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $message_id;
     }
 
     $dbmsg = phorum_db_get_message($message_id, "message_id", TRUE);
@@ -673,7 +754,7 @@ function phorum_mod_event_logging_hide_thread($message_id)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $message_id;
     }
 
     $dbmsg = phorum_db_get_message($message_id, "message_id", TRUE);
@@ -707,7 +788,7 @@ function phorum_mod_event_logging_after_approve($data)
 
     // Check for suspended logging.
     if (!empty($PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"])) {
-        return;
+        return $data;
     }
 
     list ($source, $from_module) = event_logging_find_source(1);

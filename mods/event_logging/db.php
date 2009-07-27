@@ -453,9 +453,13 @@ function event_logging_getlogs($page = 1, $pagelength = 20, $filter = NULL)
                    LEFT JOIN {$PHORUM["forums_table"]}
                    ON {$PHORUM["forums_table"]}.forum_id = {$PHORUM["event_logging_table"]}.forum_id
             $where
-            ORDER  BY log_id DESC
+            ORDER  BY log_id DESC";
+
+    if ($pagelength > 0) {
+        $sql .= "
             LIMIT  $pagelength
             OFFSET $offset";
+    }
 
     return phorum_db_interact(DB_RETURN_ASSOCS, $sql);
 }

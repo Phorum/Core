@@ -41,7 +41,7 @@ $GLOBALS["PHORUM"]["DATA"]["MOD_EVENT_LOGGING"]["LOGLEVELS"] = array(
 );
 
 /**
- * A list of available built-in event log types. The types which have
+ * A list of available built-in event log types. The types that have
  * NULL as the value are used as separators in the interface, so these
  * aren't real event types.
  */
@@ -50,6 +50,7 @@ $GLOBALS["PHORUM"]["DATA"]["MOD_EVENT_LOGGING"]["EVENT_TYPES"] = array(
         "register"                   => "A user registers for an account",
         "login_failure_forum"        => "A user fails to login to the forums",
         "login_failure_admin"        => "A user fails to login to the admin",
+        "password_reset"             => "A user requests a new password",
         "login"                      => "A user logs in",
         "logout"                     => "A user logs out",
         "post"                       => "A user posts a message in a forum",
