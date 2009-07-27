@@ -279,14 +279,14 @@ if (count($_POST) > 0) {
          *             "unapproved" (in case the account was not yet
          *             approved by a moderator, no new password or
          *             verification code was generated for the user) or
-         *             "not_found" (when the provided email address cannot
+         *             "user_unknown" (when the provided email address cannot
          *             be found in the database).</li>
          *         <li>email: the email address that the user entered
          *             in the lost password form.</li>
          *         <li>user: a user data array. This is the user data for
          *             the email address that the user entered in the lost
          *             password form. If no matching user could be found
-         *             (status = "not_found"), then this element will be
+         *             (status = "user_unknown"), then this element will be
          *             NULL.</li>
          *         <li>secret: The new password or verification code for
          *             respectively the statuses "new_password" and
@@ -314,7 +314,7 @@ if (count($_POST) > 0) {
          *                        $data['user']['username'] . ': ' .
          *                        $data['secret']; 
          *                 break;
-         *             case 'not_found':
+         *             case 'user_unknown':
          *                 $log = 'Could not find a user for email ' .
          *                        $data['email'];
          *                 break;
