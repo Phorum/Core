@@ -160,6 +160,12 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
 {
     $PHORUM = $GLOBALS["PHORUM"];
 
+    // Check for the use of the silence operator @, in which case
+    // this module should not bother with logging the error message.
+    if (error_reporting() == 0) {
+        return;
+    }
+
     // Check for suspended logging.
     if (!empty($GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["SUSPEND"])) {
         return;
