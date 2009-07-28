@@ -3,6 +3,10 @@ Changelog:
 
 2009-06-27 v1.1.2
 
+    - Fixed bug #865: Don't log errors if the silence operator @ is used. 
+      Thanks to Markus for both the bug report and the patch that fixes
+      the issue.
+
     - Fixed bug #862: the event logs could not be downloaded if the
       maximum number of stored log lines was set to 0 ("no limit").
       Thanks to Markus Fischer for the bug report.
