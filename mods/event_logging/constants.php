@@ -55,6 +55,7 @@ $GLOBALS["PHORUM"]["DATA"]["MOD_EVENT_LOGGING"]["EVENT_TYPES"] = array(
         "logout"                     => "A user logs out",
         "post"                       => "A user posts a message in a forum",
         "edit_post"                  => "A user edits a message in a forum",
+        "post_pm"                    => "A user sends a private message",
         "report"                     => "A user reports a message",
     "Forum moderator events" => NULL,
         "mod_edit_post"              => "A moderator edits a message in a forum",

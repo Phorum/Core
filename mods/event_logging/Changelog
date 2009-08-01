@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+2009-08-01 v1.1.3
+
+    - Added a new logged event: User sends a private message.
+      The fact that a PM was sent and the number of recipients are logged.
+
 2009-06-27 v1.1.2
 
     - Fixed bug #865: Don't log errors if the silence operator @ is used. 
