@@ -503,6 +503,31 @@ function phorum_mod_event_logging_after_edit($data)
     return $data;
 }
 
+function phorum_mod_event_logging_pm_sent($message, $recipients)
+{
+    // Check for suspended logging.
+    if (!empty($GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["SUSPEND"])) {
+        return $data;
+    }
+
+    if (!$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_post_pm"])
+        return $message;
+
+    list ($source, $from_module) = event_logging_find_source(1);
+
+    event_logging_writelog(array(
+        "message"    => "Private message posted by \"{$message["from_username"]}\".",
+        "details"    => "Number of recipients: " . count($recipients),
+        "loglevel"   => EVENTLOG_LVL_INFO,
+        "source"     => $source,
+        "category"   => $from_module
+                        ? EVENTLOG_CAT_MODULE
+                        : EVENTLOG_CAT_APPLICATION
+    ));
+
+    return $message;
+}
+
 function phorum_mod_event_logging_database_error($error)
 {
     if (!$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_database_error"])

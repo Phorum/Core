@@ -1,7 +1,7 @@
 title: Event Logging
 desc: This module implements an event logging system, which can be used for logging various events. Other modules can use this module for logging purposes too.
 require_version: 5.2.13
-version: 1.0.6
+version: 1.0.7
 author: Phorum Dev Team
 url: http://www.phorum.org/
 
@@ -24,3 +24,4 @@ hook: after_approve|phorum_mod_event_logging_after_approve
 hook: before_footer|phorum_mod_event_logging_before_footer
 hook: password_reset|phorum_mod_event_logging_password_reset
 hook: addon|phorum_mod_event_logging_addon
+hook: pm_sent|phorum_mod_event_logging_pm_sent
