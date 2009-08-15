@@ -289,6 +289,45 @@ if (!empty($action)) {
             {
                 $folder_id = $_POST["delete_folder_target"];
                 if (!empty($folder_id)) {
+                                    /**
+                     * [hook]
+                     *     pm_delete_folder
+                     *
+                     * [availability]
+                     *     Phorum 5 >= 5.2.13
+                     *
+                     * [description]
+                     *     This hook can be used for working on deletion of a
+                     *     private message folder. E.g. for deleting messages
+                     *     in the folder before.
+                     *
+                     * [category]
+                     *     Private message system
+                     *
+                     * [when]
+                     *     Right before Phorum deletes the private message folder.
+                     *
+                     * [input]
+                     *     The id of the private message folder going to be deleted.
+                     *
+                     * [output]
+                     *     None
+                     *     A clean module should return its input again to have
+                     *     the same data available to all modules working in this hook.
+                     *
+                     * [example]
+                     *     <hookcode>
+                     *     function phorum_mod_foo_pm_delete_folder($folder_id)
+                     *     {
+                     *         // do something with the folder going to be deleted
+                     *
+                     *         return $folder_id;
+                     *     }
+                     *     </hookcode>
+                     */
+                    if (isset($PHORUM['hooks']['pm_delete_folder'])) {
+                        phorum_hook('pm_delete_folder', $folder_id);
+                    }                	
                     phorum_db_pm_delete_folder($folder_id);
                     $redirect_message = "PMFolderDeleteSuccess";
                     $redirect = true;
@@ -308,7 +347,45 @@ if (!empty($action)) {
             if (isset($_POST["delete"]) && isset($_POST["checked"])) {
                 foreach($_POST["checked"] as $pm_id) {
                     if (phorum_db_pm_get($pm_id, $folder_id)) {
-                        phorum_db_pm_delete($pm_id, $folder_id);
+			            /**
+			             * [hook]
+			             *     pm_delete
+			             *
+			             * [availability]
+			             *     Phorum 5 >= 5.2.13
+			             *
+			             * [description]
+			             *     This hook can be used for working deletion of a
+			             *     private message.
+			             *
+			             * [category]
+			             *     Private message system
+			             *
+			             * [when]
+			             *     Right before Phorum deletes the private message.
+			             *
+			             * [input]
+			             *     The id of the private message going to be deleted.
+			             *
+			             * [output]
+			             *     None
+			             *     A clean module should return its input again to have
+			             *     the same data available to all modules working in this hook.
+			             *
+			             * [example]
+			             *     <hookcode>
+			             *     function phorum_mod_foo_pm_delete($pm_id)
+			             *     {
+			             *         // do something with the message going to be deleted
+			             *         
+			             *         return $pm_id;
+			             *     }
+			             *     </hookcode>
+			             */                        
+                         if (isset($PHORUM['hooks']['pm_delete'])) { 
+ 	                         phorum_hook('pm_delete', $pm_id);        
+                         }                     	
+                         phorum_db_pm_delete($pm_id, $folder_id);
                     }
                 }
 
