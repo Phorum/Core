@@ -358,7 +358,7 @@ foreach ($list['modules'] as $name => $info)
         $links = array();
         if ($info["settings"]) {
         	$setting_url = phorum_admin_build_url(array('module=modsettings','mod='.$name));
-            $links[] = "<a href=\"$setting_url\">" .
+            $links[] = "<a name=\"link-settings-$name\" href=\"$setting_url\">" .
                       "Edit module settings</a>";
         }
         if(isset($info["url"])){
