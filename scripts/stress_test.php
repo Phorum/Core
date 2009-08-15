@@ -162,7 +162,7 @@ if ($tcount)
                                "stress testing software. I have no value at all.\n",
                 "user_id"   => $u,
                 "author"    => $users[$u]["username"],
-                "email"    => $users[$u]["email"],
+                "email"     => '',
                 "ip"        => "127.0.0.1",
                 "status"    => PHORUM_STATUS_APPROVED,
                 "msgid"     => "<stressbatch_{$batch}_{$count}_{$i}@localhost>",
@@ -201,6 +201,9 @@ if ($ncount)
     $markread = array();
     foreach ($recent as $id => $msg)
     {
+    	if($id == 'users') {
+    		continue;
+    	}
         $markread[] = array(
             "id"    => $id,
             "forum" => $msg["forum_id"]
