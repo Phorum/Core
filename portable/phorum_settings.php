@@ -13,8 +13,8 @@ $PHORUM_ALT_DBCONFIG=array(
    "server"        =>  "localhost",
    "user"          =>  "phorum",
    "password"      =>  "phorum",
-   "table_prefix"  =>  "phorum_portable"
-
+   "table_prefix"  =>  "phorum_portable",
+   "charset"       =>  "utf8"
 );
 
 // We have to alter the urls a little
