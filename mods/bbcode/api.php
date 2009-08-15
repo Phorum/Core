@@ -718,6 +718,8 @@ function bbcode_api_tokenize($text)
                         // flag it as autoclosed.
                         else
                         {
+                            $opentags[$topname]--;
+
                             $autoclosed[$topname] =
                                 isset($autoclosed[$topname])
                                 ? $autoclosed[$topname] + 1 : 1;
