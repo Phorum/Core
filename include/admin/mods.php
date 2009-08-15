@@ -86,7 +86,7 @@ foreach ($list['modules'] as $name => $info)
 {
     if ($info["settings"] && !defined("PHORUM_INSTALL")) {
         $settings_url = phorum_admin_build_url(array('module=modsettings',"mod=$name"));
-        $settings_link="<br /><a href=\"$settings_url\">Settings</a>";
+        $settings_link="<br /><a name=\"link-settings-$name\" href=\"$settings_url\">Settings</a>";
     } else {
         $settings_link="";
     }
