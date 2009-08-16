@@ -243,15 +243,19 @@ foreach ($module_registrations as $id => $r)
     $cache_key .= '|' . $r['module'] . ':' . $r['cache_key'];
 }
 
-// Generate the final cache key.
-$cache_key = md5($cache_key . __FILE__);
 
-// Generate the cache file name.
-$cache_file = "{$PHORUM['cache']}/tpl-{$PHORUM['template']}-css-$css-" .
-              md5($cache_key . __FILE__);
+$content = NULL;
+$cache_time = 0;
+
+if(!empty($PHORUM['cache_css'])) {
+	$cache_data = phorum_cache_get('css',$cache_key);
+	if($cache_data !== null) {
+		list($cache_time,$content) = $cache_data;
+	}
+}
 
 // Create the cache file if it does not exist or if caching is disabled.
-if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
+if ($content === null)
 {
     $before = '';
     $after  = '';
@@ -329,21 +333,13 @@ if (empty($PHORUM['cache_css']) || !file_exists($cache_file))
     }
 
     if (!empty($PHORUM['cache_css'])) {
-        require_once('./include/templates.php');
-        phorum_write_file($cache_file, $content);
+    	$cache_time = time();
+        phorum_cache_put('css',$cache_key,array($cache_time,$content),86400);
     }
-
-    // Send the CSS to the browser.
-    header("Content-Type: text/css");
-    print $content;
-
-    // Exit here explicitly for not giving back control to portable and
-    // embedded Phorum setups.
-    exit(0);
 }
 
 // Find the modification time for the cache file.
-$last_modified = @filemtime($cache_file);
+$last_modified = $cache_time;
 
 // Check if a If-Modified-Since header is in the request. If yes, then
 // check if the CSS code has changed, based on the filemtime() data from
@@ -363,7 +359,7 @@ if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 header("Content-Type: text/css");
 header("Last-Modified: " . date("r", $last_modified));
 
-include($cache_file);
+echo $content;
 
 // Exit here explicitly for not giving back control to portable and
 // embedded Phorum setups.
