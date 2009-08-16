@@ -45,6 +45,21 @@ $GLOBALS['PHORUM']['API']['mods_deprecated_hooks'] = array(
     'user_check_login' => 'user_authenticate',
     'hide'             => 'hide_thread'
 );
+
+/**
+ * This array describes modules that are no longer part of the core
+ * Phorum distribution. If a module from this list is found, then
+ * a check is done to see if its version is lower than the provided
+ * theshold version. If yes, then the module is displayed as disabled
+ * in the module information and the admin is told to download the
+ * new version of the module from the Phorum.org website.
+ */
+$GLOBALS['PHORUM']['API']['mods_no_longer_bundled'] = array(
+    'html' => array(
+        'version' => '2.0.0',
+        'url'     => 'http://www.phorum.org/phorum5/read.php?62,140066'
+    )
+);
 // }}}
 
 // {{{ Function: phorum_api_modules_list()
@@ -190,6 +205,27 @@ function phorum_api_modules_list()
         $modules[$entry] = $info;
     }
     closedir($dh);
+
+    // Check if there are modules available, which are no longer
+    // included in the Phorum core distribution. If yes, then check
+    // if the version of those modules indicates an old bundled version
+    // of the module. In that case, the module is disabled and the admin
+    // is told where to get an up-to-date version of the module.
+    foreach ($PHORUM['API']['mods_no_longer_bundled'] as $module => $info)
+    {
+        if (isset($modules[$module]) && !empty($modules[$module]['enabled']))
+        {
+            $modinfo = $modules[$module];
+            if (empty($modinfo['version']) ||
+                phorum_compare_version(
+                    $modinfo['version'], // installed module's version
+                    $info['version']     // required module's version
+                ) == -1) {
+                $modules[$module]['url'] = $info['url'];
+                $problems[] = "The module \"{$modinfo['title']}\" is no longer included in the core Phorum distribution. A more recent version of this module (version {$info['version']} or higher) is available at the phorum.org website. Please download and install that version. For more information, visit <a href=\"{$info['url']}\" target=\"_new\">the module's page at phorum.org</a>.";
+            } 
+        }
+    }
 
     // Sort the modules by their title, so they show up in an easy
     // to use way for the user in the admin interface.
