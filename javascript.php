@@ -225,17 +225,19 @@ foreach ($module_registrations as $id => $r)
     $cache_key .= '|' . $r['module'] . ':' . $r['cache_key'];
 }
 
-// Generate the final cache key.
-$cache_key = md5($cache_key . __FILE__);
+$content = NULL;
+$cache_time = 0;
 
-// Generate the cache file name.
-$cache_file = "{$PHORUM['CACHECONFIG']['directory']}/tpl-{$PHORUM['template']}-javascript-" .
-              md5($cache_key . __FILE__);
-
+if(!empty($PHORUM['cache_javascript'])) {
+	$cache_data = phorum_cache_get('js',$cache_key);
+	if($cache_data !== null) {
+		list($cache_time,$content) = $cache_data;
+	}
+}              
+              
 // Create the cache file if it does not exist or if caching is disabled.
 if (isset($PHORUM['args']['refresh']) ||
-    empty($PHORUM['cache_javascript']) ||
-    !file_exists($cache_file))
+    $content === null)
 {
     $content = '';
 
@@ -299,9 +301,9 @@ if (isset($PHORUM['args']['refresh']) ||
     }
 
     if (!empty($PHORUM['cache_javascript'])) {
-        require_once PHORUM_PATH.'/include/api/write_file.php';
-        phorum_api_write_file($cache_file, $content);
-    }
+    	$cache_time = time();
+        phorum_cache_put('js',$cache_key,array($cache_time,$content),86400);
+    }    
 
     // Send the JavaScript to the browser.
     header("Content-Type: text/javascript");
@@ -314,7 +316,7 @@ if (isset($PHORUM['args']['refresh']) ||
 }
 
 // Find the modification time for the cache file.
-$last_modified = @filemtime($cache_file);
+$last_modified = $cache_time;
 
 // Check if a If-Modified-Since header is in the request. If yes, then
 // check if the JavaScript code has changed, based on the filemtime() data from
@@ -324,7 +326,8 @@ phorum_api_output_last_modify_time($last_modified);
 
 // Send the JavaScript to the browser.
 header("Content-Type: text/javascript");
-include $cache_file;
+
+echo $content;
 
 // Exit here explicitly for not giving back control to portable and
 // embedded Phorum setups.
