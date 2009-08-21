@@ -99,7 +99,8 @@ function phorum_api_charset_convert_to_utf8($var)
     }
     elseif (is_object($var))
     {
-        $vars = get_class_vars(get_class($var));
+        $var = clone($var);
+        $vars = get_object_vars($var);
         foreach ($vars as $property => $value) {
             if (is_string($value)) {
                 $value = strtr($value, $cp1252_map);
@@ -155,7 +156,8 @@ function phorum_api_charset_convert_from_utf8($var)
     }
     elseif (is_object($var))
     {
-        $vars = get_class_vars(get_class($var));
+        $var = clone($var);
+        $vars = get_object_vars($var);
         foreach ($vars as $property => $value) {
             if (is_string($value)) {
                 $value = iconv('UTF-8', $PHORUM['DATA']['CHARSET'], $value);
