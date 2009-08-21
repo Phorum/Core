@@ -149,7 +149,8 @@ function phorum_api_json_convert_to_utf8($var)
    }
    elseif (is_object($var))
    {
-       $vars = get_class_vars(get_class($var));
+       $var = clone($var);
+       $vars = get_object_vars($var);
        foreach ($vars as $property => $value) {
            $var->$property = phorum_api_json_convert_to_utf8($value);
        }
