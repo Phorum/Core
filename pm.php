@@ -265,6 +265,8 @@ if (!empty($action))
             {
                 $folder_id = $_POST["delete_folder_target"];
                 if (!empty($folder_id)) {
+                    phorum_db_pm_delete_folder($folder_id);
+                    
                     /**
                      * [hook]
                      *     pm_delete_folder
@@ -304,7 +306,6 @@ if (!empty($action))
                     if (isset($PHORUM['hooks']['pm_delete_folder'])) {
                         phorum_hook('pm_delete_folder', $folder_id);
                     }
-                    phorum_db_pm_delete_folder($folder_id);
                     $redirect_message = "PMFolderDeleteSuccess";
                     $redirect = true;
 
@@ -322,7 +323,10 @@ if (!empty($action))
             // Delete all checked messages.
             if (isset($_POST["delete"]) && isset($_POST["checked"])) {
                 foreach($_POST["checked"] as $pm_id) {
-                                    if (phorum_db_pm_get($pm_id, $folder_id)) {
+                    if (phorum_db_pm_get($pm_id, $folder_id)) {
+                        
+                        phorum_db_pm_delete($pm_id, $folder_id);
+                        
 			            /**
 			             * [hook]
 			             *     pm_delete
@@ -361,7 +365,6 @@ if (!empty($action))
                          if (isset($PHORUM['hooks']['pm_delete'])) { 
  	                         phorum_hook('pm_delete', $pm_id);        
                          }                     	
-                         phorum_db_pm_delete($pm_id, $folder_id);
                     }
                 }
 
