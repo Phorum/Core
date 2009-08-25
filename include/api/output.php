@@ -258,7 +258,8 @@ function phorum_api_output_last_modify_time($last_modified)
 
     // Set the Last-Modified header, so the browser can use that
     // on the next request to bootstrap this client side caching mechanism.
-    header("Last-Modified: " . date("r", $last_modified));
+    header("Last-Modified: " . gmdate('D, d M Y H:i:s \G\M\T', $last_modified));
+    
 }
 // }}}
 
