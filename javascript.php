@@ -318,7 +318,8 @@ if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 
 // Send the JavaScript to the browser.
 header("Content-Type: text/javascript");
-header("Last-Modified: " . date("r", $last_modified));
+header("Last-Modified: " . gmdate('D, d M Y H:i:s \G\M\T', $last_modified));
+
 
 echo $content;
 
