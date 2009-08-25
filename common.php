@@ -254,6 +254,10 @@ if ( function_exists('get_magic_quotes_gpc') &&
             $_GET[$key] = phorum_recursive_stripslashes( $value );
     }
 }
+// Also make sure that magic_quotes_runtime is disabled.
+if (function_exists('set_magic_quotes_runtime')) {
+    @set_magic_quotes_runtime(FALSE);
+}
 
 // Thanks a lot for configurable argument separators :-/
 // In some cases we compose GET based URLs, with & and = as respectively
