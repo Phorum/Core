@@ -73,6 +73,11 @@ function phorum_api_request_parse()
         }
     }
 
+    // Also make sure that magic_quotes_runtime is disabled.
+    if (function_exists('set_magic_quotes_runtime')) {
+        @set_magic_quotes_runtime(FALSE);
+    }   
+
     // Thanks a lot for configurable argument separators :-/
     // In some cases we compose GET based URLs, with & and = as respectively
     // argument and key/value separators. On some systems, the "&" character
