@@ -1302,7 +1302,7 @@ function bbcode_quote_handler($content, $args)
 function bbcode_size_handler($content, $args)
 {
     // Prevent XSS attacks by allowing a strict set of characters.
-    if (!preg_match('/^[A-Z0-9.\s]+$/i', $args['size'])) {
+    if (!preg_match('/^[A-Z0-9.\s-]+$/i', $args['size'])) {
         return $content;
     }
 
