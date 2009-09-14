@@ -40,8 +40,8 @@ require_once PHORUM_PATH.'/include/api/ban.php';
  *
  * @return array
  *     An array containing two elements:
- *     - The regular expression that is used for searching for bad words.
- *       If no bad words have been configured, then NULL is returned.
+ *     - an array of regular expressions that is used for searching for
+ *       bad words. If no bad words have been configured, then NULL is returned.
  *     - The string to replace bad words with.
  *       This is the PHORUM_BAD_WORDS constant. We pushed it in here, in
  *       case we want to make this variable in the future.
@@ -54,12 +54,11 @@ function phorum_api_format_censor_compile()
     if ($search === '') {
         $words = phorum_api_ban_list(PHORUM_BAD_WORDS);
         if (!empty($words)) {
-            $parts = array();
+            $search = array();
             foreach ($words as $word) {
-                $parts[] = "\b".preg_quote($word['string'],'/').
-                            "(ing|ed|s|er|es)*\b";
+                $search[] = "/\b".preg_quote($word['string'],'/').
+                            "(ing|ed|s|er|es)*\b/i";
             }
-            $search = '/' . implode('|', $parts) . '/i';
         } else {
             $search = NULL;
         }
