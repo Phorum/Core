@@ -168,14 +168,23 @@ function phorum_api_cache_clear() {
  */
 function phorum_api_cache_check() {
     
-    $data = "123";
+    $data = time();
     $ret  = false;
     
-    phorum_api_cache_put('check','connection',$data,10);
+    $retval = phorum_api_cache_get('check','connection');
     
-    $gotten_data = phorum_api_cache_get('check','connection');
+    // only retry the cache check if last check was more than 1 hour ago
+    if($retval === NULL || $retval < ($data-3600)) {
     
-    if($gotten_data === $data) {
+        phorum_api_cache_put('check','connection',$data,7200);
+        
+        $gotten_data = phorum_api_cache_get('check','connection');
+        
+        if($gotten_data === $data) {
+            $ret = true;
+        }
+    
+    } else {
         $ret = true;
     }
     
