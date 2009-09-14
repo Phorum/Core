@@ -966,13 +966,13 @@ function phorum_api_forums_build_path($forum_id = NULL)
     // need the path for a single node, then the node and all its parent
     // nodes are retrieved using single calls to the database.
     if ($forum_id === NULL) {
-        $nodes = phorum_db_get_forums();
+        $nodes = phorum_db_get_forums(NULL,NULL,NULL,NULL,false,0,true);
         $nodes[0] = $root;
     } else {
         if ($forum_id == 0) {
             $nodes = array(0 => $root);
         } else {
-            $nodes = phorum_db_get_forums($forum_id);
+            $nodes = phorum_db_get_forums($forum_id,NULL,NULL,NULL,false,0,true);
         }
     }
 
@@ -996,7 +996,7 @@ function phorum_api_forums_build_path($forum_id = NULL)
             if ($node['parent_id'] == 0) {
                 $node = $root;
             } elseif ($forum_id !== NULL) {
-                $tmp = phorum_db_get_forums($node['parent_id']);
+                $tmp = phorum_db_get_forums($node['parent_id'],NULL,NULL,NULL,false,0,true);
                 $node = $tmp[$node['parent_id']];
             } else {
                 $node = $nodes[$node['parent_id']];
