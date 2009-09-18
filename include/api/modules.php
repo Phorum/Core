@@ -171,13 +171,13 @@ function phorum_api_modules_list()
                     $phorum_ver = PHORUM;
 
                     $info['required_version'] = $required_ver;
-                    list ($currel, $cur) = phorum_parse_version($phorum_ver);
-                    list ($reqrel, $req) = phorum_parse_version($required_ver);
+                    $cur = phorum_parse_version($phorum_ver);
+                    $req = phorum_parse_version($required_ver);
 
                     // If an admin is using a development or snapshot release,
                     // the we asume that he knows what he's doing.
-                    if ($currel == 'snapshot' ||
-                        $currel == 'development') {
+                    if ($cur[0] == 'snapshot' ||
+                        $cur[0] == 'development') {
                         // noop
                     }
                     // Otherwise, do a real version comparison.
