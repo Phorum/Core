@@ -199,8 +199,8 @@
         "From"                  =>      "From",
 
         "Go"                    =>      "Go",
-        "Goto"                  =>      "Goto",
-        "GotoThread"            =>      "Goto Topic",
+        "Goto"                  =>      "Go to",
+        "GotoThread"            =>      "Go to Topic",
         "Group"                 =>      "Group",
         "GroupJoinFail"         =>      "Group could not be joined.",
         "GroupJoinSuccess"      =>      "Group joined successfully.",
