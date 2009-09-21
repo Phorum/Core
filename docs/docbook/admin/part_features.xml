@@ -85,7 +85,7 @@
      displayed, either on the read page or on a separate page.
    </para>
    <para>
-     <emphasis role="bold">After posting goto:</emphasis>
+     <emphasis role="bold">After posting go to:</emphasis>
      This setting specifies where the user is redirected after
      posting, either to the message read page or the message list.
    </para>
