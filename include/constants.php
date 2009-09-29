@@ -68,6 +68,12 @@
     // time in seconds for the admin token to timeout
     // 30 minutes default
     define('PHORUM_ADMIN_TOKEN_TIMEOUT', 1800);
+
+    // The maximum length for message bodies.
+    // If you upgrade this length, then note that you have to
+    // change the storage type of the body field in the messages
+    // table from TEXT to MEDIUMTEXT.
+    define('MAX_MESSAGE_LENGTH', 65000);
     
     /////////////////////////////////////////
     //                                     //

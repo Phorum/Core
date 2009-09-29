@@ -102,7 +102,7 @@ if (! $error)
     } elseif (!empty($message["email"]) &&
               !phorum_valid_email($message["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
-    } elseif (strlen($message["body"]) > 64000) {
+    } elseif (strlen($message["body"]) > MAX_MESSAGE_LENGTH) {
         $error = $PHORUM["DATA"]["LANG"]["ErrBodyTooLarge"];
     }
 }
