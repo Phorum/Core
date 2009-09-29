@@ -137,6 +137,14 @@ define('PHORUM_DEFAULT_LANGUAGE', 'english');
  */
 define('PHORUM_ADMIN_TOKEN_TIMEOUT', 1800); // 30 minutes
 
+/**
+ * The maximum length for message bodies.
+ * If you upgrade this length, then note that you have to
+ * change the storage type of the body field in the messages
+ * table from TEXT to MEDIUMTEXT.
+ */
+define('MAX_MESSAGE_LENGTH', 65000);
+
 // ----------------------------------------------------------------------
 // Constants that should stay the same and which have not been
 // assigned to an API layer (yet).
