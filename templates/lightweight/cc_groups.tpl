@@ -5,6 +5,7 @@
     <h4>{LANG->JoinAGroup}</h4>
     {IF JOINGROUP}
         <form method="post" action="{GROUP->url}">
+        {POST_VARS}        
             {LANG->JoinGroupDescription}
             <br/><br/>
             <select name="joingroup">
@@ -13,7 +14,7 @@
                     <option value="{JOINGROUP->group_id}">{JOINGROUP->name}</option>
                 {/LOOP JOINGROUP}
             </select>
-            <input type="submit" value="{LANG->Join}"
+            <input type="submit" value="{LANG->Join}" />
         </form>
     {ELSE}
         {LANG->NoGroupsJoin}
