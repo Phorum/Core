@@ -8,7 +8,7 @@
       {IF content_template}
         {INCLUDE content_template}
       {ELSE}
-        <div class="PhorumFloatingText">{MESSAGE}</div>
+        <div class="PhorumFloatingText">{OKMSG}</div>
       {/IF}
     </td>
   </tr>
