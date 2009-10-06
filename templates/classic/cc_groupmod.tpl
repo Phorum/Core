@@ -4,7 +4,7 @@
 {IF GROUP->name}
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->AddToGroup} {GROUP->name}</div>
   <div class="PhorumStdBlock" style="text-align: left;">
-    <form method="post" action="{GROUP->url}">
+    <form method="post" action="{URL->ACTION}">
     {POST_VARS}
       {IF NEWMEMBERS}
         <select name="adduser">
@@ -21,16 +21,22 @@
   </div><br />
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->GroupMemberList} {GROUP->name}</div>
   <div class="PhorumStdBlock" style="text-align: left;">
-    {LANG->Filter}:
-    {LOOP FILTER}
-      [{IF FILTER->enable}<a href="{FILTER->url}">{/IF}{FILTER->name}{IF FILTER->enable}</a>{/IF}]
-    {/LOOP FILTER}
-    <br /><br />
-    <form method="post" action="{GROUP->url}">
+<form action="{URL->ACTION}" method="post">{POST_VARS}
+{LANG->Filter}:&nbsp; <select name="filter">
+	{LOOP FILTER}
+	<option value="{FILTER->id}" {IF FILTER->enable}selected="selected"{/IF}>
+	{FILTER->name}
+	</option>
+	{/LOOP FILTER}
+</select> <input type="submit" value="{LANG->Go}" /></form>
+<br />
+{IF USERS}
+<br />
+    <form method="post" action="{URL->ACTION}">
       <table class="PhorumFormTable" cellspacing="0" border="0">
       {POST_VARS}
         <tr>
-          <th>{LANG->Username}</th>
+          <th>{LANG->Member}</th>
           <th>{LANG->MembershipType}</th>
         </tr>
         {LOOP USERS}
@@ -61,15 +67,18 @@
         </tr>
       </table>
     </form>
-  </div>
+{ELSE} 
+    {LANG->NoUserMatchFilter} 
+{/IF}
+</div>
 {ELSE}
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->SelectGroupMod}</div>
   <div class="PhorumStdBlock" style="text-align: left;">
     <table class="PhorumFormTable" cellspacing="0" border="0">
       {LOOP GROUPS}
         <tr>
-          <td><a href="{GROUPS->url}">{GROUPS->name}</a></td>
-          <td><a href="{GROUPS->unapproved_url}">{GROUPS->unapproved} {LANG->Unapproved}</a></td>
+          <td><a href="{GROUPS->URL->VIEW}">{GROUPS->name}</a></td>
+          <td><a href="{GROUPS->URL->UNAPPROVED}">{GROUPS->unapproved} {LANG->Unapproved}</a></td>
         </tr>
       {/LOOP GROUPS}
     </table>
