@@ -7361,7 +7361,7 @@ function phorum_db_create_tables()
            PRIMARY KEY (message_id),
            KEY forum_id (forum_id),
            FULLTEXT KEY search_text (search_text)
-       ) TYPE=MyISAM $charset",
+       ) ENGINE=MyISAM $charset",
 
       "CREATE TABLE {$PHORUM['user_custom_fields_table']} (
            user_id                  int unsigned   NOT NULL default '0',
@@ -7529,17 +7529,21 @@ function phorum_db_sanitychecks()
     );
 
     // MySQL before version 4.
-    if ($ver[1] < 4) return array(
+    if ($ver[1] < 5) return array(
         PHORUM_SANITY_CRIT,
         "The MySQL database server that is used is too old. The
          running version is \"" . htmlspecialchars($version) . "\",
-         while MySQL version 4.0.18 or higher is recommended.",
+         while MySQL version 5.0.x or higher is required.",
         "Upgrade your MySQL server to a newer version. If your
          website is hosted with a service provider, please contact
          the service provider to upgrade your MySQL database."
     );
 
+    // THE FOLLOWING TWO CHECKS ARE NO LONGER NEEDED WITH THE ABOVE CHECK
+    // MAKING MYSQL5 A REQUIREMENT
+    
     // MySQL before version 4.0.18, with full text search enabled.
+    /*
     if (isset($PHORUM['DBCONFIG']['mysql_use_ft']) &&
         $PHORUM['DBCONFIG']['mysql_use_ft'] &&
         $ver[2] == 4 && $ver[2] == 0 && $ver[3] < 18) return array(
@@ -7569,6 +7573,7 @@ function phorum_db_sanitychecks()
          website is hosted with a service provider, please contact
          the service provider to upgrade your MySQL database."
     );
+    */
 
     // All checks are okay.
     return array (PHORUM_SANITY_OK, NULL);

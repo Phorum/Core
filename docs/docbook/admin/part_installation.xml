@@ -350,7 +350,8 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO 'myuser'@'localhost' IDENTIFIED BY '
               </para>
               <para>
                 To be able to use this feature, the MySQL server that
-                you are using must be version 4.0.18 or higher and the
+                you are using must be version 4.0.18 or higher (should always
+                be the case as MySQL 5 is a requirement) and the
                 database user must be allowed to create temporary tables.
                 If these requirements are not met, then you will have to
                 disable this setting by assigning the value
