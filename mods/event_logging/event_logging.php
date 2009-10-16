@@ -879,4 +879,22 @@ function phorum_mod_event_logging_before_footer()
     }
 }
 
+function phorum_mod_event_logging_user_delete($userid) {
+    if (!$GLOBALS["PHORUM"]["mod_event_logging"]["do_log_user_delete"])
+        return $userid;
+
+    list ($source, $from_module) = event_logging_find_source(1);
+
+    $user = phorum_api_user_get($userid);
+
+    event_logging_writelog(array(
+        "message"    => "User deleted: {$user['username']} <{$user['email']}> ID: $userid .",
+        "loglevel"   => EVENTLOG_LVL_INFO,
+        "source"     => $source,
+        "category"   => EVENTLOG_CAT_SECURITY,
+    ));
+
+    return $userid;
+}
+
 ?>
