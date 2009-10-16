@@ -24,11 +24,17 @@ require_once './common.php';
 define('PHORUM_COMPRESS_CSS', TRUE);
 
 // Argument 1 should be the name of the css template to load.
-if(isset($PHORUM["args"]["1"])){
+if(!empty($PHORUM["args"]["1"])){
     $css = basename((string)$PHORUM["args"]["1"]);
 } else {
     trigger_error("Missing argument", E_USER_ERROR);
     exit(1);
+}
+
+// let it only process css templates
+if(substr($css,0,3) != 'css') {
+    trigger_error("Wrong template", E_USER_ERROR);
+    exit(1);	
 }
 
 // So we can use {URL->HTTP_PATH} in the templates.
