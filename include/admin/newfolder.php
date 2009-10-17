@@ -231,7 +231,8 @@
         $folders=$folder_data;
         $vroot=0;
         $active=1;
-        $template=PHORUM_DEFAULT_TEMPLATE;
+        $template=$PHORUM["default_forum_options"]["template"];
+        
     }
 
     $frm->hidden("folder_flag", "1");
