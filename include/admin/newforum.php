@@ -177,6 +177,46 @@ if(count($_POST)){
 
                 // we don't need to save the master forum
                 unset($forum_settings_inherit[$inherit_id]);
+
+                /*
+                 * [hook]
+                 *     admin_editforum_form_save_inherit
+                 *
+                 * [description]
+                 *     This hook can be used for intercepting requests where the
+                 *     forum settings get overriden with the inherited settings
+                 *     a forum is created or saved.
+                 *
+                 *     At this stage, the <literal>$_POST</literal> is still
+                 *     accessible in it's (almost) original form.
+                 *
+                 *     When this hook has run, <literal>$_POST</literal> will be
+                 *     replaced with the $forum_settings_inherit parameter !
+                 *
+                 * [category]
+                 *     Admin interface
+                 *
+                 * [when]
+                 *     After creating/saving a forum, after checking inherited settings
+                 *     <b>before</b> applying them.
+                 *
+                 * [input]
+                 *     The <literal>$forum_settings_inherit</literal> content.
+                 *
+                 * [output]
+                 *     Same as input.
+                 *
+                 * [example]
+                 *     <hookcode>
+                 *     function phorum_mod_foo_admin_editforum_form_save_inherit ($forum_settings_inherit) 
+                 *     {
+                 *         return $forum_settings_inherit;
+                 *
+                 *     }
+                 *     </hookcode>
+                 */
+                $forum_settings_inherit = phorum_hook("admin_editforum_form_save_inherit", $forum_settings_inherit);
+
                 $_POST =$forum_settings_inherit;
 
             } else {
@@ -223,6 +263,46 @@ if(count($_POST)){
                 unset($forum_settings["thread_count"]);
                 unset($forum_settings["last_post_time"]);
                 unset($forum_settings["vroot"]);
+
+                /*
+                 * [hook]
+                 *     admin_editforum_form_save_inherit_others
+                 *
+                 * [description]
+                 *     This hook gets called for every other forum which
+                 *     inherits settings from this forum and thus gets updated.
+                 *
+                 *     This can be used to prevent other settings from inherited.
+                 *
+                 *     Be cautious what you modify in $forum_settings, as it
+                 *     will be used without re-initialization in the loop going
+                 *     through all forums which inherit from this one!
+                 *
+                 * [category]
+                 *     Admin interface
+                 *
+                 * [when]
+                 *     When iterating over all forums which inherit from this
+                 *     forum.
+                 *
+                 * [input]
+                 *     The $forum_settings which will be applied to the
+                 *     inherited forums and the $inherit_setting .
+                 *
+                 * [output]
+                 *     $forum_settings, modified at wish, but be cautious, as it
+                 *     gets re-used during the loop
+                 *
+                 * [example]
+                 *     <hookcode>
+                 *     function phorum_mod_foo_admin_editforum_form_save_inherit_others ($forum_settings, $inherit_setting)
+                 *     {
+                 *         return $forum_settings;
+                 *
+                 *     }
+                 *     </hookcode>
+                 */
+                $forum_settings = phorum_hook("admin_editforum_form_save_inherit_others", $forum_settings, $inherit_setting);
 
                 $res_inherit =phorum_db_update_forum($forum_settings);
             }
@@ -319,6 +399,35 @@ if(!defined("PHORUM_DEFAULT_OPTIONS")){
 
 
     $frm->addrow("Visible", $frm->select_tag("active", array("No", "Yes"), $active));
+
+    /*
+     * [hook]
+     *     admin_editforum_section_edit_forum
+     *
+     * [description]
+     *     Allow injecting custom field logic right before the (possible
+     *     inherited) permissions/settings begin.
+     *
+     * [category]
+     *     Admin interface
+     *
+     * [when]
+     *     Editing an empty or new forum, right after the first section.
+     *
+     * [input]
+     *     An PhorumInputForm object
+     *
+     * [output]
+     *     Nothing
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_admin_editforum_section_edit_forum ($frm) 
+     *     {
+     *     }
+     *     </hookcode>
+     */
+    phorum_hook("admin_editforum_section_edit_forum", $frm);
 
     // Edit + inherit_id exists
     if(defined("PHORUM_EDIT_FORUM") && strlen($inherit_id)>0 ) {
