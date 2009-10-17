@@ -247,7 +247,8 @@ if ($success)
             break;
     }
 
-    if ($subscribe_type !== NULL) {
+    if ($subscribe_type === PHORUM_SUBSCRIPTION_BOOKMARK ||
+        $subscribe_type === PHORUM_SUBSCRIPTION_MESSAGE) {
         phorum_api_user_subscribe(
             $message["user_id"],
             $message["thread"],
