@@ -21,7 +21,7 @@ define('phorum_page','changes');
 require_once './common.php' ;
 
 require_once PHORUM_PATH.'/include/api/diff.php';
-require_once PHORUM_PATH.'/include/format/censor.php';
+require_once PHORUM_PATH.'/include/api/format/messages.php';
 
 // set all our URL's ... we need these earlier
 phorum_build_common_urls();
