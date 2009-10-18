@@ -99,7 +99,8 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     if (empty($conn))
     {
         $PHORUM = $GLOBALS['PHORUM'];
-
+        // we suppress errors from the mysqli_connect command as errors
+        // are catched differently.
         $conn = mysqli_connect(
             $PHORUM['DBCONFIG']['server'],
             $PHORUM['DBCONFIG']['user'],
