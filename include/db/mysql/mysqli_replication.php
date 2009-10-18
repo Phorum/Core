@@ -117,7 +117,9 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
                 $conn_write = phorum_db_get_random_connection($PHORUM['DBCONFIG']['masters']);
 
             } else {
-                $conn_write = mysqli_connect(
+                // we suppress errors from the mysqli_connect command as errors
+                // are catched differently.            	
+                $conn_write = @mysqli_connect(
                     $PHORUM['DBCONFIG']['server'],
                     $PHORUM['DBCONFIG']['user'],
                     $PHORUM['DBCONFIG']['password'],
@@ -408,8 +410,9 @@ function phorum_db_get_random_connection(&$db_array)
         if(!empty($db_array[$rand_server])) {
                         
             $server_data = $db_array[$rand_server];
-                        
-            $conn = mysqli_connect(
+            // we suppress errors from the mysqli_connect command as errors
+            // are catched differently.
+            $conn = @mysqli_connect(
                                    $server_data['server'],
                                    $server_data['user'],
                                    $server_data['password'],

@@ -85,8 +85,10 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     if (empty($conn))
     {
         $PHORUM = $GLOBALS['PHORUM'];
-
-        $conn = mysql_connect(
+        
+        // we suppress errors from the mysql_connect command as errors
+        // are catched differently.
+        $conn = @mysql_connect(
             $PHORUM['DBCONFIG']['server'],
             $PHORUM['DBCONFIG']['user'],
             $PHORUM['DBCONFIG']['password'],
