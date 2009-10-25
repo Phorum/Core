@@ -1938,7 +1938,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
  */
 function phorum_api_user_session_create($type, $reset = 0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     /**
      * [hook]
@@ -2002,8 +2002,8 @@ function phorum_api_user_session_create($type, $reset = 0)
     }
 
     // Reset error storage.
-    $GLOBALS['PHORUM']['API']['errno'] = NULL;
-    $GLOBALS['PHORUM']['API']['error'] = NULL;
+    $PHORUM['API']['errno'] = NULL;
+    $PHORUM['API']['error'] = NULL;
 
     // Check if we have a valid session type.
     if ($type != PHORUM_FORUM_SESSION &&
@@ -2027,7 +2027,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     }
 
     // Check if the user is activated.
-    if ($GLOBALS['PHORUM']['user']['active'] != PHORUM_USER_ACTIVE) {
+    if ($PHORUM['user']['active'] != PHORUM_USER_ACTIVE) {
         return phorum_api_error_set(
             PHORUM_ERRNO_NOACCESS,
             'The user is not (yet) activated (user id '.$user['user_id'].')'
@@ -2038,7 +2038,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     // This is also checked from phorum_api_user_set_active_user(), but
     // one can never be too sure about this.
     if ($type == PHORUM_ADMIN_SESSION &&
-        empty($GLOBALS['PHORUM']['user']['admin'])) {
+        empty($PHORUM['user']['admin'])) {
         return phorum_api_error_set(
             PHORUM_ERRNO_NOACCESS,
             'The user is not an administrator (user id '.$user['user_id'].')'
@@ -2056,7 +2056,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     // Retrieve or generate required session id(s).
     // ----------------------------------------------------------------------
 
-    $user = $GLOBALS['PHORUM']['user'];
+    $user = $PHORUM['user'];
 
     // Generate a long term session id. This one is used by all session types.
     // Create a new long term session id if no session id is available yet or
@@ -2073,7 +2073,7 @@ function phorum_api_user_session_create($type, $reset = 0)
             'user_id'   => $user['user_id'],
             'sessid_lt' => $sessid_lt,
         ));
-        $GLOBALS['PHORUM']['user']['sessid_lt'] = $sessid_lt;
+        $PHORUM['user']['sessid_lt'] = $sessid_lt;
     } else {
         $sessid_lt = $user['sessid_lt'];
     }
@@ -2117,8 +2117,8 @@ function phorum_api_user_session_create($type, $reset = 0)
                 'sessid_st'         => $sessid_st,
                 'sessid_st_timeout' => $timeout
             ));
-            $GLOBALS['PHORUM']['user']['sessid_st'] = $sessid_st;
-            $GLOBALS['PHORUM']['user']['sessid_st_timeout'] = $timeout;
+            $PHORUM['user']['sessid_st'] = $sessid_st;
+            $PHORUM['user']['sessid_st_timeout'] = $timeout;
         }
     }
 
@@ -2132,7 +2132,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     // Route the required session id(s) to the user.
     // ----------------------------------------------------------------------
 
-    $user = $GLOBALS['PHORUM']['user'];
+    $user = $PHORUM['user'];
 
     if ($type == PHORUM_FORUM_SESSION)
     {
@@ -2149,12 +2149,12 @@ function phorum_api_user_session_create($type, $reset = 0)
             );
         } else {
             // Add the session id to the URL building GET variables.
-            $GLOBALS['PHORUM']['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM] =
+            $PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM] =
                 PHORUM_SESSION_LONG_TERM . '=' .
                 urlencode($user['user_id'].':'.$sessid_lt);
 
             // Add the session id to the form POST variables.
-            $GLOBALS['PHORUM']['DATA']['POST_VARS'] .=
+            $PHORUM['DATA']['POST_VARS'] .=
                 '<input type="hidden" name="'.PHORUM_SESSION_LONG_TERM.'" ' .
                 'value="'.$user['user_id'].':'.$sessid_lt.'" />';
         }
