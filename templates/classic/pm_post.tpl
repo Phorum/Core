@@ -67,6 +67,7 @@
       </tr>
     </table>
   </div>
+  {HOOK "tpl_pm_editor_before_textarea"}
   <div class="PhorumStdBlock" style="width:99%; text-align: center">
     <textarea id="message" name="message" rows="20" cols="50" style="width: 98%">{MESSAGE->message}</textarea>
     <div style="margin-top: 3px; width:99%" align="right">

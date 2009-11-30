@@ -304,7 +304,7 @@ if (!empty($action))
                      *     </hookcode>
                      */
                     if (isset($PHORUM['hooks']['pm_delete_folder'])) {
-                        phorum_hook('pm_delete_folder', $folder_id);
+                        phorum_api_hook('pm_delete_folder', $folder_id);
                     }
                     $redirect_message = "PMFolderDeleteSuccess";
                     $redirect = true;
@@ -324,46 +324,47 @@ if (!empty($action))
             if (isset($_POST["delete"]) && isset($_POST["checked"])) {
                 foreach($_POST["checked"] as $pm_id) {
                     if (phorum_db_pm_get($pm_id, $folder_id)) {
-                        
+
                         phorum_db_pm_delete($pm_id, $folder_id);
-                        
-			            /**
-			             * [hook]
-			             *     pm_delete
-			             *
-			             * [availability]
-			             *     Phorum 5 >= 5.2.13
-			             *
-			             * [description]
-			             *     This hook can be used for working deletion of a
-			             *     private message.
-			             *
-			             * [category]
-			             *     Private message system
-			             *
-			             * [when]
-			             *     Right before Phorum deletes the private message.
-			             *
-			             * [input]
-			             *     The id of the private message going to be deleted.
-			             *
-			             * [output]
-			             *     None
-			             *     A clean module should return its input again to have
-			             *     the same data available to all modules working in this hook.
-			             *
-			             * [example]
-			             *     <hookcode>
-			             *     function phorum_mod_foo_pm_delete($pm_id)
-			             *     {
-			             *         // do something with the message going to be deleted
-			             *         
-			             *         return $pm_id;
-			             *     }
-			             *     </hookcode>
-			             */                        
+
+                        /**
+                         * [hook]
+                         *     pm_delete
+                         *
+                         * [availability]
+                         *     Phorum 5 >= 5.2.13
+                         *
+                         * [description]
+                         *     This hook can be used for working deletion of a
+                         *     private message.
+                         *
+                         * [category]
+                         *     Private message system
+                         *
+                         * [when]
+                         *     Right before Phorum deletes the private message.
+                         *
+                         * [input]
+                         *     The id of the private message going to
+                         *     be deleted.
+                         *
+                         * [output]
+                         *     Same as input.
+                         *
+                         * [example]
+                         *     <hookcode>
+                         *     function phorum_mod_foo_pm_delete($pm_id)
+                         *     {
+                         *         // do something with the message that is
+                         *         // going to be deleted
+                         *         ...
+                         *
+                         *         return $pm_id;
+                         *     }
+                         *     </hookcode>
+                         */                        
                          if (isset($PHORUM['hooks']['pm_delete'])) { 
- 	                         phorum_hook('pm_delete', $pm_id);        
+ 	                         phorum_api_hook('pm_delete', $pm_id);        
                          }                     	
                     }
                 }
@@ -554,18 +555,76 @@ if (!empty($action))
                             }
                         }
 
+                        /**
+                         * [hook]
+                         *     pm_before_send
+                         *
+                         * [availability]
+                         *     Phorum 5 >= 5.2.15
+                         *
+                         * [description]
+                         *     This hook can be used for doing modifications to
+                         *     PM message data that is stored in the database.
+                         *     This hook can also be used to apply checks to
+                         *     the data that is to be posted and to return an
+                         *     error in case the data should not be posted.
+                         *
+                         * [category]
+                         *     Private message system
+                         *
+                         * [when]
+                         *     Just before the private message is stored in
+                         *     the database.
+                         *
+                         * [input]
+                         *     An array containing private message data. The
+                         *     fields in this data are "subject", "message",
+                         *     "recipients" and "keep".
+                         *
+                         * [output]
+                         *     The message data, possibly modified. A hook can
+                         *     set the field "error" in the data. In that case,
+                         *     sending the PM will be halted and the error
+                         *     message is shown to the user.
+                         *
+                         * [example]
+                         *     <hookcode>
+                         *     function phorum_mod_foo_pm_send_init($message, $action)
+                         *     {
+                         *         if ($message['error'] !== NULL) return $message;
+                         *
+                         *         // Enable "keep copy" option by default.
+                         *         if ($action === NULL) {
+                         *             $message['keep'] = 1;
+                         *         }
+                         *
+                         *         return $message;
+                         *     }
+                         *     </hookcode>
+                         */
+                        $pm_message = array(
+                            'subject'       => $_POST['subject'],
+                            'message'       => $_POST['message'],
+                            'recipients'    => $recipients,
+                            'keep'          => $_POST['keep'],
+                            'error'         => NULL
+                        );
+                        if (isset($PHORUM['hooks']['pm_before_send'])) {
+                            $pm_message = phorum_api_hook('pm_before_send', $pm_message);
+                            if ($pm_message['error']) {
+                                $error = $pm_message['error'];
+                            }
+                        }
+
                         // Send the private message if no errors occurred.
                         if (empty($error)) {
 
-                            $pm_message_id = phorum_db_pm_send($_POST["subject"], $_POST["message"], array_keys($recipients), NULL, $_POST["keep"]);
+                            $pm_message_id = phorum_db_pm_send($pm_message["subject"], $pm_message["message"], array_keys($recipients), NULL, $pm_message["keep"]);
 
-                            $pm_message = array(
-                                    'pm_message_id' => $pm_message_id,
-                                    'subject'       => $_POST['subject'],
-                                    'message'       => $_POST['message'],
-                                    'from_username' => $PHORUM['user']['display_name'],
-                                    'user_id'       => $user_id,
-                            );
+                            $pm_message['pm_message_id'] = $pm_message_id;
+                            $pm_message['from_username'] = $PHORUM['user']['display_name'];
+                            $pm_message['user_id']       = $user_id;
+
                             // Show an error in case of problems.
                             if (! $pm_message_id) {
 
@@ -952,7 +1011,7 @@ switch ($page) {
              *         // Add a notice to messages that were sent by
              *         // evil user X with user_id 666.
              *         if ($message['user_id'] == 666) {
-             *             $message['subject'] .= ' <strong>EVIL!</strong>';
+             *             $message['subject'] .= ' [EVIL!]';
              *         }
              *
              *         return $message;
@@ -1002,7 +1061,7 @@ switch ($page) {
         );
 
         // Data initialization for posting messages on first request.
-        if ($action == NULL || $action != 'post')
+        if ($action === NULL)
         {
             // Setup data for sending a private message to specified recipients.
             // Recipients are passed on as a standard phorum argument "to_id"
@@ -1073,6 +1132,55 @@ switch ($page) {
             }
         }
 
+        /**
+         * [hook]
+         *     pm_send_init
+         *
+         * [availability]
+         *     Phorum 5 >= 5.2.15
+         *
+         * [description]
+         *     This hook can be used for doing modifications to the
+         *     PM message data that is used for sending a PM at an
+         *     early stage in the request.
+         *
+         * [category]
+         *     Private message system
+         *
+         * [when]
+         *     At the start of "send" page handling, after the code that sets
+         *     up the message values on the first request.
+         *
+         * [input]
+         *     Two arguments: the private message data array and the action that
+         *     is being handled (one of NULL (initial request), rpct_add,
+         *     preview, posting).
+         *
+         * [output]
+         *     The private message data, possibly modified.
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_pm_send_init($message, $action)
+         *     {
+         *         // Enable "keep copy" option by default.
+         *         if ($action === NULL) {
+         *             $message['keep'] = 1;
+         *         }
+         *
+         *         return $message;
+         *     }
+         *     </hookcode>
+         */
+        if (isset($PHORUM['hooks']['pm_send_init'])) {
+            phorum_api_hook('pm_send_init', $message, $action);
+        }
+
+        // Setup data for previewing a message.
+        if ($msg["preview"]) {
+            list($preview) = phorum_pm_format(array($msg));
+            $PHORUM["DATA"]["PREVIEW"] = $preview;
+        }
         // Setup data for previewing a message.
         if ($msg["preview"]) {
             list($preview) = phorum_pm_format(array($msg));
