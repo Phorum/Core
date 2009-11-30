@@ -1006,7 +1006,7 @@ switch ($page) {
              *         // Add a notice to messages that were sent by
              *         // evil user X with user_id 666.
              *         if ($message['user_id'] == 666) {
-             *             $message['subject'] .= ' <strong>EVIL!</strong>';
+             *             $message['subject'] .= ' [EVIL!]';
              *         }
              *
              *         return $message;

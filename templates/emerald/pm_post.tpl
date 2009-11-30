@@ -75,9 +75,7 @@
             <input type="checkbox" id="keep" name="keep" value="1"{IF MESSAGE->keep} checked="checked" {/IF} /><label for="keep"> {LANG->KeepCopy}</label><br />
             <br />
 
-        </small>
-        {HOOK "tpl_pm_editor_before_textarea"}
-        <small>
+            {HOOK "tpl_pm_editor_before_textarea"}
 
             {LANG->Message}:
             <div id="post-body">
