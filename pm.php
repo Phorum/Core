@@ -312,9 +312,7 @@ if (!empty($action)) {
                      *     The id of the private message folder going to be deleted.
                      *
                      * [output]
-                     *     None
-                     *     A clean module should return its input again to have
-                     *     the same data available to all modules working in this hook.
+                     *     Same as input.
                      *
                      * [example]
                      *     <hookcode>
@@ -370,9 +368,7 @@ if (!empty($action)) {
                          *     The id of the private message going to be deleted.
                          *
                          * [output]
-                         *     None
-                         *     A clean module should return its input again to have
-                         *     the same data available to all modules working in this hook.
+                         *     Same as input.
                          *
                          * [example]
                          *     <hookcode>
@@ -1168,7 +1164,7 @@ switch ($page) {
          *     </hookcode>
          */
         if (isset($PHORUM['hooks']['pm_send_init'])) {
-            phorum_hook('pm_send_init', $message, $action);
+            $message = phorum_hook('pm_send_init', $message, $action);
         }
 
         // Setup data for previewing a message.
@@ -1202,6 +1198,43 @@ switch ($page) {
             }
         }
 
+        /**
+         * [hook]
+         *     pm_before_editor
+         *
+         * [availability]
+         *     Phorum 5 >= 5.2.15
+         *
+         * [description]
+         *     This hook can be used for tweaking the template data that
+         *     is used for setting up the private message editor.
+         *
+         * [category]
+         *     Private message system
+         *
+         * [when]
+         *     Right after Phorum has formatted the template data for the
+         *     editor and just before the editor template is loaded.
+         *
+         * [input]
+         *     Two arguments: the private message data array and the action that
+         *     is being handled (one of NULL (initial request), rpct_add,
+         *     preview, posting).
+         *
+         * [output]
+         *     The private message data, possibly modified.
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_pm_before_editor($message)
+         *     {
+         *         return $message;
+         *     }
+         *     </hookcode>
+         */
+        if (isset($PHORUM['hooks']['pm_before_editor'])) {
+            $msg = phorum_hook('pm_before_editor', $msg, $action);
+        }
 
         $PHORUM["DATA"]["MESSAGE"] = $msg;
         $PHORUM["DATA"]["RECIPIENT_COUNT"] = count($msg["recipients"]);
