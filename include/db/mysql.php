@@ -3567,7 +3567,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
  *     An array of custom fields is returned, indexed by relation_id.
  *     For relation_ids that cannot be found, there will be no array element at all.
  */
-function phorum_db_get_custom_fields($type,$relation_id,$db_flags=0) {
+function phorum_db_get_custom_fields($type,$relation_id,$db_flags=0,$raw_data=FALSE) {
 
     global $PHORUM;
 
@@ -3609,7 +3609,7 @@ function phorum_db_get_custom_fields($type,$relation_id,$db_flags=0) {
 
         // For "html_disabled" fields, the data is XSS protected by
         // replacing special HTML characters with their HTML entities.
-        if ($PHORUM['PROFILE_FIELDS'][$type][$fld['type']]['html_disabled']) {
+        if ($PHORUM['PROFILE_FIELDS'][$type][$fld['type']]['html_disabled'] && $raw_data === FALSE ) {
             $requested_data[$fld['relation_id']][$name] = htmlspecialchars($fld['data']);
             continue;
         }

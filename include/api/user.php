@@ -872,7 +872,7 @@ function phorum_api_user_save_settings($settings)
  *     Users for user_ids that are not found are not included in the
  *     returned array.
  */
-function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE)
+function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE, $raw_data = FALSE)
 {
     global $PHORUM;
 
@@ -928,7 +928,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
         // Retrieve and apply the custom fields for users.
         if (!empty($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_USER])) {
             $db_users = phorum_api_custom_field_apply(
-                PHORUM_CUSTOM_FIELD_USER, $db_users
+                PHORUM_CUSTOM_FIELD_USER, $db_users,$raw_data
             );
         }
 

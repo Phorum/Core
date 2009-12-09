@@ -490,7 +490,7 @@ function phorum_api_custom_field_checkconfig()
  * @return array
  *     Returns the input array with the custom fields added.
  */
-function phorum_api_custom_field_apply($custom_field_type = NULL, $data_array)
+function phorum_api_custom_field_apply($custom_field_type = NULL, $data_array,$raw_data=FALSE)
 {
     global $PHORUM;
 
@@ -508,7 +508,8 @@ function phorum_api_custom_field_apply($custom_field_type = NULL, $data_array)
 
     $custom_fields = phorum_db_get_custom_fields(
         $custom_field_type,
-        array_keys($data_array)
+        array_keys($data_array),
+        $raw_data
     );
 
     // Add custom fields to the forums
