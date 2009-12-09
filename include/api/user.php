@@ -428,7 +428,7 @@ function phorum_api_user_save($user, $flags = 0)
     // Check if we are handling an existing or new user.
     $existing = NULL;
     if ($user['user_id'] !== NULL) {
-        $existing = phorum_api_user_get($user['user_id'], TRUE);
+        $existing = phorum_api_user_get($user['user_id'], TRUE, TRUE, TRUE);
     }
 
     // Create a user data array that is understood by the database layer.
@@ -880,7 +880,7 @@ function phorum_api_user_save_settings($settings)
  *     Users for user_ids that are not found are not included in the
  *     returned array.
  */
-function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE)
+function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE, $raw_data = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -903,7 +903,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
 
     // First, try to retrieve user data from the user cache,
     // if user caching is enabled.
-    if (!empty($PHORUM['cache_users']))
+    if ($raw_data === FALSE && !empty($PHORUM['cache_users']))
     {
         $cached_users = phorum_cache_get('user', $user_ids);
         if (is_array($cached_users))
@@ -931,7 +931,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
     // retrieved from the cache.
     if (count($user_ids))
     {
-        $db_users = phorum_db_user_get($user_ids, $detailed, $use_write_server);
+        $db_users = phorum_db_user_get($user_ids, $detailed, $use_write_server, $raw_data);
 
         foreach ($db_users as $id => $user)
         {
@@ -959,7 +959,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
             // If detailed information was requested, we store the data in
             // the cache. For non-detailed information, we do not cache the
             // data, because there is not much to gain there by caching.
-            if ($detailed && !empty($PHORUM['cache_users'])) {
+            if ($detailed && !empty($PHORUM['cache_users']) && $raw_data === FALSE) {
                 phorum_cache_put('user', $id, $user);
             }
 

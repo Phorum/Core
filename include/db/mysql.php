@@ -3173,7 +3173,7 @@ function phorum_db_user_get_all($offset = 0, $length = 0)
  *     returned, indexed by user_id. For user_ids that cannot be found,
  *     there will be no array element at all.
  */
-function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
+function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE, $raw_data = FALSE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -3309,7 +3309,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
 
         // For "html_disabled" fields, the data is XSS protected by
         // replacing special HTML characters with their HTML entities.
-        if ($PHORUM['PROFILE_FIELDS'][$fld['type']]['html_disabled']) {
+        if ($PHORUM['PROFILE_FIELDS'][$fld['type']]['html_disabled'] && $raw_data === FALSE) {
             $users[$fld['user_id']][$name] = htmlspecialchars($fld['data']);
             continue;
         }
