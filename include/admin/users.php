@@ -89,8 +89,9 @@ if(count($_POST))
             $valid_email = phorum_api_mail_check_address($_POST["email"]);
             if ($valid_email !== true)
                 $error = 'The email "'.htmlspecialchars($_POST[email]).'" is not valid!';
+        } else {
+            $error = "You must provide an e-mail!";
         }
-
         //check for password and password confirmation
         if(isset($_POST['password1']) && !empty($_POST['password1']) && !empty($_POST['password2']) && $_POST['password1'] != $_POST['password2']) {
             $error="Passwords don't match!";
