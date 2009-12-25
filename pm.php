@@ -592,7 +592,7 @@ if (!empty($action)) {
                         // Send the private message if no errors occurred.
                         if (empty($error)) {
 
-                            $pm_message_id = phorum_db_pm_send($pm_message["subject"], $pm_message["message"], array_keys($recipients), NULL, $pm_message["keep"]);
+                            $pm_message_id = phorum_db_pm_send($pm_message["subject"], $pm_message["message"], array_keys($pm_message['recipients']), NULL, $pm_message["keep"]);
 
                             $pm_message['pm_message_id'] = $pm_message_id;
                             $pm_message['from_username'] = $PHORUM['user']['display_name'];
@@ -610,7 +610,7 @@ if (!empty($action)) {
 
                                 // Sort all recipients that want a notify by language.
                                 $langrcpts = array();
-                                foreach ($recipients as $rcpt_id => $rcpt) {
+                                foreach ($pm_message['recipients'] as $rcpt_id => $rcpt) {
 
                                     if ($rcpt["pm_email_notify"]) {
                                         if (!isset($langrcpts[$rcpt["user_language"]])) {
@@ -626,7 +626,7 @@ if (!empty($action)) {
                             }
 
                             if (isset($PHORUM["hooks"]["pm_sent"])) {
-                                phorum_hook("pm_sent", $pm_message, array_keys($recipients));
+                                phorum_hook("pm_sent", $pm_message, array_keys($pm_message['recipients']));
                             }
                         }
 
@@ -1052,7 +1052,7 @@ switch ($page) {
         );
 
         // Data initialization for posting messages on first request.
-        if ($action === NULL)
+        if ($action === NULL || $action != "post")
         {
             // Setup data for sending a private message to specified recipients.
             // Recipients are passed on as a standard phorum argument "to_id"
@@ -1073,7 +1073,6 @@ switch ($page) {
 
             // Setup data for replying to a private message.
             } elseif (isset($pm_id)) {
-
                 $message = phorum_db_pm_get($pm_id);
                 $msg["subject"] = $message["subject"];
                 $msg["message"] = $message["message"];
