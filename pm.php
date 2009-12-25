@@ -617,7 +617,7 @@ if (!empty($action))
                         // Send the private message if no errors occurred.
                         if (empty($error)) {
 
-                            $pm_message_id = phorum_db_pm_send($pm_message["subject"], $pm_message["message"], array_keys($recipients), NULL, $pm_message["keep"]);
+                            $pm_message_id = phorum_db_pm_send($pm_message["subject"], $pm_message["message"], array_keys($pm_message['recipients']), NULL, $pm_message["keep"]);
 
                             $pm_message['pm_message_id'] = $pm_message_id;
                             $pm_message['from_username'] = $PHORUM['user']['display_name'];
@@ -630,11 +630,11 @@ if (!empty($action))
 
                             // Do e-mail notifications on successful sending.
                             } elseif (!empty($PHORUM['allow_pm_email_notify'])) {
-                                phorum_api_mail_pm_notify($pm_message, $recipients);
+                                phorum_api_mail_pm_notify($pm_message, $pm_message['recipients']);
                             }
 
                             if (isset($PHORUM["hooks"]["pm_sent"])) {
-                                phorum_api_hook("pm_sent", $pm_message, array_keys($recipients));
+                                phorum_api_hook("pm_sent", $pm_message, array_keys($pm_message['recipients']));
                             }
                         }
 
@@ -1059,7 +1059,7 @@ switch ($page) {
         );
 
         // Data initialization for posting messages on first request.
-        if ($action === NULL)
+        if ($action === NULL || $action != "post")
         {
             // Setup data for sending a private message to specified recipients.
             // Recipients are passed on as a standard phorum argument "to_id"
