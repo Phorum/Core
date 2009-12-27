@@ -519,8 +519,8 @@ if (isset($PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) && $PHORUM["DATA"]["
 // No checking is needed on intermediate requests.
 if ($initial || $finish) {
     include './include/posting/check_permissions.php';
-    if ($PHORUM["posting_template"] == 'message') {
-      return phorum_output('message');
+    if ($PHORUM["posting_template"] == 'message' && empty($PHORUM["postingargs"]["as_include"])) {
+        return phorum_output('message');
     }
 }
 
