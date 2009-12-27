@@ -13,7 +13,7 @@
 
 #spamhurdles_spoken_captcha {
     padding-left: 15px;
-    background: url(lib/audio.gif) no-repeat;
+    background: url(mods/spamhurdles/lib/audio.gif) no-repeat;
     padding-bottom: 10px;
     font-size: small;
 }
