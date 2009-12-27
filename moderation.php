@@ -35,9 +35,21 @@ phorum_api_request_check_token();
 
 $PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
-$msgthd_id = (isset($_POST["thread"])) ? (int)$_POST["thread"] : (int)$PHORUM['args'][2];
+if(isset($_POST["thread"])) {
+	$msgthd_id = (int)$_POST["thread"];
+} elseif(isset($PHORUM['args'][2])) {
+	$msgthd_id = (int)$PHORUM['args'][2];
+} else {
+	$msgthd_id = 0;
+}
 
-$mod_step = (isset($_POST["mod_step"])) ? (int)$_POST["mod_step"] : (int)$PHORUM['args'][1];
+if(isset($_POST["mod_step"])) {
+	$mod_step = (int)$_POST["mod_step"];
+} elseif(isset($PHORUM['args'][1])) {
+	$mod_step = (int)$PHORUM['args'][1];
+} else {
+	$mod_step = 0;
+}
 
 if(empty($msgthd_id) || !$PHORUM["DATA"]["MODERATOR"]) {
    phorum_return_to_list();
