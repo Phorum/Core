@@ -58,6 +58,7 @@ function phorum_api_mail_message_notify($message)
         // Template variables
         'forumname'   => strip_tags($PHORUM['DATA']['NAME']),
         'forum_id'    => $message['forum_id'],
+        "thread_id"   => $message['thread'],
         'message_id'  => $message['message_id'],
         'author'      => phorum_api_user_get_display_name(
                              $message['user_id'],
