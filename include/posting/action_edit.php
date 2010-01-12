@@ -53,6 +53,12 @@ if ( $message["parent_id"]==0 ) {
         }
         $dbmessage["sort"] = $sort;
     }
+    
+    // has the sorting order been changed?
+    if($dbmessage['sort'] !== $origmessage['sort']) {
+        // too much to calculate here to avoid the full refresh
+        phorum_db_update_forum_stats(true);
+    }    
 
 } else {
 
