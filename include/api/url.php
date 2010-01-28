@@ -320,6 +320,7 @@ function phorum_api_url_no_uri_auth()
     $uri_auth = NULL;
     if (isset($PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM])) {
         $uri_auth = $PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM];
+        unset($PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM]);        
     }
 
     $argv = func_get_args();
