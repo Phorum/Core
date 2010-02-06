@@ -300,6 +300,40 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
     header("Content-Type: $content_type");
     print $data;
 
+
+	/*
+	 * [hook]
+	 *     feed_sent
+	 *
+	 * [description]
+	 *     This hook is called whenever the feed has been sent to the client
+	 *     (regardless of the cache setting). This can be used to add internal
+	 *     server side tracking code.
+	 *
+	 * [category]
+	 *     Feed
+	 *
+	 * [when]
+	 *     Feed sent to the client
+	 *
+	 * [input]
+	 *     None
+	 *
+	 * [output]
+	 *     None
+	 *
+	 * [example]
+	 *     <hookcode>
+	 *     function phorum_mod_foo_feed_after () 
+	 *     {
+	 *       # E.g. do server side tracking
+	 *       @file_get_contents('your tracking service');
+	 *     }
+	 *     </hookcode>
+	 */
+	phorum_hook('feed_sent');
+    
+    
     // Exit explicitly here, for not giving back control to portable and
     // embedded Phorum setups.
     exit(0);
