@@ -28,12 +28,6 @@ if (! ini_get('safe_mode')) {
 
 print "\nRebuilding thread info meta data ...\n";
 
-// this should be enabled if you switched to utf-8
-/*
-mysql_query( "SET NAMES 'utf8'", $conn);
-mysql_query( "SET CHARACTER SET utf8", $conn);
-*/
-
 $count_total = phorum_db_interact(
     DB_RETURN_VALUE,
     "SELECT count(*)
