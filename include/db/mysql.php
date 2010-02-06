@@ -5607,7 +5607,8 @@ function phorum_db_user_list_subscribers($forum_id, $thread, $type, $ignore_acti
          WHERE  s.forum_id = $forum_id AND
                 (s.thread = $thread or s.thread = 0) AND
                 s.sub_type = $type AND
-                u.user_id = s.user_id
+                u.user_id = s.user_id AND
+                u.active = ".PHORUM_USER_ACTIVE."
                 $userignore"
     );
 
