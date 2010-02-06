@@ -1289,7 +1289,7 @@ function phorum_api_user_search_custom_profile_field($field_id, $value, $operato
 /**
  * Retrieve a list of Phorum users.
  *
- * @param int $flags
+ * @param int $type
  *     One of:
  *     - {@link PHORUM_GET_ALL}: retrieve a list of all users (the default)
  *     - {@link PHORUM_GET_ACTIVE}: retrieve a list of all active users
