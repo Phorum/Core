@@ -449,6 +449,7 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
             $markread_ids[$key] = (int) $val;
         }
     }
+    $orig_forum_id = $PHORUM['forum_id'];
 
     // An array to keep track of the forums for which we need to invalidate
     // the cache later on.
@@ -459,6 +460,7 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
     {
         foreach ($markread_ids as $forum_id)
         {
+        	$PHORUM['forum_id'] = $forum_id;
             phorum_db_newflag_allread($forum_id);
             $processed_forum_ids[$forum_id] = $forum_id;
         }
@@ -482,6 +484,7 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
             // messages in the thread.
             $forum_id = $thread['forum_id'];
             if (!isset($PHORUM['user']['newflags'][$forum_id])) {
+            	$PHORUM['forum_id'] = $forum_id;
                 $newflags = phorum_api_newflags_by_forum($forum_id);
             } else {
                 $newflags = $PHORUM['user']['newflags'][$forum_id];
@@ -502,6 +505,7 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
             }
 
             $processed_forum_ids[$forum_id] = $forum_id;
+            $PHORUM['forum_id'] = $forum_id;
         }
 
         // Mark the messages in the thread(s) as read.
@@ -524,6 +528,7 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
             );
 
             $processed_forum_ids[$message['forum_id']] = $message['forum_id'];
+            $PHORUM['forum_id'] = $message['forum_id'];
         }
 
         // Mark the messages read in the database.
@@ -541,6 +546,8 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
             phorum_api_cache_remove('newflags_index',$cachekey);
         }
     }
+    
+    $PHORUM['forum_id'] = $orig_forum_id;
 }
 // }}}
 
