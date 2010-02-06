@@ -156,6 +156,7 @@ $settings_t = @filemtime($settings_php);
 // Generate the cache key. While adding cache keys for the module
 // registrations, we also check the validity of the registration data.
 $cache_key = $PHORUM['template'] .'|'.
+             $css                .'|'.
              $css_t              .'|'.
              $settings_t;
 foreach ($module_registrations as $id => $r)
