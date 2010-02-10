@@ -96,7 +96,6 @@ if (count($_POST)) {
             $_POST[$key] = trim($val);
         }
     }
-
     /*
      * [hook]
      *     before_register_check
@@ -104,7 +103,8 @@ if (count($_POST)) {
      * [description]
      *     This hook can be used for performing tasks before the checks on user
      *     registration. This hook is useful if you want to modify the data before
-     *     the unique checks on username or email address.<sbr/>
+     *     the unique checks on username or email address or if you want to skip specific 
+     *     checks.<sbr/>
      *
      * [category]
      *     User data handling
@@ -114,45 +114,65 @@ if (count($_POST)) {
      *     for a new user are done.
      *
      * [input]
-     *     An array containing the $_POST array of user data of the 
-     *     soon-to-be-registered user.
+     *     An array containing both the $_POST array of user data of the 
+     *     soon-to-be-registered user and an array telling which checks are going 
+     *     to be done
      *
      * [output]
-     *     Same as input.
+     *     Same as input, maybe with
      *
      * [example]
      *     <hookcode>
      *     function phorum_mod_foo_before_register_check ($data)
      *     {
+     *         list($userdata,$checks) = $data;
      *         // modify the username ...
-     *         if($data['username'] == 'foo') {
-     *              $data['username']= 'bar';
+     *         if($userdata['username'] == 'foo') {
+     *              $userdata['username']= 'bar';
      *         }
-     *         return $data;
+     *         
+     *         // skip the email validity check
+     *         $checks['email_valid']=0;
+     *         
+     *         return array($userdata,$checks);
      *     }
      *     </hookcode>
      */
-    if (isset($PHORUM["hooks"]["before_register_check"]))
-        $_POST = phorum_api_hook("before_register_check", $_POST);
-    
+    $todo_checks = array(
+        'username_empty' => 1,
+        'username_unique'=> 1,    
+        'email_valid'    => 1,
+        'email_unique'   => 1,    
+        'password'       => 1, 
+        'banlists'       => 1, 
+    );
+    if (isset($PHORUM["hooks"]["before_register_check"])) {
+        list($_POST,$todo_checks) = phorum_api_hook("before_register_check", array($_POST,$todo_checks));
+    }
+
     // Check if all required fields are filled and valid.
-    if (!isset($_POST["username"]) || empty($_POST['username'])) {
+    if ($todo_checks['username_empty'] && 
+        (!isset($_POST["username"]) || empty($_POST['username']))) {
         $error = $PHORUM["DATA"]["LANG"]["ErrUsername"];
-    } elseif (!isset($_POST["email"]) ||
+    } elseif ($todo_checks['email_valid'] && !isset($_POST["email"]) ||
               !phorum_api_mail_check_address($_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
-    } elseif (empty($_POST["open_id"]) && (empty($_POST["password"]) || $_POST["password"] != $_POST["password2"])) {
+    } elseif ($todo_checks['password'] && 
+              empty($_POST["open_id"]) && 
+             (empty($_POST["password"]) || $_POST["password"] != $_POST["password2"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
     }
     // Check if the username and email address don't already exist.
-    elseif(phorum_api_user_search("username", $_POST["username"])) {
+    elseif($todo_checks['username_unique'] && 
+           phorum_api_user_search("username", $_POST["username"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdName"];
-    } elseif (phorum_api_user_search("email", $_POST["email"])){
+    } elseif ($todo_checks['email_unique'] && 
+              phorum_api_user_search("email", $_POST["email"])){
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdEmail"];
     }
 
     // Check banlists.
-    if (empty($error)) {
+    if ($todo_checks['banlists'] && empty($error)) {
         $error = phorum_api_ban_check_multi(array(
             array($_POST["username"], PHORUM_BAD_NAMES),
             array($_POST["email"],    PHORUM_BAD_EMAILS),
