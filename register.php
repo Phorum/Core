@@ -97,6 +97,44 @@ if (count($_POST)) {
         }
     }
 
+    /*
+     * [hook]
+     *     before_register_check
+     *
+     * [description]
+     *     This hook can be used for performing tasks before the checks on user
+     *     registration. This hook is useful if you want to modify the data before
+     *     the unique checks on username or email address.<sbr/>
+     *
+     * [category]
+     *     User data handling
+     *
+     * [when]
+     *     In <filename>register.php</filename>, right before checks on the data
+     *     for a new user are done.
+     *
+     * [input]
+     *     An array containing the $_POST array of user data of the 
+     *     soon-to-be-registered user.
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_before_register_check ($data)
+     *     {
+     *         // modify the username ...
+     *         if($data['username'] == 'foo') {
+     *              $data['username']= 'bar';
+     *         }
+     *         return $data;
+     *     }
+     *     </hookcode>
+     */
+    if (isset($PHORUM["hooks"]["before_register_check"]))
+        $_POST = phorum_api_hook("before_register_check", $_POST);
+    
     // Check if all required fields are filled and valid.
     if (!isset($_POST["username"]) || empty($_POST['username'])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrUsername"];
