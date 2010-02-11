@@ -114,18 +114,19 @@ if (count($_POST)) {
      *     for a new user are done.
      *
      * [input]
-     *     An array containing both the $_POST array of user data of the 
-     *     soon-to-be-registered user and an array telling which checks are going 
-     *     to be done
+     *     An array containing: 
+     *     the $_POST array of user data of the soon-to-be-registered user
+     *     an array telling which checks are going to be done after the hook is run
+     *     and the error variable to allow the module to return errors
      *
      * [output]
-     *     Same as input, maybe with
+     *     Same as input, with possibly changed contents
      *
      * [example]
      *     <hookcode>
      *     function phorum_mod_foo_before_register_check ($data)
      *     {
-     *         list($userdata,$checks) = $data;
+     *         list($userdata,$checks,$error) = $data;
      *         // modify the username ...
      *         if($userdata['username'] == 'foo') {
      *              $userdata['username']= 'bar';
@@ -134,7 +135,10 @@ if (count($_POST)) {
      *         // skip the email validity check
      *         $checks['email_valid']=0;
      *         
-     *         return array($userdata,$checks);
+     *         // return an error
+     *         $error = "You can't continue as module is run! ;-)";
+     *         
+     *         return array($userdata,$checks,$error);
      *     }
      *     </hookcode>
      */
@@ -147,9 +151,9 @@ if (count($_POST)) {
         'banlists'       => 1, 
     );
     if (isset($PHORUM["hooks"]["before_register_check"])) {
-        list($_POST,$todo_checks) = phorum_api_hook("before_register_check", array($_POST,$todo_checks));
+        list($_POST,$todo_checks,$error) = phorum_api_hook("before_register_check", array($_POST,$todo_checks,$error));
     }
-
+    
     // Check if all required fields are filled and valid.
     if ($todo_checks['username_empty'] && 
         (!isset($_POST["username"]) || empty($_POST['username']))) {
