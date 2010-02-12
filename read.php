@@ -71,6 +71,7 @@ if(empty($PHORUM["args"][1])) {
     if(!is_numeric($PHORUM["args"][2])) {
         $dest_url="";
         $newervar=(int)$PHORUM["args"][1];
+        $thread = 0;
 
         switch($PHORUM["args"][2])
         {
