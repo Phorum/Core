@@ -297,7 +297,7 @@ Phorum.JSON.encode = function(params)
 
 Phorum.JSON.decode = function(json)
 {
-    eval('var res = '+json);
+    var res = JSON.parse(json);
     if (res === undefined) {
         throw new SyntaxError('The Phorum JSON data cannot be parsed');
     }

@@ -360,16 +360,16 @@ if ( isset( $_REQUEST["forum_id"] ) && is_numeric( $_REQUEST["forum_id"] ) ) {
 // will have to use $_GET or $_POST.
 if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBALS["PHORUM_CUSTOM_QUERY_STRING"]))) {
 
-    if(strpos($_SERVER["QUERY_STRING"], "&")!==false){
+	$Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] )
+	         ? $_SERVER["QUERY_STRING"]
+	         : $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
+               
+    if(strpos($Q_STR, "&")!==false){
 
         $PHORUM["args"] = $_GET;
 
     } else {
-
-        $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] )
-               ? $_SERVER["QUERY_STRING"]
-               : $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
-
+    	
         // ignore stuff past a #
         if ( strstr( $Q_STR, "#" ) ) list( $Q_STR, $other ) = explode( "#", $Q_STR, 2 );
 
