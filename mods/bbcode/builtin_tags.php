@@ -193,14 +193,30 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
         // in include/format_functions.php.
         //BBCODE_INFO_STRIPBREAK    => TRUE
     ),
-
+    
+    'left' => array(
+        BBCODE_INFO_DESCRIPTION   =>'[left]left aligned content[/left]',
+        BBCODE_INFO_HASEDITORTOOL => TRUE,
+        BBCODE_INFO_DEFAULTSTATE  => 2,
+        BBCODE_INFO_REPLACEOPEN   => '<div style="text-align: left;" class="bbcode">',
+        BBCODE_INFO_REPLACECLOSE  => '</div>'
+    ),
+    
     'center' => array(
         BBCODE_INFO_DESCRIPTION   =>'[center]centered content[/center]',
         BBCODE_INFO_HASEDITORTOOL => TRUE,
         BBCODE_INFO_DEFAULTSTATE  => 2,
         BBCODE_INFO_REPLACEOPEN   => '<center class="bbcode">',
         BBCODE_INFO_REPLACECLOSE  => '</center>'
-    )
+    ),
+
+    'right' => array(
+        BBCODE_INFO_DESCRIPTION   =>'[right]right aligned content[/right]',
+        BBCODE_INFO_HASEDITORTOOL => TRUE,
+        BBCODE_INFO_DEFAULTSTATE  => 2,
+        BBCODE_INFO_REPLACEOPEN   => '<div style="text-align: right;" class="bbcode">',
+        BBCODE_INFO_REPLACECLOSE  => '</div>'
+    )    
 );
 
 

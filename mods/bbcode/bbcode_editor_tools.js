@@ -353,6 +353,24 @@ function editor_tools_handle_quote()
     editor_tools_focus_textarea();
 }
 
+//----------------------------------------------------------------------
+//Tool: [left]...[/left] (add left aligned content)
+//----------------------------------------------------------------------
+
+function editor_tools_handle_left() {
+    editor_tools_add_tags('[left]', '[/left]');
+    editor_tools_focus_textarea();
+}
+
+//----------------------------------------------------------------------
+//Tool: [right]...[/right] (add right aligned content)
+//----------------------------------------------------------------------
+
+function editor_tools_handle_right() {
+  editor_tools_add_tags('[right]', '[/right]');
+  editor_tools_focus_textarea();
+}
+
 // ----------------------------------------------------------------------
 // Tool: [list] [*]item1 [*]item2 [/list]
 // ----------------------------------------------------------------------
