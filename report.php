@@ -67,22 +67,13 @@ if(is_array($message) && count($message)) {
                 "raw_date"    => $message["datestamp"],
                 "date"        => phorum_date($PHORUM["short_date_time"], $message["datestamp"]),
                 "explanation" => wordwrap($_POST["explanation"], 72),
-                "url"         => phorum_get_url(PHORUM_READ_URL, $message["thread"], $message_id),
-                "delete_url"  => phorum_get_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $message_id),
-                "hide_url"    => phorum_get_url(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $message_id),
-                "edit_url"    => phorum_get_url(PHORUM_POSTING_URL, 'moderation', $message_id),
-                "reporter_url"=> phorum_get_url(PHORUM_PROFILE_URL, $PHORUM["user"]["user_id"]),
+                "url"         => phorum_get_url_no_uri_auth(PHORUM_READ_URL, $message["thread"], $message_id),
+                "delete_url"  => phorum_get_url_no_uri_auth(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, $message_id),
+                "hide_url"    => phorum_get_url_no_uri_auth(PHORUM_MODERATION_URL, PHORUM_HIDE_POST, $message_id),
+                "edit_url"    => phorum_get_url_no_uri_auth(PHORUM_POSTING_URL, 'moderation', $message_id),
+                "reporter_url"=> phorum_get_url_no_uri_auth(PHORUM_PROFILE_URL, $PHORUM["user"]["user_id"]),
                 "message"     => $message
                 );
-
-                if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
-                    // strip any auth info from the created urls
-                    $mail_data["url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["url"]);
-                    $mail_data["delete_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["delete_url"]);
-                    $mail_data["hide_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["hide_url"]);
-                    $mail_data["edit_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["edit_url"]);
-                    $mail_data["reporter_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["reporter_url"]);
-                }
 
                 if (isset($PHORUM["hooks"]["report"]))
                     $mail_data = phorum_hook("report", $mail_data);

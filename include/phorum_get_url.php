@@ -228,6 +228,30 @@ function phorum_get_url()
 }
 
 /**
+ * Generate a Phorum URL, without any URI authentication information in it.
+ */
+function phorum_get_url_no_uri_auth()
+{
+    global $PHORUM;
+
+    $uri_auth = NULL;
+    if (isset($PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM])) {
+        $uri_auth = $PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM];
+        unset($PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM]);       
+    }
+
+    $argv = func_get_args();
+
+    $url = call_user_func_array('phorum_get_url', $argv);
+
+    if ($uri_auth !== NULL) {
+        $PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM] = $uri_auth;
+    }
+
+    return $url;
+}
+
+/**
  * Determines the current pages URL
  *
  * Several places in code we need to produce the current URL for use in

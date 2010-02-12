@@ -279,17 +279,12 @@ function phorum_email_pm_notice($message, $langusers)
         "subject"        => $message["subject"],
         "full_body"      => $message["message"],
         "plain_body"     => wordwrap(phorum_strip_body($message["message"]),72),
-        "read_url"       => phorum_get_url(PHORUM_PM_URL, "page=read", "pm_id=" . $message["pm_message_id"]),
+        "read_url"       => phorum_get_url_no_uri_auth(PHORUM_PM_URL, "page=read", "pm_id=" . $message["pm_message_id"]),
 
         // For email_user_start.
         "mailmessagetpl" => 'PMNotifyMessage',
         "mailsubjecttpl" => 'PMNotifySubject'
     );
-
-    if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
-        // strip any auth info from the read url
-        $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["read_url"]);
-    }
 
     foreach ($langusers as $language => $users)
     {
@@ -342,23 +337,16 @@ function phorum_email_notice($message)
             "subject"     => $message['subject'],
             "full_body"   => $message['body'],
             "plain_body"  => phorum_strip_body($message['body']),
-            "read_url"    => phorum_get_url(PHORUM_READ_URL, $message['thread'], $message['message_id']),
-            "remove_url"  => phorum_get_url(PHORUM_FOLLOW_URL, $message['thread'], "stop=1"),
-            "noemail_url" => phorum_get_url(PHORUM_FOLLOW_URL, $message['thread'], "noemail=1"),
-            "followed_threads_url" => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS),
+            "read_url"    => phorum_get_url_no_uri_auth(PHORUM_READ_URL, $message['thread'], $message['message_id']),
+            "remove_url"  => phorum_get_url_no_uri_auth(PHORUM_FOLLOW_URL, $message['thread'], "stop=1"),
+            "noemail_url" => phorum_get_url_no_uri_auth(PHORUM_FOLLOW_URL, $message['thread'], "noemail=1"),
+            "followed_threads_url" => phorum_get_url_no_uri_auth(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_SUBSCRIPTION_THREADS),
             "msgid"       => $message["msgid"],
 
             // For email_user_start.
             "mailmessagetpl" => 'NewReplyMessage',
             "mailsubjecttpl" => 'NewReplySubject'
         );
-        if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
-            // strip any auth info from the read url
-            $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["read_url"]);
-            $mail_data["remove_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["remove_url"]);
-            $mail_data["noemail_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["noemail_url"]);
-            $mail_data["followed_threads_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["followed_threads_url"]);
-        }
         // go through the user-languages and send mail with their set lang
         foreach($mail_users_full as $language => $mail_users)
         {
@@ -409,8 +397,8 @@ function phorum_email_moderators($message)
             "subject"     => $message['subject'],
             "full_body"   => $message['body'],
             "plain_body"  => phorum_strip_body($message['body']),
-            "approve_url" => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=messages"),
-            "read_url"    => phorum_get_url(PHORUM_READ_URL, $message['thread'], $message['message_id']),
+            "approve_url" => phorum_get_url_no_uri_auth(PHORUM_CONTROLCENTER_URL, "panel=messages"),
+            "read_url"    => phorum_get_url_no_uri_auth(PHORUM_READ_URL, $message['thread'], $message['message_id']),
             "mailmessage" => $mailmessage,
             "mailsubject" => $mailsubject,
 
@@ -419,11 +407,6 @@ function phorum_email_moderators($message)
             "mailsubjecttpl" => $mailsubjecttpl,
             "language"    => $PHORUM['language'],
         );
-        if (isset($_POST[PHORUM_SESSION_LONG_TERM])) {
-            // strip any auth info from the read url
-            $mail_data["read_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["read_url"]);
-            $mail_data["approve_url"] = preg_replace("!,{0,1}" . PHORUM_SESSION_LONG_TERM . "=" . urlencode($_POST[PHORUM_SESSION_LONG_TERM]) . "!", "", $mail_data["approve_url"]);
-        }
         phorum_email_user($mail_users, $mail_data);
     }
 }
