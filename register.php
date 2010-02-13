@@ -68,6 +68,33 @@ if (isset($PHORUM["args"]["approve"])) {
             // Save the new user active status.
             $moduser["user_id"] = $user_id;
             phorum_api_user_save($moduser);
+            
+            /*
+             * [hook]
+             *     after_correct_validation
+             *
+             * [description]
+             *     This hook can be used for performing tasks after a user has correctly
+             *     validated himself (aka clicked on the verify link in his email).<sbr />
+             *
+             * [category]
+             *     User data handling
+             *
+             * [when]
+             *     In <filename>register.php</filename>, right after saving the
+             *     activated user
+             *
+             * [input]
+             *     An associative array containing: 
+             *     user_id, active, email of the currently activating user
+             *
+             * [output]
+             *     Same as input, with possibly changed contents  
+             *
+             *     
+             */    
+             $moduser['email'] = $user['email'];
+             $moduser = phorum_api_hook("after_correct_validation", $moduser);            
         }
 
     // Validation code incorrect.
