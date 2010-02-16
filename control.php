@@ -190,6 +190,12 @@ if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag'] == 0) {
  *         modules can fill this field with an error message to show.</li>
  *     <li>okmsg:
  *         modules can fill this field with an ok message to show.</li>
+ *     <li>force_okmsg:
+ *         modules can fill this field if their okmsg should take precedence
+ *         over the okmsg set from the core controlcenter panel.</li>
+ *     <li>force_error:
+ *         modules can fill this field if their error should take precedence
+ *         over the error set from the core controlcenter panel.</li>
  *     </ul>
  *
  * [output]
@@ -202,7 +208,9 @@ $hook_info = array(
     'template' => NULL,
     'handled'  => FALSE,
     'error'    => NULL,
-    'okmsg'    => NULL
+    'okmsg'    => NULL,
+    'force_okmsg' => FALSE,
+    'force_error' => FALSE,
 );
 if (isset($PHORUM['hooks']['cc_panel'])) {
     $hook_info = phorum_hook('cc_panel', $hook_info);
@@ -240,8 +248,8 @@ if (isset($template) && !empty($template)) {
 
 // The include file can also set an error message to show
 // in the $error variable and a success message in $okmsg.
-if (isset($error) && !empty($error)) $PHORUM['DATA']['ERROR'] = $error;
-if (isset($okmsg) && !empty($okmsg)) $PHORUM['DATA']['OKMSG'] = $okmsg;
+if (!$hook_info['force_error'] && isset($error) && !empty($error)) $PHORUM['DATA']['ERROR'] = $error;
+if (!$hook_info['force_okmsg'] && isset($okmsg) && !empty($okmsg)) $PHORUM['DATA']['OKMSG'] = $okmsg;
 
 if ($error_msg) { // Possibly set from the panel include file.
     $template = "message";
