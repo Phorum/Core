@@ -219,6 +219,7 @@ if (count($_POST)) {
             'username'   => NULL,
             'password'   => NULL,
             'email'      => NULL,
+            'real_name'  => NULL,
         );
         // Add custom profile fields as acceptable fields.
         foreach ($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $id => $field) {
