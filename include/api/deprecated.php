@@ -70,7 +70,7 @@ function phorum_get_current_url($include_query_string = TRUE) {
 }
 
 /**
- * @deprecated Replaced by {@link phorum_api_url_redirect()}.
+ * @deprecated Replaced by {@link phorum_api_redirect()}.
  */
 function phorum_redirect_by_url($url) {
     return phorum_api_redirect($url);
