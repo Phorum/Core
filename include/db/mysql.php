@@ -1530,7 +1530,7 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
  *     from the master (aka write-server) in case replication is used
  *
  * @param boolean $get_custom_fields
- *     This value can be set to false to specify that no custom fields should be 
+ *     This value can be set to false to specify that no custom fields should be
  *     retrieved for the message, avoids another query and therefore speed up things
  *
  * @return array
@@ -2030,7 +2030,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
         // that only contains the threads for the results.
         if ($return_threads)
         {
-            $threads_table = $PHORUM['search_table']."_final_".md5(microtime());
+            $threads_table = $PHORUM['search_table']."_final_threads_".md5(microtime());
             phorum_db_interact(
                 DB_RETURN_RES,
                 "CREATE TEMPORARY TABLE $threads_table (
@@ -5078,7 +5078,7 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
          ORDER  BY message_id ASC",
         0
     );
-    
+
     // Select the forum's min_id for the current user.
     $min_id = phorum_db_interact(
         DB_RETURN_VALUE,
@@ -5096,10 +5096,10 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
             'forum_id' => $forum_id
         )));
         $min_id = 0;
-    }   
+    }
 
     $newflags['min_id'] = $min_id;
-    
+
     return $newflags;
 }
 // }}}
@@ -5196,7 +5196,7 @@ function phorum_db_newflag_count($forum_ids)
     $message_counts = phorum_db_interact(
         DB_RETURN_ASSOCS,
         "SELECT {$PHORUM['user_newflags_table']}.forum_id,
-                count(*) AS count 
+                count(*) AS count
          FROM   {$PHORUM['user_newflags_table']}
                 INNER JOIN {$PHORUM['message_table']}
                 USING (message_id, forum_id)
@@ -5240,7 +5240,7 @@ function phorum_db_newflag_count($forum_ids)
                 "SELECT count(*) AS count
                  FROM   {$PHORUM['message_table']}
                  WHERE  forum_id = $forum_id AND
-                        message_id > {$min_ids[$forum_id]['message_id']} AND 
+                        message_id > {$min_ids[$forum_id]['message_id']} AND
                         status = ".PHORUM_STATUS_APPROVED." AND
                         moved = 0"
             );
@@ -5354,9 +5354,9 @@ function phorum_db_newflag_get_unread_count($forum_id=NULL)
 function phorum_db_newflag_add_min_id($min_ids)
 {
     global $PHORUM;
-    
+
     $user_id = $PHORUM['user']['user_id'];
-    
+
     foreach ($min_ids as $min_id)
     {
         settype($min_id['forum_id'], 'int');
@@ -5370,7 +5370,7 @@ function phorum_db_newflag_add_min_id($min_ids)
              VALUES ($user_id, {$min_id['forum_id']}, {$min_id['min_id']})",
             NULL,
             DB_DUPKEYOK | DB_MASTERQUERY
-        );    
+        );
         if (!$res) {
             // No res returned, therefore that key probably exists already.
             phorum_db_interact(
@@ -5381,7 +5381,7 @@ function phorum_db_newflag_add_min_id($min_ids)
                         forum_id = {$min_id['forum_id']}",
                 NULL,
                 DB_MASTERQUERY
-            );  
+            );
         }
     }
 }
@@ -5514,7 +5514,7 @@ function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
              FROM   {$PHORUM['user_newflags_table']}
              WHERE  forum_id = $forum_id AND user_id={$PHORUM['user']['user_id']}"
         );
-    
+
         // Set this message_id as the min-id for the forum.
         if ($min_id) {
             phorum_db_newflag_add_min_id(array(array(
@@ -7893,7 +7893,7 @@ function phorum_db_create_tables()
            PRIMARY KEY track_id (track_id),
            KEY message_id (message_id)
        ) $charset",
-    
+
        "CREATE TABLE {$PHORUM['user_newflags_min_id_table']} (
            user_id               INT UNSIGNED NOT NULL ,
            forum_id              INT UNSIGNED NOT NULL ,
