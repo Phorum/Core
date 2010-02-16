@@ -1862,7 +1862,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
         // that only contains the threads for the results.
         if ($return_threads)
         {
-            $threads_table = $PHORUM['search_table']."_final_".md5(microtime());
+            $threads_table = $PHORUM['search_table']."_final_threads_".md5(microtime());
             phorum_db_interact(
                 DB_RETURN_RES,
                 "CREATE TEMPORARY TABLE $threads_table (
@@ -4488,7 +4488,7 @@ function phorum_db_file_save($file)
     $link       = phorum_db_interact(DB_RETURN_QUOTED, $file["link"]);
     $filename   = phorum_db_interact(DB_RETURN_QUOTED, $file["filename"]);
     $file_data  = phorum_db_interact(DB_RETURN_QUOTED, $file["file_data"]);
-    $datetime   = empty($file['add_datetime']) 
+    $datetime   = empty($file['add_datetime'])
                 ? time() : (int)$file['add_datetime'];
 
     // Create a new file record.
@@ -7542,7 +7542,7 @@ function phorum_db_sanitychecks()
 
     // THE FOLLOWING TWO CHECKS ARE NO LONGER NEEDED WITH THE ABOVE CHECK
     // MAKING MYSQL5 A REQUIREMENT
-    
+
     // MySQL before version 4.0.18, with full text search enabled.
     /*
     if (isset($PHORUM['DBCONFIG']['mysql_use_ft']) &&
