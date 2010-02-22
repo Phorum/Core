@@ -205,7 +205,9 @@ if($PHORUM['cache_messages'] &&
             return;
         }
 
-        $data['users'][] = $data[$thread]['user_id'];
+        if ($data[$thread]['user_id'] > 0) {
+            $data['users'][] = $data[$thread]['user_id'];
+        }
 
         if($PHORUM["DATA"]["MODERATOR"] && isset($data[$thread]["meta"]["message_ids_moderator"])) {
             $message_index=$data[$thread]['meta']['message_ids_moderator'];
@@ -272,7 +274,9 @@ if($PHORUM['cache_messages'] &&
                 $msg_not_in_cache++;
             } else {
                 $data[$mid]=$cache_messages[$cache_id];
-                $data['users'][] = $data[$mid]['user_id'];
+                if ($data[$mid]['user_id'] > 0) { 
+                    $data['users'][] = $data[$mid]['user_id']; 
+                }                 
             }
         }
 
@@ -284,7 +288,9 @@ if($PHORUM['cache_messages'] &&
             foreach($db_messages as $mid => $message) {
                 phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$mid,$message);
                 $data[$mid]=$message;
-                $data['users'][] = $data[$mid]['user_id'];
+                if ($data[$mid]['user_id'] > 0) { 
+                    $data['users'][] = $data[$mid]['user_id']; 
+                }
             }
 
             if($PHORUM['threaded_read'] && isset($PHORUM["reverse_threading"]) && $PHORUM["reverse_threading"]) {
