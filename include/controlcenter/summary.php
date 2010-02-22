@@ -27,7 +27,7 @@ if( $PHORUM["track_user_activity"] &&
     (!empty($PHORUM["user"]["admin"])                                  ||
      phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES) ||
      phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS)    ||
-     !$user["hide_activity"])){
+     !$PHORUM['DATA']['PROFILE']["hide_activity"])){
 
     $PHORUM["DATA"]["PROFILE"]["raw_date_last_active"]=$PHORUM["DATA"]["PROFILE"]["date_last_active"];
     $PHORUM["DATA"]["PROFILE"]["date_last_active"]=phorum_api_format_date( $PHORUM['short_date_time'], $PHORUM["DATA"]["PROFILE"]["date_last_active"]);
