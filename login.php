@@ -64,7 +64,7 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
 
     // Strip the session id from the URL in case URI auth is in use.
     if (stristr($url, PHORUM_SESSION_LONG_TERM)){
-        $url = str_replace(PHORUM_SESSION_LONG_TERM."=".urlencode($PHORUM["args"][PHORUM_SESSION_LONG_TERM]), "", $url);
+        $url = preg_replace('!'.PHORUM_SESSION_LONG_TERM.'=[^$&,]+!', "", $url);
     }
 
     /*
