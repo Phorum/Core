@@ -362,11 +362,6 @@ if(isset($PHORUM["args"]["match_forum"])){
     }
 }
 
-foreach($PHORUM["DATA"]["SEARCH"]["forum_list"] as $key=>$list_item){
-    $PHORUM["DATA"]["SEARCH"]["forum_list"][$key]['indent_spaces'] =
-        str_repeat("&nbsp;", $list_item['indent']);
-}
-
 $PHORUM["DATA"]["SEARCH"]["forum_list_length"] = min(10, count($PHORUM["DATA"]["SEARCH"]["forum_list"])+1);
 
 if ($PHORUM["args"]["match_type"] == "USER_ID")
