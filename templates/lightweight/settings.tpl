@@ -9,6 +9,9 @@
 {! --- This is used the number of page numbers shown on the list page in the paging section (eg. 1 2 3 4 5) --- }
 {DEFINE list_pages_shown 5}
 
+{! --- This is used the number of page numbers shown on the search page in the paging section (eg. 1 2 3 4 5) --- }
+{DEFINE search_pages_shown 5}
+
 {! --- Define on what page notifications should be displayed ---- }
 {DEFINE show_notify_for_pages "index,list,cc"}
 
