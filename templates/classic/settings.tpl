@@ -15,6 +15,8 @@
 {! -- This is the image for the gauge bar to show how full the PM box is -- }
 {VAR gauge_image "templates/classic/images/gauge.gif"}
 
+{! --- This is used the number of page numbers shown on the search page in the paging section (eg. 1 2 3 4 5) --- }
+{DEFINE search_pages_shown 5}
 {! --- these are the colors used in the style sheet --- }
 {! --- you can use them or replace them in the style sheet --- }
 
