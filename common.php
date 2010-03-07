@@ -87,6 +87,8 @@ if (!defined( "PHORUM_ADMIN" ))
 {
     $PHORUM["DATA"]["TITLE"] =
         isset($PHORUM["title"]) ? $PHORUM["title"] : "";
+        
+    $PHORUM["DATA"]["DESCRIPTION"] =         
         isset( $PHORUM["description"]) ? $PHORUM["description"] : "";
 
     $PHORUM["DATA"]["HTML_TITLE"] = !empty($PHORUM["html_title"])
