@@ -33,7 +33,7 @@ define("PHORUM_CONTROL_CENTER", 1);
 
 $error_msg = false;
 $error = "";
-$okmsg = "";
+$okmsg = isset($PHORUM['args']['okmsg']) ? htmlspecialchars($PHORUM['args']['okmsg'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) : "";
 $template = "";
 
 // Generating the panel id of the page to use.
