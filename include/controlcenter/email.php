@@ -65,12 +65,12 @@ if ( count( $_POST ) ) {
             $_POST['email_temp']=$_POST['email']."|".$conf_code;
             // ... send email ... //
             $maildata=array(
-            'mailmessage'   => wordwrap($PHORUM['DATA']['LANG']['EmailVerifyBody'], 72),
-            'mailsubject'   => $PHORUM['DATA']['LANG']['EmailVerifySubject'],
-            'uname'         => $PHORUM['DATA']['PROFILE']['username'],
-            'newmail'       => $_POST['email'],
-            'mailcode'      => $conf_code,
-            'cc_url'        => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL)
+                'mailmessage'   => wordwrap($PHORUM['DATA']['LANG']['EmailVerifyBody'], 72),
+                'mailsubject'   => $PHORUM['DATA']['LANG']['EmailVerifySubject'],
+                'uname'         => $PHORUM['DATA']['PROFILE']['username'],
+                'newmail'       => $_POST['email'],
+                'mailcode'      => $conf_code,
+                'cc_url'        => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_MAIL)
             );
             phorum_email_user(array($_POST['email']),$maildata);
 
@@ -83,7 +83,7 @@ if ( count( $_POST ) ) {
 }
 
 if (!empty($email_temp_part)) {
-	$PHORUM['DATA']['PROFILE']['email_temp_part'] = $email_temp_part;
+    $PHORUM['DATA']['PROFILE']['email_temp_part'] = $email_temp_part;
 }
 
 // TEMPLATETODO

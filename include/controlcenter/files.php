@@ -108,6 +108,11 @@ if($PHORUM["file_space_quota"]){
     $PHORUM["DATA"]["FILE_QUOTA_LIMIT"]=$PHORUM["DATA"]["LANG"]["FileQuotaLimits"] . ' ' . phorum_filesize($PHORUM["file_space_quota"]*1024);;
 }
 
+foreach ($files as $id => $file) {
+  $files[$id]['filename'] = htmlspecialchars(
+    $file['filename'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+}
+
 $PHORUM["DATA"]["FILES"] = $files;
 
 $PHORUM["DATA"]["TOTAL_FILES"] = count($files);
