@@ -113,6 +113,12 @@ $user["signature_formatted"] = $fake_messages[0]["body"];
 // or  HTML escape it
 $user["signature"] = htmlspecialchars($user["signature"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
+// HTML escape all other fields that are used in the control center.
+foreach ($user as $key => $val) {
+  if (is_array($val) || substr($key, 0, 9) == 'signature') continue;
+  $user[$key] = htmlspecialchars($user[$key], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+}
+
 // Initialize any custom profile fields that are not present.
 if (!empty($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER])) {
     foreach($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $id => $field) {
@@ -265,8 +271,6 @@ function phorum_controlcenter_user_save($panel)
         'signature'       => NULL,
         'hide_email'      => NULL,
         'hide_activity'   => NULL,
-        'password'        => NULL,
-        'password_temp'   => NULL,
         'tz_offset'       => NULL,
         'is_dst'          => NULL,
         'user_language'   => NULL,
@@ -275,12 +279,25 @@ function phorum_controlcenter_user_save($panel)
         'email_notify'    => NULL,
         'show_signature'  => NULL,
         'pm_email_notify' => NULL,
-        'email'           => NULL,
-        'email_temp'      => NULL,
         'user_template'   => NULL,
         'moderation_email'=> NULL,
         'real_name'       => NULL,
     );
+    // Password related fields can only be updated from the password panel.
+    if ($panel == 'password') {
+      $userdata['password'] = NULL;
+      $userdata['password_temp'] = NULL;
+    }
+    // E-mail address related fields can only be updated from the email panel.
+    if ($panel == 'email') {
+      $userdata['email'] = NULL;
+      $userdata['email_temp'] = NULL;
+    }
+    // E-mail address related fields can only be updated from the email panel.
+    if ($panel == 'email') {
+      $userdata['email'] = NULL;
+      $userdata['email_temp'] = NULL;
+    }
     // Add custom profile fields as acceptable fields.
     foreach ($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $id => $field) {
         if ($id === "num_fields" || !empty($field['deleted'])) continue;

@@ -31,12 +31,6 @@ if(is_array($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER])) {
     }
 }
 
-foreach($PHORUM["DATA"]["PROFILE"] as $key => $data) {
-       if(!is_array($data) && !isset($profile_field_names[$key])) {
-            $PHORUM["DATA"]["PROFILE"][$key]=htmlspecialchars($data);
-       }
-}
-
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditUserinfo"];
 $PHORUM['DATA']['PROFILE']['USERPROFILE'] = 1;
 $template = "cc_usersettings";
