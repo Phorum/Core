@@ -43,6 +43,14 @@ if(count($_POST)) {
         $_POST['password_temp'] = $_POST['password'] = $new_password;
         list($error,$okmsg) = phorum_controlcenter_user_save($panel);
 
+        // Redirect to the password page, to make sure that the
+        // CSRF token is refreshed. This token is partly based on the
+        // session id and this session id changed along with the password.
+        phorum_redirect_by_url(phorum_get_url(
+            PHORUM_CONTROLCENTER_URL,
+            "panel=" . PHORUM_CC_PASSWORD,
+            "okmsg=" . urlencode($okmsg)
+        )); 
     }
 }
 
