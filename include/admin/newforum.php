@@ -60,6 +60,59 @@ if (count($_POST))
         $errors[] = 'The "Title" field is empty. Please, fill in a title.';
     }
 
+    if (empty($error)) {
+        /*
+         * [hook]
+         *     admin_editforum_form_save_after_defaults
+         *
+         * [description]
+         *     This hook is called whenever a forum is created/saved and passes
+         *     the basic checks (i.e. no error is generated there). The raw
+         *     <literal>$_POST</literal> request can be accessed and a new
+         *     custom error can be generated.
+         *
+         *     At this stage, the <literal>$_POST</literal> is still
+         *     accessible in it's (almost) original form.
+         *
+         * [category]
+         *     Admin interface
+         *
+         * [when]
+         *     Forum created or saved, passing basic phorum verification steps.
+         *
+         * [input]
+         *     The $error variable (a single string message). The first hook
+         *     being called always has an empty error (as the whole hook chain
+         *     is only invoked in such a case), but each hook may generate an
+         *     error which is passed on to other hooks in the chain. It is
+         *     strongly advised that, once your hook gets called and it detects
+         *     the input string containing an error (i.e. is non-zero string
+         *     length), simply bail out and return the error instead of doing
+         *     work and possible generating a new error. Only one error at a
+         *     time can be passed to the end user through the whole chain.
+         *
+         * [output]
+         *     Same as input. However, a non-zero length string signals to abort
+         *     and <b>not</b> save any data!
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_admin_editforum_form_save_after_defaults ($error) 
+         *     {
+         *         # Early bail out in case another hook generated already an error
+         *         if (strlen($error) > 0) {
+         *             return $error;
+         *         }
+         *         # Do your stuff, possible setting $error to a error string
+         *         # for the user to be shown; or simply leave it untouched.
+         *         return $error;
+         *
+         *     }
+         *     </hookcode>
+         */
+        $error = phorum_hook("admin_editforum_form_save_after_defaults", $error);
+    }    
+    
     // If there were no errors, then store the data in the database.
     if (empty($errors))
     {
