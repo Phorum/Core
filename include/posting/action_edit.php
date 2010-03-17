@@ -153,7 +153,8 @@ if (!count($dbmessage["meta"]["attachments"])) {
  *     storing an edited message in the database.
  *
  * [input]
- *     An array containing message data.
+ *     An array containing message data and an optional parameter 
+ *     which holds the original message data (added in Phorum 5.2.15)
  *
  * [output]
  *     Same as input.
@@ -174,7 +175,7 @@ if (!count($dbmessage["meta"]["attachments"])) {
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["before_edit"])) {
-    $dbmessage = phorum_api_hook("before_edit", $dbmessage);
+    $dbmessage = phorum_api_hook("before_edit", $dbmessage,$origmessage);
 }
 
 phorum_db_update_message($message["message_id"], $dbmessage);
@@ -195,7 +196,8 @@ phorum_db_update_message($message["message_id"], $dbmessage);
  *     storing an edited message in the database.
  *
  * [input]
- *     An array containing message data (read-only).
+ *     An array containing message data (read-only)  and an optional parameter 
+ *     which holds the original message data (added in Phorum 5.2.15)
  *
  * [output]
  *     None
@@ -224,7 +226,7 @@ phorum_db_update_message($message["message_id"], $dbmessage);
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["after_edit"])) {
-    phorum_api_hook("after_edit", $dbmessage);
+    phorum_api_hook("after_edit", $dbmessage,$origmessage);
 }
 
 // remove the message from the cache if caching is enabled
