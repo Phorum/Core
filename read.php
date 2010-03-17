@@ -704,9 +704,53 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         }
     }
 
-    // run read mods
+     /**
+     * [hook]
+     *     read
+     *
+     * [availability]
+     *     Phorum 5
+     *
+     * [description]
+     *     This hook can be used to pre-process all the messages.
+     *
+     * [category]
+     *     Read messages
+     *
+     * [when]
+     *     Right before the countview is incremented and before the messages
+     *     have been formatted.
+     *
+     * [input]
+     *     The array of messages to be shown and the currently shown message_id.
+     *     NOTE: the read hook is also used in feed.php but <b>without</b>
+     *     the $message_id parameter, thus be advised to make the second
+     *     parameter optional (default to 0), message_id was added in 5.2.15
+     *
+     * [output]
+     *     The array of messages. Data attached to messages can be added (e.g.
+     *     for specific usage in custom templates). The current message_id
+     *     cannot be changed that way.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_read($messages, $message_id = 0)
+     *     {
+     *         // extend all message with some data
+     *         foreach ($messages as &$message) {
+     *             $message['random'] = rand();
+     *         }
+     *         // Do something special with the current message
+     *         if ($message_id > 0) {
+     *             $messages[$message_id]['random'] = 0;
+     *          }
+     *
+     *         return $messages;
+     *     }
+     *     </hookcode>
+     */
     if (isset($PHORUM["hooks"]["read"]))
-        $messages = phorum_hook("read", $messages);
+        $messages = phorum_hook("read", $messages, $message_id);
 
     // increment viewcount if enabled
     if($PHORUM['count_views'] &&
