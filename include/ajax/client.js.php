@@ -1,9 +1,6 @@
-// Create the Phorum object if it's not available. It it created in the
-// core javascript.php, but when loading this code from an external
-// page, it might not be available.
-if (!document.Phorum || Phorum == undefined) Phorum = {};
-
-Phorum.Ajax = {};
+// Setup the Phorum.Ajax namespace if it has not yet been setup.
+if (Phorum === undefined) Phorum = {};
+if (Phorum.Ajax === undefined) Phorum.Ajax = {};
 
 // The version of this lib
 Phorum.Ajax.version = '1.0.0';

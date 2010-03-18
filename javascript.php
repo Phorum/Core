@@ -236,7 +236,7 @@ if (isset($PHORUM['args']['refresh']) ||
 {
     $content =
         "// Phorum object. Other JavaScript code for Phorum can extend\n" .
-        "// this one to implement functionality without risking name\n" .
+        "// this one to implement functionality without risking\n" .
         "// name space collissions.\n" .
         "Phorum = {};\n\n";
 
