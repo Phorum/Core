@@ -44,7 +44,7 @@ if ($PHORUM['DATA']['CHARSET']) {
         {! The template variable GLOBAL_ERROR can be used to show an error }
         {! message at the start of the page. }
         {IF GLOBAL_ERROR}
-          <div id="global-error" class="PhorumNotificationArea PhorumNavBlock">
+          <div id="global-error" class="PhorumUserError">
             {GLOBAL_ERROR}
           </div>
         {/IF}      
