@@ -27,13 +27,6 @@ phorum_build_common_urls();
 // have to be added to the javascript code.
 $module_registrations = array();
 
-// Add core JSON parser library code
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/javascript/json2.js.php)',
-    'cache_key' => filemtime('./include/javascript/json2.js.php')
-);
-
 // Add core Phorum posting form object manipulation client JavaScript code.
 $module_registrations[] = array(
     'module'    => 'core',
