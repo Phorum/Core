@@ -27,14 +27,6 @@ phorum_build_common_urls();
 // have to be added to the javascript code.
 $module_registrations = array();
 
-// Add core Phorum posting form object manipulation client JavaScript code.
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/javascript/form_objects.js.php)',
-    'cache_key' => filemtime('./include/javascript/form_objects.js.php')
-);
-
-
 // Add the jQuery JavaScript library code.
 $module_registrations[] = array(
     'module'    => 'core',
@@ -62,6 +54,14 @@ $module_registrations[] = array(
     'module'    => 'core',
     'source'    => 'file(include/javascript/phorum-javascript-library.php)'
 );
+
+// Add core Phorum posting form object manipulation client JavaScript code.
+$module_registrations[] = array(
+    'module'    => 'core',
+    'source'    => 'file(include/javascript/form_objects.js.php)',
+    'cache_key' => filemtime('./include/javascript/form_objects.js.php')
+);
+
 
 // Add template specific javascript code, if available. The template writer
 // can put the javascript code to include in the file
