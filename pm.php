@@ -1171,7 +1171,7 @@ switch ($page) {
          *     </hookcode>
          */
         if (isset($PHORUM['hooks']['pm_send_init'])) {
-            $message = phorum_api_hook('pm_send_init', $message, $action);
+            $msg = phorum_api_hook('pm_send_init', $msg, $action);
         }
 
         // Setup data for previewing a message.
