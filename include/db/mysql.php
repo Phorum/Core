@@ -2112,7 +2112,15 @@ function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $time
             $last_post_time = 0;
         }
     } else {
-        $last_post_time = $timestamp;
+        $last_post_time = phorum_db_interact(
+            DB_RETURN_VALUE,
+            "SELECT last_post_time
+             FROM   {$PHORUM['forums_table']}
+             WHERE  forum_id = {$PHORUM['forum_id']}"
+        );
+        if ($timestamp > $last_post_time) {
+            $last_post_time = $timestamp;
+        }
     }
 
     if ($refresh || empty($thread_count_change)) {
