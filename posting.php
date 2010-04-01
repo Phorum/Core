@@ -218,7 +218,7 @@ define("READONLYFIELDS", true);
  *
  * [example]
  *     <hookcode>
- *     function phorum_mod_foo_posting_init ()
+ *     function phorum_mod_foo_posting_init()
  *     {
  *         global $PHORUM;
  *
@@ -450,7 +450,7 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
  *
  * [example]
  *     <hookcode>
- *     function phorum_mod_foo_posting_permissions ()
+ *     function phorum_mod_foo_posting_permissions()
  *     {
  *         global $PHORUM;
  *

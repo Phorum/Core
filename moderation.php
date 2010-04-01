@@ -131,7 +131,7 @@ $is_admin_user=$PHORUM["user"]["admin"];
  *     The id of the moderation step which is run (read-only).
  *
  * [output]
- *     None
+ *     Same as input.
  *
  * [example]
  *     <hookcode>
@@ -142,11 +142,13 @@ $is_admin_user=$PHORUM["user"]["admin"];
  *         // Update the last timestamp for the moderation step
  *         $PHORUM["mod_foo"]["moderation_step_timestamps"][$mod_step] = time();
  *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+ *
+ *         return $mod_step;
  *     }
  *     </hookcode>
  */
 if (isset($PHORUM["hooks"]["moderation"]))
-    phorum_hook("moderation",$mod_step);
+    phorum_hook("moderation", $mod_step);
 
 
 $invalidate_message_cache = array();
@@ -272,7 +274,7 @@ switch ($mod_step) {
          *     An array of ids for messages that have been deleted (read-only).
          *
          * [output]
-         *     None
+         *     Same as input.
          *
          * [example]
          *     <hookcode>
@@ -285,6 +287,8 @@ switch ($mod_step) {
          *             $PHORUM["mod_foo"]["deleted_messages"][] = $msgthd_id;
          *         }
          *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *
+         *         return $msgthd_ids;
          *     }
          *     </hookcode>
          */
@@ -497,7 +501,7 @@ switch ($mod_step) {
              *     The id of the thread that has been moved (read-only).
              *
              * [output]
-             *     None
+             *     Same as input.
              *
              * [example]
              *     <hookcode>
@@ -508,6 +512,8 @@ switch ($mod_step) {
              *         // Log the moved thread id
              *         $PHORUM["mod_foo"]["moved_threads"][] = $msgthd_id;
              *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+             *
+             *         return $msgthd_ids;
              *     }
              *     </hookcode>
              */
@@ -547,7 +553,7 @@ switch ($mod_step) {
          *     The id of the thread that has been closed (read-only).
          *
          * [output]
-         *     None
+         *     Same as input.
          *
          * [example]
          *     <hookcode>
@@ -558,6 +564,8 @@ switch ($mod_step) {
          *         // Log the closed thread id
          *         $PHORUM["mod_foo"]["closed_threads"][] = $msgthd_id;
          *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *
+         *         return $msgthd_ids; 
          *     }
          *     </hookcode>
          */
@@ -595,7 +603,7 @@ switch ($mod_step) {
          *     The id of the thread that has been reopened (read-only).
          *
          * [output]
-         *     None
+         *     Same as input.
          *
          * [example]
          *     <hookcode>
@@ -606,6 +614,8 @@ switch ($mod_step) {
          *         // Log the reopened thread id
          *         $PHORUM["mod_foo"]["reopened_threads"][] = $msgthd_id;
          *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *
+         *         return $msgthd_id;
          *     }
          *     </hookcode>
          */
@@ -796,7 +806,7 @@ switch ($mod_step) {
          *     The id of the thread that has been hidden (read-only).
          *
          * [output]
-         *     None
+         *     Same as input.
          *
          * [example]
          *     <hookcode>
@@ -807,6 +817,8 @@ switch ($mod_step) {
          *         // Log the hidden thread id
          *         $PHORUM["mod_foo"]["hidden_threads"][] = $msgthd_id;
          *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *
+         *         return $msgthd_id;
          *     }
          *     </hookcode>
          */
@@ -938,8 +950,7 @@ switch ($mod_step) {
              *     An array with the translated message-ids; old-message_id -> new-message_id
              *
              * [output]
-             *     None
-             *
+             *     Same as input.
              */
 
             phorum_hook('after_merge', $msgid_translation);
@@ -999,8 +1010,7 @@ switch ($mod_step) {
              *     The id of the newly created thread
              *
              * [output]
-             *     None
-             *
+             *     Same as input.
              */
            phorum_hook('after_split', $_POST['message']);
 

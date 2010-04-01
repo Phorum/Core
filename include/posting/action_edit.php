@@ -202,11 +202,11 @@ phorum_db_update_message($message["message_id"], $dbmessage);
  *     which holds the original message data (added in Phorum 5.2.15)
  *
  * [output]
- *     None
+ *     Same as input.
  *
  * [example]
  *     <hookcode>
- *     function phorum_mod_foo_after_edit($dbmessage,$orig_message)
+ *     function phorum_mod_foo_after_edit($dbmessage, $orig_message)
  *     {
  *         global $PHORUM;
  *
@@ -224,6 +224,8 @@ phorum_db_update_message($message["message_id"], $dbmessage);
  *                 $dbmessage["user_id"]
  *                 );
  *         }
+ *
+ *         return $dbmessage
  *     }
  *     </hookcode>
  */

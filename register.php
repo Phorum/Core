@@ -280,7 +280,7 @@ if (count($_POST)) {
                  *     user (read-only).
                  *
                  * [output]
-                 *     None
+                 *     Same as input.
                  *
                  * [example]
                  *     <hookcode>
@@ -294,6 +294,8 @@ if (count($_POST)) {
                  *         $PHORUM["mod_foo"]["user_registrations"][$userdata["user_id"]] = $_SERVER["REMOTE_ADDR"];
                  *
                  *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+                 *
+                 *         return $data;
                  *     }
                  *     </hookcode>
                  */
