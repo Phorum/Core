@@ -326,7 +326,7 @@ if (isset($_POST['username']))
          *     </ul>
          *
          * [output]
-         *     None
+         *     Same as input.
          *
          * [example]
          *     <hookcode>
@@ -355,6 +355,8 @@ if (isset($_POST['username']))
          *             $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] = $curr_time;
          *         }
          *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *
+         *         return $data;
          *     }
          *     </hookcode>
          */

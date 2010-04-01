@@ -200,7 +200,7 @@ phorum_db_update_message($message["message_id"], $dbmessage);
  *     which holds the original message data (added in Phorum 5.2.15)
  *
  * [output]
- *     None
+ *     Same as input.
  *
  * [example]
  *     <hookcode>
@@ -222,6 +222,8 @@ phorum_db_update_message($message["message_id"], $dbmessage);
  *                 $dbmessage["user_id"]
  *                 );
  *         }
+ *
+ *         return $dbmessage;
  *     }
  *     </hookcode>
  */

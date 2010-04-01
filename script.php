@@ -158,7 +158,7 @@ if (count($modules))
  *     Any array of arguments. (Optional)
  *
  * [output]
- *     None
+ *     Same as input.
  */
 
 if ($callhook == 'external')
