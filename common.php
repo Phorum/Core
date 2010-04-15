@@ -121,62 +121,77 @@ if (!defined( "PHORUM_ADMIN" ))
         }
     }
 
-    // Load the settings for the currently active forum.
-    $forum_settings = phorum_api_forums_get(
+    if(!empty($PHORUM["forum_id"])){
+
+        // Load the settings for the currently active forum.
+        $forum_settings = phorum_api_forums_get(
         $PHORUM["forum_id"],null,null,null,PHORUM_FLAG_INCLUDE_INACTIVE);
 
-    if ($forum_settings === NULL)
-    {
-        /*
-         * [hook]
-         *     common_no_forum
-         *
-         * [description]
-         *     This hook is called in case a forum_id is requested for
-         *     an unknown or inaccessible forum. It can be used for
-         *     doing things like logging the bad requests or fully
-         *     overriding Phorum's default behavior for these cases
-         *     (which is redirecting the user back to the index page).
-         *
-         * [category]
-         *     Request initialization
-         *
-         * [when]
-         *     In <filename>common.php</filename>, right after detecting
-         *     that a requested forum does not exist or is inaccessible
-         *     and right before redirecting the user back to the Phorum
-         *     index page.
-         *
-         * [input]
-         *     No input.
-         *
-         * [output]
-         *     No output.
-         *
-         * [example]
-         *     <hookcode>
-         *     function phorum_mod_foo_common_no_forum()
-         *     {
-         *         // Return a 404 Not found error instead of redirecting
-         *         // the user back to the index.
-         *         header("HTTP/1.0 404 Not Found");
-         *         print "<html><head>\n";
-         *         print "  <title>404 - Not Found</title>\n";
-         *         print "</head><body>";
-         *         print "  <h1>404 - Forum Not Found</h1>";
-         *         print "</body></html>";
-         *         exit();
-         *     }
-         *     </hookcode>
-         */
-        if (isset($PHORUM["hooks"]["common_no_forum"])) {
-            phorum_api_hook("common_no_forum", "");
+        if ($forum_settings === NULL)
+        {
+            /*
+             * [hook]
+             *     common_no_forum
+             *
+             * [description]
+             *     This hook is called in case a forum_id is requested for
+             *     an unknown or inaccessible forum. It can be used for
+             *     doing things like logging the bad requests or fully
+             *     overriding Phorum's default behavior for these cases
+             *     (which is redirecting the user back to the index page).
+             *
+             * [category]
+             *     Request initialization
+             *
+             * [when]
+             *     In <filename>common.php</filename>, right after detecting
+             *     that a requested forum does not exist or is inaccessible
+             *     and right before redirecting the user back to the Phorum
+             *     index page.
+             *
+             * [input]
+             *     No input.
+             *
+             * [output]
+             *     No output.
+             *
+             * [example]
+             *     <hookcode>
+             *     function phorum_mod_foo_common_no_forum()
+             *     {
+             *         // Return a 404 Not found error instead of redirecting
+             *         // the user back to the index.
+             *         header("HTTP/1.0 404 Not Found");
+             *         print "<html><head>\n";
+             *         print "  <title>404 - Not Found</title>\n";
+             *         print "</head><body>";
+             *         print "  <h1>404 - Forum Not Found</h1>";
+             *         print "</body></html>";
+             *         exit();
+             *     }
+             *     </hookcode>
+             */
+            if (isset($PHORUM["hooks"]["common_no_forum"])) {
+                phorum_api_hook("common_no_forum", "");
+            }
+
+            phorum_api_redirect(PHORUM_INDEX_URL);
         }
 
-        phorum_api_redirect(PHORUM_INDEX_URL);
-    }
+        $PHORUM = array_merge($PHORUM, $forum_settings);
 
-    $PHORUM = array_merge($PHORUM, $forum_settings);
+    } elseif(isset($PHORUM["forum_id"]) && $PHORUM["forum_id"]==0){
+
+        $PHORUM = array_merge( $PHORUM, $PHORUM["default_forum_options"] );
+
+        // some hard settings are needed if we are looking at forum_id 0
+        $PHORUM['vroot']=0;
+        $PHORUM['parent_id']=0;
+        $PHORUM['active']=1;
+        $PHORUM['folder_flag']=1;
+        $PHORUM['cache_version']=0;
+
+    }
 
     // handling vroots
     if (!empty($PHORUM['vroot']))
