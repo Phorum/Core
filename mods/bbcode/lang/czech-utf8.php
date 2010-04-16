@@ -10,12 +10,16 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'color'         => 'Barva písma',
     'size'          => 'Velikost písma',
     'center'        => 'Vycentrovat text',
+    'left'          => 'Zarovnat vlevo',
+    'right'         => 'Zarovnat doprava',
     'url'           => 'Vložit odkaz',
     'email'         => 'Vložit emailovou adresu',
     'img'           => 'Vložit odkaz obrázku',
     'hr'            => 'Vložit horizontální čáru',
     'code'          => 'Neformátovaný text',
     'quote'         => 'Vložit citaci',
+    'list'          => 'Insert a list of items',
+    'help'          => 'Help',
 
     # The text that is shown in the quote block.
     'quote_title'   => 'Citaci',

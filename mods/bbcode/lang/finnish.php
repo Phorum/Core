@@ -10,12 +10,16 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'color'         => 'Kirjasinv�ri',
     'size'          => 'Kirjasinkoko',
     'center'        => 'Keskit�',
+    'left'          => 'Tasaa vasemmalle',
+    'right'         => 'Tasaa oikealle',
     'url'           => 'Liit� URL',
     'email'         => 'Liit� s�hk�posti',
     'img'           => 'Liit� kuva URL',
     'hr'            => 'Lis�� vaakaviiva',
     'code'          => 'Koodi blokki',
     'quote'         => 'Liit� lainaus',
+    'list'          => 'Lista',
+    'help'          => 'Apua',
 
     # The text that is shown in the quote block.
     'quote_title'   => 'Lainaus',

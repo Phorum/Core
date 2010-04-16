@@ -10,12 +10,16 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'color'         => 'Barva p�sma',
     'size'          => 'Velikost p�sma',
     'center'        => 'Vycentrovat text',
+    'left'          => 'Zarovnat vlevo',
+    'right'         => 'Zarovnat doprava',
     'url'           => 'Vlo�it odkaz',
     'email'         => 'Vlo�it emailovou adresu',
     'img'           => 'Vlo�it odkaz obr�zku',
     'hr'            => 'Vlo�it horizont�ln� ��ru',
     'code'          => 'Neform�tovan� text',
     'quote'         => 'Vlo�it citaci',
+    'list'          => 'Insert a list of items',
+    'help'          => 'Help',
 
     # The text that is shown in the quote block.
     'quote_title'   => 'Citaci',
