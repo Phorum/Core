@@ -10,12 +10,16 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'color'         => 'Textfarbe',
     'size'          => 'Textgroesse',
     'center'        => 'Text zentrieren',
+    'left'          => 'Text links ausrichten',
+    'right'         => 'Text rechts ausrichten',
     'url'           => 'URL einfuegen',
     'email'         => 'E-Mail Adresse einfuegen',
     'img'           => 'Bild einfuegen',
     'hr'            => 'Horizontale Linie einfuegen',
     'code'          => 'Vorformatierten Text einfuegen',
     'quote'         => 'Zitierten Text einfuegen',
+    'list'          => 'Liste einfügen',
+    'help'          => 'Hilfe',
 
     # The text that is shown in the quote block.
     'quote_title'   => 'Zitat',

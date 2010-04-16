@@ -10,12 +10,16 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'color'         => 'Välj teckenfärg',
     'size'          => 'Välj teckenstorlek',
     'center'        => 'Centrera texten',
+    'left'          => 'Justera vänster',
+    'right'         => 'Justera höger',
     'url'           => 'Infoga sökväg (URL)',
     'email'         => 'Infoga e-post adress',
     'img'           => 'Infoga sökväg (URL) till bild',
     'hr'            => 'Infoga liggande linje',
     'code'          => 'Formatterad kod',
     'quote'         => 'Infoga citerad text',
+    'list'          => 'Insert a list of items',
+    'help'          => 'Help',
 
     # The text that is shown in the quote block.
     'quote_title'   => 'Quote',

@@ -10,12 +10,16 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'color'         => 'Couleur du texte',
     'size'          => 'Taille du texte',
     'center'        => 'Centrer le texte',
+    'left'          => 'Left align text',
+    'right'         => 'Right align text',
     'url'           => 'Ins�rer un lien',
     'email'         => 'Ins�rer une adresse e-mail',
     'img'           => 'Ins�rer une image distante',
     'hr'            => 'Ins�rer une ligne horizontale',
     'code'          => 'Code format�',
     'quote'         => 'Citation',
+    'list'          => 'Liste',
+    'help'          => 'Help',
 
     # The text that is shown in the quote block.
     'quote_title'   => 'Citation',

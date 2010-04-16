@@ -10,12 +10,16 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'color'         => 'Select font color',
     'size'          => 'Select font size',
     'center'        => 'Yaz�y� Ortala',
+    'left'          => 'Sola hizala',
+    'right'         => 'Sağa hizala',
     'url'           => 'Site Adresi Ekle',
     'email'         => 'E-Posta Adresi Ekle',
     'img'           => 'Resim ekle',
     'hr'            => 'Dikey �izgi Ekle',
     'code'          => 'Bi�imlendirilmi� Yaz�',
     'quote'         => 'Al�nt�',
+    'list'          => 'Insert a list of items',
+    'help'          => 'Help',
 
     # The text that is shown in the quote block.
     'quote_title'   => 'Al�nt�',

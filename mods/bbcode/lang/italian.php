@@ -10,12 +10,16 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'color'         => 'Seleziona il colore del testo',
     'size'          => 'Seleziona dimensioni del testo',
     'center'        => 'Allinea il testo al centro',
+    'left'          => 'Allinea a sinistra',
+    'right'         => 'Allinea a destra',
     'url'           => 'Inserisci URL (indirizzo internet)',
     'email'         => 'Inserisci indirizzo e-mail',
     'img'           => 'Inserisci indirizzo internet della immagine',
     'hr'            => 'Inserisci una linea orizzontale',
     'code'          => 'Codice formattato',
     'quote'         => 'Inserisci le virgolette',
+    'list'          => 'Insert a list of items',
+    'help'          => 'Help',
 
     # The text that is shown in the quote block.
     'quote_title'   => 'Virgolette',
