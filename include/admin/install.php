@@ -173,40 +173,71 @@ if(count($_POST)){
 
         case "create_admin_user":
 
-            if(!empty($_POST["admin_user"]) && !empty($_POST["admin_pass"]) && !empty($_POST["admin_pass2"]) && !empty($_POST["admin_email"])){
-                if($_POST["admin_pass"]!=$_POST["admin_pass2"]){
+            if (!empty($_POST["admin_user"]) && !empty($_POST["admin_pass"]) &&
+                !empty($_POST["admin_pass2"]) && !empty($_POST["admin_email"]))
+            {
+                // Check if the two entered passwords are equal.
+                if ($_POST["admin_pass"] != $_POST["admin_pass2"]) {
                     phorum_admin_error("The password fields do not match");
-                } elseif(phorum_api_user_authenticate(PHORUM_ADMIN_SESSION, $_POST["admin_user"],$_POST["admin_pass"])){
-                    if($PHORUM["user"]["admin"]){
-                        phorum_admin_error("Admin user already exists and has permissions.");
-                    } else {
-                        phorum_admin_error("That user already exists but does not have admin permissions.");
-                    }
-                } else {
+                    break;
+                }
 
+                // Check if the user already exists as an admin user.
+                // If yes, then we can use that existing user.
+                $user_id = phorum_api_user_authenticate(
+                    PHORUM_ADMIN_SESSION,
+                    $_POST["admin_user"],$_POST["admin_pass"]
+                );
+                if ($user_id) {
+                    $user = phorum_api_user_get($user_id);
+                    if (empty($user["admin"])) {
+                        phorum_admin_error(
+                            "That user already exists but without admin " .
+                            "permissions. Please create a different user."
+                        );
+                        break;
+                    }
+                }
+
+                // Authenticating the user failed? Let's check if the user
+                // already exists at all.
+                if (!$user_id) {
+                    $user = phorum_api_user_search('username', $_POST['admin_user']);
+                    if ($user) {
+                        phorum_admin_error(
+                            "That user already exists in the database."
+                        );
+                        break;
+                    }
+                }
+
+                // The user does not yet exist. Create it now.
+                if (!$user_id)
+                {
                     // add the user
                     $user = array( "user_id"=>NULL, "username"=>$_POST["admin_user"], "password"=>$_POST["admin_pass"], "email"=>$_POST["admin_email"], "active"=>1, "admin"=>1 );
 
-                    if(!phorum_api_user_save($user)){
+                    if (!phorum_api_user_save($user)){
                         phorum_admin_error("There was an error adding the user.");
+                        break;
                     }
-
-                    // set the default http_path so we can continue.
-                    if(!empty($_SERVER["HTTP_REFERER"])) {
-                        $http_path=$_SERVER["HTTP_REFERER"];
-                    } elseif(!empty($_SERVER['HTTP_HOST'])) {
-                        $http_path="http://".$_SERVER['HTTP_HOST'];
-                        $http_path.=$_SERVER['PHP_SELF'];
-                    } else {
-                        $http_path="http://".$_SERVER['SERVER_NAME'];
-                        $http_path.=$_SERVER['PHP_SELF'];
-                    }
-                    phorum_db_update_settings(array("http_path"=>dirname($http_path)));
-                    phorum_db_update_settings(array("system_email_from_address"=>$_POST["admin_email"]));
-
-                    $step = "modules";
-
                 }
+
+                // set the default http_path so we can continue.
+                if(!empty($_SERVER["HTTP_REFERER"])) {
+                    $http_path=$_SERVER["HTTP_REFERER"];
+                } elseif(!empty($_SERVER['HTTP_HOST'])) {
+                    $http_path="http://".$_SERVER['HTTP_HOST'];
+                    $http_path.=$_SERVER['PHP_SELF'];
+                } else {
+                    $http_path="http://".$_SERVER['SERVER_NAME'];
+                    $http_path.=$_SERVER['PHP_SELF'];
+                }
+                phorum_db_update_settings(array("http_path"=>dirname($http_path)));
+                phorum_db_update_settings(array("system_email_from_address"=>$_POST["admin_email"]));
+
+                $step = "modules";
+
             } else {
                 phorum_admin_error("Please fill in all fields.");
             }
