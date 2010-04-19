@@ -21,6 +21,7 @@
         <dd>{PROFILE->posts}</dd>
         <dt>{LANG->Signature}:</dt>
         <dd>{PROFILE->signature_formatted}</dd>
+        {HOOK "tpl_cc_start" PROFILE} 
     </dl>
 </div>
 {IF PROFILE->admin OR UserPerms}

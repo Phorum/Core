@@ -37,6 +37,7 @@
           <td nowrap="nowrap">{LANG->DateActive}:&nbsp;</td>
           <td>{PROFILE->date_last_active}</td>
         </tr>
+        {HOOK "tpl_profile" PROFILE} 
       {/IF}
     </table>
   </div>
