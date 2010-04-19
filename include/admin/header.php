@@ -34,18 +34,19 @@ if (isset($PHORUM["DATA"]['CHARSET'])) {
 	header("Content-Type: text/html; " .
            "charset=".htmlspecialchars($PHORUM["DATA"]['CHARSET']));
 }
-// set the path to the CSS file to pull in
-$default_admin_css_file = 'default.css';
-$admin_css_path = $PHORUM["http_path"].'/include/admin/css/' . $default_admin_css_file;
+
+// Set the path to the CSS file to use.
+$admin_css_path = $PHORUM['http_path'].'/include/admin/css/default.css';
+
+// Chrome doesn't like the double slash in "//path/to/file.css".
+$admin_css_path = preg_replace('!^//!', '/', $admin_css_path);
 
 /**
  * [hook]
  *     admin_css_file
  *
  * [description]
- *     This hook can be used to pull in an alternate css file for the admin screens.
- *     That's pretty much all it's useful for. This hook is allowed to change the path to
- *     the admin css files because if we didn't allow it, someone would request it.
+ *     This hook allows changing the path to the admin css file.
  *
  * [category]
  *     Admin interface
@@ -54,10 +55,11 @@ $admin_css_path = $PHORUM["http_path"].'/include/admin/css/' . $default_admin_cs
  *     Just before output begins on the admin page.
  *
  * [input]
- *     A string containing the path to the css file which will be used for the admin page.
+ *     A string containing the URL to the css file which will be used
+ *     for the admin page.
  *
  * [output]
- *     The path to the actual css file to use.
+ *     The URL to the actual css file to use.
  *
  * [example]
  *     <hookcode>
@@ -71,7 +73,6 @@ $admin_css_path = $PHORUM["http_path"].'/include/admin/css/' . $default_admin_cs
  *     }
  *     </hookcode>
  */
-
 if (isset($PHORUM['hooks']['admin_css_file'])) {
 	$admin_css_path = phorum_hook('admin_css_file', $admin_css_path);
 }
