@@ -31,6 +31,7 @@
       <td>{LANG->Signature}:</td>
       <td>{PROFILE->signature_formatted}</td>
     </tr>
+    {HOOK "tpl_cc_start" PROFILE} 
   </table>
 </div>
 {IF PROFILE->admin}{VAR SHOWPERMS 1}{/IF}
