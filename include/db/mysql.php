@@ -7968,15 +7968,16 @@ function phorum_db_sanitychecks()
     global $PHORUM;
 
     // For Phorum 5.2+, we need the "charset" option to be set
-    // in the config.php.
+    // in the include/config/database.php.
     if (!isset($PHORUM['DBCONFIG']['charset'])) return array(
         PHORUM_SANITY_CRIT,
         "Database configuration parameter \"charset\" missing.",
         "The option \"charset\" is missing in your database configuration.
-         This might indicate that you are using a config.php from an
-         older Phorum version, which does not yet contain this option.
-         Please, copy include/config/database.php.sample to
-         include/config/database.php and edit this new config.php. Read
+         This might indicate that you are using an
+         include/config/database.php from an older Phorum version, which does
+         not yet contain this option. Please, copy
+         include/config/database.php.sample to
+         include/config/database.php and edit this new database.php. Read
          Phorum's install.txt for installation instructions."
     );
 
@@ -8066,9 +8067,9 @@ function phorum_db_sanitychecks()
 // ----------------------------------------------------------------------
 
 // PHP has support for MySQL connections through multiple extensions.
-// If the config.php specifies a PHP database extension, then this one is
-// used for loading the specific PHP database extension code. Otherwise,
-// we try to auto-detect which one is available.
+// If the include/config/database.php specifies a PHP database extension,
+// then this one is used for loading the specific PHP database extension code.
+// Otherwise, we try to auto-detect which one is available.
 
 $ext = NULL;
 // could be unset in Phorum < 5.2.7

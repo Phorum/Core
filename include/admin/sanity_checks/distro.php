@@ -301,6 +301,10 @@ function phorum_check_distro()
          \"777\" for Phorum!"
     );
     $ok = false;
+    // The config.php file is skipped. This is the old database configuration
+    // file. From 5.3 on, the database config is stored in
+    // include/config/database.php. Because in old installations, the
+    // config.php might still be in this location, we explicitly still skip it.
     while ($entry = readdir($dir)) {
         if (substr($entry, -4, 4) == ".php" && $entry != "config.php") {
             $ok = true;

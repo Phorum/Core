@@ -7363,9 +7363,9 @@ function phorum_db_sanitychecks()
 // ----------------------------------------------------------------------
 
 // PHP has support for MySQL connections through multiple extensions.
-// If the config.php specifies a PHP database extension, then this one is
-// used for loading the specific PHP database extension code. Otherwise,
-// we try to auto-detect which one is available.
+// If the include/config/database.php specifies a PHP database extension,
+// then this one is used for loading the specific PHP database extension code.
+// Otherwise, we try to auto-detect which one is available.
 // There is just one Phorum extenstion for PostgreSQL but we take the same
 // approach to be consistent.
 

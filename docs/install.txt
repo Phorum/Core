@@ -168,11 +168,11 @@ Contents:
    included.
 
    First, copy or rename the file "include/config/database.php.sample" to
-   "include/config/database.php". Now edit the config.php file to match the
+   "include/config/database.php". Now edit the database.php file to match the
    access settings for the database that was created in step 4.
 
    If you run your website on a remote server, then either edit
-   the config.php file directly on that server (e.g. through a
+   the database.php file directly on that server (e.g. through a
    UNIX prompt) or upload the file to the correct location after
    editing it locally.
 

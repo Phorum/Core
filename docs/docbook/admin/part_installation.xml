@@ -182,7 +182,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO 'myuser'@'localhost' IDENTIFIED BY '
         Copy or rename the sample configuration file
         <filename>include/config/database.php.sample</filename> to
         <filename>include/config/database.php</filename>. Then edit the
-        <filename>config.php</filename> file to match the access
+        <filename>database.php</filename> file to match the access
         settings for the database that was created in
         <xref linkend="installation.createdb"/>.
       </para>
