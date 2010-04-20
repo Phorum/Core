@@ -598,6 +598,10 @@ switch ($step){
 
         foreach ($list['modules'] as $name => $info)
         {
+            // Skip the compatibility modules.
+            // These are enabled automatically by Phorum when required.
+            if (!empty($info['compat'])) continue;
+
             // Should not happen.
             if ($info['version_disabled']) continue;
 
