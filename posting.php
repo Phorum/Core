@@ -329,7 +329,8 @@ switch($mode){
         $PHORUM["DATA"]["DESCRIPTION"] = "";
         $PHORUM['DATA']['BREADCRUMBS'][] = array(
             'URL'  => '',
-            'TEXT' => $PHORUM['DATA']['LANG']['NewTopic']
+            'TEXT' => $PHORUM['DATA']['LANG']['NewTopic'],
+            'TYPE' => $mode
         );
         break;
     case "moderation":
@@ -338,7 +339,8 @@ switch($mode){
         $PHORUM["DATA"]["DESCRIPTION"] = "";
         $PHORUM['DATA']['BREADCRUMBS'][] = array(
             'URL'  => '',
-            'TEXT' => $PHORUM['DATA']['LANG']['EditMessage']
+            'TEXT' => $PHORUM['DATA']['LANG']['EditMessage'],
+            'TYPE' => $mode
         );
         break;
 }
