@@ -30,8 +30,8 @@ $module_registrations = array();
 // Add the jQuery JavaScript library code.
 $module_registrations[] = array(
     'module'    => 'core',
-    'source'    => 'file(include/javascript/jquery-1.3.2.min.js)',
-    'cache_key' => '1.3.2.min'
+    'source'    => 'file(include/javascript/jquery-1.4.2.min.js)',
+    'cache_key' => '1.4.2.min'
 );
 
 // Add the jQuery JSON plugin.
