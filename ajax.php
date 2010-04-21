@@ -58,7 +58,7 @@ $PHORUM['ajax_args'] = array();
 
 // Check if this is a JSONP request.
 $PHORUM['ajax_jsonp'] = NULL;
-if (isset($PHORUM['args']['callback']) && isset($PHORUM['args']['_'])) {
+if (isset($PHORUM['args']['callback'])) {
     $PHORUM['ajax_jsonp'] = $PHORUM['args']['callback'];
 }
 
