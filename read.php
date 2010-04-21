@@ -154,18 +154,12 @@ if(!$PHORUM["threaded_read"]) {
     }
 }
 
-// fill the breadcrumbs-info
-$PHORUM['DATA']['BREADCRUMBS'][]=array(
-    'URL'=>$page > 1 ? phorum_api_url(PHORUM_READ_URL, $thread) : '',
-    'TEXT'=>$PHORUM['DATA']['LANG']['Thread'],
-    'ID'=>$message_id,
-    'TYPE'=>'message'
-);
+// Add paging info to the breadcrumbs.
 if ($page > 1) {
     $PHORUM['DATA']['BREADCRUMBS'][]=array(
-        'URL'=>'',
-        'TEXT'=>$PHORUM['DATA']['LANG']['Page'] . ' ' . $page,
-        'TYPE'=>'message-page'
+        'URL'  => phorum_api_url(PHORUM_READ_URL, $thread, "page=$page"),
+        'TEXT' => $PHORUM['DATA']['LANG']['Page'] . ' ' . $page,
+        'TYPE' => 'message-page'
     );
 }
 

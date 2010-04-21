@@ -52,13 +52,6 @@ if (! $PHORUM["enable_pm"]) {
     return;
 }
 
-// fill the breadcrumbs-info
-$PHORUM['DATA']['BREADCRUMBS'][]=array(
-    'URL'=>$PHORUM['DATA']['URL']['PM'],
-    'TEXT'=>$PHORUM['DATA']['LANG']['PrivateMessages'],
-    'TYPE'=>'pm'
-);
-
 // ------------------------------------------------------------------------
 // Parameter handling
 // ------------------------------------------------------------------------
@@ -1337,6 +1330,15 @@ $PHORUM["DATA"]["FOLDER_IS_INCOMING"] = $folder_id == PHORUM_PM_OUTBOX ? 0 : 1;
 $PHORUM["DATA"]["PM_PAGE"] = $page;
 $PHORUM["DATA"]["PM_TEMPLATE"] = $template;
 $PHORUM["DATA"]["HIDE_USERSELECT"] = $hide_userselect;
+
+// fill the breadcrumbs-info
+$PHORUM['DATA']['BREADCRUMBS'][] = array(
+    'URL'  => $PHORUM['DATA']['URL']['PM'],
+    'TEXT' => $page == 'buddies'
+              ? $PHORUM['DATA']['LANG']['Buddies']
+              : $PHORUM['DATA']['LANG']['PrivateMessages'],
+    'TYPE' => $page == 'buddies' ? 'buddies' : 'pm'
+);
 
 if ($error_msg) {
     $PHORUM["DATA"]["ERROR"] = $error_msg;

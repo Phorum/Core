@@ -43,6 +43,8 @@ phorum_api_request_parse();
  *     Because the hook was put after the request parsing phase, you can
  *     make use of the request data that is stored in the global variables
  *     <literal>$PHORUM['forum_id']</literal> and
+ *     <literal>$PHORUM['ref_thread_id']</literal> and
+ *     <literal>$PHORUM['ref_message_id']</literal> and
  *     <literal>$PHORUM['args']</literal>.
  *
  * [category]
@@ -87,7 +89,7 @@ if (!defined( "PHORUM_ADMIN" ))
 {
     $PHORUM["DATA"]["TITLE"] =
         isset($PHORUM["title"]) ? $PHORUM["title"] : "";
-        
+
     $PHORUM["DATA"]["DESCRIPTION"] =         
         isset( $PHORUM["description"]) ? $PHORUM["description"] : "";
 
@@ -594,6 +596,12 @@ if (!defined( "PHORUM_ADMIN" ))
     $PHORUM['DATA']['USERTRACK'] = $PHORUM['track_user_activity'];
     $PHORUM['DATA']['VROOT'] = $PHORUM['vroot'];
     $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"forum_id\" value=\"{$PHORUM["forum_id"]}\" />\n";
+    if (!empty($PHORUM['ref_thread_id'])) {
+        $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"ref_thread_id\" value=\"{$PHORUM["ref_thread_id"]}\" />\n";
+    }
+    if (!empty($PHORUM['ref_message_id'])) {
+        $PHORUM['DATA']['POST_VARS'].="<input type=\"hidden\" name=\"ref_message_id\" value=\"{$PHORUM["ref_message_id"]}\" />\n";
+    }
 
     if (!empty($PHORUM['use_rss'])) {
         if($PHORUM["default_feed"] == "rss"){
@@ -659,6 +667,20 @@ if (!defined( "PHORUM_ADMIN" ))
         if (!$PHORUM['folder_flag']) {
             $PHORUM['DATA']['BREADCRUMBS'][$track]['TYPE'] = 'forum';
             $PHORUM['DATA']['BREADCRUMBS'][$track]['URL'] = phorum_api_url(PHORUM_LIST_URL, $track);
+        }
+
+        if (!empty($PHORUM['ref_thread_id'])) {
+            $PHORUM['DATA']['BREADCRUMBS'][] = array(
+                'URL'  => phorum_api_url(
+                    PHORUM_READ_URL,
+                    $PHORUM['ref_thread_id'],
+                    $PHORUM['ref_message_id']
+                ),
+                'TEXT' => $PHORUM['DATA']['LANG']['Thread'],
+                'ID'   => $PHORUM['ref_message_id'],
+                'TYPE' => 'message'
+            );
+
         }
     }
 }

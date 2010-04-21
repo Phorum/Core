@@ -44,6 +44,10 @@
  *   this path info is parsed into standard Phorum arguments.
  * - If a forum_id is available in the request, then it is stored
  *   in $PHORUM['forum_id'].
+ * - If a ref_thread_id is available in the request, then it is stored
+ *   in $PHORUM['thread_id']. This is the referring thread id.
+ * - If a ref_message_id is available in the request, then it is stored
+ *   in $PHORUM['message_id']. This is the referring message id.
  */
 function phorum_api_request_parse()
 {
@@ -169,13 +173,6 @@ function phorum_api_request_parse()
         phorum_api_hook("parse_request");
     }
 
-    // Get the forum_id if set using a POST or GET parameter.
-    if (isset($_POST['forum_id']) && is_numeric($_POST['forum_id'])) {
-        $PHORUM['forum_id'] = (int) $_POST['forum_id'];
-    } elseif (isset($_GET['forum_id']) && is_numeric($_GET['forum_id'])) {
-        $PHORUM['forum_id'] = (int) $_GET['forum_id'];
-    }
-
     // Look for and parse the QUERY_STRING or custom query string in
     // $PHORUM_CUSTOM_QUERY_STRING..
     // For the admin environment, we don't handle this request handling step.
@@ -243,6 +240,44 @@ function phorum_api_request_parse()
         // Phorum request parameter.
         if (empty($PHORUM['forum_id']) && isset($PHORUM['args'][0])) {
             $PHORUM['forum_id'] = (int) $PHORUM['args'][0];
+        }
+
+        // Get the forum_id, ref_thread_id and ref_message_id if set using
+        // a named POST, GET or Phorum query arg parameter.
+        foreach (array('forum_id', 'ref_thread_id', 'ref_message_id') as $field) {
+            if (isset($_POST[$field]) && is_numeric($_POST[$field])) {
+                $PHORUM[$field] = (int) $_POST[$field];
+            } elseif (isset($_GET[$field]) && is_numeric($_GET[$field])) {
+                $PHORUM[$field] = (int) $_GET[$field];
+            } elseif (isset($PHORUM['args'][$field]) &&
+                      is_numeric($PHORUM['args'][$field])) {
+                $PHORUM[$field] = (int) $PHORUM['args'][$field];
+            }
+        }
+
+        // Set the active ref_thread_id and ref_message_id if not already set
+        // by a request parameter and when these are passed as numeric
+        // arguments.
+        if (empty($PHORUM['thread_id'])) {
+            if (in_array(phorum_page, array(
+                // The pages that use the numeric "forum,thread,message" format.
+                'list', 'read', 'login', 'register', 'pm', 'control'
+            ))) {
+                if (empty($PHORUM['ref_thread_id']) && isset($PHORUM['args'][1]) &&
+                    is_numeric($PHORUM['args'][1])) {
+                    $PHORUM['ref_thread_id'] = $PHORUM['args'][1];
+                }
+                if (empty($PHORUM['ref_message_id']) && isset($PHORUM['args'][2]) &&
+                    is_numeric($PHORUM['args'][2])) {
+                    $PHORUM['ref_message_id'] = $PHORUM['args'][2];
+                }
+            }
+        }
+
+        // The ref_message_id can be set to the ref_thread_id, if no
+        // ref_message_id was provided.
+        if (!empty($PHORUM['ref_thread_id']) && empty($PHORUM['ref_message_id'])) {
+            $PHORUM['ref_message_id'] = $PHORUM['ref_thread_id'];
         }
     }
 }

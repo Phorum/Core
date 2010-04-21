@@ -65,6 +65,7 @@ define('PHORUM_POSTING_ACTION_URL',       34);
 define('PHORUM_JAVASCRIPT_URL',           35);
 define('PHORUM_AJAX_URL',                 36);
 define('PHORUM_OPENID_URL',               37);
+define('PHORUM_FOREIGN_PM_URL',           38);
 
 global $PHORUM;
 
@@ -80,6 +81,10 @@ global $PHORUM;
  *   1 = no
  *   2 = yes
  *   3 = conditional (only if there are no other args in $argv)
+ *   4 = add forum_id and (if available) ref_thread_id and ref_message_id
+ *       (these are respectively the referring thread and message id,
+ *       which are used by the breadcrumbs system to keep track of
+ *       thread and message)
  *
  * - A boolean, telling whether the GET vars have to be added to the URL.
  *
@@ -96,7 +101,7 @@ $PHORUM['API']['url_patterns'] = array
     PHORUM_BASE_URL                 => array('',           1, TRUE,  '', NULL),
     PHORUM_CHANGES_URL              => array('changes',    2, TRUE,  '', NULL),
     PHORUM_CONTROLCENTER_ACTION_URL => array('control',    1, FALSE, '', NULL),
-    PHORUM_CONTROLCENTER_URL        => array('control',    2, TRUE,  '', NULL),
+    PHORUM_CONTROLCENTER_URL        => array('control',    4, TRUE,  '', NULL),
     PHORUM_CSS_URL                  => array('css',        2, TRUE,  '', NULL),
     PHORUM_JAVASCRIPT_URL           => array('javascript', 2, TRUE,  '', NULL),
     PHORUM_FEED_URL                 => array('feed',       1, TRUE,  '', NULL),
@@ -105,18 +110,19 @@ $PHORUM['API']['url_patterns'] = array
     PHORUM_INDEX_URL                => array('index',      1, TRUE,  '', NULL),
     PHORUM_LIST_URL                 => array('list',       3, TRUE,  '', NULL),
     PHORUM_LOGIN_ACTION_URL         => array('login',      1, FALSE, '', NULL),
-    PHORUM_LOGIN_URL                => array('login',      2, TRUE,  '', NULL),
+    PHORUM_LOGIN_URL                => array('login',      4, TRUE,  '', NULL),
     PHORUM_MODERATION_ACTION_URL    => array('moderation', 1, FALSE, '', NULL),
     PHORUM_MODERATION_URL           => array('moderation', 2, TRUE,  '', NULL),
     PHORUM_PM_ACTION_URL            => array('pm',         1, FALSE, '', NULL),
-    PHORUM_PM_URL                   => array('pm',         2, TRUE,  '', NULL),
+    PHORUM_PM_URL                   => array('pm',         4, TRUE,  '', NULL),
+    PHORUM_FOREIGN_PM_URL           => array('pm',         1, TRUE,  '', NULL),
     PHORUM_POSTING_URL              => array('posting',    2, TRUE,  '', NULL),
     PHORUM_POSTING_ACTION_URL       => array('posting',    1, FALSE, '', NULL),
-    PHORUM_PROFILE_URL              => array('profile',    2, TRUE,  '', NULL),
+    PHORUM_PROFILE_URL              => array('profile',    4, TRUE,  '', NULL),
     PHORUM_REDIRECT_URL             => array('redirect',   1, TRUE,  '', NULL),
     PHORUM_REGISTER_ACTION_URL      => array('register',   1, FALSE, '', NULL),
-    PHORUM_REGISTER_URL             => array('register',   2, TRUE,  '', NULL),
-    PHORUM_REPORT_URL               => array('report',     2, TRUE,  '', NULL),
+    PHORUM_REGISTER_URL             => array('register',   4, TRUE,  '', NULL),
+    PHORUM_REPORT_URL               => array('report',     4, TRUE,  '', NULL),
     PHORUM_SEARCH_ACTION_URL        => array('search',     1, FALSE, '', NULL),
     PHORUM_SEARCH_URL               => array('search',     2, TRUE,  '', NULL),
     PHORUM_SUBSCRIBE_URL            => array('subscribe',  2, TRUE,  '', NULL),
@@ -148,7 +154,7 @@ function phorum_api_url()
     $url          = '';
     $suffix       = '';
     $pathinfo     = NULL;
-    $add_forum_id = FALSE;
+    $add_forum_id = 1;
     $add_get_vars = TRUE;
 
     $type = array_shift($argv);
@@ -162,7 +168,7 @@ function phorum_api_url()
         {
             case PHORUM_REPLY_URL:
                 $add_get_vars = TRUE;
-                $add_forum_id = TRUE;
+                $add_forum_id = 2;
                 // The reply URL depends on how the reply form is handled.
                 if (!empty($PHORUM['reply_on_read_page'])) {
                     $name = 'read';
@@ -174,7 +180,7 @@ function phorum_api_url()
 
             case PHORUM_FILE_URL:
                 $name = 'file';
-                $add_forum_id = TRUE;
+                $add_forum_id = 2;
 
                 // If a filename=... parameter is set, then change that
                 // parameter to a URL path, unless this feature is not
@@ -215,7 +221,7 @@ function phorum_api_url()
                     }
                     if ($file_id !== NULL && $filename !== NULL) {
                         foreach ($unset as $id) unset($argv[$id]);
-                        $add_forum_id = FALSE;
+                        $add_forum_id = 2;
                         $pathinfo = "/$download{$PHORUM['forum_id']}/" .
                                     "$file_id/$filename";
                     }
@@ -227,7 +233,7 @@ function phorum_api_url()
                 // first arg is our page
                 $name = array_shift($argv);
                 // second arg determines if we should add the forum_id
-                $add_forum_id = (bool) array_shift($argv);
+                $add_forum_id = (bool) array_shift($argv) ? 2 : 0;
                 break;
 
             default:
@@ -257,11 +263,6 @@ function phorum_api_url()
                 }
             }
         }
-
-        // Add forum id if setting is conditional and there are no params.
-        if ($add_forum_id==3 && count($argv) == 0) {
-            $add_forum_id=2;
-        }
     }
 
     // Build the URL.
@@ -269,7 +270,29 @@ function phorum_api_url()
     if ($name) $url .= $name . '.' . PHORUM_FILE_EXTENSION;
 
     // Build the query parameters to add.
-    if ($add_forum_id == 2) array_unshift($argv, $PHORUM['forum_id']);
+
+    // Add forum id if requested.
+    if ($add_forum_id === 2) {
+        array_unshift($argv, $PHORUM['forum_id']);
+    }
+
+    // Add forum id if setting is conditional and there are no params.
+    if ($add_forum_id === 3 & count($argv) == 0) {
+        array_unshift($argv, $PHORUM['forum_id']);
+    }
+
+    // Add forum id and (if available) the thread and message id.
+    if ($add_forum_id === 4) {
+        if (!empty($PHORUM['ref_message_id'])) {
+            array_push($argv, 'ref_message_id=' . $PHORUM['ref_message_id']);
+        }
+        if (!empty($PHORUM['ref_thread_id'])) {
+            array_push($argv, 'ref_thread_id=' . $PHORUM['ref_thread_id']);
+        }
+        array_unshift($argv, $PHORUM['forum_id']);
+    }
+
+    // Add GET vars if requested.
     if ($add_get_vars) {
         $query_params = array_merge($argv, $PHORUM['DATA']['GET_VARS']);
     } else {
