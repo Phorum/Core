@@ -1411,6 +1411,37 @@ function phorum_output($templates) {
         phorum_hook("start_output");
     }
 
+    /* 
+     * [availability]
+     *     Phorum 5 >= 5.2.16
+     *
+     * [hook]
+     *     start_output_<page>
+     *
+     * [description]
+     *     This hook provides the same functionality as the
+     *     <hook>start_output</hook> hook. The difference is that this
+     *     hook is called for a specific phorum_page, which makes
+     *     this a lightweight hook if you only need to do processing
+     *     for a single phorum_page.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After setting up all Phorum data, right before sending the
+     *     page header template.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     */
+    if (isset($GLOBALS['PHORUM']['hooks']['start_output_' . phorum_page])) {
+        phorum_hook('start_output_' . phorum_page);
+    }
+
     // Copy only what we need into the current scope. We do this at
     // this point and not earlier, so the start_output hook can be
     // used for changing values in the $PHORUM data.
@@ -1462,6 +1493,108 @@ function phorum_output($templates) {
         phorum_hook("after_header");
     }
 
+    /* 
+     * [availability]
+     *     Phorum 5 >= 5.2.16
+     *
+     * [hook]
+     *     after_header_<page>
+     *
+     * [description]
+     *     This hook provides the same functionality as the
+     *     <hook>after_header</hook> hook. The difference is that this
+     *     hook is called for a specific phorum_page, which makes
+     *     this a lightweight hook if you only need to do processing
+     *     for a single phorum_page.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After sending the page header template, but before sending the
+     *     main page content.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     */
+    if (isset($GLOBALS['PHORUM']['hooks']['after_header_' . phorum_page])) {
+        phorum_hook('after_header_' . phorum_page);
+    }
+
+    /*
+     * [hook]
+     *     output_templates
+     *
+     * [description]
+     *     This hook can be used to alter the list of templates that
+     *     will be displayed by the phorum_api_output() call.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After sending the page header template, but before sending the
+     *     main page content.
+     *
+     * [input]
+     *     An array, containing the names of the templates to display
+     *     in the page body (between the header and footer template).
+     *
+     * [output]
+     *     Same as input, possibly modified.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_output_templates($templates)
+     *     {
+     *         // Add some advertisements at the top and bottom of the page.
+     *         array_unshift($templates, "foo::top_advertisement);
+     *         array_push($templates, "foo::bottom_advertisement);
+     *
+     *         return $templates;
+     *     }
+     *     </hookcode>
+     */
+    if (isset($PHORUM['hooks']['output_templates'])) {
+        $templates = phorum_hook('output_templates', $templates);
+    }
+
+    /* 
+     * [availability]
+     *     Phorum 5 >= 5.2.16
+     *
+     * [hook]
+     *     output_templates_<page>
+     *
+     * [description]
+     *     This hook provides the same functionality as the
+     *     <hook>output_templates</hook> hook. The difference is that this
+     *     hook is called for a specific phorum_page, which makes
+     *     this a lightweight hook if you only need to do processing
+     *     for a single phorum_page.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After sending the page header template, but before sending the
+     *     main page content.
+     *
+     * [input]
+     *     An array, containing the names of the templates to display
+     *     in the page body (between the header and footer template).
+     *
+     * [output]
+     *     Same as input, possibly modified.
+     */
+    if (isset($GLOBALS['PHORUM']['hooks']['output_templates' . phorum_page])) {
+        $templates = phorum_hook(
+          'output_templates' . phorum_page, $templates);
+    }
+
     foreach($templates as $template){
         include phorum_get_template($template);
     }
@@ -1503,6 +1636,37 @@ function phorum_output($templates) {
         phorum_hook("before_footer");
     }
 
+    /* 
+     * [availability]
+     *     Phorum 5 >= 5.2.16
+     *
+     * [hook]
+     *     before_footer_<page>
+     *
+     * [description]
+     *     This hook provides the same functionality as the
+     *     <hook>before_footer</hook> hook. The difference is that this
+     *     hook is called for a specific phorum_page, which makes
+     *     this a lightweight hook if you only need to do processing
+     *     for a single phorum_page.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After sending the main page content, but before sending the
+     *     page footer template.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     */
+    if (isset($GLOBALS['PHORUM']['hooks']['before_footer_' . phorum_page])) {
+        phorum_hook('before_footer_' . phorum_page);
+    }
+
     include phorum_get_template("footer");
 
     /*
@@ -1540,6 +1704,36 @@ function phorum_output($templates) {
      */
     if (isset($PHORUM["hooks"]["end_output"])) {
         phorum_hook("end_output");
+    }
+
+    /* 
+     * [availability]
+     *     Phorum 5 >= 5.2.16
+     *
+     * [hook]
+     *     end_output_<page>
+     *
+     * [description]
+     *     This hook provides the same functionality as the
+     *     <hook>end_output</hook> hook. The difference is that this
+     *     hook is called for a specific phorum_page, which makes
+     *     this a lightweight hook if you only need to do processing
+     *     for a single phorum_page.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After sending the page footer template.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     */
+    if (isset($GLOBALS['PHORUM']['hooks']['end_output_' . phorum_page])) {
+        phorum_hook('end_output_' . phorum_page);
     }
 }
 
