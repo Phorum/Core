@@ -376,21 +376,46 @@ if (!defined( "PHORUM_ADMIN" ))
         $PHORUM["DATA"]["URL"]["AJAX"] = phorum_api_url(PHORUM_AJAX_URL);
     }
 
+    // Language names that modules might be using to reference the same
+    // language. Before Phorum 5.3, the language filename format was
+    // not standardized, so some other formats might still be in use.
+    // The included language file can fill this array with appropriate
+    // language names when needed.
+    $PHORUM['compat_languages'] = array(); 
+
     // Load the main language file.
     $PHORUM['language'] = basename($PHORUM['language']);
     if (file_exists(PHORUM_PATH."/include/lang/$PHORUM[language].php")) {
         require_once PHORUM_PATH."/include/lang/$PHORUM[language].php";
+    } else trigger_user_error(
+        "Language file include/lang/$PHORUM[language].php not found",
+        E_USER_ERROR
+    );
+
+    // Add the active language and the default language to compat_languages,
+    // so we can simply use the language array to scan for language files.
+    $PHORUM['compat_languages'][] = $PHORUM['language'];
+    $PHORUM['compat_languages'] = array_reverse($PHORUM['compat_languages']);
+    if (PHORUM_DEFAULT_LANGUAGE !== $PHORUM['language']) {
+        $PHORUM['compat_languages'][] = PHORUM_DEFAULT_LANGUAGE;
     }
 
     // Load language file(s) for localized modules.
     if (!empty($PHORUM['hooks']['lang']['mods'])) {
         foreach($PHORUM['hooks']['lang']['mods'] as $mod) {
             $mod = basename($mod);
-            if (file_exists(PHORUM_PATH."/mods/$mod/lang/$PHORUM[language].php")) {
-                require_once PHORUM_PATH."/mods/$mod/lang/$PHORUM[language].php";
-            } elseif (file_exists(PHORUM_PATH."/mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php")) {
-                require_once PHORUM_PATH."/mods/$mod/lang/".PHORUM_DEFAULT_LANGUAGE.".php";
+            $loaded = FALSE;
+            foreach ($PHORUM['compat_languages'] as $language) {
+                $language_file = PHORUM_PATH."/mods/$mod/lang/$language.php";
+                if (file_exists($language_file)) {
+                    require_once $language_file;
+                    $loaded = TRUE;
+                    break;
+                }
             }
+            if (!$loaded) trigger_user_error(
+                "No language file found for module $mod", E_USER_ERROR
+            );
         }
     }
 

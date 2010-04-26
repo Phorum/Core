@@ -1,5 +1,11 @@
 <?php
     $language="English (American)";
+
+    // Language names that modules might be using to reference the same
+    // language. Before Phorum 5.3, the language filename format was
+    // not standardized, so some other formats might still be in use.
+    $PHORUM['compat_languages'][] = 'english';
+
     // uncomment this to hide this language from the user-select-box
     //$language_hide=1;
 

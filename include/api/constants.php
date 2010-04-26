@@ -130,7 +130,7 @@ define('PHORUM_DEFAULT_TEMPLATE', 'emerald');
 /**
  * Phorum's default language.
  */
-define('PHORUM_DEFAULT_LANGUAGE', 'english');
+define('PHORUM_DEFAULT_LANGUAGE', 'en_US.UTF-8');
 
 /**
  * The time in seconds for the admin token to timeout.
