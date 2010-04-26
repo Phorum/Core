@@ -150,8 +150,8 @@ ob_end_clean();
 // Find the modification time for the css file and the settings file.
 list ($css, $css_php, $css_tpl) = phorum_api_template_resolve($css);
 list ($d, $settings_php, $settings_tpl) = phorum_api_template_resolve('settings');
-$css_t = @filemtime($css_tpl);
-$settings_t = @filemtime($settings_tpl);
+$css_t = @filemtime($css_php);
+$settings_t = @filemtime($settings_php);
 
 // Generate the cache key. While adding cache keys for the module
 // registrations, we also check the validity of the registration data.
