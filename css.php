@@ -24,7 +24,7 @@ require_once './common.php';
 define('PHORUM_COMPRESS_CSS', TRUE);
 
 // Argument 1 should be the name of the css template to load.
-if(!empty($PHORUM["args"]["1"])){
+if (!empty($PHORUM["args"]["1"])){
     $css = basename((string)$PHORUM["args"]["1"]);
 } else {
     trigger_error("Missing argument", E_USER_ERROR);
@@ -32,7 +32,7 @@ if(!empty($PHORUM["args"]["1"])){
 }
 
 // let it only process css templates
-if(substr($css,0,3) != 'css') {
+if (substr($css,0,3) != 'css') {
     trigger_error("Wrong template", E_USER_ERROR);
     exit(1);	
 }
@@ -150,8 +150,8 @@ ob_end_clean();
 // Find the modification time for the css file and the settings file.
 list ($css, $css_php, $css_tpl) = phorum_api_template_resolve($css);
 list ($d, $settings_php, $settings_tpl) = phorum_api_template_resolve('settings');
-$css_t = @filemtime($css_php);
-$settings_t = @filemtime($settings_php);
+$css_t = @filemtime($css_tpl);
+$settings_t = @filemtime($settings_tpl);
 
 // Generate the cache key. While adding cache keys for the module
 // registrations, we also check the validity of the registration data.
@@ -253,11 +253,14 @@ foreach ($module_registrations as $id => $r)
 $content = NULL;
 $cache_time = 0;
 
-if(!empty($PHORUM['cache_css'])) {
-	$cache_data = phorum_cache_get('css',$cache_key);
-	if($cache_data !== null) {
-		list($cache_time,$content) = $cache_data;
-	}
+$cache_key .= '|' . (PHORUM_COMPRESS_CSS ? 'compress' : 'nocompress');
+$cache_key = md5($cache_key);
+
+if (!empty($PHORUM['cache_css'])) {
+    $cache_data = phorum_cache_get('css', $cache_key);
+    if ($cache_data !== null) {
+        list ($cache_time, $content) = $cache_data;
+    }
 }
 
 // Create the cache file if it does not exist or if caching is disabled.
