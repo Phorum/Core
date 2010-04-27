@@ -1,0 +1,117 @@
+// ----------------------------------------------------------------------
+// Utility functions to manage Phorum page elements
+// ----------------------------------------------------------------------
+
+/**
+ * @class Phorum.UI.Element
+ * 
+ * <p>
+ *   This class is a base class that is used for building objects that
+ *   can manage page element.
+ * </p>
+ *
+ * @constructor
+ *   Create a new Phorum.UI.Element object.
+ * @param {String/Array} selectors (optional)
+ *   The jQuery selector or selectors to use for looking up the element to
+ *   manage in the page. The selector will only match an element if there is
+ *   exactly one available in the jQuery lookup result. The first unique
+ *   element that matches will be used.
+ */
+Phorum.UI.Element = Phorum.extend(
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    function (selectors) {
+
+        selectors = (selectors === undefined || selectors === null) ?
+                    this.selectors :
+                    $PJ.isArray(selectors) ? selectors : [ selectors ];
+
+        // Lookup the first selector for which a unique element can be found.
+        var me = this;
+        $PJ.each(selectors, function (id, selector)
+        {
+            Phorum.debug(
+              10, me.class + ': lookup element for "' + selector + '"');
+
+            var $tmp = $PJ(selector);
+
+            if ($tmp.length === 1) {
+                Phorum.debug(
+                  10, me.class + ': found unique element for "' + selector + '"');
+                me.$object = $tmp;
+                me.object  = $tmp[0];
+                return false;
+            } else {
+                Phorum.debug(
+                  10, me.class + ': number of elements for ' +
+                  '"' + selector + '": ' + $tmp.length);
+            }
+        });
+        if (!this.$object) {
+            throw(
+                this.class + ': No unique matching element found on the ' +
+                'current page'
+            );
+        }
+    },
+
+    // ----------------------------------------------------------------------
+    // Prototype
+    // ----------------------------------------------------------------------
+
+    {
+        /**
+         * @cfg {String} class
+         *
+         * The name of this class, for easy reference.
+         */
+        class: 'Phorum.UI.Element',
+
+        /**
+         * @cfg {Array} selectors
+         *
+         * The array of jQuery selectors to search for.
+         */
+        selectors: [ ],
+
+        /**
+         * @property $object
+         *
+         * A reference to the jQuery wrapper object for the managed element.
+         *
+         * @var jQuery
+         */
+        $object: null,
+
+        /**
+         * @property object
+         *
+         * A reference to the managed element object.
+         *
+         * @private
+         */
+        object: null,
+
+        /**
+         * Return the jQuery wrapper for the element.
+         *
+         * @return {jQuery} $object
+         */
+        get: function () {
+            return this.$object;
+        },
+
+        /**
+         * Move the focus to the element.
+         */
+        focus: function ()
+        {
+            this.$object.focus();
+        }
+    }
+);
+
