@@ -5,3 +5,8 @@ and store the output in ../phorum-javascript-library.php
 The numeric prefix that is used for the source files can be used to
 make sure that the files get added to the final library script in
 the correct order.
+
+"make test" can be run, to check the syntax for the files with the
+jslint program. To be able to run this test, you will have to install
+the command line javascript interpreter "rhino".
+

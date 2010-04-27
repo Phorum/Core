@@ -1,0 +1,159 @@
+#!/usr/bin/env php
+<?php
+# Note: this script needs "rhino" (a CLI javascript interpreter). 
+
+// ----------------------------------------------------------------------
+// Configuration
+// ----------------------------------------------------------------------
+
+$jslint_options = array(
+  'browser'  => true,   // assume a browser environment
+  'white'    => false,  // don't require strict white space usage
+  'onevar'   => false,  // multiple "var" statements is ok
+  'evil'     => true,   // we allow the use of evilness
+  'undef'    => true,   // warn for undefined variables
+  'nomen'    => true,   // no leading _ in identifiefs
+  'eqeqeq'   => true,   // do not allow != an ==, but use resp. !== and ===
+  'bitwise'  => true,   // disallow the use of bitwise operators (catches && || misspellings)
+  'regexp'   => true,   // disallow . in regexp literals
+  'newcap'   => true,   // constructor functions must use initial capitals
+  'immed'    => true,   // require parens around immediate invocations
+  'plusplus' => false,  // allow the use of ++ and --
+);
+
+$jslint_strict_options = array(
+  'white'    => true,   // be picky about white space syntax
+  'indent'   => 4,      // we use 2 whitespace characters for indention
+  'plusplus' => false   // allow the use of ++ and --
+);
+
+$jslint_global = array(
+    'jQuery',
+    'window'
+);
+
+// ----------------------------------------------------------------------
+// Process arguments
+// ----------------------------------------------------------------------
+
+$prog = array_shift($_SERVER['argv']);
+
+$verbose = FALSE;
+$strict  = FALSE;
+$help    = FALSE;
+while(count($_SERVER['argv']) && $_SERVER['argv'][0][0] == '-')
+{
+  $option = array_shift($_SERVER['argv']);
+  if ($option == '-v') {
+    $verbose = TRUE;
+  }
+  elseif ($option == '-s') {
+    $strict = TRUE;
+  }
+  elseif ($option == '-h') {
+    $help = TRUE;
+  }
+  else die("$option: Illegal option\n");
+}
+
+if ($help || empty($_SERVER['argv'])) {
+  die(
+    "\n" .
+    "Usage: $prog [-h] [-v] [-s] <file 1> <file 2> .. <file n>\n" .
+    "   -v: verbose processing (can only be used with one file)\n" .
+    "   -s: enable strict jslint rules (nitpickers only!!)\n" .
+    "   -h: show this help\n" .
+    "\n"
+  );
+}
+
+if ($verbose && count($_SERVER['argv']) != 1) {
+  die("Verbose mode can be used with only one input file.\n");
+}
+
+// ----------------------------------------------------------------------
+// Processing
+// ----------------------------------------------------------------------
+
+if ($strict) $jslint_options = array_merge(
+  $jslint_options,
+  $jslint_strict_options
+);
+
+$formatted_options = array();
+foreach ($jslint_options as $k => $v)
+{
+  if ($v === true) $value = 'true';
+  elseif ($v === false) $value = 'false';
+  elseif (is_numeric($v)) $value = (int)$v;
+  else $value = $v;
+
+  $formatted_options[] .= $k . ': ' . $value; 
+}
+
+$jslint_options = '/*jslint ' . implode(', ', $formatted_options) . " */\n" .
+                  '/*global ' . implode(', ', $jslint_global) . " */\n";
+
+$return = 0;
+
+while ($file = array_shift($_SERVER['argv']))
+{
+  // Read the javascript file.
+  // Included, so embedded PHP code will be evaluated.
+  if (!file_exists($file)) die("$file: File not found.\n");
+  if (is_dir($file)) die("$file: This is a directory!\n");
+  $jscode = file_get_contents($file);
+  if (!$jscode) die("$file: Unable to read file.\n");
+
+  // Write a file that jslint can check.
+  $tmpfile = tempnam(sys_get_temp_dir(), 'yoda_jslint_');
+  $fp = fopen($tmpfile, "w");
+  fputs($fp, $jslint_options);
+  fputs($fp, "var \$PJ;\nvar Phorum = {};\n");
+
+  if (preg_match('!\.json$!', $file)) fputs($fp, 'var dummy = ');
+  fputs($fp, $jscode);
+  if (preg_match('!\.json$!', $file)) fputs($fp, ';');
+  fflush($fp);
+
+  // Run jslint.
+  $cmd = "rhino " . dirname(__FILE__) . "/jslint.js " . $tmpfile . " 2>&1";
+  $result = array();
+  exec($cmd, $result, $return);
+
+  // Filter and present the output.
+  $errors = 0;
+
+  // 127 = file not found which means rhino isn't correctly installed
+  if($return == 127) {
+    $errors++;
+    fwrite($fp, "couldn't exec() rhino\n");
+  }
+
+  fclose($fp);
+
+  foreach ($result as &$line)
+  {
+    if (preg_match('/Lint at line \d+/', $line)) $errors ++;
+
+    if ($verbose) {
+      // Replace filename with original filename.
+      $line = str_replace($tmpfile, $file, $line);
+
+      // Compensate for the extra lines of jslint options that we added to the code.
+      $line = preg_replace('/(Lint at line )(\d+)/e', "'\\1'.(\\2-4)", $line);
+
+      print $line . "\n";
+    }
+  }
+
+  if (!$verbose) {
+    if ($return != 0) {
+      print "$file: $errors error(s) found\n";
+    } else {
+      print "$file: OK\n";
+    }
+  }
+}
+
+return $return;
