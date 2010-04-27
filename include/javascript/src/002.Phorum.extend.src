@@ -1,0 +1,68 @@
+/**
+ * An easy to use class extension system. Example usage:
+ *
+ * <p><pre><code>
+  // Constructor for Parent:
+  var Parent = Phorum.extend(function (args) {
+      // Constructor code
+      ...
+  }, {
+      // Properties and methods to add to Foo's prototype.
+      prop: 'parent property',
+      func: function () { alert('cool'); }
+      ...
+  });
+
+  // Constructor for Child, extending on Parent and applying
+  // extra prototype properties for the Child:
+  var Child = Phorum.extend(Parent, function (args) {
+      // Constructor code
+      this.super(args); // <-- this one must be called
+      ...
+  }, {
+      childprop: 'child property',
+      childfunc: function () { alert('nice'); }
+  });
+ * </code></pre></p>
+ *
+ * @param {Function} base
+ *   The base constructor. 
+ *
+ * @param {Object/Function} extension
+ *   When this argument is an object, then all properties from the
+ *   object will be applied to the prototype of the base constructor.
+ *   When this argument is a function, then that function will be
+ *   setup as a child for the base constructor.
+ *
+ * @param {Object} child_prototype (optional)
+ *   When extending a child class, then this third parameter can be
+ *   used to directly provide an object which' properties will be
+ *   applied to the prototype of the child class.
+ */
+Phorum.extend = function (base, extension, child_prototype)
+{
+    if (extension instanceof Function)
+    {
+        extension.prototype.super = base;
+
+        for (var p in base.prototype) {
+            extension.prototype[p] = base.prototype[p];
+        }
+
+        if (child_prototype) {
+            for (var p in child_prototype) {
+                base.prototype[p] = child_prototype[p];
+            }
+        }
+
+        return extension;
+    }
+    else
+    {
+        for (var p in extension) {
+            base.prototype[p] = extension[p];
+        }
+        return base;
+    }
+};
+
