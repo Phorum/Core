@@ -5,5 +5,7 @@ TARGET=../phorum-javascript-library.php
 all: $(TARGET)
 
 $(TARGET): *.src
+	rm $(TARGET)
+	touch $(TARGET)
 	cat *.src >> $(TARGET)
 
