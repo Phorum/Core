@@ -1,0 +1,7 @@
+This directory holds the source files for the Phorum JavaScript library.
+The Makefile will concatenate all the source files in this directory
+and store the output in ../phorum-javascript-library.php
+
+The numeric prefix that is used for the source files can be used to
+make sure that the files get added to the final library script in
+the correct order.

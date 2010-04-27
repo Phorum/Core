@@ -1,0 +1,146 @@
+// ----------------------------------------------------------------------
+// UI functionality that is related to notifying the user about
+// running async calls to the server (request busy notification).
+//
+// The default implementation will show a message box in the top left of
+// the screen, notifying the user about the number of pending actions.
+// This box can be styling by CSS by styling the class "phorum_busy_message".
+// For example:
+//
+//   .phorum_busy_message {
+//       border: 1px solid #cc7;
+//       padding: 5px;
+//       background: #ff9;
+//   }   
+//
+// The template author can fully override Phorum.UI.notification to implement
+// a customized notification mechanism. The minimal interface that has
+// to be implemented is:
+//
+//   - Phorum.UI.busy.increment(): increments the number of busy actions
+//   - Phorum.UI.busy.decrement(): decrements the number of busy actions
+//
+// All other methods from the busy implementation from below are used for
+// implementing the default message box.
+// ----------------------------------------------------------------------
+
+Phorum.UI.busy =
+{
+    'box': null,   // storage for our box <div>
+    'boxtop': 5,   // top notify box offset
+    'boxleft': 5,  // left notify box offset
+    'count': 0,    // the number of pending actions
+    'timer': null, // used for timing the fading effect
+
+    /**
+     * Increments the number of pending actions.
+     */
+    'increment': function() { this.count ++; this.set(); },
+
+    /**
+     * Decrements the number of pending actions.
+     */
+    'decrement': function() { this.count --; this.set(); },
+
+    /**
+     * Fades out the busy box.
+     */
+    'fade': function()
+    {
+        if (!this.box) return;
+        if (this.box.style.opacity > 0) {
+            var o = this.box.style.opacity;
+            o = o - 0.05; if (o < 0) o = 0;
+            p = o * 100;
+            this.box.style.opacity = o;                     // Standard opacity
+            this.box.style.filter = 'alpha(opacity='+p+')'; // MSIE opacity
+            this.timer = setTimeout(function() {
+                Phorum.UI.busy.fade();
+            }, 20);
+        }
+        else {
+            this.box.style.display = 'none';
+        }
+    },
+
+    /**
+     * Set the busy message.
+     */
+    'set': function()
+    {
+        if (this.timer) clearTimeout(this.timer);
+
+        // If no actions are pending, clear up the busy message
+        // after a little 250ms pause (to keep the busy message
+        // from being irritatingly flashy on screen).
+        if (this.count == 0) {
+            if (!this.box) return;
+            this.timer = setTimeout(function() {
+                Phorum.UI.busy.fade();
+            }, 250);
+            return;
+        }
+
+        // Create the notify box if it is not available yet.
+        if (!this.box)
+        {
+            // Create the box.
+            this.box = document.createElement('div');
+            this.box.style.position = 'absolute';
+            this.box.style.zIndex = '1000';
+            this.box.style.display = 'none';
+
+            // So template authors can style the message box.
+            this.box.className = 'phorum_busy_message';
+
+            // Add it to the page.
+            document.body.insertBefore(this.box, document.body.childNodes[0]);
+
+            // Move the busy message in view if the page scrolls.
+            if (window.onscroll) {
+                var orig = window.onscroll;
+                window.onscroll = function() {
+                    orig();
+                    Phorum.UI.busy.place();
+                };
+            } else {
+                window.onscroll = function() {
+                    Phorum.UI.busy.place();
+                }
+            }
+        }
+
+        <?php $lang = $PHORUM['DATA']['LANG']; ?>
+        var message = this.count == 1
+            ? '<?php print addslashes($lang['ActionPending']) ?>'
+            : '<?php print addslashes($lang['ActionsPending']) ?>';
+
+        // Replace %count% in the message with the current action count.
+        var pos = message.indexOf('%count%');
+        if (pos > -1) {
+            message = message.substr(0,pos)+this.count+message.substr(pos+7);
+        }
+
+        // Show the busy message.
+        this.box.innerHTML = message;
+        this.place();
+        this.box.style.display = 'block';
+        this.box.style.opacity = 1;                   // Standard opacity
+        this.box.style.filter = 'alpha(opacity=100)'; // MSIE opacity
+    },
+
+    'place': function()
+    {
+        if (!this.box) return;
+
+        var s = document.documentElement.scrollTop
+              ? document.documentElement.scrollTop
+              : document.body.scrollTop;
+
+        var t = (s+this.boxtop) + 'px';
+
+        this.box.style.top = t;
+        this.box.style.left = this.boxleft;
+    }
+};
+

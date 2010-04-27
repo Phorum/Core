@@ -1,0 +1,72 @@
+// ----------------------------------------------------------------------
+// Caching functionality
+//
+// This is a caching layer that can be used by Phorum JavaScript
+// code for client side data caching. It supports TTLs for automatically
+// expiring the cached data.
+// ----------------------------------------------------------------------
+
+Phorum.Cache =
+{
+    TTL: 0,   // the default TTL for cache entries
+
+    data: {}, // cache data storage
+
+    put: function(cache_id, data, ttl)
+    {
+        // Determine the TTL to use for the cache entry.
+        if (typeof ttl === 'undefined') {
+            ttl = Phorum.Cache.TTL;
+        } else {
+            ttl = parseInt(ttl);
+            if (ttl == 'NaN') {
+                ttl = Phorum.Cache.TTL;
+            }
+        }
+
+        // Determine the expire time. When ttl = 0, then
+        // no expiration is done at all.
+        var expire_t = 0;
+        if (ttl != 0) {
+            var d = new Date();
+            expire_t = d.getTime() + 1000*ttl;
+        }
+
+        // Store the data in the cache.
+        Phorum.Cache.data[cache_id] = [data, expire_t];
+    },
+
+    get: function(cache_id)
+    {
+        // Check if there is a cache entry available.
+        if (typeof Phorum.Cache.data[cache_id] === 'undefined') {
+            Phorum.debug(5, 'Phorum cache miss for cache_id "'+cache_id+'"');
+            return null;
+        }
+        var c = Phorum.Cache.data[cache_id];
+
+        // TTL set? Then check if the cache entry hasn't expired yet.
+        if (c[1] != 0) {
+            var d = new Date();
+            var now = d.getTime();
+            if (now > c[1]) {
+                Phorum.debug(5, 'Phorum cache expired for cache_id "'+cache_id+'"');
+                return null;
+            }
+        }
+
+        Phorum.debug(5, 'Phorum cache hit for cache_id "'+cache_id+'"');
+        return c[0];
+    },
+
+    // Invalidate a single cache item or the full cache.
+    purge: function(key)
+    {
+        if (typeof key  !== 'undefined') {
+            Phorum.Ajax.cache[key] = null;
+        } else {
+            Phorum.Ajax.cache = {};
+        }
+    }
+};
+

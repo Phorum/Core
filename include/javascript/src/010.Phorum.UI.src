@@ -1,0 +1,7 @@
+// ----------------------------------------------------------------------
+// Phorum.UI is a namespace that is reserved for implementing user
+// interface related functionality.
+// ----------------------------------------------------------------------
+
+Phorum.UI = {};
+
