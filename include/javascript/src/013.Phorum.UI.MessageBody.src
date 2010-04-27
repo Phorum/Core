@@ -1,0 +1,96 @@
+// ----------------------------------------------------------------------
+// Utility functions to handle Phorum message body textareas
+// ----------------------------------------------------------------------
+
+/**
+ * @class Phorum.UI.MessageBody
+ * @extends Phorum.UI.Element
+ * 
+ * <p>
+ *   This class can be used to access and manipulate message body textarea
+ *   elements in Phorum. By default, the constructor will automatically search
+ *   the page for some known textarea identifiers. If you need more control
+ *   over the selector(s) to use for the textarea lookup, then you can provide
+ *   a jQuery selector or selector array to use as the argument for
+ *   the constructor.
+ * </p>
+ * <p><pre><code>
+var t1 = new Phorum.UI.MessageBody();
+var t2 = new Phorum.UI.MessageBody('#phorum .mytextfield');
+var t3 = new Phorum.UI.MessageBody(['#this', '#that']);
+
+t1.focus();
+
+var $jquerytextarea = t1.get();
+$jquerytextarea.css('color', 'blue');
+ * </code></pre></p>
+ *
+ * @constructor
+ *   Create a new Phorum.UI.MessageBody object.
+ * @param {String/Array} selectors (optional)
+ *   The selector or selectors to use for looking up the textarea to
+ *   handle in the page. If no selectors are provided, then the built-in
+ *   selector list is used (which should work for a template that uses
+ *   the standard textarea id naming).
+ */
+Phorum.UI.MessageBody = Phorum.extend(Phorum.UI.Element,
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    function (selectors) {
+
+        this.className = 'Phorum.UI.MessageBody';
+
+        this.selectors = [
+            'textarea.#phorum_textarea',  // Phorum 5.1
+            'textarea.#body',             // Phorum 5.2+
+            'textarea.#message'           // PM interface
+        ];
+
+        this.parentConstructor(selectors);
+    },
+
+    // ----------------------------------------------------------------------
+    // Prototype
+    // ----------------------------------------------------------------------
+
+    {
+        /**
+         * Used to store the textarea selection range.
+         *
+         * @private
+         */
+        range: null,
+
+        /**
+         * Store the active selection range of the textarea. This can be used to
+         * restore the selection range at a later time. This is used for MSIE,
+         * because sometimes clicking in a popup can clear the selection range.
+         */
+        storeSelection: function ()
+        {
+            // This rules out non-MSIE browsers, which do not need to store
+            // the selecton range.
+            if (this.object.setSelectionRange || ! document.selection) {
+                return;
+            }
+
+            this.object.focus();
+            this.range = document.selection.createRange();
+        },
+
+        /**
+         * Restore a previously stored textarea selection range.
+         */
+        restoreSelection: function ()
+        {
+            if (this.range !== null) {
+                this.range.select();
+                this.range = null;
+            }
+        }
+    }
+);
+

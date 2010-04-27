@@ -17,7 +17,7 @@
   // extra prototype properties for the Child:
   var Child = Phorum.extend(Parent, function (args) {
       // Constructor code
-      this.super(args); // <-- this one must be called
+      this.parentConstructor(args); // <-- this one must be called
       ...
   }, {
       childprop: 'child property',
@@ -41,17 +41,23 @@
  */
 Phorum.extend = function (base, extension, child_prototype)
 {
+    var p;
+
     if (extension instanceof Function)
     {
-        extension.prototype.super = base;
+        extension.prototype.parentConstructor = base;
 
-        for (var p in base.prototype) {
-            extension.prototype[p] = base.prototype[p];
+        for (p in base.prototype) {
+            if (true) { // keep jslint happy
+                extension.prototype[p] = base.prototype[p];
+            }
         }
 
         if (child_prototype) {
-            for (var p in child_prototype) {
-                base.prototype[p] = child_prototype[p];
+            for (p in child_prototype) {
+                if (true) { // keep jslint happy
+                    base.prototype[p] = child_prototype[p];
+                }
             }
         }
 
@@ -59,8 +65,10 @@ Phorum.extend = function (base, extension, child_prototype)
     }
     else
     {
-        for (var p in extension) {
-            base.prototype[p] = extension[p];
+        for (p in extension) {
+            if (true) { // keep jslint happy
+                base.prototype[p] = extension[p];
+            }
         }
         return base;
     }

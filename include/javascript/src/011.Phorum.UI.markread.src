@@ -22,14 +22,14 @@
  *     A forum_id, thread id or message_id (which one to use depends
  *     on the "mode" parameter).
  */
-Phorum.UI.markread = function(mode, item_id)
+Phorum.UI.markread = function (mode, item_id)
 {
     // Request busy notification for the user.
     Phorum.UI.busy.increment();
 
     var req = {
         'call': 'markread',
-        'onSuccess': function(data)
+        'onSuccess': function (data)
         {
             Phorum.UI.busy.decrement();
 
@@ -39,7 +39,7 @@ Phorum.UI.markread = function(mode, item_id)
                 l[i](mode, item_id);
             }
         },
-        'onFailure': function(data)
+        'onFailure': function (data)
         {
             Phorum.UI.busy.decrement();
         }
@@ -73,7 +73,7 @@ Phorum.UI.markread = function(mode, item_id)
  * messages in the announcements block as read when the user clicks on
  * "mark read" for the announcement forum on the index page).
  */
-Phorum.UI.markread.callbacks = new Array();
+Phorum.UI.markread.callbacks = [ ];
 
 /**
  * A utility function for easy handling of newflag DOM changes.
@@ -102,10 +102,12 @@ Phorum.UI.markread.callbacks = new Array();
  * @param function callback
  *     A callback function that has to process matching DOM elements.
  */
-Phorum.UI.markread.matchElements = function(tag, pre, mode, item_id, callback)
+Phorum.UI.markread.matchElements = function (tag, pre, mode, item_id, callback)
 {
     var elts = document.getElementsByTagName(tag);
-    if (!elts) return;
+    if (!elts) {
+        return;
+    }
 
     for (var i = 0; i < elts.length; i++)
     {
@@ -117,7 +119,9 @@ Phorum.UI.markread.matchElements = function(tag, pre, mode, item_id, callback)
             if (c.length)
             {
                 // Check if the class starts with the provided prefix match.
-                if (c.substr(0, pre.length) != pre) continue;
+                if (c.substr(0, pre.length) !== pre) {
+                    continue;
+                }
 
                 // Yes, match found. The postfix is formatted as
                 // <forum_id>[-<thread>[-<message_id>]]
@@ -125,24 +129,24 @@ Phorum.UI.markread.matchElements = function(tag, pre, mode, item_id, callback)
 
                 // Run the callback function for messages that match
                 // a forum that was marked read.
-                if (mode == 'forums' && parts[0] && parts[0] == item_id)
-                {
+                if (mode === 'forums' && parts[0] &&
+                    parts[0] + '' === item_id + '') {
                     callback(elts[i]);
                 }
                 // Run the callback function for messages that match
                 // a thread that was marked read.
-                else if (mode == 'threads' && parts[1] && parts[1] == item_id)
-                {
+                else if (mode === 'threads' && parts[1] &&
+                    parts[1] + '' === item_id + '') {
                     callback(elts[i]);
                 }
                 // Run the callback function for messages that match
                 // a message that was marked read.
-                else if (mode == 'messages' && parts[2] && parts[2] == item_id)
-                {
+                else if (mode === 'messages' && parts[2] &&
+                    parts[2] + '' === item_id + '') {
                     callback(elts[i]);
                 }
             }
         }
     }
-}
+};
 

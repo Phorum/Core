@@ -18,11 +18,15 @@
  *     Optional argument containing a variable which' contents should be
  *     logged. The data will be written to the debug log as a JSON structure.
  */
-Phorum.debug = function(level, message, data)
+Phorum.debug = function (level, message, data)
 {
-    level = parseInt(level);
-    if (level === 'NaN') level = 1;
-    if (level < 0) level = 1;
+    level = parseInt(level, 10);
+    if (level === 'NaN') {
+        level = 1;
+    }
+    if (level < 0) {
+        level = 1;
+    }
     if (Phorum.debug.level &&
         Phorum.debug.level >= level &&
         typeof window.console !== 'undefined')
@@ -35,7 +39,7 @@ Phorum.debug = function(level, message, data)
 
         console.debug('Phorum debug [' + level + '] ' + message + data);
     }
-}
+};
 
 /**
  * The debug level. Set this variable to a higher number

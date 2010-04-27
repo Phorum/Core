@@ -10,7 +10,7 @@ Phorum.Ajax =
 {
     // The URL that we can use to access the Phorum Ajax layer script.
     // The 'callback=?' part is a special placeholder for jQuery's JSONP code.
-    URL: '<?php print phorum_api_url(PHORUM_AJAX_URL,'callback=?')?>',
+    URL: '<?php print phorum_api_url(PHORUM_AJAX_URL,"callback=?")?>',
 
     /**
      * Execute an Ajax Phorum call.
@@ -40,7 +40,7 @@ Phorum.Ajax =
      *     What call arguments are available depends on the Phorum Ajax call
      *     that is called. Check the documentation of the call for details.
      */
-    call: function(req)
+    call: function (req)
     {
         // Check if a call was provided in the request data.
         if (! req.call) {
@@ -48,11 +48,13 @@ Phorum.Ajax =
                 1, 'Phorum.Ajax.call() error: missing property ' +
                 '"call" for the request object', req
             );
-            if (req.onFailure) req.onFailure(
-                'Phorum.Ajax.call() error: missing property ' +
-                '"call" for the request object.',
-                -1, null
-            );
+            if (req.onFailure) {
+                req.onFailure(
+                    'Phorum.Ajax.call() error: missing property ' +
+                    '"call" for the request object.',
+                    -1, null
+                );
+            }
             return;
         }
 
@@ -62,10 +64,10 @@ Phorum.Ajax =
         if (req.cache_id) {
             var data = Phorum.Cache.get(req.cache_id);
 
-            if (data != null) {
+            if (data !== null) {
                 Phorum.debug(
                     4, 'Phorum.Ajax.call calls onSuccess with cached data ' +
-                    'for cache_id "'+req.cache_id+'"', data
+                    'for cache_id "' + req.cache_id + '"', data
                 );
                 if (req.onSuccess) {
                     // true = data retrieved from cache.
@@ -78,10 +80,10 @@ Phorum.Ajax =
         // Create a filtered argument list (without functions and control args).
         var args = {};
         for (var key in req) {
-            if (typeof req[key] != 'function' && key != 'cache_id') {
+            if (typeof req[key] !== 'function' && key !== 'cache_id') {
                 // Convert complex arguments to JSON, otherwise they will
                 // not survive the translation to a JSONP request URL.
-                if (typeof(req[key]) == 'object') {
+                if (typeof(req[key]) === 'object') {
                     args[key] = '$JSON$' + $PJ.toJSON(req[key]);
                 } else {
                     args[key] = req[key];
@@ -91,24 +93,38 @@ Phorum.Ajax =
 
         // Notify the start of the request loading stage.
         Phorum.debug(5, 'Phorum.Ajax.call calls server with args', args);
-        if (req.onRequest) req.onRequest(args);
+        if (req.onRequest) {
+            req.onRequest(args);
+        }
 
-        $PJ.getJSON(Phorum.Ajax.URL, args, function(answer)
+        $PJ.getJSON(Phorum.Ajax.URL, args, function (answer)
         {
-            Phorum.debug(5, 'Phorum.Ajax.call receives answer from server', answer);
-            if (typeof answer['error'] === 'undefined')
+            Phorum.debug(
+                5, 'Phorum.Ajax.call receives answer from server', answer
+            );
+            if (typeof answer.error === 'undefined')
             {
-                // If the req.cache_id property is set, then we cache the results.
-                if (req.cache_id) Phorum.Cache.put(req.cache_id, answer);
+                // If the req.cache_id property is set, then cache the results.
+                if (req.cache_id) {
+                    Phorum.Cache.put(req.cache_id, answer);
+                }
 
                 // false = data not retrieved from cache.
-                Phorum.debug(4, 'Phorum.Ajax.call calls onSuccess with', answer);
-                if (req.onSuccess) req.onSuccess(answer, false);
+                Phorum.debug(
+                    4, 'Phorum.Ajax.call calls onSuccess with', answer
+                );
+                if (req.onSuccess) {
+                    req.onSuccess(answer, false);
+                }
             }
             else
             {
-                Phorum.debug(4, 'Phorum.Ajax.call calls onFailure with', answer['error']);
-                if (req.onFailure) req.onFailure(answer['error']);
+                Phorum.debug(
+                    4, 'Phorum.Ajax.call calls onFailure with', answer.error
+                );
+                if (req.onFailure) {
+                    req.onFailure(answer.error);
+                }
             }
         });
     },
@@ -117,7 +133,7 @@ Phorum.Ajax =
      * Parse out javascript blocks from the data to eval them. Adding them
      * to the page using innerHTML does not invoke parsing by the browser.
      */
-    evalJavaScript: function(data)
+    evalJavaScript: function (data)
     {
         var cursor = 0;
         var start  = 1;
@@ -131,7 +147,7 @@ Phorum.Ajax =
                     var res = data.substring(start, end);
                     start = res.indexOf('>') + 1;
                     res = res.substring(start);
-                    if (res.length != 0) {
+                    if (res.length !== 0) {
                         eval(res);
                     }
                 }

@@ -35,27 +35,29 @@ Phorum.UI.Element = Phorum.extend(
         $PJ.each(selectors, function (id, selector)
         {
             Phorum.debug(
-              10, me.class + ': lookup element for "' + selector + '"');
+                10, me.className + ': lookup element for "' + selector + '"'
+            );
 
             var $tmp = $PJ(selector);
 
             if ($tmp.length === 1) {
                 Phorum.debug(
-                  10, me.class + ': found unique element for "' + selector + '"');
+                    10, me.className + ': found unique element for ' +
+                    '"' + selector + '"'
+                );
                 me.$object = $tmp;
                 me.object  = $tmp[0];
                 return false;
             } else {
                 Phorum.debug(
-                  10, me.class + ': number of elements for ' +
-                  '"' + selector + '": ' + $tmp.length);
+                    10, me.className + ': number of elements for ' +
+                    '"' + selector + '": ' + $tmp.length
+                );
             }
         });
         if (!this.$object) {
-            throw(
-                this.class + ': No unique matching element found on the ' +
-                'current page'
-            );
+            throw this.className + ': No unique matching element found ' +
+                  'on the current page';
         }
     },
 
@@ -65,11 +67,11 @@ Phorum.UI.Element = Phorum.extend(
 
     {
         /**
-         * @cfg {String} class
+         * @cfg {String} className
          *
          * The name of this class, for easy reference.
          */
-        class: 'Phorum.UI.Element',
+        className: 'Phorum.UI.Element',
 
         /**
          * @cfg {Array} selectors
