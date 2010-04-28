@@ -1,0 +1,193 @@
+// ----------------------------------------------------------------------
+// Utility functions to handle text fields (textarea, input type=text)
+// ----------------------------------------------------------------------
+
+/**
+ * @class Phorum.UI.TextElement
+ * @extends Phorum.UI.Element
+ * 
+ * <p>
+ *   This class can be used to access and manipulate text input fields
+ *   (textarea, input type="text"). This class mainly serves as a
+ *   base class. 
+ * </p>
+ * @constructor
+ *   Create a new Phorum.UI.TextElement object.
+ * @param {String/Array} selectors
+ *   The selector or selectors to use for looking up the text element to
+ *   handle in the page.
+ */
+Phorum.UI.TextElement = Phorum.extend(Phorum.UI.Element,
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    function (selectors) {
+
+        this.className = 'Phorum.UI.TextElement';
+        this.parentConstructor(selectors);
+    },
+
+    // ----------------------------------------------------------------------
+    // Prototype
+    // ----------------------------------------------------------------------
+
+    {
+        /**
+         * Add tags (e.g. BBcode tags) to the text element.
+         * <p>
+         *   If some text is selected, then place the tags around the
+         *   selected text. If no text is selected and a prompt_str is
+         *   provided, then prompt the user for the data to place inside
+         *   the tags.
+         * </p>
+         * <p><pre><code>
+var body = new Phorum.UI.MessageBody();
+body.addTags('[b]', '[/b]');
+body.addTags('[url]', '[/url]', 'Please, enter the URL');
+         * </code></pre></p>
+         *
+         * @param {String} pre
+         *   The tag to put in front of the selection or manual input.
+         * @param {String} post
+         *   The tag to put after the selection or manual input.
+         */
+        addTags: function (pre, post, prompt_str)
+        {
+            var text;
+            var pretext;
+            var posttext;
+            var range;
+
+            // Store the current scroll offset, so we can restore it after
+            // adding the tags to its contents.
+            var offset = this.object.scrollTop;
+
+            if (this.object.setSelectionRange)
+            {
+                // Get the currently selected text.
+                pretext = this.object.value.substring(
+                    0, this.object.selectionStart);
+                text = this.object.value.substring(
+                    this.object.selectionStart, this.object.selectionEnd);
+                posttext = this.object.value.substring(
+                    this.object.selectionEnd, this.object.value.length);
+
+                // Prompt for input if no text was selected and a prompt is set.
+                if (text == '' && prompt_str) {
+                    text = prompt(prompt_str, '');
+                    if (text == null) return;
+                }
+
+                // Strip whitespace from text selection and move it to the
+                // pre- and post.
+                var res = Phorum.trim(text, true);
+                text = res[0];
+                pre = res[1] + pre;
+                post = post + res[2];
+
+                this.object.value = pretext + pre + text + post + posttext;
+
+                // Reselect the selected text.
+                var cursorpos1 = pretext.length + pre.length;
+                var cursorpos2 = cursorpos1 + text.length;
+                this.object.setSelectionRange(cursorpos1, cursorpos2);
+                this.object.focus();
+            }
+            else if (document.selection) /* MSIE support */
+            {
+                // Get the currently selected text.
+                this.focus();
+                range = document.selection.createRange();
+
+                // Fumbling to work around newline selections at the end of
+                // the text selection. MSIE does not include them in the
+                // range.text, but it does replace them when setting range.text
+                // to a new value :-/
+                var virtlen = range.text.length;
+                if (virtlen > 0) {
+                    while (range.text.length == virtlen) {
+                        range.moveEnd('character', -1);
+                    }
+                    range.moveEnd('character', +1);
+                }
+
+                // Prompt for input if no text was selected and a prompt is set.
+                text = range.text;
+                if (text == '' && prompt_str) {
+                    text = prompt(prompt_str, '');
+                    if (text == null) return;
+                }
+
+                // Strip whitespace from text selection and move it to the
+                // pre- and post.
+                var res = Phorum.trim(text, true);
+                text = res[0];
+                pre = res[1] + pre;
+                post = post + res[2];
+
+                // Add pre and post to the text.
+                range.text = pre + text + post;
+
+                // Reselect the selected text. Another MSIE anomaly has to be
+                // taken care of here. MSIE will include carriage returns
+                // in the text.length, but it does not take them into account
+                // when using selection range moving methods :-/
+                // By setting the range.text before, the cursor is now after
+                // the replaced code, so we will move the start and the end
+                // back in the text.
+                var mvstart = post.length + text.length -
+                              ((text + post).split('\r').length - 1);
+                var mvend   = post.length +
+                              (post.split('\r').length - 1);
+                range.moveStart('character', -mvstart);
+                range.moveEnd('character', -mvend);
+                range.select();
+            }
+            else /* Support for really limited browsers, e.g. MSIE5 on MacOS */
+            {
+                this.object.value = this.object.value + pre + post;
+            }
+
+            this.object.scrollTop = offset;
+        },
+
+        /**
+         * Used to store the tex element's selection range.
+         *
+         * @private
+         */
+        selectionRange: null,
+
+        /**
+         * Store the active selection range of the text elment.
+         * This can be used to restore the selection range at a later time.
+         * This is used for MSIE, because sometimes clicking in a popup
+         * can clear the selection range.
+         */
+        storeSelection: function ()
+        {
+            // This rules out non-MSIE browsers, which do not need to store
+            // the selecton range.
+            if (this.object.setSelectionRange || ! document.selection) {
+                return;
+            }
+
+            this.object.focus();
+            this.selectionRange = document.selection.createRange();
+        },
+
+        /**
+         * Restore a previously stored textarea selection range.
+         */
+        restoreSelection: function ()
+        {
+            if (this.selectionRange !== null) {
+                this.selectionRange.select();
+                this.selectionRange = null;
+            }
+        }
+    }
+);
+

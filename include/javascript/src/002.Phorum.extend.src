@@ -1,28 +1,28 @@
 /**
- * An easy to use class extension system. Example usage:
+ * A class extension system. Example usage:
  *
  * <p><pre><code>
-  // Constructor for Parent:
-  var Parent = Phorum.extend(function (args) {
-      // Constructor code
-      ...
-  }, {
-      // Properties and methods to add to Foo's prototype.
-      prop: 'parent property',
-      func: function () { alert('cool'); }
-      ...
-  });
+// Constructor for Parent:
+var Parent = Phorum.extend(function (args) {
+    // Constructor code
+    ...
+}, {
+    // Properties and methods to add to the prototype of Foo.
+    prop: 'parent property',
+    func: function () { alert('cool'); }
+    ...
+});
 
-  // Constructor for Child, extending on Parent and applying
-  // extra prototype properties for the Child:
-  var Child = Phorum.extend(Parent, function (args) {
-      // Constructor code
-      this.parentConstructor(args); // <-- this one must be called
-      ...
-  }, {
-      childprop: 'child property',
-      childfunc: function () { alert('nice'); }
-  });
+// Constructor for Child, extending on Parent and applying
+// extra prototype properties for the Child:
+var Child = Phorum.extend(Parent, function (args) {
+    // Constructor code
+    this.parentConstructor(args); // <-- this one must be called
+    ...
+}, {
+    childprop: 'child property',
+    childfunc: function () { alert('nice'); }
+});
  * </code></pre></p>
  *
  * @param {Function} base
@@ -38,6 +38,8 @@
  *   When extending a child class, then this third parameter can be
  *   used to directly provide an object which' properties will be
  *   applied to the prototype of the child class.
+ *
+ * @member Phorum extend
  */
 Phorum.extend = function (base, extension, child_prototype)
 {
@@ -56,7 +58,7 @@ Phorum.extend = function (base, extension, child_prototype)
         if (child_prototype) {
             for (p in child_prototype) {
                 if (true) { // keep jslint happy
-                    base.prototype[p] = child_prototype[p];
+                    extension.prototype[p] = child_prototype[p];
                 }
             }
         }

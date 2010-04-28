@@ -7,25 +7,89 @@
  *
  * @singleton
  */
-var Phorum = {};
+var Phorum = {
+
+    /**
+     * @property library_version
+     *
+     * <p>
+     *   The version of this library.
+     * </p>
+     * <p>
+     *   This can be used by other code to check if the correct version of
+     *   the library is loaded. The library_version object contains
+     *   two properties:
+     *   <div class="mdetail-params"><ul>
+     *     <li><b>major:</b> major version, incremented when
+     *         backward compatibility is broken</li>
+     *     <li><b>minor:</b> minor version, incremented when
+     *         new functionality is implemented</li>
+     *   </ul></div>
+     * </p>
+     *
+     * @var Object
+     */
+    library_version: {
+        major: 1,
+        minor: 1
+    },
+
+    /**
+     * @property debuglevel
+     *
+     * Configures the debug level for {@link #debug Phorum.debug()}.
+     * Set this variable to a higher number for more debugging information.
+     * A value of 0 (zero) will suppress all debug output.
+     *
+     * @var Integer
+     */
+    debuglevel: 0,
+
+    /**
+     * @property UI
+     *
+     * Phorum.UI is the namespace that is reserved for implementing user
+     * interface related functionality.
+     *
+     * @var Object
+     */
+    UI: {}
+
+};
+
 
 /**
- * A non-conflicting jQuery library for use by Phorum. This way, our jQuery
- * library will not conflict with existing javascript libraries (e.g. when
- * Phorum is embedded in another application that uses a javascript library
- * or when a module is loaded that also loads a library of its own).
- */
-var $PJ = jQuery.noConflict();
-
-/**
- * @property library_version
+ * @class Phorum.jQuery
  *
- * The version of this lib. This can be used by other code to check if the
- * correct version of the library is loaded. The major number should be
- * incremented in case backward compatibility is broken. The minor number
- * should be incremented when new functionality is implemented.
+ * <p>
+ *   The jQuery object for the jQuery library that Phorum loads is
+ *   stored in Phorum.jQuery. 
+ * </p>
+ * <p>
+ *   A short length reference to the jQuery object is additionally stored
+ *   in the global variable <b>$PJ</b> instead of the default <b>$</b>
+ *   jQuery variable.
+ * </p>
+ * <p>
+ *   This is a no-conflict jQuery reference for use by Phorum code
+ *   (see the jQuery documentation for jQuery.noConflict()).
+ *   By using a no-conflict library, our jQuery library will not conflict
+ *   with existing javascript libraries (e.g. when Phorum is embedded in
+ *   another application that uses a javascript library or when a module is
+ *   loaded that also loads a javascript library of its own).
+ * </p>
+ * <p>
+ *   If you want to use the regular <b>$</b> jQuery reference in your
+ *   functions, then you could use a construction like this:
+ * </p>
+ * <p><pre><code>
+function yourfunction() {
+  var $ = Phorum.jQuery;
+  ...
+  ...
+}
+ * </code></pre></p>
  *
- * @var String
+ * @singleton
  */
-Phorum.library_version = '1.0';
-
+var $PJ = Phorum.jQuery = jQuery.noConflict();

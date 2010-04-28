@@ -35,23 +35,23 @@ Phorum.UI.Element = Phorum.extend(
         $PJ.each(selectors, function (id, selector)
         {
             Phorum.debug(
-                10, me.className + ': lookup element for "' + selector + '"'
+                me.className + ': lookup element for "' + selector + '"', 10
             );
 
             var $tmp = $PJ(selector);
 
             if ($tmp.length === 1) {
                 Phorum.debug(
-                    10, me.className + ': found unique element for ' +
-                    '"' + selector + '"'
+                    me.className + ': found unique element for ' +
+                    '"' + selector + '"', 10
                 );
                 me.$object = $tmp;
                 me.object  = $tmp[0];
                 return false;
             } else {
                 Phorum.debug(
-                    10, me.className + ': number of elements for ' +
-                    '"' + selector + '": ' + $tmp.length
+                    me.className + ': number of elements for ' +
+                    '"' + selector + '": ' + $tmp.length, 10
                 );
             }
         });

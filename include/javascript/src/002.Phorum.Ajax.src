@@ -1,16 +1,14 @@
 // ----------------------------------------------------------------------
 // Ajax communication
-//
-// Handles Ajax calls to the Phorum system. Calls are done to the
-// ajax.php script, which will handle the call and return the
-// result to the calling client.
 // ----------------------------------------------------------------------
 
 /**
  * @class Phorum.Ajax
  * @extends Object
  *
- * This class provides tools for handling Ajax communication.
+ * This class provides tools for handling Phorum Ajax communication.
+ * Ajax calls are done to the ajax.php script of the Phorum system,
+ * which will handle the call and return the result.
  *
  * @singleton
  */
@@ -92,8 +90,8 @@ Phorum.Ajax.call({
         // Check if a call was provided in the request data.
         if (! req.call) {
             Phorum.debug(
-                1, 'Phorum.Ajax.call() error: missing property ' +
-                '"call" for the request object', req
+                'Phorum.Ajax.call() error: missing property ' +
+                '"call" for the request object', 1, req
             );
             if (req.onFailure) {
                 req.onFailure(
@@ -113,8 +111,8 @@ Phorum.Ajax.call({
 
             if (data !== null) {
                 Phorum.debug(
-                    4, 'Phorum.Ajax.call calls onSuccess with cached data ' +
-                    'for cache_id "' + req.cache_id + '"', data
+                    'Phorum.Ajax.call calls onSuccess with cached data ' +
+                    'for cache_id "' + req.cache_id + '"', 4, data
                 );
                 if (req.onSuccess) {
                     // true = data retrieved from cache.
@@ -139,7 +137,7 @@ Phorum.Ajax.call({
         }
 
         // Notify the start of the request loading stage.
-        Phorum.debug(5, 'Phorum.Ajax.call calls server with args', args);
+        Phorum.debug('Phorum.Ajax.call calls server with args', 5, args);
         if (req.onRequest) {
             req.onRequest(args);
         }
@@ -147,7 +145,7 @@ Phorum.Ajax.call({
         $PJ.getJSON(Phorum.Ajax.url, args, function (answer)
         {
             Phorum.debug(
-                5, 'Phorum.Ajax.call receives answer from server', answer
+                'Phorum.Ajax.call receives answer from server', 5, answer
             );
             if (typeof answer.error === 'undefined')
             {
@@ -158,7 +156,7 @@ Phorum.Ajax.call({
 
                 // false = data not retrieved from cache.
                 Phorum.debug(
-                    4, 'Phorum.Ajax.call calls onSuccess with', answer
+                    'Phorum.Ajax.call calls onSuccess with', 4, answer
                 );
                 if (req.onSuccess) {
                     req.onSuccess(answer, false);
@@ -167,7 +165,7 @@ Phorum.Ajax.call({
             else
             {
                 Phorum.debug(
-                    4, 'Phorum.Ajax.call calls onFailure with', answer.error
+                    'Phorum.Ajax.call calls onFailure with', 4, answer.error
                 );
                 if (req.onFailure) {
                     req.onFailure(answer.error);
@@ -177,13 +175,19 @@ Phorum.Ajax.call({
     },
 
     /**
-     * Parse out javascript blocks from the data to eval them. Adding the
-     * data to the page after rendering (e.g. by using innerHTML) does not
-     * invoke parsing and execution of the script block(s) by the browser.
+     * <p>
+     *   Parse out javascript blocks from the data and eval them.
+     * </p>
+     * <p>
+     *   This can be used to process javascript code that is embedded in
+     *   dynamically retrieved blocks of HTML code. Adding this data to 
+     *   the page (e.g. by using document.write or innerHTML) would not
+     *   evaluate the javascript code. Browsers only parse and evaluate
+     *   javascript code that is retrieved at page load time.
+     * </p>
      *
      * @param {String} data
      *   The data from which to parse the javascript blocks.
-     * @private
      */
     evalJavaScript: function (data)
     {

@@ -1,0 +1,54 @@
+// ----------------------------------------------------------------------
+// Utility functions to handle Phorum message body textareas
+// ----------------------------------------------------------------------
+
+/**
+ * @class Phorum.UI.MessageBody
+ * @extends Phorum.UI.TextElement
+ * 
+ * <p>
+ *   This class can be used to access and manipulate message body textarea
+ *   elements in Phorum. By default, the constructor will automatically search
+ *   the page for some known textarea identifiers. If you need more control
+ *   over the selector(s) to use for the textarea lookup, then you can provide
+ *   a jQuery selector or selector array to use as the argument for
+ *   the constructor.
+ * </p>
+ * <p><pre><code>
+// Retrieve the message body using built-in list of possible ids.
+var t1 = new Phorum.UI.MessageBody();
+t1.focus();
+
+// Retrieve using a custom jQuery selector.
+var t2 = new Phorum.UI.MessageBody('#phorum .mytextfield');
+t2.addTags('[i]', '[/i]');
+
+// Access to the jQuery wrapper object for the message body input..
+var t3 = new Phorum.UI.MessageBody(['#this', '#that']);
+var $jquerytextarea = t3.get();
+$jquerytextarea.css('color', 'blue');
+ * </code></pre></p>
+ *
+ * @constructor
+ *   Create a new Phorum.UI.MessageBody object.
+ * @param {String/Array} selectors (optional)
+ *   The selector or selectors to use for looking up the textarea to
+ *   handle in the page. If no selectors are provided, then the built-in
+ *   selector list is used (which should work for a template that uses
+ *   the standard textarea id naming).
+ */
+Phorum.UI.MessageBody = Phorum.extend(Phorum.UI.TextElement,
+
+    function (selectors) {
+
+        this.className = 'Phorum.UI.MessageBody';
+
+        this.selectors = [
+            'textarea.#phorum_textarea',  // Phorum 5.1
+            'textarea.#body',             // Phorum 5.2+
+            'textarea.#message'           // PM interface
+        ];
+
+        this.parentConstructor(selectors);
+    }
+);

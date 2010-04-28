@@ -3,33 +3,45 @@
 // ----------------------------------------------------------------------
 
 /**
- * Use FireFox' console.debug() method for logging debugging information.
- * When no console is available, then no logging is done at all.
- *
- * @param Integer level
- *     The debug level of the message. Only messages that have a
- *     debugging level equal to or below the configuration variable
- *     Phorum.debug.level are logged.
+ * <p>
+ *   Use the console.debug() method (originally introduced by the Firebug
+ *   plugin for Firefox) for logging debugging information.
+ *   When no console is available, then no logging is done at all.
+ * </p>
+ * <p><pre><code>
+Phorum.debuglevel = 10;
+
+Phorum.debug('Hello, world!', 5); // <-- this will output the debug message
+Phorum.debug('Bye, world!', 11);  // <-- silent, Phorum.debuglevel is too low
+ * </code></pre></p>
  *
  * @param String message
  *     The message to write to the debug log.
  *
- * @param mixed data
+ * @param Integer level (optional)
+ *     The debug level of the message. Only messages that have a
+ *     debugging level equal to or below the configuration variable
+ *     {@link #debuglevel Phorum.debuglevel} are logged.
+ *     If no debug level is provided, then level = 1 is implied.
+ *
+ * @param mixed data (optional)
  *     Optional argument containing a variable which' contents should be
  *     logged. The data will be written to the debug log as a JSON structure.
+ *
+ * @member Phorum debug
  */
-Phorum.debug = function (level, message, data)
+Phorum.debug = function (message, level, data)
 {
     level = parseInt(level, 10);
-    if (level === 'NaN') {
+    if (isNaN(level)) {
         level = 1;
     }
     if (level < 0) {
         level = 1;
     }
-    if (Phorum.debug.level &&
-        Phorum.debug.level >= level &&
-        typeof window.console !== 'undefined')
+
+    if (Phorum.debuglevel && Phorum.debuglevel >= level &&
+        console !== undefined && console.debug instanceof Function)
     {
         if (data !== undefined) {
             data = ': ' + $PJ.toJSON(data);
@@ -40,10 +52,4 @@ Phorum.debug = function (level, message, data)
         console.debug('Phorum debug [' + level + '] ' + message + data);
     }
 };
-
-/**
- * The debug level. Set this variable to a higher number
- * for more debugging information.
- */
-Phorum.debug.level = 0;
 
