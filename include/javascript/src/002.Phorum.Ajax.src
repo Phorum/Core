@@ -6,39 +6,86 @@
 // result to the calling client.
 // ----------------------------------------------------------------------
 
+/**
+ * @class Phorum.Ajax
+ * @extends Object
+ *
+ * This class provides tools for handling Ajax communication.
+ *
+ * @singleton
+ */
 Phorum.Ajax =
 {
-    // The URL that we can use to access the Phorum Ajax layer script.
-    // The 'callback=?' part is a special placeholder for jQuery's JSONP code.
-    URL: '<?php print phorum_api_url(PHORUM_AJAX_URL,"callback=?")?>',
+    /**
+     * @property url
+     *
+     * The URL that we use to access the Phorum Ajax layer script.
+     * Note that the 'callback=?' part in this URL is a special placeholder
+     * for jQuery's JSONP implementation (Phorum uses JSONP as the Ajax
+     * call method).
+     *
+     * @var String
+     */
+    url: '<?php print phorum_api_url(PHORUM_AJAX_URL,"callback=?")?>',
 
     /**
      * Execute an Ajax Phorum call.
      *
-     * @param Object req
+     * @param {Object} req
+     *   <p>
      *     The request object. This is object needs at least the property
-     *     "call". This req.call property determines what Ajax call has
-     *     to be handled by the ajax.php script on the server.
-     *
-     *     When the req.cache_id property is set, then the Phorum.Cache is
+     *     <b>"call"</b>. This property holds the name of the Ajax call that
+     *     must be handled by the ajax.php script on the server.
+     *   </p>
+     *   <p>
+     *     When the <b>"cache_id"</b> property is set, then the Phorum.Cache is
      *     used for caching the call result data. It is the task of the
-     *     caller to make sure that the provided cache_id is unique for
-     *     the call that is done.
+     *     caller to make sure that the provided cache_id is
+     *     <em>globally unique</em>.
+     *   </p>
+     *   <p>
+     *     The <b>"onFailure"</b> property can be set for handling Ajax errors.
+     *     Its value should be a function that handles the error that was
+     *     returned by the Ajax call. This function will be called with the
+     *     error message as its argument.
+     *   </p>
+     *   <p>
+     *     The <b>"onSuccess"</b> property can be set for handling a successful
+     *     Ajax call. Its value should be a function that handles the data
+     *     that was returned by the Ajax call. This function will be called
+     *     with two arguments:
+     *     <ul>
+     *       <li>the data that was returned by the Ajax call</li>
+     *       <li>whether (true) or not (false) the result was returned
+     *           from cache</li>
+     *     </ul>
+     *   </p>
+     *   <p>
+     *     All other properties will be sent to the ajax.php script as call
+     *     arguments. What call arguments are available depends on the
+     *     Phorum Ajax call that is called. Check the documentation of
+     *     the call for details.
+     *   </p>
      *
-     *     The req.onFailure property can be set for implementing error
-     *     handling. Its value should be a function that handles the error.
-     *     The function will be called with the error message as its argument.
-     *
-     *     The req.onSuccess property can be set for implementing handling for
-     *     a successful Ajax call. Its value should be a function that handles
-     *     the data that was returned by the Ajax call. The function will be
-     *     called with two arguments:
-     *     - the data that was returned by the Ajax call
-     *     - whether (true) or not (false) the result was returned from cache
-     *
-     *     Other properties are sent to the ajax.php script as call arguments.
-     *     What call arguments are available depends on the Phorum Ajax call
-     *     that is called. Check the documentation of the call for details.
+     *   <b>Example code:</b>
+     *   <p><pre><code>
+Phorum.Ajax.call({
+
+   call: 'foo',
+   arg1: 'bar',
+   arg2: 'baz',
+   cache_id: 'foo-bar-bar-id',
+
+   onSuccess: function (data, from_cache) {
+       alert('Call successful, data loaded ' +
+             (from_cache ? ' from cache' : ' from server'));
+   },
+
+   onFailure: function (error) {
+       alert('Call failed: ' + error);
+   }
+})
+     *   </code></pre></p>
      */
     call: function (req)
     {
@@ -97,7 +144,7 @@ Phorum.Ajax =
             req.onRequest(args);
         }
 
-        $PJ.getJSON(Phorum.Ajax.URL, args, function (answer)
+        $PJ.getJSON(Phorum.Ajax.url, args, function (answer)
         {
             Phorum.debug(
                 5, 'Phorum.Ajax.call receives answer from server', answer
@@ -130,8 +177,13 @@ Phorum.Ajax =
     },
 
     /**
-     * Parse out javascript blocks from the data to eval them. Adding them
-     * to the page using innerHTML does not invoke parsing by the browser.
+     * Parse out javascript blocks from the data to eval them. Adding the
+     * data to the page after rendering (e.g. by using innerHTML) does not
+     * invoke parsing and execution of the script block(s) by the browser.
+     *
+     * @param {String} data
+     *   The data from which to parse the javascript blocks.
+     * @private
      */
     evalJavaScript: function (data)
     {
