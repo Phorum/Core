@@ -1,0 +1,65 @@
+/**
+ * Trim whitespace from the start and end of a string.
+ *
+ * <p><pre><code>
+var a = "\t\n\t  string with mad whitespace \t\t\n\n\n  ";
+var b = Phorum.trim(a);
+>>> b now contains "string with mad whitespace"
+
+var c = Phorum.trim(a, true);
+>>> c[0] contains "string with mad whitespace"
+>>> c[1] contains "\t\n\t  "
+>>> c[2] contains "\t\t\n\n\n  "
+
+ * </code></pre></p>
+ *
+ * @param {String} str
+ *   The string from which to trim the surrounding whitespace.
+ * @param {Boolean} return_trimmed (optional)
+ *   If true, then this method will return three values in an array:
+ *   the trimmed string, the whispace that was trimmed from the
+ *   left and the whitespace that was trimmed from the right.
+ *   If false (the default), then only the trimmed string will
+ *   be returned.
+ * @return {mixed} result
+ *   Either an array or a string is returned, depending on the
+ *   return_trimmed parameter.
+ *
+ * @member Phorum trim
+ */
+Phorum.trim = function(str, return_trimmed)
+{
+    var trim_pre = '';
+    var trim_post = '';
+
+    // Trim whitespace from end of string.
+    for (;;) {
+        var lastchar = str.substring(str.length-1, str.length);
+        if (lastchar == ' '  || lastchar == '\r' ||
+            lastchar == '\n' || lastchar == '\t') {
+            trim_post = lastchar + trim_post;
+
+            str = str.substring(0, str.length-1);
+        } else {
+            break;
+        }
+    }
+
+    // Trim whitespace from start of string.
+    for (;;) {
+        var firstchar = str.substring(0,1);
+        if (firstchar == ' '  || firstchar == '\r' ||
+            firstchar == '\n' || firstchar == '\t') {
+            trim_pre += firstchar;
+            str = str.substring(1);
+        } else {
+            break;
+        }
+    }
+
+    if (return_trimmed) {
+        return [ str, trim_pre, trim_post ];
+    } else {
+        return str;
+    }
+} 
