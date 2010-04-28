@@ -27,19 +27,19 @@ var c = Phorum.trim(a, true);
  *
  * @member Phorum trim
  */
-Phorum.trim = function(str, return_trimmed)
+Phorum.trim = function (str, return_trimmed)
 {
     var trim_pre = '';
     var trim_post = '';
 
     // Trim whitespace from end of string.
     for (;;) {
-        var lastchar = str.substring(str.length-1, str.length);
-        if (lastchar == ' '  || lastchar == '\r' ||
-            lastchar == '\n' || lastchar == '\t') {
+        var lastchar = str.substring(str.length - 1, str.length);
+        if (lastchar === ' '  || lastchar === '\r' ||
+            lastchar === '\n' || lastchar === '\t') {
             trim_post = lastchar + trim_post;
 
-            str = str.substring(0, str.length-1);
+            str = str.substring(0, str.length - 1);
         } else {
             break;
         }
@@ -47,9 +47,9 @@ Phorum.trim = function(str, return_trimmed)
 
     // Trim whitespace from start of string.
     for (;;) {
-        var firstchar = str.substring(0,1);
-        if (firstchar == ' '  || firstchar == '\r' ||
-            firstchar == '\n' || firstchar == '\t') {
+        var firstchar = str.substring(0, 1);
+        if (firstchar === ' '  || firstchar === '\r' ||
+            firstchar === '\n' || firstchar === '\t') {
             trim_pre += firstchar;
             str = str.substring(1);
         } else {
@@ -62,4 +62,4 @@ Phorum.trim = function(str, return_trimmed)
     } else {
         return str;
     }
-} 
+};

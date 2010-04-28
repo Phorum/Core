@@ -59,6 +59,7 @@ body.addTags('[url]', '[/url]', 'Please, enter the URL');
             var pretext;
             var posttext;
             var range;
+            var res;
 
             // Store the current scroll offset, so we can restore it after
             // adding the tags to its contents.
@@ -75,14 +76,16 @@ body.addTags('[url]', '[/url]', 'Please, enter the URL');
                     this.object.selectionEnd, this.object.value.length);
 
                 // Prompt for input if no text was selected and a prompt is set.
-                if (text == '' && prompt_str) {
+                if (text === '' && prompt_str) {
                     text = prompt(prompt_str, '');
-                    if (text == null) return;
+                    if (text === null) {
+                        return;
+                    }
                 }
 
                 // Strip whitespace from text selection and move it to the
                 // pre- and post.
-                var res = Phorum.trim(text, true);
+                res = Phorum.trim(text, true);
                 text = res[0];
                 pre = res[1] + pre;
                 post = post + res[2];
@@ -107,7 +110,7 @@ body.addTags('[url]', '[/url]', 'Please, enter the URL');
                 // to a new value :-/
                 var virtlen = range.text.length;
                 if (virtlen > 0) {
-                    while (range.text.length == virtlen) {
+                    while (range.text.length === virtlen) {
                         range.moveEnd('character', -1);
                     }
                     range.moveEnd('character', +1);
@@ -115,14 +118,16 @@ body.addTags('[url]', '[/url]', 'Please, enter the URL');
 
                 // Prompt for input if no text was selected and a prompt is set.
                 text = range.text;
-                if (text == '' && prompt_str) {
+                if (text === '' && prompt_str) {
                     text = prompt(prompt_str, '');
-                    if (text == null) return;
+                    if (text === null) {
+                        return;
+                    }
                 }
 
                 // Strip whitespace from text selection and move it to the
                 // pre- and post.
-                var res = Phorum.trim(text, true);
+                res = Phorum.trim(text, true);
                 text = res[0];
                 pre = res[1] + pre;
                 post = post + res[2];
