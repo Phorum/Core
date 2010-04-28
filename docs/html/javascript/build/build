@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+# This script generates the Yoda GUI documentation.
+
+$base_dir   = dirname(__FILE__);
+$extdoc_dir = "$base_dir/ext-doc";
+$template   = "$extdoc_dir/template/phorum/template.xml";
+$buildprog  = "java -jar $extdoc_dir/ext-doc.jar";
+$config     = "$base_dir/phorum-project.xml";
+$output_dir = "$base_dir/../";
+$jsdir      = "$base_dir/../../../../include/javascript";
+
+system("/bin/rm -f  $output_dir/*.html");
+system("/bin/rm -fR $output_dir/resources");
+system("/bin/rm -fR $output_dir/source");
+
+system("cd $jsdir/src; make");
+system("/bin/cp $jsdir/phorum-javascript-library.php $output_dir/phorum.js");
+
+system(
+  "$buildprog " .
+    "-v " .
+    "-p $config " .
+    "-o $output_dir " .
+    "-t $template"
+);
+
+system("/bin/rm $output_dir/phorum.js");
+
