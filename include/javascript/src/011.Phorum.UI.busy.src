@@ -126,6 +126,7 @@ Phorum.UI.busy =
         }
 
         // <?php $lang = $PHORUM['DATA']['LANG']; ?>
+
         var message = this.count === 1 ?
                       '<?php print addslashes($lang["ActionPending"]) ?>' :
                       '<?php print addslashes($lang["ActionsPending"]) ?>';
