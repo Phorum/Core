@@ -67,16 +67,25 @@ Phorum.UI.Element = Phorum.extend(
 
     {
         /**
-         * @cfg {String} className
+         * @property className
          *
          * The name of this class, for easy reference.
+         * Derived classes must override this property.
+         *
+         * @var String
+         * @private
          */
         className: 'Phorum.UI.Element',
 
         /**
-         * @cfg {Array} selectors
+         * @property selectors
          *
          * The array of jQuery selectors to search for.
+         * Derived classes can override this property to set the default
+         * list of selectors to check.
+         *
+         * @var Array
+         * @private
          */
         selectors: [ ],
 
@@ -86,6 +95,7 @@ Phorum.UI.Element = Phorum.extend(
          * A reference to the jQuery wrapper object for the managed element.
          *
          * @var jQuery
+         * @private
          */
         $object: null,
 
@@ -94,6 +104,7 @@ Phorum.UI.Element = Phorum.extend(
          *
          * A reference to the managed element object.
          *
+         * @var Object
          * @private
          */
         object: null,

@@ -1,23 +1,25 @@
 /**
- * A non-conflicting jQuery library for use by Phorum. This way, our jQuery
- * library will not conflict with existing javascript libraries (e.g. when
- * Phorum is embedded in another application that uses a javascript library
- * or when a module is loaded that also loads a library of its own).
+ * @class Phorum
+ * @extends Object
  *
- * @var jQuery
- */
-var $PJ = jQuery.noConflict();
-
-/**
  * Phorum object. Other JavaScript code for Phorum can extend this one to
  * implement functionality without risking name name space collissions.
  *
- * @var Object
  * @singleton
  */
 var Phorum = {};
 
 /**
+ * A non-conflicting jQuery library for use by Phorum. This way, our jQuery
+ * library will not conflict with existing javascript libraries (e.g. when
+ * Phorum is embedded in another application that uses a javascript library
+ * or when a module is loaded that also loads a library of its own).
+ */
+var $PJ = jQuery.noConflict();
+
+/**
+ * @property library_version
+ *
  * The version of this lib. This can be used by other code to check if the
  * correct version of the library is loaded. The major number should be
  * incremented in case backward compatibility is broken. The minor number

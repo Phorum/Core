@@ -3,5 +3,10 @@
 // interface related functionality.
 // ----------------------------------------------------------------------
 
+/**
+ * @class Phorum.UI
+ * @extends Object
+ * @singleton
+ */
 Phorum.UI = {};
 
