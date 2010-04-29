@@ -160,10 +160,16 @@ body.addTags('[url]', '[/url]', 'Please, enter the URL');
         selectionRange: null,
 
         /**
-         * Store the active selection range of the text elment.
-         * This can be used to restore the selection range at a later time.
-         * This is used for MSIE, because sometimes clicking in a popup
-         * can clear the selection range.
+         * <p>
+         *   Store the active selection range of the text element.
+         *   This can be used to restore the selection range at a later time
+         *   using {@link #restoreSelection restoreSelection()}.
+         * </p>
+         * <p>
+         *   Currently, this will only act for MSIE. It was implemented because
+         *   MSIE sometimes clears the selection range in the text element when
+         *   clicking in a popup window.
+         * </p>
          */
         storeSelection: function ()
         {
@@ -178,7 +184,10 @@ body.addTags('[url]', '[/url]', 'Please, enter the URL');
         },
 
         /**
-         * Restore a previously stored textarea selection range.
+         * <p>
+         *   Restore a textarea selection range that was previously stored
+         *   using {@link #restoreSelection storeSelection()}.
+         * </p>
          */
         restoreSelection: function ()
         {

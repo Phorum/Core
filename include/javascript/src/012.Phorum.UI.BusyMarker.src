@@ -1,0 +1,200 @@
+/**
+ * @class Phorum.UI.BusyMarker
+ * <p>
+ *   This singleton class implements a busy marker for the Phorum UI.
+ *   This marker is used for notifying the user about running async
+ *   calls to the server (or other async activities).
+ * </p>
+ * <p>
+ *   The default implementation will show a message box at a fixed position
+ *   in the top left of the page, notifying the user about the number of
+ *   pending actions. This box can be styled by modifying the
+ *   {@link #style Phorum.UI.BusyMarker.style} object <i>before</i> the
+ *   first call to {@link #increment Phorum.UI.BusyMarker.increment}.
+ *   For example:
+ * </p>
+ * <p><pre><code>
+// Override or add single style properties.
+Phorum.UI.BusyMarker.style.background = 'green';
+Phorum.UI.BusyMarker.style.padding = '5px';
+
+// Replace the full style configuration.
+Phorum.UI.BusyMarker.style = {
+    position: 'absolute',
+    top: '0px';
+    right: '0px';
+    border: '1px solid #cc7';
+    padding: '5px';
+    background: '#ff9';
+};
+ * </code></pre></p>
+ * <p>
+ *   The template author can even go a step further than changing the CSS config
+ *   alone by fully overriding the Phorum.UI.BusyMarker.render() method through
+ *   the template javascript code. This method can check the
+ *   {@link #count Phorum.UI.BusyMarker.count} property to find out how many
+ *   busy tasks there are.
+ * </p>
+ *
+ * @singleton
+ */
+Phorum.UI.BusyMarker =
+{
+    /**
+     * @property className
+     * @private
+     */
+    className: 'Phorum.UI.BusyMarker',
+
+    // The public interface of the busy marker ==============================
+
+    /**
+     * @property count
+     *
+     * The number of pending actions. This property is updated by the
+     * {@link #increment increment()} and {@link #decrement decrement()}
+     * methods.
+     *
+     * @var Integer
+     */
+    count : 0,
+
+    /**
+     * Increment the number of pending actions, e.g. when starting
+     * an Ajax call. After incrementing the counter, the busy marker
+     * will automatically render.
+     */
+    increment: function ()
+    {
+        this.count ++;
+        Phorum.debug(
+            this.className + ': counter incremented to: ' + this.count, 10);
+
+        this.render();
+    },
+
+    /**
+     * Decrement the number of pending actions, e.g. when an Ajax reply
+     * is received. After decrementing the counter, the busy marker is
+     * automatically updated or cleaned up when the counter reached zero.
+     */
+    decrement: function ()
+    {
+        this.count --;
+        Phorum.debug(
+            this.className + ': Busy marker counter decremented to: ' +
+            this.count, 10);
+
+        if (this.count < 0) {
+            throw 'Yoda.UI.BusyMarker: the busy counter went below zero! ' +
+                  'The decrement() method was called more often than the ' +
+                  'decrement() method. This should not happen.';
+        }
+        this.render(); 
+    },
+
+    // Specific code for rendering the default busy marker ==================
+
+    // The following code can be overridden by template
+    // JavaScript code to implement a different marker.
+
+     /**
+      * @property $box
+      *
+      * Used to store our $box jQuery object
+      *
+      * @var Object
+      * @private
+      */
+    $box: null,
+
+    /**
+     * @property style
+     *
+     * <p>
+     *   The style properties that will be assigned to the busy marker
+     *   object, right after rendering. Properties can be modified or extra
+     *   properties can be added to style the marker.
+     * </p>
+     * <p>
+     *   Since styling is most related to templates, overriding style
+     *   properties for the marker can best be done from the template specific
+     *   JavaScript code.
+     * </p>
+     *
+     * @var Object
+     */
+    style: {
+        position   : 'fixed',
+        top        : '5px',
+        left       : '5px',
+        border     : '1px solid #aa5',
+        background : '#ff9',
+        padding    : '0.2em 1em',
+        zIndex     : 1000
+    },
+
+    /**
+     * <p>
+     *   Render the busy marker or clean up the existing busy marker when the
+     *   busy {@link #count counter} has reached zero.
+     * </p>
+     * <p>
+     *   This method is automatically called from the
+     *   {@link #increment increment()} and {@link #decrement decrement()}
+     *   methods, so there should be no need to actively call it yourself.
+     * </p>
+     * <p>
+     *   When a different busy marker is required for a template, then this
+     *   method (Phorum.UI.BusyMarker.render()) can be overriden from the
+     *   template's JavaScript code to alter the rendering to whatever is
+     *   appropriate for the template.
+     * </p>
+     */
+    render: function ()
+    {
+        // If no actions are pending, clear up the busy message after a
+        // little 100ms pause (to keep the busy message from being
+        // irritatingly flashy on screen).
+        if (this.count === 0) {
+            Phorum.debug(this.className + ': delete the busy marker', 10);
+            Phorum.UI.BusyMarker.$box.
+              stop(true, false).show().delay(100).fadeOut(1000);
+            return;
+        }
+
+        // Create the notify box if it is not available yet.
+        if (this.$box === null)
+        {
+            Phorum.debug(this.className + ': render the busy marker', 10);
+
+            // Create the box.
+            this.$box = $PJ('<div/>')
+                       .css(this.style)
+                       .addClass('phorum_busy_marker')
+                       .hide();
+
+            // Add the box to the page.
+            $PJ('body').prepend(this.$box);
+        }
+
+        // <?php $lang = $PHORUM['DATA']['LANG']; ?>
+
+        // Determine the message to show. 
+        var message =
+            this.count === 1 ?
+            '<?php print addslashes($lang["ActionPending"]) ?>' :
+            '<?php print addslashes($lang["ActionsPending"]) ?>';
+
+        // Replace %count% in the message with the current action count.
+        Phorum.debug(
+            this.className + ': set busy marker message: ' + message, 10);
+        message = message.replace(/%count%/, this.count);
+
+        // Show the busy marker.
+        Phorum.debug(this.className + ': show the busy marker', 10);
+        this.$box.html(message);
+        this.$box.stop(true, false).css('opacity', 1).show();
+    }
+};
+

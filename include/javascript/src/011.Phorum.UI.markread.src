@@ -25,13 +25,13 @@
 Phorum.UI.markread = function (mode, item_id)
 {
     // Request busy notification for the user.
-    Phorum.UI.busy.increment();
+    Phorum.UI.BusyMarker.increment();
 
     var req = {
         'call': 'markread',
         'onSuccess': function (data)
         {
-            Phorum.UI.busy.decrement();
+            Phorum.UI.BusyMarker.decrement();
 
             // Call all registered new flag cleanup callback functions.
             var l = Phorum.UI.markread.callbacks;
@@ -41,7 +41,7 @@ Phorum.UI.markread = function (mode, item_id)
         },
         'onFailure': function (data)
         {
-            Phorum.UI.busy.decrement();
+            Phorum.UI.BusyMarker.decrement();
         }
     };
 
