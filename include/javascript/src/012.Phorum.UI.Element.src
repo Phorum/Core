@@ -1,28 +1,22 @@
-// ----------------------------------------------------------------------
-// Utility functions to manage Phorum page elements
-// ----------------------------------------------------------------------
-
 /**
  * @class Phorum.UI.Element
  * 
  * <p>
  *   This class is a base class that is used for building objects that
- *   can manage page element.
+ *   can manage page elements.
  * </p>
  *
  * @constructor
  *   Create a new Phorum.UI.Element object.
  * @param {String/Array} selectors (optional)
  *   The jQuery selector or selectors to use for looking up the element to
- *   manage in the page. The selector will only match an element if there is
- *   exactly one available in the jQuery lookup result. The first unique
- *   element that matches will be used.
+ *   manage. The first selector that matches a single element will be used.
+ *   When no selectors are provided, then the selectors from the
+ *   {@link #selectors selectors} configuration property will be used instead.
  */
 Phorum.UI.Element = Phorum.extend(
 
-    // ----------------------------------------------------------------------
-    // Constructor
-    // ----------------------------------------------------------------------
+    // Constructor ==========================================================
 
     function (selectors) {
 
@@ -61,9 +55,7 @@ Phorum.UI.Element = Phorum.extend(
         }
     },
 
-    // ----------------------------------------------------------------------
-    // Prototype
-    // ----------------------------------------------------------------------
+    // Prototype ============================================================
 
     {
         /**
@@ -114,7 +106,7 @@ Phorum.UI.Element = Phorum.extend(
          *
          * @return {jQuery} $object
          */
-        get: function () {
+        wrapper: function () {
             return this.$object;
         },
 

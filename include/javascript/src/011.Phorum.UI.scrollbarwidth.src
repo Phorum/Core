@@ -8,17 +8,25 @@
  *   because this width differs per OS and browser.
  * </p>
  * <p><pre><code>
-var width = Phorum.scrollbarwidth();
+Phorum.UI.scrollbarwidth();
+>>> "15px"
+Phorum.UI.scrollbarwidth(true);
+>>> 15
  * </code></pre></p>
+ *
+ * @param {Boolean} as_integer
+ *   When true (default is false), then the integer pixel width is
+ *   returned (e.g. 10). Otherwise, a formatted CSS width is returned
+ *   (e.g. "10px").
  *
  * @return {Integer} width
  *   The width of the scrollbar in pixels.
  *
- * @member Phorum scrollbarwidth
+ * @member Phorum.UI scrollbarwidth
  */
-Phorum.scrollbarwidth = function ()
+Phorum.UI.scrollbarwidth = function (as_integer)
 {
-    if (Phorum.scrollbarwidth.width === undefined) {
+    if (Phorum.UI.scrollbarwidth.width === undefined) {
       var $outer = $PJ('<div/>').css({
           width    : '100px',
           height   : '100px',
@@ -37,9 +45,9 @@ Phorum.scrollbarwidth = function ()
       var with_scrollbar = $inner.innerWidth();
       $outer.remove();
 
-      Phorum.scrollbarwidth.width = (without_scrollbar - with_scrollbar);
+      Phorum.UI.scrollbarwidth.width = (without_scrollbar - with_scrollbar);
     }
 
-    return Phorum.scrollbarwidth.width;
+    return Phorum.UI.scrollbarwidth.width + (as_integer ? 0 : 'px');
 }
 

@@ -2,8 +2,9 @@
  * @class Phorum
  * @extends Object
  *
- * Phorum object. Other JavaScript code for Phorum can extend this one to
- * implement functionality without risking name name space collissions.
+ * The Phorum object. All Phorum JavaScript code is stored in this
+ * object. This way, functionality can be implemented without risking name
+ * space collissions.
  *
  * @singleton
  */
@@ -43,18 +44,7 @@ var Phorum = {
      *
      * @var Integer
      */
-    debuglevel: 0,
-
-    /**
-     * @property UI
-     *
-     * Phorum.UI is the namespace that is reserved for implementing user
-     * interface related functionality.
-     *
-     * @var Object
-     */
-    UI: {}
-
+    debuglevel: 0
 };
 
 
@@ -93,3 +83,4 @@ function yourfunction() {
  * @singleton
  */
 var $PJ = Phorum.jQuery = jQuery.noConflict();
+

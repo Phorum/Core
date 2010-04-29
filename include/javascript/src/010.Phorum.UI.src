@@ -1,0 +1,15 @@
+// ----------------------------------------------------------------------
+// User Interface
+// ----------------------------------------------------------------------
+
+/**
+ * @class Phorum.UI
+ * @extends Object
+ *
+ * Phorum.UI provides user interface handling methods and acts as the
+ * namespace for storing user interface related classes.
+ *
+ * @singleton
+ */
+Phorum.UI = { };
+

@@ -1,7 +1,3 @@
-// ----------------------------------------------------------------------
-// Utility functions to handle text fields (textarea, input type=text)
-// ----------------------------------------------------------------------
-
 /**
  * @class Phorum.UI.TextElement
  * @extends Phorum.UI.Element
@@ -13,15 +9,15 @@
  * </p>
  * @constructor
  *   Create a new Phorum.UI.TextElement object.
- * @param {String/Array} selectors
- *   The selector or selectors to use for looking up the text element to
- *   handle in the page.
+ * @param {String/Array} selectors (optional)
+ *   The jQuery selector or selectors to use for looking up the element to
+ *   manage. The first selector that matches a single element will be used.
+ *   When no selectors are provided, then the selectors from the
+ *   {@link #selectors selectors} configuration property will be used instead.
  */
 Phorum.UI.TextElement = Phorum.extend(Phorum.UI.Element,
 
-    // ----------------------------------------------------------------------
-    // Constructor
-    // ----------------------------------------------------------------------
+    // Constructor ==========================================================
 
     function (selectors) {
 
@@ -29,9 +25,7 @@ Phorum.UI.TextElement = Phorum.extend(Phorum.UI.Element,
         this.parentConstructor(selectors);
     },
 
-    // ----------------------------------------------------------------------
-    // Prototype
-    // ----------------------------------------------------------------------
+    // Prototype ============================================================
 
     {
         /**
