@@ -1,0 +1,45 @@
+/**
+ * <p>
+ *   Retrieve the width of the scrollbar in the browser.
+ * </p>
+ * <p>
+ *   This implements a reliable way of determining the width
+ *   of the scrollbar. One cannot rely on a predefined width,
+ *   because this width differs per OS and browser.
+ * </p>
+ * <p><pre><code>
+var width = Phorum.scrollbarwidth();
+ * </code></pre></p>
+ *
+ * @return {Integer} width
+ *   The width of the scrollbar in pixels.
+ *
+ * @member Phorum scrollbarwidth
+ */
+Phorum.scrollbarwidth = function ()
+{
+    if (Phorum.scrollbarwidth.width === undefined) {
+      var $outer = $PJ('<div/>').css({
+          width    : '100px',
+          height   : '100px',
+          position : 'absolute',
+          top      : '-200px',
+          left     : '-200px',
+      });
+      var $inner = $PJ('<div/>').css({
+          height   : '100px',
+      });
+      $outer.append($inner);
+      $PJ('body').append($outer);
+
+      var without_scrollbar = $inner.innerWidth();
+      $outer.css('overflow-y', 'scroll');
+      var with_scrollbar = $inner.innerWidth();
+      $outer.remove();
+
+      Phorum.scrollbarwidth.width = (without_scrollbar - with_scrollbar);
+    }
+
+    return Phorum.scrollbarwidth.width;
+}
+
