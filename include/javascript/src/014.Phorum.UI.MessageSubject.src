@@ -46,7 +46,7 @@ Phorum.UI.MessageSubject = Phorum.extend(Phorum.UI.TextElement,
 
         this.selectors = [
             '#phorum #phorum_subject',   // Phorum 5.1
-            '#phorum #subject',          // Phorum 5.2+
+            '#phorum #subject'           // Phorum 5.2+
         ];
 
         this.parentConstructor(selectors);

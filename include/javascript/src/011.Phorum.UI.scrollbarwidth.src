@@ -27,27 +27,27 @@ Phorum.UI.scrollbarwidth(true);
 Phorum.UI.scrollbarwidth = function (as_integer)
 {
     if (Phorum.UI.scrollbarwidth.width === undefined) {
-      var $outer = $PJ('<div/>').css({
-          width    : '100px',
-          height   : '100px',
-          position : 'absolute',
-          top      : '-200px',
-          left     : '-200px',
-      });
-      var $inner = $PJ('<div/>').css({
-          height   : '100px',
-      });
-      $outer.append($inner);
-      $PJ('body').append($outer);
+        var $outer = $PJ('<div/>').css({
+            width    : '100px',
+            height   : '100px',
+            position : 'absolute',
+            top      : '-200px',
+            left     : '-200px'
+        });
+        var $inner = $PJ('<div/>').css({
+            height   : '100px'
+        });
+        $outer.append($inner);
+        $PJ('body').append($outer);
 
-      var without_scrollbar = $inner.innerWidth();
-      $outer.css('overflow-y', 'scroll');
-      var with_scrollbar = $inner.innerWidth();
-      $outer.remove();
+        var without_scrollbar = $inner.innerWidth();
+        $outer.css('overflow-y', 'scroll');
+        var with_scrollbar = $inner.innerWidth();
+        $outer.remove();
 
-      Phorum.UI.scrollbarwidth.width = (without_scrollbar - with_scrollbar);
+        Phorum.UI.scrollbarwidth.width = (without_scrollbar - with_scrollbar);
     }
 
     return Phorum.UI.scrollbarwidth.width + (as_integer ? 0 : 'px');
-}
+};
 
