@@ -146,6 +146,13 @@ In template:
      *   This method is also available through the alias
      *   {@link Phorum#markRead Phorum.markRead()}.
      * </p>
+     * <p>
+     *   <b>Example code</b>
+     * </p>
+     * <p><pre><code>
+<a href="http://example.com/index.php?10,markread,0"
+   onclick="return Phorum.UI.NewFlags.markRead('forums', 10)">Mark forum read</a>
+     * </code></pre></p>
      *
      * @param {String} mode
      *     One of "forums", "threads" or "messages".
@@ -153,6 +160,10 @@ In template:
      * @param {Integer} item_id
      *     A forum_id, thread id or message_id (which one to use depends
      *     on the "mode" parameter).
+     *
+     * @return boolean false
+     *     This method always returns false, which makes it simple to cancel
+     *     events (e.g. onclick="return Phorum.UI.NewFlags.markRead(...)")
      */
     markRead: function (mode, item_id)
     {

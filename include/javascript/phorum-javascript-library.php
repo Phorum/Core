@@ -1155,6 +1155,24 @@ Phorum.UI.MessageSubject = Phorum.extend(Phorum.UI.TextElement,
         this.parentConstructor(selectors);
     }
 );
+// Add base CSS code for Phorum.UI.BusyMarker the page. It is inserted
+// at the beginning of the head section, so template CSS code can be
+// used to override the basic style.
+$PJ(document).ready(function () {
+    $PJ('<style type="text/css">' +
+        '.phorum_busy_marker ' +
+        '{' +
+            'position: fixed; ' +
+            'top: 0; ' +
+            'left: 0; ' +
+            'border: 1px solid #aa5; ' +
+            'background: #ff9; ' +
+            'padding: 0.2em 1em; ' +
+            'z-index: 1000; ' +
+        '}' +
+        '</style>').prependTo($PJ('head'));
+});
+
 /**
  * @class Phorum.UI.BusyMarker
  * <p>
@@ -1165,32 +1183,22 @@ Phorum.UI.MessageSubject = Phorum.extend(Phorum.UI.TextElement,
  * <p>
  *   The default implementation will show a message box at a fixed position
  *   in the top left of the page, notifying the user about the number of
- *   pending actions. This box can be styled by modifying the
- *   {@link #style Phorum.UI.BusyMarker.style} object <i>before</i> the
- *   first call to {@link #increment Phorum.UI.BusyMarker.increment}.
- *   For example:
+ *   pending actions. This box can be styled by CSS through the
+ *   phorum_busy_marker class. For example:
  * </p>
  * <p><pre><code>
-// Override or add single style properties.
-Phorum.UI.BusyMarker.style.background = 'green';
-Phorum.UI.BusyMarker.style.padding = '5px';
-
-// Replace the full style configuration.
-Phorum.UI.BusyMarker.style = {
-    position: 'absolute',
-    top: '0px',
-    right: '0px',
-    border: '1px solid #cc7',
-    padding: '5px',
-    background: '#ff9'
-};
+#phorum .phorum_busy_marker {
+    border: 1px solid black;
+    background: #ddd;
+    color: white;
+}
  * </code></pre></p>
  * <p>
- *   The template author can even go a step further than changing the CSS config
- *   alone by fully overriding the Phorum.UI.BusyMarker.render() method through
- *   the template javascript code. This method can check the
+ *   The template author can even go a step further than changing the CSS
+ *   styling alone by fully overriding the Phorum.UI.BusyMarker.render()
+ *   method through the template javascript code. This method can check the
  *   {@link #count Phorum.UI.BusyMarker.count} property to find out how many
- *   busy tasks there are.
+ *   busy tasks there are and render a custom busy marker accordingly.
  * </p>
  *
  * @singleton
@@ -1266,32 +1274,6 @@ Phorum.UI.BusyMarker =
     $box: null,
 
     /**
-     * @property style
-     *
-     * <p>
-     *   The style properties that will be assigned to the busy marker
-     *   object, right after rendering. Properties can be modified or extra
-     *   properties can be added to style the marker.
-     * </p>
-     * <p>
-     *   Since styling is most related to templates, overriding style
-     *   properties for the marker can best be done from the template specific
-     *   JavaScript code.
-     * </p>
-     *
-     * @var Object
-     */
-    style: {
-        position   : 'fixed',
-        top        : '5px',
-        left       : '5px',
-        border     : '1px solid #aa5',
-        background : '#ff9',
-        padding    : '0.2em 1em',
-        zIndex     : 1000
-    },
-
-    /**
      * <p>
      *   Render the busy marker or clean up the existing busy marker when the
      *   busy {@link #count counter} has reached zero.
@@ -1326,12 +1308,10 @@ Phorum.UI.BusyMarker =
             Phorum.debug(this.className + ': render the busy marker', 10);
 
             // Create the box.
-            this.$box = $PJ('<div/>')
-                       .css(this.style)
-                       .addClass('phorum_busy_marker')
-                       .hide();
+            this.$box = $PJ('<div class="phorum_busy_marker"/>');
 
-            // Add the box to the page.
+            // Add the box to the page. We add it to the #phorum wrapper and
+            // not to the page body to make it inherit CSS styles from #phorum. 
             $PJ('#phorum').prepend(this.$box);
         }
 
@@ -1503,6 +1483,13 @@ In template:
      *   This method is also available through the alias
      *   {@link Phorum#markRead Phorum.markRead()}.
      * </p>
+     * <p>
+     *   <b>Example code</b>
+     * </p>
+     * <p><pre><code>
+<a href="http://example.com/index.php?10,markread,0"
+   onclick="return Phorum.UI.NewFlags.markRead('forums', 10)">Mark forum read</a>
+     * </code></pre></p>
      *
      * @param {String} mode
      *     One of "forums", "threads" or "messages".
@@ -1510,6 +1497,10 @@ In template:
      * @param {Integer} item_id
      *     A forum_id, thread id or message_id (which one to use depends
      *     on the "mode" parameter).
+     *
+     * @return boolean false
+     *     This method always returns false, which makes it simple to cancel
+     *     events (e.g. onclick="return Phorum.UI.NewFlags.markRead(...)")
      */
     markRead: function (mode, item_id)
     {
