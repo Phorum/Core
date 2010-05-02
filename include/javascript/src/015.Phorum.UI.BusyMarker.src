@@ -1,8 +1,8 @@
 /**
  * @class Phorum.UI.BusyMarker
  * <p>
- *   This singleton class implements a busy marker for the Phorum UI.
- *   This marker is used for notifying the user about running async
+ *   The Phorum.UI.BusyMarker singleton implements a busy marker for the
+ *   Phorum UI. This marker is used for notifying the user about running async
  *   calls to the server (or other async activities).
  * </p>
  * <p>

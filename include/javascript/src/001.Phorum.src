@@ -2,9 +2,10 @@
  * @class Phorum
  * @extends Object
  *
- * The Phorum object. All Phorum JavaScript code is stored in this
- * object. This way, functionality can be implemented without risking name
- * space collissions.
+ * The Phorum singleton acts as the top level namespace for all Phorum
+ * JavaScript code. Methods, objects and classes are stored in this
+ * object. This takes away the risk of running into name space collissions
+ * with other JavaScript code.
  *
  * @singleton
  */

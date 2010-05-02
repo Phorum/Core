@@ -6,10 +6,10 @@
  * @class Phorum.Cache
  * @extends Object
  *
- * This is a caching layer that can be used by Phorum JavaScript code
- * for handling client side data caching. The cache is a simple key/value
- * pair based data storage. It supports TTLs for automatically expiring
- * cached data.
+ * The Phorum.Cache singleton is a caching layer that can be used by Phorum
+ * JavaScript code for handling client side data caching. The cache is a
+ * simple key/value pair based data storage. It supports TTLs for automatically
+ * expiring cached data.
  *
  * @singleton
  */

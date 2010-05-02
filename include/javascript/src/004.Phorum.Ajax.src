@@ -6,9 +6,9 @@
  * @class Phorum.Ajax
  * @extends Object
  *
- * This class provides tools for handling Phorum Ajax communication.
- * Ajax calls are done to the ajax.php script of the Phorum system,
- * which will handle the call and return the result.
+ * The Phorum.Ajax singleton provides tools for handling Phorum Ajax
+ * communication. Ajax calls are done to the ajax.php script of the Phorum
+ * system, which will handle the call and return the result.
  *
  * @singleton
  */
@@ -27,7 +27,13 @@ Phorum.Ajax =
     url: '<?php print phorum_api_url(PHORUM_AJAX_URL,"callback=?")?>',
 
     /**
-     * Execute an Ajax Phorum call.
+     * <p>
+     *   Execute an Ajax Phorum call.
+     * </p>
+     * <p>
+     *   This method is also available through the alias
+     *   {@link Phorum#call Phorum.call()}.
+     * </p>
      *
      * @param {Object} req
      *   <p>
