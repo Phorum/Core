@@ -15,10 +15,11 @@
  * </p>
  * <p>
  *   For updating the user interface after a successful call, a few built-in
- *   methods are provided. See {@link #updateUI updateUI()} for a description
- *   of these. If a template or module author needs support for a method that
- *   is not built-in, extra methods can be implemented by registering a
- *   callback through {@link #registerCallback registerCallback()}.
+ *   actions are provided. See {@link #updateUI updateUI()} for a description
+ *   of these. If a template or module author needs support for a type of
+ *   action that is not built-in, extra actions can be implemented by
+ *   registering a callback through
+ *   {@link #registerActionCallback registerActionCallback()}.
  * </p>
  *
  * @singleton
@@ -33,51 +34,113 @@ Phorum.UI.NewFlags = {
 
     /**
      * <p>
-     *   This is the callback registry. It holds callback functions that
-     *   will be called when a {@link #markRead Phorum.UI.NewFlags.markRead()}
-     *   call has been executed successfully.
+     *   This is the callback registry. It holds global and action based
+     *   callback functions that will be called when a
+     *   {@link #markRead Phorum.UI.NewFlags.markRead()} call has been
+     *   executed successfully.
      * </p>
      *
      * @private
      */
-    callbacks: [ ],
+    callbacks: {
+        global: [ ],
+        action: { },
+    },
 
     /**
      * <p>
-     *   Register a callback that has to be called after a
+     *   Register a global callback function that has to be called after every
      *   {@link #markRead markRead()} call has been completed successfully.
      * </p>
      * <p>
-     *   By means of callbacks, templates and modules can add handling code
-     *   for updating the user interface after marking messages read (e.g. the
-     *   announcement module, which needs customized handling for marking
-     *   messages in the announcements block as read when the user clicks on
-     *   "mark read" for the announcement forum on the index page).
+     *   The registered global callback functions will be called with two
+     *   parameters, which identify what messages have been marked read:
+     *   <div class="mdetail-params"><ul>
+     *     <li><b>mode</b>: "forums", "threads" or "messages"</li>
+     *     <li><b>item_id</b>: the forum, thread or message id</li>
+     *   </ul></div>
      * </p>
      * <p>
-     *   The registered callback functions will be called with two parameters,
-     *   which identify the messages that have been marked read:
+     *   <b>Example code:</b>
      * </p>
-     * <div class="mdetail-params"><ul>
-     *   <li><b>mode</b>: "forums", "threads" or "messages"</li>
-     *   <li><b>item_id</b>: the forum, thread or message id/li>
-     * </ul></div>
+     * <p><pre><code>
+Phorum.UI.NewFlags.registerCallback(function (mode, item_id) {
+  alert("Mark read was successful for " + mode + ", id " + item_id
+});
+     * </code></pre></p>
      * 
      * @param {Function} callback
      *   The callback function to register.
      */
     registerCallback: function (callback)
     {
-        this.callbacks.push(callback);
+        if (!(callback instanceof Function)) {
+            throw this.className + '.registerCallback(): ' +
+            'the callback must be a function'
+        }
+
+        this.callbacks.global.push(callback);
+    },
+
+    /**
+     * <p>
+     *   Register a callback function for a specific action that has to be
+     *   called after a {@link #markRead markRead()} call has been completed
+     *   successfully.
+     * </p>
+     * <p>
+     *   The registered action callback functions will be called with two
+     *   parameters, which both identify the matching element:
+     *   <div class="mdetail-params"><ul>
+     *     <li><b>element</b>: the matching DOM-element</li>
+     *     <li><b>$element</b>: the jQuery wrapper for the DOM-element</li>
+     *   </ul></div>
+     * </p>
+     * <p>
+     *   <b>Example code:</b>
+     * </p>
+     * <p><pre><code>
+In javascript:
+
+function handleCustomAction(elt, $elt) {
+    $elt.css('color', 'green');
+}
+
+Phorum.UI.NewFlags.registerActionCallback(handleCustomAction, 'custom');
+
+In template:
+
+<span class="new-flag[custom,10,5,293]">
+  this text will turn green when the message is read
+</span>
+     * </code></pre></p>
+     *
+     * @param {Function} callback
+     *   The callback function to register.
+     *
+     * @param {String} action (optional)
+     *   The action for which to register the callback. The action is defined
+     *   in the special new-flag[&lt;action&gt;,...] CSS class (see
+     *   {@link #updateUI updateUI()} for more info). 
+     */
+    registerActionCallback: function (callback, action)
+    {
+        if (!(callback instanceof Function)) {
+            throw this.className + '.registerActionCallback(): ' +
+            'the callback must be a function'
+        }
+        if (this.callbacks.action[action] === undefined) {
+            this.callbacks.action[action] = [ ];
+        }
+        this.callbacks.action[action].push(callback);
     },
 
     /**
      * <p>
      *   This method can be called from "mark read" links to handle marking
      *   forums, threads or messages read through Ajax calls. After the
-     *   call has finished successfully, the
-     *   {@link #registerCallback registered callbacks} will be called to
-     *   update the user interface.
+     *   call has finished successfully, {@link #updateUI updateUI} will be
+     *   called to update the user interface.
      * </p>
      * <p>
      *   This method is also available through the alias
@@ -129,18 +192,24 @@ Phorum.UI.NewFlags = {
      *   Update the user interface after marking messages as read.
      * </p>
      * <p>
-     *   This method implements a few basic methods for updating the
-     *   user interface. If a template or module needs extra methods,
-     *   then the {@link #registerCallback registerCallback()}
-     *   method can be used to implement extra methods.
+     *   This method implements a few built-in actions for updating the
+     *   user interface. If a template or module needs custom handling of
+     *   mark read events, then the {@link #registerCallback registerCallback()}
+     *   and {@link #registerActionCallback registerActionCallback()} methods
+     *   can be used to implement custom functions.
      * </p>
      * <p>
-     *   <b>Built-in UI update methods:</b>
+     *   <b>Built-in UI update actions:</b>
      * </p>
      * <p>
-     *   Below, we describe what update methods are provided by this class.
-     *   In the descriptions, you will find references to &lt;item&gt;. At
-     *   places where you see this, you can define the item to which the new
+     *   Below, we will describe the built-in actions that are provided by
+     *   Phorum.UI.NewFlags. Linking one of these actions to a page element
+     *   is done by assigning a CSS class that looks like:
+     *   <pre><code>
+new-flag[&lt;action&gt;,&lt;item&gt;]
+     *   </code></pre>
+     * </p>
+     *   The &lt;item&gt; part in here references the item to which the new
      *   flag is linked. The format is:
      *   <pre><code>
 &lt;forum id&gt;[, &lt;thread id&gt;[, &lt;message id&gt;]]
@@ -149,26 +218,55 @@ Phorum.UI.NewFlags = {
 [ ] = optional
 
 Examples:
-new-flag[10] = forum 10, for example on the index page
-new-flag[10,5] = forum 10, thread 5, for example on the list page
-new-flag[10,5,84] = forum 10, thread 5, message 85, for example on the read page
+10      = forum 10, for example on the index, where forums are listed
+10,5    = forum 10, thread 5, for example on the list, where threads are listed
+10,5,84 = forum 10, thread 5, message 85, for example on the read page
      *   </code></pre>
+     * Using this notation, a mark read event for thread id 5 would match both
+     * "10,5" and "10,5,84".
+     * </p>
+     * <p>
+     *   The &lt;action&gt; part references the action that must be performed
+     *   on the element. Below here, the built-in actions are described.
      * </p>
      * <div class="mdetail-params"><ul>
      *   <li>
-     *     <b>New-flag</b>:<br/>
-     *     In the default Phorum template, this is the red "new" text that
-     *     is shown for new messages. When the related item is marked read,
-     *     then the new flag is hidden. To implement this in a template, use
-     *     the following template:<br/>
+     *     <b>Action: hide</b>:<br/>
+     *     An element that will be hidden when the related item is
+     *     marked read.<br/>
+     *     In the default Phorum template, this is used for the
+     *     red "new" text that is shown for new messages.<br/>
+     *     <br/>
+     *     Template code:
      *     <pre><code>
-&lt;span class="new-flag[&lt;item&gt;]"&gt;
-  ... new-flag representation code goes here ...
-&lt;span&gt;
+&lt;<i>element</i> class="new-flag[hide,&lt;item&gt;]"&gt;
+  ... code to hide when marked read ...
+&lt;/<i>element</i>&gt;
 
 For example:
 
-&lt;span class="new-flag[10,5,84] new-flag"&gt;new&lt;/span&gt;
+&lt;span class="new-flag[hide,10,5,84] new-flag"&gt;new&lt;/span&gt;
+     *     </code></pre>
+     *   </li>
+     *   <li>
+     *     <b>Action: css</b>:<br/>
+     *     An element, from which the CSS class "new-flag" will be removed and
+     *     to which the CSS class "read-flag" will be added when the related
+     *     item is marked read.<br/>
+     *     In the default Phorum template, this is for example used for the
+     *     styling of the subject for new or updated threads on the list page.
+     *     New subjects are displayed in a bold font.<br/>
+     *     <br/>
+     *     Template code:
+     *     <pre><code>
+&lt;<i>element</i> class="new-flag[css,&lt;item&gt;] new-flag"&gt;
+   ... code to style ...
+&lt;/<i>element</i>&gt;
+
+For example:
+
+&lt;a href="http://example.com/read.php?10,5,84#msg-84"
+   class="new-flag[css,10,5] new-flag"&gt;Phorum rocks!&lt;/a&gt;
      *     </code></pre>
      *   </li>
      * </ul></div>
@@ -182,85 +280,85 @@ For example:
      */
     updateUI: function (mode, item_id)
     {
+        var func = this.className + '.updateUI()';
+
         Phorum.debug(
-            this.className + ': update UI for mode = ' + mode + ', ' +
+            func + ': update UI for mode = ' + mode + ', ' +
             'id = ' + item_id, 5
         );
 
-        // Method: new-flag
-        // Action: Hide the new-flag element
-        this.processMatchingElements(
-            'span', 'new-flag', mode, item_id,
-            function (elt) {
-                $PJ(elt).fadeOut();
-            }
-        );
-
-        // Call all registered new flag cleanup callback functions.
-        for (var i = 0; i < this.callbacks.length; i++) {
-            this.callbacks[i](mode, item_id);
-        }
-    },
-
-    /**
-     * <p>
-     *   Utility method for finding new-flag elements for which to run
-     *   a callback function.
-     * </p>
-     * <p>
-     *   This method is marked as private, but template and module writers
-     *   that need this functionality as well can of course make use of it.
-     * </p>
-     * 
-     * @param {String} tag
-     *     The tag to search on (e.g. "span").
-     * @param {String} type
-     *     The type of new-flag (e.g. "new-flag" or "new-subject").
-     * @param {String} mode
-     *     One of "forums", "threads" or "messages".
-     * @param {Integer} item_id
-     *     A forum_id, thread id or message_id (which one to use depends
-     *     on the "mode" parameter).
-     * @param {Function} callback
-     *     The callback function to call for each matching element
-     *     in the page. The callback function will receive the matching
-     *     element as its argument.
-     * @private
-     */
-    processMatchingElements: function (tag, type, mode, item_id, callback)
-    {
-        // Build the regular expression for matching the class name that is used
-        // in the page for representing type + mode + item_id.
-        var regexp = '^' + type + '\\[';
+        // Build the regular expression for matching elements that have a
+        // new flag action linked to them.
+        var regexp = '^new-flag\\[(\\w+),';
         switch (mode) {
         case "forums"   : regexp += item_id + '(,\\d+){0,2}'; break;
         case "threads"  : regexp += '\\d+,' + item_id + '(,\\d+)?'; break;
         case "messages" : regexp += '\\d+,\\d+,' + item_id; break;
-        default         : throw this.className + ': ' +
+        default         : throw func + ': ' +
                           'processMatchingTags(): illegal mode: ' + mode;
         }
         regexp += '\\]';
         var re = new RegExp();
         re.compile(regexp);
 
-        // Find for the provided tag (e.g. "span") all elements that have
-        // "<type>[" somewhere in the class name. These are candidates
-        // for matching the full "<type>[<item>]" format.
-        var selector = '"' + tag + "[class*='" + type + "[']\"";
-        $PJ(selector).each(function ()
+        Phorum.debug(
+            func + ': find elements that have a CSS class ' +
+            'matching: ' + regexp, 10
+        );
+
+        // Find all elements that have "new-flag[" somewhere in the class name.
+        // These are candidates for matching the complete
+        // "new-flag[<action>,<item>]" class format.
+        var me = this;
+        $PJ("*[class*='new-flag[']").each(function ()
         {
+            var $element = $PJ(this);
+            var classes = $element.attr('class').split(' ');
+
+            Phorum.debug(
+                func + ': inspect element classes: ' + classes.join(', '), 10
+            );
+
             // Elements might have more than one class name assigned to them.
             // Inspect each class name separately.
-            var classes = $PJ(this).attr('class').split(' ');
-            for (var i = 0; i < classes.length; i++) {
-                // If we find a match, we call the callback method and
-                // stop inspecting the class names for the current element.
-                if (re.test(classes[i])) {
-                    callback(this);
-                    break;
+            for (var i = 0; i < classes.length; i++)
+            {
+                var match = re.exec(classes[i]);
+                if (match)
+                {
+                    var action = match[1];
+
+                    // Handle built-in action.
+                    switch (action) {
+
+                    case 'hide':
+                        $element.fadeOut();
+                        break;
+
+                    case 'css':
+                        $element.addClass('read-flag');
+                        $element.removeClass('new-flag');
+                        break;
+
+                    }
+
+                    // Handle action callback.
+                    if (me.callbacks.action[action] !== undefined) {
+                        var callbacks = me.callbacks.action[action];
+                        console.warn(callbacks);
+                        for (var j = 0; j < callbacks.length; j++) {
+                            callbacks[j](me, $element);
+                        }
+                    }
                 }
             }
         });
+
+        // Call all registered global callback functions
+        // to handle custom mark read functionality.
+        for (var i = 0; i < this.callbacks.global.length; i++) {
+            this.callbacks[i](mode, item_id);
+        }
     }
 };
 
