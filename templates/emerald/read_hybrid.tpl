@@ -26,7 +26,7 @@
                             {IF MESSAGES->URL->PM}<small>[ <a href="{MESSAGES->URL->PM}">{LANG->PrivateReply}</a> ]</small>{/IF}
                         </div>
                         <small>
-                        <strong><a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a> {IF MESSAGES->new}<span class="new-flag[hide,{MESSAGES->forum_id},{MESSAGES->thread}]"><span class="new-flag">{MESSAGES->new}</span></span>{/IF}</strong><br />
+                        <strong><a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a>{IF MESSAGES->new}<span class="new-flag[hide,{MESSAGES->forum_id},{MESSAGES->thread}]"> <span class="new-flag">{MESSAGES->new}</span></span>{/IF}</strong><br />
                         {MESSAGES->datestamp}
                         </small>
                     </td>

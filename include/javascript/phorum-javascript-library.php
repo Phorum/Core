@@ -23,83 +23,384 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * A non-conflicting jQuery library for use by Phorum. This way, our jQuery
- * library will not conflict with existing javascript libraries (e.g. when
- * Phorum is embedded in another application that uses a javascript library
- * or when a module is loaded that also loads a library of its own).
+ * @class Phorum
+ * @extends Object
  *
- * @var jQuery
- */
-var $PJ = jQuery.noConflict();
-
-/**
- * Phorum object. Other JavaScript code for Phorum can extend this one to
- * implement functionality without risking name name space collissions.
+ * The Phorum singleton acts as the top level namespace for all Phorum
+ * JavaScript code. Methods, objects and classes are stored in this
+ * object. This takes away the risk of running into name space collissions
+ * with other JavaScript code.
  *
- * @var Object
  * @singleton
  */
-var Phorum = {};
-
-/**
- * The version of this lib. This can be used by other code to check if the
- * correct version of the library is loaded. The major number should be
- * incremented in case backward compatibility is broken. The minor number
- * should be incremented when new functionality is implemented.
- *
- * @var String
- */
-Phorum.library_version = '1.0';
-
-// ----------------------------------------------------------------------
-// Ajax communication
-//
-// Handles Ajax calls to the Phorum system. Calls are done to the
-// ajax.php script, which will handle the call and return the
-// result to the calling client.
-// ----------------------------------------------------------------------
-
-Phorum.Ajax =
-{
-    // The URL that we can use to access the Phorum Ajax layer script.
-    // The 'callback=?' part is a special placeholder for jQuery's JSONP code.
-    URL: '<?php print phorum_api_url(PHORUM_AJAX_URL,"callback=?")?>',
+var Phorum = {
 
     /**
-     * Execute an Ajax Phorum call.
+     * @property library_version
      *
-     * @param Object req
+     * <p>
+     *   The version of this library.
+     * </p>
+     * <p>
+     *   This can be used by other code to check if the correct version of
+     *   the library is loaded. The library_version object contains
+     *   two properties:
+     *   <div class="mdetail-params"><ul>
+     *     <li><b>major:</b> major version, incremented when
+     *         backward compatibility is broken</li>
+     *     <li><b>minor:</b> minor version, incremented when
+     *         new functionality is implemented</li>
+     *   </ul></div>
+     * </p>
+     *
+     * @var Object
+     */
+    library_version: {
+        major: 1,
+        minor: 1
+    },
+
+    /**
+     * @property debuglevel
+     *
+     * Configures the debug level for {@link #debug Phorum.debug()}.
+     * Set this variable to a higher number for more debugging information.
+     * A value of 0 (zero) will suppress all debug output.
+     *
+     * @var Integer
+     */
+    debuglevel: 0
+};
+/**
+ * @class Phorum.jQuery
+ *
+ * <p>
+ *   The jQuery object for the jQuery library that Phorum loads is
+ *   stored in Phorum.jQuery. 
+ * </p>
+ * <p>
+ *   A short length reference to the jQuery object is additionally stored
+ *   in the global variable <b>$PJ</b> instead of the default <b>$</b>
+ *   jQuery variable.
+ * </p>
+ * <p>
+ *   This is a no-conflict jQuery reference for use by Phorum code
+ *   (see the jQuery documentation for jQuery.noConflict()).
+ *   By using a no-conflict library, our jQuery library will not conflict
+ *   with existing javascript libraries (e.g. when Phorum is embedded in
+ *   another application that uses a javascript library or when a module is
+ *   loaded that also loads a javascript library of its own).
+ * </p>
+ * <p>
+ *   If you want to use the regular <b>$</b> jQuery reference in your
+ *   functions, then you could use a construction like this:
+ * </p>
+ * <p><pre><code>
+function yourfunction() {
+  var $ = Phorum.jQuery;
+  ...
+  ...
+}
+ * </code></pre></p>
+ *
+ * @singleton
+ */
+var $PJ = Phorum.jQuery = jQuery.noConflict();
+
+/**
+ * <p>
+ *   Uses the console.debug() method (originally introduced by the Firebug
+ *   plugin for Firefox) for logging debugging information.
+ *   When no console is available, then no logging is done at all.
+ * </p>
+ * <p><pre><code>
+Phorum.debuglevel = 10;
+
+Phorum.debug('Hello, world!', 5); // <-- this will output the debug message
+Phorum.debug('Bye, world!', 11);  // <-- silent, Phorum.debuglevel is too low
+ * </code></pre></p>
+ *
+ * @param {String} message
+ *     The message to write to the debug log.
+ *
+ * @param {Integer} level (optional)
+ *     The debug level of the message. Only messages that have a
+ *     debugging level equal to or below the configuration variable
+ *     {@link #debuglevel Phorum.debuglevel} are logged.
+ *     If no debug level is provided, then level = 1 is implied.
+ *
+ * @param {mixed} data (optional)
+ *     Optional argument containing a variable which' contents should be
+ *     logged. The data will be written to the debug log as a JSON structure.
+ *
+ * @member Phorum debug
+ */
+Phorum.debug = function (message, level, data)
+{
+    level = parseInt(level, 10);
+    if (isNaN(level)) {
+        level = 1;
+    }
+    if (level < 0) {
+        level = 1;
+    }
+
+    if (Phorum.debuglevel && Phorum.debuglevel >= level &&
+        console !== undefined && console.debug instanceof Function)
+    {
+        if (data !== undefined) {
+            data = ': ' + $PJ.toJSON(data);
+        } else {
+            data = '';
+        }
+
+        console.debug('Phorum debug [' + level + '] ' + message + data);
+    }
+};
+
+/**
+ * A class extension system. Example usage:
+ *
+ * <p><pre><code>
+// Constructor for Parent:
+var Parent = Phorum.extend(function (args) {
+    // Constructor code
+    ...
+}, {
+    // Properties and methods to add to the prototype of Foo.
+    prop: 'parent property',
+    func: function () { alert('cool'); }
+    ...
+});
+
+// Constructor for Child, extending on Parent and applying
+// extra prototype properties for the Child:
+var Child = Phorum.extend(Parent, function (args) {
+    // Constructor code
+    this.parentConstructor(args); // <-- this one must be called
+    ...
+}, {
+    childprop: 'child property',
+    childfunc: function () { alert('nice'); }
+});
+ * </code></pre></p>
+ *
+ * @param {Function} base
+ *   The base constructor. 
+ *
+ * @param {Object/Function} extension
+ *   When this argument is an object, then all properties from the
+ *   object will be applied to the prototype of the base constructor.
+ *   When this argument is a function, then that function will be
+ *   setup as a child for the base constructor.
+ *
+ * @param {Object} child_prototype (optional)
+ *   When extending a child class, then this third parameter can be
+ *   used to directly provide an object which' properties will be
+ *   applied to the prototype of the child class.
+ *
+ * @member Phorum extend
+ */
+Phorum.extend = function (base, extension, child_prototype)
+{
+    var p;
+
+    if (extension instanceof Function)
+    {
+        extension.prototype.parentConstructor = base;
+
+        for (p in base.prototype) {
+            if (true) { // keep jslint happy
+                extension.prototype[p] = base.prototype[p];
+            }
+        }
+
+        if (child_prototype) {
+            for (p in child_prototype) {
+                if (true) { // keep jslint happy
+                    extension.prototype[p] = child_prototype[p];
+                }
+            }
+        }
+
+        return extension;
+    }
+    else
+    {
+        for (p in extension) {
+            if (true) { // keep jslint happy
+                base.prototype[p] = extension[p];
+            }
+        }
+        return base;
+    }
+};
+
+/**
+ * Trim whitespace from the start and end of a string.
+ *
+ * <p><pre><code>
+var a = "\t\n\t  string with mad whitespace \t\t\n\n\n  ";
+var b = Phorum.trim(a);
+>>> b now contains "string with mad whitespace"
+
+var c = Phorum.trim(a, true);
+>>> c[0] contains "string with mad whitespace"
+>>> c[1] contains "\t\n\t  "
+>>> c[2] contains "\t\t\n\n\n  "
+
+ * </code></pre></p>
+ *
+ * @param {String} str
+ *   The string from which to trim the surrounding whitespace.
+ * @param {Boolean} return_trimmed (optional)
+ *   If true, then this method will return three values in an array:
+ *   the trimmed string, the whispace that was trimmed from the
+ *   left and the whitespace that was trimmed from the right.
+ *   If false (the default), then only the trimmed string will
+ *   be returned.
+ * @return {mixed} result
+ *   Either an array or a string is returned, depending on the
+ *   return_trimmed parameter.
+ *
+ * @member Phorum trim
+ */
+Phorum.trim = function (str, return_trimmed)
+{
+    var trim_pre = '';
+    var trim_post = '';
+
+    // Trim whitespace from end of string.
+    for (;;) {
+        var lastchar = str.substring(str.length - 1, str.length);
+        if (lastchar === ' '  || lastchar === '\r' ||
+            lastchar === '\n' || lastchar === '\t') {
+            trim_post = lastchar + trim_post;
+
+            str = str.substring(0, str.length - 1);
+        } else {
+            break;
+        }
+    }
+
+    // Trim whitespace from start of string.
+    for (;;) {
+        var firstchar = str.substring(0, 1);
+        if (firstchar === ' '  || firstchar === '\r' ||
+            firstchar === '\n' || firstchar === '\t') {
+            trim_pre += firstchar;
+            str = str.substring(1);
+        } else {
+            break;
+        }
+    }
+
+    if (return_trimmed) {
+        return [ str, trim_pre, trim_post ];
+    } else {
+        return str;
+    }
+};
+// ----------------------------------------------------------------------
+// Ajax communication
+// ----------------------------------------------------------------------
+
+/**
+ * @class Phorum.Ajax
+ * @extends Object
+ *
+ * The Phorum.Ajax singleton provides tools for handling Phorum Ajax
+ * communication. Ajax calls are done to the ajax.php script of the Phorum
+ * system, which will handle the call and return the result.
+ *
+ * @singleton
+ */
+Phorum.Ajax =
+{
+    /**
+     * @property url
+     *
+     * The URL that we use to access the Phorum Ajax layer script.
+     * Note that the 'callback=?' part in this URL is a special placeholder
+     * for jQuery's JSONP implementation (Phorum uses JSONP as the Ajax
+     * call method).
+     *
+     * @var String
+     */
+    url: '<?php print phorum_api_url(PHORUM_AJAX_URL,"callback=?")?>',
+
+    /**
+     * <p>
+     *   Execute an Ajax Phorum call.
+     * </p>
+     * <p>
+     *   This method is also available through the alias
+     *   {@link Phorum#call Phorum.call()}.
+     * </p>
+     *
+     * @param {Object} req
+     *   <p>
      *     The request object. This is object needs at least the property
-     *     "call". This req.call property determines what Ajax call has
-     *     to be handled by the ajax.php script on the server.
-     *
-     *     When the req.cache_id property is set, then the Phorum.Cache is
+     *     <b>"call"</b>. This property holds the name of the Ajax call that
+     *     must be handled by the ajax.php script on the server.
+     *   </p>
+     *   <p>
+     *     When the <b>"cache_id"</b> property is set, then the Phorum.Cache is
      *     used for caching the call result data. It is the task of the
-     *     caller to make sure that the provided cache_id is unique for
-     *     the call that is done.
+     *     caller to make sure that the provided cache_id is
+     *     <em>globally unique</em>.
+     *   </p>
+     *   <p>
+     *     The <b>"onFailure"</b> property can be set for handling Ajax errors.
+     *     Its value should be a function that handles the error that was
+     *     returned by the Ajax call. This function will be called with the
+     *     error message as its argument.
+     *   </p>
+     *   <p>
+     *     The <b>"onSuccess"</b> property can be set for handling a successful
+     *     Ajax call. Its value should be a function that handles the data
+     *     that was returned by the Ajax call. This function will be called
+     *     with two arguments:
+     *     <ul>
+     *       <li>the data that was returned by the Ajax call</li>
+     *       <li>whether (true) or not (false) the result was returned
+     *           from cache</li>
+     *     </ul>
+     *   </p>
+     *   <p>
+     *     All other properties will be sent to the ajax.php script as call
+     *     arguments. What call arguments are available depends on the
+     *     Phorum Ajax call that is called. Check the documentation of
+     *     the call for details.
+     *   </p>
      *
-     *     The req.onFailure property can be set for implementing error
-     *     handling. Its value should be a function that handles the error.
-     *     The function will be called with the error message as its argument.
-     *
-     *     The req.onSuccess property can be set for implementing handling for
-     *     a successful Ajax call. Its value should be a function that handles
-     *     the data that was returned by the Ajax call. The function will be
-     *     called with two arguments:
-     *     - the data that was returned by the Ajax call
-     *     - whether (true) or not (false) the result was returned from cache
-     *
-     *     Other properties are sent to the ajax.php script as call arguments.
-     *     What call arguments are available depends on the Phorum Ajax call
-     *     that is called. Check the documentation of the call for details.
+     *   <b>Example code:</b>
+     *   <p><pre><code>
+Phorum.Ajax.call({
+
+   call: 'foo',
+   arg1: 'bar',
+   arg2: 'baz',
+   cache_id: 'foo-bar-bar-id',
+
+   onSuccess: function (data, from_cache) {
+       alert('Call successful, data loaded ' +
+             (from_cache ? ' from cache' : ' from server'));
+   },
+
+   onFailure: function (error) {
+       alert('Call failed: ' + error);
+   }
+})
+     *   </code></pre></p>
      */
     call: function (req)
     {
         // Check if a call was provided in the request data.
         if (! req.call) {
             Phorum.debug(
-                1, 'Phorum.Ajax.call() error: missing property ' +
-                '"call" for the request object', req
+                'Phorum.Ajax.call() error: missing property ' +
+                '"call" for the request object', 1, req
             );
             if (req.onFailure) {
                 req.onFailure(
@@ -119,8 +420,8 @@ Phorum.Ajax =
 
             if (data !== null) {
                 Phorum.debug(
-                    4, 'Phorum.Ajax.call calls onSuccess with cached data ' +
-                    'for cache_id "' + req.cache_id + '"', data
+                    'Phorum.Ajax.call calls onSuccess with cached data ' +
+                    'for cache_id "' + req.cache_id + '"', 4, data
                 );
                 if (req.onSuccess) {
                     // true = data retrieved from cache.
@@ -145,15 +446,15 @@ Phorum.Ajax =
         }
 
         // Notify the start of the request loading stage.
-        Phorum.debug(5, 'Phorum.Ajax.call calls server with args', args);
+        Phorum.debug('Phorum.Ajax.call calls server with args', 5, args);
         if (req.onRequest) {
             req.onRequest(args);
         }
 
-        $PJ.getJSON(Phorum.Ajax.URL, args, function (answer)
+        $PJ.getJSON(Phorum.Ajax.url, args, function (answer)
         {
             Phorum.debug(
-                5, 'Phorum.Ajax.call receives answer from server', answer
+                'Phorum.Ajax.call receives answer from server', 5, answer
             );
             if (typeof answer.error === 'undefined')
             {
@@ -164,7 +465,7 @@ Phorum.Ajax =
 
                 // false = data not retrieved from cache.
                 Phorum.debug(
-                    4, 'Phorum.Ajax.call calls onSuccess with', answer
+                    'Phorum.Ajax.call calls onSuccess with', 4, answer
                 );
                 if (req.onSuccess) {
                     req.onSuccess(answer, false);
@@ -173,7 +474,7 @@ Phorum.Ajax =
             else
             {
                 Phorum.debug(
-                    4, 'Phorum.Ajax.call calls onFailure with', answer.error
+                    'Phorum.Ajax.call calls onFailure with', 4, answer.error
                 );
                 if (req.onFailure) {
                     req.onFailure(answer.error);
@@ -183,8 +484,19 @@ Phorum.Ajax =
     },
 
     /**
-     * Parse out javascript blocks from the data to eval them. Adding them
-     * to the page using innerHTML does not invoke parsing by the browser.
+     * <p>
+     *   Parse out javascript blocks from the data and eval them.
+     * </p>
+     * <p>
+     *   This can be used to process javascript code that is embedded in
+     *   dynamically retrieved blocks of HTML code. Adding this data to 
+     *   the page (e.g. by using document.write or innerHTML) would not
+     *   evaluate the javascript code. Browsers only parse and evaluate
+     *   javascript code that is retrieved at page load time.
+     * </p>
+     *
+     * @param {String} data
+     *   The data from which to parse the javascript blocks.
      */
     evalJavaScript: function (data)
     {
@@ -211,28 +523,67 @@ Phorum.Ajax =
 };
 
 // ----------------------------------------------------------------------
-// Caching functionality
-//
-// This is a caching layer that can be used by Phorum JavaScript
-// code for client side data caching. It supports TTLs for automatically
-// expiring the cached data.
+// Caching
 // ----------------------------------------------------------------------
 
+/**
+ * @class Phorum.Cache
+ * @extends Object
+ *
+ * The Phorum.Cache singleton is a caching layer that can be used by Phorum
+ * JavaScript code for handling client side data caching. The cache is a
+ * simple key/value pair based data storage. It supports TTLs for automatically
+ * expiring cached data.
+ *
+ * @singleton
+ */
 Phorum.Cache =
 {
-    TTL: 0,   // the default TTL for cache entries
+    /**
+     * @property ttl
+     *
+     * The default TTL in seconds for cache entries. A value of 0 (zero)
+     * can be used to cache the data indefinitely (or until a
+     * {@link #purge purge()} is done on the cached data).
+     *
+     * @type Integer
+     */
+    ttl: 0,
 
-    data: {}, // cache data storage
+    /**
+     * @property data
+     *
+     * The cache storage.
+     *
+     * @type Object
+     * @private
+     */
+    data: {},
 
+    /**
+     * Store data in the cache.
+     *
+     * @param {String} cache_id
+     *   This id is used as the key under which to store the data
+     *   in the cache. Make sure that you use globally unique cache id's
+     *   (e.g. instead of "1234", it is advised to use something like
+     *   "myapp-user-1234" to prevent collissions).
+     * @param {mixed} data
+     *   The data to store in the cache.
+     * @param {Integer} ttl (optional)
+     *   The TTL (time to live) in seconds for the cached data. If no TTL
+     *   is provided or if it is not recognized as a valid number, then the
+     *   default {@link #ttl Phorum.Cache.ttl} is used instead.
+     */
     put: function (cache_id, data, ttl)
     {
         // Determine the TTL to use for the cache entry.
-        if (typeof ttl === 'undefined') {
-            ttl = Phorum.Cache.TTL;
+        if (ttl === undefined) {
+            ttl = Phorum.Cache.ttl;
         } else {
             ttl = parseInt(ttl, 10);
             if (ttl === 'NaN') {
-                ttl = Phorum.Cache.TTL;
+                ttl = Phorum.Cache.ttl;
             }
         }
 
@@ -248,12 +599,23 @@ Phorum.Cache =
         Phorum.Cache.data[cache_id] = [data, expire_t];
     },
 
+    /**
+     * Retrieve data from the cache.
+     *
+     * @param {String} cache_id
+     *   The key under which to the data was stored in the cache
+     *   using {@link #put Phorum.Cache.put()}.
+     *
+     * @return mixed
+     *   In case no cache data was found or the cache data expired,
+     *   then null is returned. Otherwise, the cached data is returned.
+     */
     get: function (cache_id)
     {
         // Check if there is a cache entry available.
         if (typeof Phorum.Cache.data[cache_id] === 'undefined') {
             Phorum.debug(
-                5, 'Phorum cache miss for cache_id "' + cache_id + '"'
+                'Phorum cache miss for cache_id "' + cache_id + '"', 5
             );
             return null;
         }
@@ -265,21 +627,28 @@ Phorum.Cache =
             var now = d.getTime();
             if (now > c[1]) {
                 Phorum.debug(
-                    5, 'Phorum cache expired for cache_id "' + cache_id + '"'
+                    'Phorum cache expired for cache_id "' + cache_id + '"', 5
                 );
                 return null;
             }
         }
 
-        Phorum.debug(5, 'Phorum cache hit for cache_id "' + cache_id + '"');
+        Phorum.debug('Phorum cache hit for cache_id "' + cache_id + '"', 5);
         return c[0];
     },
 
-    // Invalidate a single cache item or the full cache.
-    purge: function (key)
+    /**
+     * Purge a single cached item or the full cache.
+     *
+     * @param {String} cache_id (optional)
+     *   When this parameter is provided, then the cache data for
+     *   the cache_id is purged from the cache. Otherwise, the full
+     *   cache is purged.
+     */
+    purge: function (cache_id)
     {
-        if (typeof key  !== 'undefined') {
-            Phorum.Ajax.cache[key] = null;
+        if (cache_id !== undefined) {
+            Phorum.Ajax.cache[cache_id] = null;
         } else {
             Phorum.Ajax.cache = {};
         }
@@ -287,479 +656,92 @@ Phorum.Cache =
 };
 
 // ----------------------------------------------------------------------
-// console.debug() debugging support
+// User Interface
 // ----------------------------------------------------------------------
 
 /**
- * Use FireFox' console.debug() method for logging debugging information.
- * When no console is available, then no logging is done at all.
+ * @class Phorum.UI
+ * @extends Object
  *
- * @param Integer level
- *     The debug level of the message. Only messages that have a
- *     debugging level equal to or below the configuration variable
- *     Phorum.debug.level are logged.
+ * Phorum.UI is a singleton that provides user interface handling methods
+ * and acts as the namespace for storing user interface related classes.
  *
- * @param String message
- *     The message to write to the debug log.
- *
- * @param mixed data
- *     Optional argument containing a variable which' contents should be
- *     logged. The data will be written to the debug log as a JSON structure.
+ * @singleton
  */
-Phorum.debug = function (level, message, data)
-{
-    level = parseInt(level, 10);
-    if (level === 'NaN') {
-        level = 1;
-    }
-    if (level < 0) {
-        level = 1;
-    }
-    if (Phorum.debug.level &&
-        Phorum.debug.level >= level &&
-        typeof window.console !== 'undefined')
-    {
-        if (data !== undefined) {
-            data = ': ' + $PJ.toJSON(data);
-        } else {
-            data = '';
-        }
-
-        console.debug('Phorum debug [' + level + '] ' + message + data);
-    }
-};
+Phorum.UI = { };
 
 /**
- * The debug level. Set this variable to a higher number
- * for more debugging information.
- */
-Phorum.debug.level = 0;
-
-/**
- * An easy to use class extension system. Example usage:
- *
+ * <p>
+ *   Retrieve the width of the scrollbar in the browser.
+ * </p>
+ * <p>
+ *   This implements a reliable way of determining the width
+ *   of the scrollbar. One cannot rely on a predefined width,
+ *   because this width differs per OS and browser.
+ * </p>
  * <p><pre><code>
-  // Constructor for Parent:
-  var Parent = Phorum.extend(function (args) {
-      // Constructor code
-      ...
-  }, {
-      // Properties and methods to add to Foo's prototype.
-      prop: 'parent property',
-      func: function () { alert('cool'); }
-      ...
-  });
-
-  // Constructor for Child, extending on Parent and applying
-  // extra prototype properties for the Child:
-  var Child = Phorum.extend(Parent, function (args) {
-      // Constructor code
-      this.parentConstructor(args); // <-- this one must be called
-      ...
-  }, {
-      childprop: 'child property',
-      childfunc: function () { alert('nice'); }
-  });
+Phorum.UI.scrollbarwidth();
+>>> "15px"
+Phorum.UI.scrollbarwidth(true);
+>>> 15
  * </code></pre></p>
  *
- * @param {Function} base
- *   The base constructor. 
+ * @param {Boolean} as_integer
+ *   When true (default is false), then the integer pixel width is
+ *   returned (e.g. 10). Otherwise, a formatted CSS width is returned
+ *   (e.g. "10px").
  *
- * @param {Object/Function} extension
- *   When this argument is an object, then all properties from the
- *   object will be applied to the prototype of the base constructor.
- *   When this argument is a function, then that function will be
- *   setup as a child for the base constructor.
+ * @return {Integer} width
+ *   The width of the scrollbar in pixels.
  *
- * @param {Object} child_prototype (optional)
- *   When extending a child class, then this third parameter can be
- *   used to directly provide an object which' properties will be
- *   applied to the prototype of the child class.
+ * @member Phorum.UI scrollbarwidth
  */
-Phorum.extend = function (base, extension, child_prototype)
+Phorum.UI.scrollbarwidth = function (as_integer)
 {
-    var p;
+    if (Phorum.UI.scrollbarwidth.width === undefined) {
+        var $outer = $PJ('<div/>').css({
+            width    : '100px',
+            height   : '100px',
+            position : 'absolute',
+            top      : '-200px',
+            left     : '-200px'
+        });
+        var $inner = $PJ('<div/>').css({
+            height   : '100px'
+        });
+        $outer.append($inner);
+        $PJ('body').append($outer);
 
-    if (extension instanceof Function)
-    {
-        extension.prototype.parentConstructor = base;
+        var without_scrollbar = $inner.innerWidth();
+        $outer.css('overflow-y', 'scroll');
+        var with_scrollbar = $inner.innerWidth();
+        $outer.remove();
 
-        for (p in base.prototype) {
-            if (true) { // keep jslint happy
-                extension.prototype[p] = base.prototype[p];
-            }
-        }
-
-        if (child_prototype) {
-            for (p in child_prototype) {
-                if (true) { // keep jslint happy
-                    base.prototype[p] = child_prototype[p];
-                }
-            }
-        }
-
-        return extension;
+        Phorum.UI.scrollbarwidth.width = (without_scrollbar - with_scrollbar);
     }
-    else
-    {
-        for (p in extension) {
-            if (true) { // keep jslint happy
-                base.prototype[p] = extension[p];
-            }
-        }
-        return base;
-    }
+
+    return Phorum.UI.scrollbarwidth.width + (as_integer ? 0 : 'px');
 };
-
-// ----------------------------------------------------------------------
-// Phorum.UI is a namespace that is reserved for implementing user
-// interface related functionality.
-// ----------------------------------------------------------------------
-
-Phorum.UI = {};
-
-// ----------------------------------------------------------------------
-// UI functionality that is related to notifying the user about
-// running async calls to the server (request busy notification).
-//
-// The default implementation will show a message box in the top left of
-// the screen, notifying the user about the number of pending actions.
-// This box can be styling by CSS by styling the class "phorum_busy_message".
-// For example:
-//
-//   .phorum_busy_message {
-//       border: 1px solid #cc7;
-//       padding: 5px;
-//       background: #ff9;
-//   }   
-//
-// The template author can fully override Phorum.UI.notification to implement
-// a customized notification mechanism. The minimal interface that has
-// to be implemented is:
-//
-//   - Phorum.UI.busy.increment(): increments the number of busy actions
-//   - Phorum.UI.busy.decrement(): decrements the number of busy actions
-//
-// All other methods from the busy implementation from below are used for
-// implementing the default message box.
-// ----------------------------------------------------------------------
-
-Phorum.UI.busy =
-{
-    'box': null,   // storage for our box <div>
-    'boxtop': 5,   // top notify box offset
-    'boxleft': 5,  // left notify box offset
-    'count': 0,    // the number of pending actions
-    'timer': null, // used for timing the fading effect
-
-    /**
-     * Increments the number of pending actions.
-     */
-    'increment': function () {
-        this.count ++;
-        this.set();
-    },
-
-    /**
-     * Decrements the number of pending actions.
-     */
-    'decrement': function () {
-        this.count --;
-        this.set(); 
-    },
-
-    /**
-     * Fades out the busy box.
-     */
-    'fade': function ()
-    {
-        if (!this.box) {
-            return;
-        }
-        if (this.box.style.opacity > 0) {
-            var o = this.box.style.opacity;
-            o = o - 0.05;
-            if (o < 0) {
-                o = 0;
-            }
-            var p = o * 100;
-            this.box.style.opacity = o;                         // Std. opacity
-            this.box.style.filter = 'alpha(opacity=' + p + ')'; // MSIE opacity
-            this.timer = setTimeout(function () {
-                Phorum.UI.busy.fade();
-            }, 20);
-        }
-        else {
-            this.box.style.display = 'none';
-        }
-    },
-
-    /**
-     * Set the busy message.
-     */
-    'set': function ()
-    {
-        if (this.timer) {
-            clearTimeout(this.timer);
-        }
-
-        // If no actions are pending, clear up the busy message
-        // after a little 250ms pause (to keep the busy message
-        // from being irritatingly flashy on screen).
-        if (this.count === 0) {
-            if (!this.box) {
-                return;
-            }
-            this.timer = setTimeout(function () {
-                Phorum.UI.busy.fade();
-            }, 250);
-            return;
-        }
-
-        // Create the notify box if it is not available yet.
-        if (!this.box)
-        {
-            // Create the box.
-            this.box = document.createElement('div');
-            this.box.style.position = 'absolute';
-            this.box.style.zIndex = '1000';
-            this.box.style.display = 'none';
-
-            // So template authors can style the message box.
-            this.box.className = 'phorum_busy_message';
-
-            // Add it to the page.
-            document.body.insertBefore(this.box, document.body.childNodes[0]);
-
-            // Move the busy message in view if the page scrolls.
-            if (window.onscroll) {
-                var orig = window.onscroll;
-                window.onscroll = function () {
-                    orig();
-                    Phorum.UI.busy.place();
-                };
-            } else {
-                window.onscroll = function () {
-                    Phorum.UI.busy.place();
-                };
-            }
-        }
-
-        // <?php $lang = $PHORUM['DATA']['LANG']; ?>
-
-        var message = this.count === 1 ?
-                      '<?php print addslashes($lang["ActionPending"]) ?>' :
-                      '<?php print addslashes($lang["ActionsPending"]) ?>';
-
-        // Replace %count% in the message with the current action count.
-        var pos = message.indexOf('%count%');
-        if (pos > -1) {
-            message = message.substr(0, pos) +
-                      this.count + message.substr(pos + 7);
-        }
-
-        // Show the busy message.
-        this.box.innerHTML = message;
-        this.place();
-        this.box.style.display = 'block';
-        this.box.style.opacity = 1;                   // Standard opacity
-        this.box.style.filter = 'alpha(opacity=100)'; // MSIE opacity
-    },
-
-    'place': function ()
-    {
-        if (!this.box) {
-            return;
-        }
-
-        var s = document.documentElement.scrollTop ?
-                document.documentElement.scrollTop :
-                document.body.scrollTop;
-
-        var t = (s + this.boxtop) + 'px';
-
-        this.box.style.top = t;
-        this.box.style.left = this.boxleft;
-    }
-};
-
-// ----------------------------------------------------------------------
-// UI functionality that is related to marking forums / threads as read
-//
-// This code implements a framework for handling "mark read" Ajax
-// communication to the server. It is the task of the template author
-// to implement the template specific interfacing. This interfacing
-// consists of:
-//
-// - Handling mark read calls by calling Phorum.UI.markread(...).
-// - Implementing callback functions for updating the UI after a
-//   successful "mark read" Ajax call.
-// ----------------------------------------------------------------------
-
-/**
- * This function can be called from "mark read" links to handle marking
- * forums, threads or messages read through Ajax calls.
- *
- * @param string mode
- *     One of "forums", "threads" or "messages".
- *
- * @param int item_id
- *     A forum_id, thread id or message_id (which one to use depends
- *     on the "mode" parameter).
- */
-Phorum.UI.markread = function (mode, item_id)
-{
-    // Request busy notification for the user.
-    Phorum.UI.busy.increment();
-
-    var req = {
-        'call': 'markread',
-        'onSuccess': function (data)
-        {
-            Phorum.UI.busy.decrement();
-
-            // Call all registered new flag cleanup callback functions.
-            var l = Phorum.UI.markread.callbacks;
-            for (var i = 0; i < l.length; i++) {
-                l[i](mode, item_id);
-            }
-        },
-        'onFailure': function (data)
-        {
-            Phorum.UI.busy.decrement();
-        }
-    };
-
-    // Because the "mode" is dynamic ("forums", "threads" or "messages"),
-    // we have to assign this property of the request like this.
-    req[mode] = [item_id];
-
-    // Dispatch the Ajax Phorum call.
-    Phorum.Ajax.call(req);
-
-    // So "return Phorum.UI.markread(...)" can be used to cancel
-    // an <a href> click.
-    return false;
-};
-
-/**
- * An array of functions that need to be called when cleaning up newflags
- * through Phorum.UI.markread() is successful.
- *
- * The functions in this array will be called from the function
- * Phorum.UI.markread() with two parameters (when the markread call
- * was successful):
- * - mode = <forums|threads|messages>
- * - item_id = the forum_id, thread or message_id to clear
- *
- * Since this is an array of callback functions, modules can add extra
- * handling code for marking forums/threads/messages read (e.g. the
- * announcement module, which needs customized handling for marking
- * messages in the announcements block as read when the user clicks on
- * "mark read" for the announcement forum on the index page).
- */
-Phorum.UI.markread.callbacks = [ ];
-
-/**
- * A utility function for easy handling of newflag DOM changes.
- * This code will normally be used by mark read callback functions.
- *
- * @param string tag
- *     The name of the tags to process.
- *
- * @param string pre
- *     A prefix to check for in each DOM object's class name. This code
- *     expects that if the prefix matches, the suffix is formatted as
- *     <forum_id>[-<thread>[-<message_id>]]. E.g. with prefix "new-flag-"
- *     a DOM element could contain the class "new-flag-10-44" to identify
- *     a new flag for forum 10, thread 44.
- *
- * @param string mode
- *     The mode that was used for Phorum.UI.markread(). This is one of
- *     "forums", "threads" or "messages".
- *
- * @param integer item_id
- *     The item_id that was used for Phorum.UI.markread(). Together with
- *     the mode parameter, this parameter is used to check if a DOM
- *     element from the elts argument should be processed by the callback
- *     function.
- *
- * @param function callback
- *     A callback function that has to process matching DOM elements.
- */
-Phorum.UI.markread.matchElements = function (tag, pre, mode, item_id, callback)
-{
-    var elts = document.getElementsByTagName(tag);
-    if (!elts) {
-        return;
-    }
-
-    for (var i = 0; i < elts.length; i++)
-    {
-        // Walk over all classes for the current element.
-        var classes = elts[i].className.split(' ');
-        for (var j = 0; j < classes.length; j++)
-        {
-            var c = classes[j];
-            if (c.length)
-            {
-                // Check if the class starts with the provided prefix match.
-                if (c.substr(0, pre.length) !== pre) {
-                    continue;
-                }
-
-                // Yes, match found. The postfix is formatted as
-                // <forum_id>[-<thread>[-<message_id>]]
-                var parts = c.substr(pre.length).split('-');
-
-                // Run the callback function for messages that match
-                // a forum that was marked read.
-                if (mode === 'forums' && parts[0] &&
-                    parts[0] + '' === item_id + '') {
-                    callback(elts[i]);
-                }
-                // Run the callback function for messages that match
-                // a thread that was marked read.
-                else if (mode === 'threads' && parts[1] &&
-                    parts[1] + '' === item_id + '') {
-                    callback(elts[i]);
-                }
-                // Run the callback function for messages that match
-                // a message that was marked read.
-                else if (mode === 'messages' && parts[2] &&
-                    parts[2] + '' === item_id + '') {
-                    callback(elts[i]);
-                }
-            }
-        }
-    }
-};
-
-// ----------------------------------------------------------------------
-// Utility functions to manage Phorum page elements
-// ----------------------------------------------------------------------
 
 /**
  * @class Phorum.UI.Element
  * 
  * <p>
  *   This class is a base class that is used for building objects that
- *   can manage page element.
+ *   can manage page elements.
  * </p>
  *
  * @constructor
  *   Create a new Phorum.UI.Element object.
  * @param {String/Array} selectors (optional)
  *   The jQuery selector or selectors to use for looking up the element to
- *   manage in the page. The selector will only match an element if there is
- *   exactly one available in the jQuery lookup result. The first unique
- *   element that matches will be used.
+ *   manage. The first selector that matches a single element will be used.
+ *   When no selectors are provided, then the selectors from the
+ *   {@link #selectors selectors} configuration property will be used instead.
  */
 Phorum.UI.Element = Phorum.extend(
 
-    // ----------------------------------------------------------------------
-    // Constructor
-    // ----------------------------------------------------------------------
+    // Constructor ==========================================================
 
     function (selectors) {
 
@@ -772,23 +754,23 @@ Phorum.UI.Element = Phorum.extend(
         $PJ.each(selectors, function (id, selector)
         {
             Phorum.debug(
-                10, me.className + ': lookup element for "' + selector + '"'
+                me.className + ': lookup element for "' + selector + '"', 10
             );
 
             var $tmp = $PJ(selector);
 
             if ($tmp.length === 1) {
                 Phorum.debug(
-                    10, me.className + ': found unique element for ' +
-                    '"' + selector + '"'
+                    me.className + ': found unique element for ' +
+                    '"' + selector + '"', 10
                 );
                 me.$object = $tmp;
                 me.object  = $tmp[0];
                 return false;
             } else {
                 Phorum.debug(
-                    10, me.className + ': number of elements for ' +
-                    '"' + selector + '": ' + $tmp.length
+                    me.className + ': number of elements for ' +
+                    '"' + selector + '": ' + $tmp.length, 10
                 );
             }
         });
@@ -798,22 +780,29 @@ Phorum.UI.Element = Phorum.extend(
         }
     },
 
-    // ----------------------------------------------------------------------
-    // Prototype
-    // ----------------------------------------------------------------------
+    // Prototype ============================================================
 
     {
         /**
-         * @cfg {String} className
+         * @property className
          *
          * The name of this class, for easy reference.
+         * Derived classes must override this property.
+         *
+         * @var String
+         * @private
          */
         className: 'Phorum.UI.Element',
 
         /**
-         * @cfg {Array} selectors
+         * @property selectors
          *
          * The array of jQuery selectors to search for.
+         * Derived classes can override this property to set the default
+         * list of selectors to check.
+         *
+         * @var Array
+         * @private
          */
         selectors: [ ],
 
@@ -823,6 +812,7 @@ Phorum.UI.Element = Phorum.extend(
          * A reference to the jQuery wrapper object for the managed element.
          *
          * @var jQuery
+         * @private
          */
         $object: null,
 
@@ -831,6 +821,7 @@ Phorum.UI.Element = Phorum.extend(
          *
          * A reference to the managed element object.
          *
+         * @var Object
          * @private
          */
         object: null,
@@ -840,7 +831,7 @@ Phorum.UI.Element = Phorum.extend(
          *
          * @return {jQuery} $object
          */
-        get: function () {
+        wrapper: function () {
             return this.$object;
         },
 
@@ -854,76 +845,178 @@ Phorum.UI.Element = Phorum.extend(
     }
 );
 
-// ----------------------------------------------------------------------
-// Utility functions to handle Phorum message body textareas
-// ----------------------------------------------------------------------
-
 /**
- * @class Phorum.UI.MessageBody
+ * @class Phorum.UI.TextElement
  * @extends Phorum.UI.Element
  * 
  * <p>
- *   This class can be used to access and manipulate message body textarea
- *   elements in Phorum. By default, the constructor will automatically search
- *   the page for some known textarea identifiers. If you need more control
- *   over the selector(s) to use for the textarea lookup, then you can provide
- *   a jQuery selector or selector array to use as the argument for
- *   the constructor.
+ *   This class can be used to access and manipulate text input fields
+ *   (textarea, input type="text"). This class mainly serves as a
+ *   base class. 
  * </p>
- * <p><pre><code>
-var t1 = new Phorum.UI.MessageBody();
-var t2 = new Phorum.UI.MessageBody('#phorum .mytextfield');
-var t3 = new Phorum.UI.MessageBody(['#this', '#that']);
-
-t1.focus();
-
-var $jquerytextarea = t1.get();
-$jquerytextarea.css('color', 'blue');
- * </code></pre></p>
- *
  * @constructor
- *   Create a new Phorum.UI.MessageBody object.
+ *   Create a new Phorum.UI.TextElement object.
  * @param {String/Array} selectors (optional)
- *   The selector or selectors to use for looking up the textarea to
- *   handle in the page. If no selectors are provided, then the built-in
- *   selector list is used (which should work for a template that uses
- *   the standard textarea id naming).
+ *   The jQuery selector or selectors to use for looking up the element to
+ *   manage. The first selector that matches a single element will be used.
+ *   When no selectors are provided, then the selectors from the
+ *   {@link #selectors selectors} configuration property will be used instead.
  */
-Phorum.UI.MessageBody = Phorum.extend(Phorum.UI.Element,
+Phorum.UI.TextElement = Phorum.extend(Phorum.UI.Element,
 
-    // ----------------------------------------------------------------------
-    // Constructor
-    // ----------------------------------------------------------------------
+    // Constructor ==========================================================
 
     function (selectors) {
 
-        this.className = 'Phorum.UI.MessageBody';
-
-        this.selectors = [
-            'textarea.#phorum_textarea',  // Phorum 5.1
-            'textarea.#body',             // Phorum 5.2+
-            'textarea.#message'           // PM interface
-        ];
-
+        this.className = 'Phorum.UI.TextElement';
         this.parentConstructor(selectors);
     },
 
-    // ----------------------------------------------------------------------
-    // Prototype
-    // ----------------------------------------------------------------------
+    // Prototype ============================================================
 
     {
         /**
-         * Used to store the textarea selection range.
+         * Add tags (e.g. BBcode tags) to the text element.
+         * <p>
+         *   If some text is selected, then place the tags around the
+         *   selected text. If no text is selected and a prompt_str is
+         *   provided, then prompt the user for the data to place inside
+         *   the tags.
+         * </p>
+         * <p><pre><code>
+var body = new Phorum.UI.MessageBody();
+body.addTags('[b]', '[/b]');
+body.addTags('[url]', '[/url]', 'Please, enter the URL');
+         * </code></pre></p>
+         *
+         * @param {String} pre
+         *   The tag to put in front of the selection or manual input.
+         * @param {String} post
+         *   The tag to put after the selection or manual input.
+         */
+        addTags: function (pre, post, prompt_str)
+        {
+            var text;
+            var pretext;
+            var posttext;
+            var range;
+            var res;
+
+            // Store the current scroll offset, so we can restore it after
+            // adding the tags to its contents.
+            var offset = this.object.scrollTop;
+
+            if (this.object.setSelectionRange)
+            {
+                // Get the currently selected text.
+                pretext = this.object.value.substring(
+                    0, this.object.selectionStart);
+                text = this.object.value.substring(
+                    this.object.selectionStart, this.object.selectionEnd);
+                posttext = this.object.value.substring(
+                    this.object.selectionEnd, this.object.value.length);
+
+                // Prompt for input if no text was selected and a prompt is set.
+                if (text === '' && prompt_str) {
+                    text = prompt(prompt_str, '');
+                    if (text === null) {
+                        return;
+                    }
+                }
+
+                // Strip whitespace from text selection and move it to the
+                // pre- and post.
+                res = Phorum.trim(text, true);
+                text = res[0];
+                pre = res[1] + pre;
+                post = post + res[2];
+
+                this.object.value = pretext + pre + text + post + posttext;
+
+                // Reselect the selected text.
+                var cursorpos1 = pretext.length + pre.length;
+                var cursorpos2 = cursorpos1 + text.length;
+                this.object.setSelectionRange(cursorpos1, cursorpos2);
+                this.object.focus();
+            }
+            else if (document.selection) /* MSIE support */
+            {
+                // Get the currently selected text.
+                this.focus();
+                range = document.selection.createRange();
+
+                // Fumbling to work around newline selections at the end of
+                // the text selection. MSIE does not include them in the
+                // range.text, but it does replace them when setting range.text
+                // to a new value :-/
+                var virtlen = range.text.length;
+                if (virtlen > 0) {
+                    while (range.text.length === virtlen) {
+                        range.moveEnd('character', -1);
+                    }
+                    range.moveEnd('character', +1);
+                }
+
+                // Prompt for input if no text was selected and a prompt is set.
+                text = range.text;
+                if (text === '' && prompt_str) {
+                    text = prompt(prompt_str, '');
+                    if (text === null) {
+                        return;
+                    }
+                }
+
+                // Strip whitespace from text selection and move it to the
+                // pre- and post.
+                res = Phorum.trim(text, true);
+                text = res[0];
+                pre = res[1] + pre;
+                post = post + res[2];
+
+                // Add pre and post to the text.
+                range.text = pre + text + post;
+
+                // Reselect the selected text. Another MSIE anomaly has to be
+                // taken care of here. MSIE will include carriage returns
+                // in the text.length, but it does not take them into account
+                // when using selection range moving methods :-/
+                // By setting the range.text before, the cursor is now after
+                // the replaced code, so we will move the start and the end
+                // back in the text.
+                var mvstart = post.length + text.length -
+                              ((text + post).split('\r').length - 1);
+                var mvend   = post.length +
+                              (post.split('\r').length - 1);
+                range.moveStart('character', -mvstart);
+                range.moveEnd('character', -mvend);
+                range.select();
+            }
+            else /* Support for really limited browsers, e.g. MSIE5 on MacOS */
+            {
+                this.object.value = this.object.value + pre + post;
+            }
+
+            this.object.scrollTop = offset;
+        },
+
+        /**
+         * Used to store the tex element's selection range.
          *
          * @private
          */
-        range: null,
+        selectionRange: null,
 
         /**
-         * Store the active selection range of the textarea. This can be used to
-         * restore the selection range at a later time. This is used for MSIE,
-         * because sometimes clicking in a popup can clear the selection range.
+         * <p>
+         *   Store the active selection range of the text element.
+         *   This can be used to restore the selection range at a later time
+         *   using {@link #restoreSelection restoreSelection()}.
+         * </p>
+         * <p>
+         *   Currently, this will only act for MSIE. It was implemented because
+         *   MSIE sometimes clears the selection range in the text element when
+         *   clicking in a popup window.
+         * </p>
          */
         storeSelection: function ()
         {
@@ -934,19 +1027,717 @@ Phorum.UI.MessageBody = Phorum.extend(Phorum.UI.Element,
             }
 
             this.object.focus();
-            this.range = document.selection.createRange();
+            this.selectionRange = document.selection.createRange();
         },
 
         /**
-         * Restore a previously stored textarea selection range.
+         * <p>
+         *   Restore a textarea selection range that was previously stored
+         *   using {@link #restoreSelection storeSelection()}.
+         * </p>
          */
         restoreSelection: function ()
         {
-            if (this.range !== null) {
-                this.range.select();
-                this.range = null;
+            if (this.selectionRange !== null) {
+                this.selectionRange.select();
+                this.selectionRange = null;
             }
         }
     }
 );
+
+/**
+ * @class Phorum.UI.MessageBody
+ * @extends Phorum.UI.TextElement
+ * 
+ * <p>
+ *   This class can be used to access and manipulate message body textarea
+ *   elements in Phorum.
+ * </p>
+ * <p>
+ *   By default, the constructor will automatically search the page for some
+ *   known message body textarea identifiers. If you need more control
+ *   over the selector(s) to use for the textarea lookup, then you can provide
+ *   a jQuery selector or selector array as the argument for the constructor.
+ * </p>
+ * <p><pre><code>
+// Retrieve the message body using the built-in list of possible ids.
+var t1 = new Phorum.UI.MessageBody();
+t1.focus();
+
+// Retrieve using a custom jQuery selector.
+var t2 = new Phorum.UI.MessageBody('#phorum .mytextfield');
+t2.addTags('[i]', '[/i]');
+
+// Or using an array of selectors.
+var t3 = new Phorum.UI.MessageBody(['#this', '#that']);
+
+// It is possible to access the jQuery wrapper object for
+// the message body input.
+var $jquerytextarea = t3.wrapper();
+$jquerytextarea.css('color', 'blue');
+ * </code></pre></p>
+ *
+ * @constructor
+ *   Create a new Phorum.UI.MessageBody object.
+ * @param {String/Array} selectors (optional)
+ *   The jQuery selector or selectors to use for looking up the element to
+ *   manage. The first selector that matches a single element will be used.
+ *   When no selectors are provided, then some known Phorum message body
+ *   identifiers will be used by default.
+ */
+Phorum.UI.MessageBody = Phorum.extend(Phorum.UI.TextElement,
+
+    function (selectors) {
+
+        this.className = 'Phorum.UI.MessageBody';
+
+        this.selectors = [
+            '#phorum #phorum_textarea',  // Phorum 5.1
+            '#phorum #body',             // Phorum 5.2+
+            '#phorum #message'           // PM interface
+        ];
+
+        this.parentConstructor(selectors);
+    }
+);
+/**
+ * @class Phorum.UI.MessageSubject
+ * @extends Phorum.UI.TextElement
+ * 
+ * <p>
+ *   This class can be used to access and manipulate message subject textfield
+ *   elements in Phorum.
+ * </p>
+ * <p>
+ *   By default, the constructor will automatically search the page for some
+ *   known message subject textfield identifiers. If you need more control
+ *   over the selector(s) to use for the textfield lookup, then you can provide
+ *   a jQuery selector or selector array as the argument for the constructor.
+ * </p>
+ * <p><pre><code>
+// Retrieve the message body using the built-in list of possible ids.
+var t1 = new Phorum.UI.MessageSubject();
+t1.focus();
+
+// Retrieve using a custom jQuery selector.
+var t2 = new Phorum.UI.MessageBody('#phorum .mytextfield');
+t2.addTags('[i]', '[/i]');
+
+// Or using an array of selectors.
+var t3 = new Phorum.UI.MessageBody(['#this', '#that']);
+
+// It is possible to access the jQuery wrapper object for
+// the message body input.
+var $jquerytextarea = t3.wrapper();
+$jquerytextarea.css('color', 'blue');
+ * </code></pre></p>
+ *
+ * @constructor
+ *   Create a new Phorum.UI.MessageBody object.
+ * @param {String/Array} selectors (optional)
+ *   The jQuery selector or selectors to use for looking up the element to
+ *   manage. The first selector that matches a single element will be used.
+ *   When no selectors are provided, then some known Phorum message body
+ *   identifiers will be used by default.
+ */
+Phorum.UI.MessageSubject = Phorum.extend(Phorum.UI.TextElement,
+
+    function (selectors) {
+
+        this.className = 'Phorum.UI.MessageSubject';
+
+        this.selectors = [
+            '#phorum #phorum_subject',   // Phorum 5.1
+            '#phorum #subject'           // Phorum 5.2+
+        ];
+
+        this.parentConstructor(selectors);
+    }
+);
+/**
+ * @class Phorum.UI.BusyMarker
+ * <p>
+ *   The Phorum.UI.BusyMarker singleton implements a busy marker for the
+ *   Phorum UI. This marker is used for notifying the user about running async
+ *   calls to the server (or other async activities).
+ * </p>
+ * <p>
+ *   The default implementation will show a message box at a fixed position
+ *   in the top left of the page, notifying the user about the number of
+ *   pending actions. This box can be styled by modifying the
+ *   {@link #style Phorum.UI.BusyMarker.style} object <i>before</i> the
+ *   first call to {@link #increment Phorum.UI.BusyMarker.increment}.
+ *   For example:
+ * </p>
+ * <p><pre><code>
+// Override or add single style properties.
+Phorum.UI.BusyMarker.style.background = 'green';
+Phorum.UI.BusyMarker.style.padding = '5px';
+
+// Replace the full style configuration.
+Phorum.UI.BusyMarker.style = {
+    position: 'absolute',
+    top: '0px',
+    right: '0px',
+    border: '1px solid #cc7',
+    padding: '5px',
+    background: '#ff9'
+};
+ * </code></pre></p>
+ * <p>
+ *   The template author can even go a step further than changing the CSS config
+ *   alone by fully overriding the Phorum.UI.BusyMarker.render() method through
+ *   the template javascript code. This method can check the
+ *   {@link #count Phorum.UI.BusyMarker.count} property to find out how many
+ *   busy tasks there are.
+ * </p>
+ *
+ * @singleton
+ */
+Phorum.UI.BusyMarker =
+{
+    /**
+     * @property className
+     * @private
+     */
+    className: 'Phorum.UI.BusyMarker',
+
+    // The public interface of the busy marker ==============================
+
+    /**
+     * @property count
+     *
+     * The number of pending actions. This property is updated by the
+     * {@link #increment increment()} and {@link #decrement decrement()}
+     * methods.
+     *
+     * @var Integer
+     */
+    count : 0,
+
+    /**
+     * Increment the number of pending actions, e.g. when starting
+     * an Ajax call. After incrementing the counter, the busy marker
+     * will automatically render.
+     */
+    increment: function ()
+    {
+        this.count ++;
+        Phorum.debug(
+            this.className + ': counter incremented to: ' + this.count, 10);
+
+        this.render();
+    },
+
+    /**
+     * Decrement the number of pending actions, e.g. when an Ajax reply
+     * is received. After decrementing the counter, the busy marker is
+     * automatically updated or cleaned up when the counter reached zero.
+     */
+    decrement: function ()
+    {
+        this.count --;
+        Phorum.debug(
+            this.className + ': Busy marker counter decremented to: ' +
+            this.count, 10);
+
+        if (this.count < 0) {
+            throw 'Yoda.UI.BusyMarker: the busy counter went below zero! ' +
+                  'The decrement() method was called more often than the ' +
+                  'decrement() method. This should not happen.';
+        }
+        this.render(); 
+    },
+
+    // Specific code for rendering the default busy marker ==================
+
+    // The following code can be overridden by template
+    // JavaScript code to implement a different marker.
+
+     /**
+      * @property $box
+      *
+      * Used to store our $box jQuery object
+      *
+      * @var Object
+      * @private
+      */
+    $box: null,
+
+    /**
+     * @property style
+     *
+     * <p>
+     *   The style properties that will be assigned to the busy marker
+     *   object, right after rendering. Properties can be modified or extra
+     *   properties can be added to style the marker.
+     * </p>
+     * <p>
+     *   Since styling is most related to templates, overriding style
+     *   properties for the marker can best be done from the template specific
+     *   JavaScript code.
+     * </p>
+     *
+     * @var Object
+     */
+    style: {
+        position   : 'fixed',
+        top        : '5px',
+        left       : '5px',
+        border     : '1px solid #aa5',
+        background : '#ff9',
+        padding    : '0.2em 1em',
+        zIndex     : 1000
+    },
+
+    /**
+     * <p>
+     *   Render the busy marker or clean up the existing busy marker when the
+     *   busy {@link #count counter} has reached zero.
+     * </p>
+     * <p>
+     *   This method is automatically called from the
+     *   {@link #increment increment()} and {@link #decrement decrement()}
+     *   methods, so there should be no need to actively call it yourself.
+     * </p>
+     * <p>
+     *   When a different busy marker is required for a template, then this
+     *   method (Phorum.UI.BusyMarker.render()) can be overriden from the
+     *   template's JavaScript code to alter the rendering to whatever is
+     *   appropriate for the template.
+     * </p>
+     */
+    render: function ()
+    {
+        // If no actions are pending, clear up the busy message after a
+        // little 100ms pause (to keep the busy message from being
+        // irritatingly flashy on screen).
+        if (this.count === 0) {
+            Phorum.debug(this.className + ': delete the busy marker', 10);
+            Phorum.UI.BusyMarker.$box.
+              stop(true, false).show().delay(100).fadeOut(1000);
+            return;
+        }
+
+        // Create the notify box if it is not available yet.
+        if (this.$box === null)
+        {
+            Phorum.debug(this.className + ': render the busy marker', 10);
+
+            // Create the box.
+            this.$box = $PJ('<div/>')
+                       .css(this.style)
+                       .addClass('phorum_busy_marker')
+                       .hide();
+
+            // Add the box to the page.
+            $PJ('#phorum').prepend(this.$box);
+        }
+
+        // <?php $lang = $PHORUM['DATA']['LANG']; ?>
+
+        // Determine the message to show. 
+        var message =
+            this.count === 1 ?
+            '<?php print addslashes($lang["ActionPending"]) ?>' :
+            '<?php print addslashes($lang["ActionsPending"]) ?>';
+
+        // Replace %count% in the message with the current action count.
+        Phorum.debug(
+            this.className + ': set busy marker message: ' + message, 10);
+        message = message.replace(/%count%/, this.count);
+
+        // Show the busy marker.
+        Phorum.debug(this.className + ': show the busy marker', 10);
+        this.$box.html(message);
+        this.$box.stop(true, false).css('opacity', 1).show();
+    }
+};
+
+/**
+ * @class Phorum.UI.NewFlags
+ * @extends Object
+ *
+ * <p>
+ *   The Phorum.UI.NewFlags singleton implements a framework for handling
+ *   newflags in Phorum. It provides features to to handle "mark read" actions
+ *   through Ajax communication to the server and to update the user interface
+ *   after a "mark read" Ajax call has completed successfully.
+ * </p>
+ * <p>
+ *   For templates to support handling mark new actions through Ajax, they have
+ *   to include calls to {@link #markRead Phorum.UI.NewFlags.markRead()} or
+ *   the shorter alias {@link Phorum#markRead Phorum.markRead()}.
+ * </p>
+ * <p>
+ *   For updating the user interface after a successful call, a few built-in
+ *   actions are provided. See {@link #updateUI updateUI()} for a description
+ *   of these. If a template or module author needs support for a type of
+ *   action that is not built-in, extra actions can be implemented by
+ *   registering a callback through
+ *   {@link #registerActionCallback registerActionCallback()}.
+ * </p>
+ *
+ * @singleton
+ */
+Phorum.UI.NewFlags = {
+
+    /**
+     * @property className
+     * @private
+     */
+    className: 'Phorum.UI.NewFlags',
+
+    /**
+     * <p>
+     *   This is the callback registry. It holds global and action based
+     *   callback functions that will be called when a
+     *   {@link #markRead Phorum.UI.NewFlags.markRead()} call has been
+     *   executed successfully.
+     * </p>
+     *
+     * @private
+     */
+    callbacks: {
+        global: [ ],
+        action: { },
+    },
+
+    /**
+     * <p>
+     *   Register a global callback function that has to be called after every
+     *   {@link #markRead markRead()} call has been completed successfully.
+     * </p>
+     * <p>
+     *   The registered global callback functions will be called with two
+     *   parameters, which identify what messages have been marked read:
+     *   <div class="mdetail-params"><ul>
+     *     <li><b>mode</b>: "forums", "threads" or "messages"</li>
+     *     <li><b>item_id</b>: the forum, thread or message id</li>
+     *   </ul></div>
+     * </p>
+     * <p>
+     *   <b>Example code:</b>
+     * </p>
+     * <p><pre><code>
+Phorum.UI.NewFlags.registerCallback(function (mode, item_id) {
+  alert("Mark read was successful for " + mode + ", id " + item_id
+});
+     * </code></pre></p>
+     * 
+     * @param {Function} callback
+     *   The callback function to register.
+     */
+    registerCallback: function (callback)
+    {
+        if (!(callback instanceof Function)) {
+            throw this.className + '.registerCallback(): ' +
+            'the callback must be a function'
+        }
+
+        this.callbacks.global.push(callback);
+    },
+
+    /**
+     * <p>
+     *   Register a callback function for a specific action that has to be
+     *   called after a {@link #markRead markRead()} call has been completed
+     *   successfully.
+     * </p>
+     * <p>
+     *   The registered action callback functions will be called with two
+     *   parameters, which both identify the matching element:
+     *   <div class="mdetail-params"><ul>
+     *     <li><b>element</b>: the matching DOM-element</li>
+     *     <li><b>$element</b>: the jQuery wrapper for the DOM-element</li>
+     *   </ul></div>
+     * </p>
+     * <p>
+     *   <b>Example code:</b>
+     * </p>
+     * <p><pre><code>
+In javascript:
+
+function handleCustomAction(elt, $elt) {
+    $elt.css('color', 'green');
+}
+
+Phorum.UI.NewFlags.registerActionCallback('custom', handleCustomAction);
+
+In template:
+
+<span class="new-flag[custom,10,5,293]">
+  this text will turn green when the message is read
+</span>
+     * </code></pre></p>
+     *
+     * @param {String} action (optional)
+     *   The action for which to register the callback. The action is defined
+     *   in the special new-flag[&lt;action&gt;,...] CSS class (see
+     *   {@link #updateUI updateUI()} for more info). 
+     *
+     * @param {Function} callback
+     *   The callback function to register.
+     */
+    registerActionCallback: function (action, callback)
+    {
+        if (!(callback instanceof Function)) {
+            throw this.className + '.registerActionCallback(): ' +
+            'the callback must be a function'
+        }
+        if (this.callbacks.action[action] === undefined) {
+            this.callbacks.action[action] = [ ];
+        }
+        this.callbacks.action[action].push(callback);
+    },
+
+    /**
+     * <p>
+     *   This method can be called from "mark read" links to handle marking
+     *   forums, threads or messages read through Ajax calls. After the
+     *   call has finished successfully, {@link #updateUI updateUI} will be
+     *   called to update the user interface.
+     * </p>
+     * <p>
+     *   This method is also available through the alias
+     *   {@link Phorum#markRead Phorum.markRead()}.
+     * </p>
+     *
+     * @param {String} mode
+     *     One of "forums", "threads" or "messages".
+     *
+     * @param {Integer} item_id
+     *     A forum_id, thread id or message_id (which one to use depends
+     *     on the "mode" parameter).
+     */
+    markRead: function (mode, item_id)
+    {
+        // Request busy notification for the user.
+        Phorum.UI.BusyMarker.increment();
+
+        var request = {
+            'call': 'markread',
+            'onSuccess': function (data) {
+                Phorum.UI.BusyMarker.decrement();
+                Phorum.UI.NewFlags.updateUI(mode, item_id);
+            },
+            'onFailure': function (data) {
+                Phorum.UI.BusyMarker.decrement();
+            }
+        };
+
+        // Because the "mode" is dynamic ("forums", "threads" or "messages"),
+        // we have to assign this property of the request like this.
+        request[mode] = [ item_id ];
+
+        Phorum.debug(
+            this.className + ': call markread for mode = ' + mode + ', ' +
+            'id = ' + item_id, 5
+        );
+
+        // Dispatch the Ajax Phorum call.
+        Phorum.call(request);
+
+        // So "return Phorum.UI.NewFlags.markRead(...)" can be used to cancel
+        // an <a href> click.
+        return false;
+    },
+
+    /**
+     * <p>
+     *   Update the user interface after marking messages as read.
+     * </p>
+     * <p>
+     *   This method implements a few built-in actions for updating the
+     *   user interface. If a template or module needs custom handling of
+     *   mark read events, then the {@link #registerCallback registerCallback()}
+     *   and {@link #registerActionCallback registerActionCallback()} methods
+     *   can be used to implement custom functions.
+     * </p>
+     * <p>
+     *   <b>Built-in UI update actions:</b>
+     * </p>
+     * <p>
+     *   Below, we will describe the built-in actions that are provided by
+     *   Phorum.UI.NewFlags. Linking one of these actions to a page element
+     *   is done by assigning a CSS class that looks like:
+     *   <pre><code>
+new-flag[&lt;action&gt;,&lt;item&gt;]
+     *   </code></pre>
+     * </p>
+     *   The &lt;item&gt; part in here references the item to which the new
+     *   flag is linked. The format is:
+     *   <pre><code>
+&lt;forum id&gt;[, &lt;thread id&gt;[, &lt;message id&gt;]]
+
+&lt &gt = mandatory
+[ ] = optional
+
+Examples:
+10      = forum 10, for example on the index, where forums are listed
+10,5    = forum 10, thread 5, for example on the list, where threads are listed
+10,5,84 = forum 10, thread 5, message 85, for example on the read page
+     *   </code></pre>
+     * Using this notation, a mark read event for thread id 5 would match both
+     * "10,5" and "10,5,84".
+     * </p>
+     * <p>
+     *   The &lt;action&gt; part references the action that must be performed
+     *   on the element. Below here, the built-in actions are described.
+     * </p>
+     * <div class="mdetail-params"><ul>
+     *   <li>
+     *     <b>Action: hide</b>:<br/>
+     *     An element that will be hidden when the related item is
+     *     marked read.<br/>
+     *     In the default Phorum template, this is used for the
+     *     red "new" text that is shown for new messages.<br/>
+     *     <br/>
+     *     Template code:
+     *     <pre><code>
+&lt;<i>element</i> class="new-flag[hide,&lt;item&gt;]"&gt;
+  ... code to hide when marked read ...
+&lt;/<i>element</i>&gt;
+
+For example:
+
+&lt;span class="new-flag[hide,10,5,84] new-flag"&gt;new&lt;/span&gt;
+     *     </code></pre>
+     *   </li>
+     *   <li>
+     *     <b>Action: css</b>:<br/>
+     *     An element, from which the CSS class "new-flag" will be removed and
+     *     to which the CSS class "read-flag" will be added when the related
+     *     item is marked read.<br/>
+     *     In the default Phorum template, this is for example used for the
+     *     styling of the subject for new or updated threads on the list page.
+     *     New subjects are displayed in a bold font.<br/>
+     *     <br/>
+     *     Template code:
+     *     <pre><code>
+&lt;<i>element</i> class="new-flag[css,&lt;item&gt;] new-flag"&gt;
+   ... code to style ...
+&lt;/<i>element</i>&gt;
+
+For example:
+
+&lt;a href="http://example.com/read.php?10,5,84#msg-84"
+   class="new-flag[css,10,5] new-flag"&gt;Phorum rocks!&lt;/a&gt;
+     *     </code></pre>
+     *   </li>
+     * </ul></div>
+     *
+     * @param {String} mode
+     *     One of "forums", "threads" or "messages".
+     *
+     * @param {Array} item_id
+     *     The forum, thread or message id (which one to use depends
+     *     on the "mode" parameter).
+     */
+    updateUI: function (mode, item_id)
+    {
+        var func = this.className + '.updateUI()';
+
+        Phorum.debug(
+            func + ': update UI for mode = ' + mode + ', ' +
+            'id = ' + item_id, 5
+        );
+
+        // Build the regular expression for matching elements that have a
+        // new flag action linked to them.
+        var regexp = '^new-flag\\[(\\w+),';
+        switch (mode) {
+        case "forums"   : regexp += item_id + '(,\\d+){0,2}'; break;
+        case "threads"  : regexp += '\\d+,' + item_id + '(,\\d+)?'; break;
+        case "messages" : regexp += '\\d+,\\d+,' + item_id; break;
+        default         : throw func + ': ' +
+                          'processMatchingTags(): illegal mode: ' + mode;
+        }
+        regexp += '\\]';
+        var re = new RegExp();
+        re.compile(regexp);
+
+        Phorum.debug(
+            func + ': find elements that have a CSS class ' +
+            'matching: ' + regexp, 10
+        );
+
+        // Find all elements that have "new-flag[" somewhere in the class name.
+        // These are candidates for matching the complete
+        // "new-flag[<action>,<item>]" class format.
+        var me = this;
+        $PJ("*[class*='new-flag[']").each(function ()
+        {
+            var $element = $PJ(this);
+            var classes = $element.attr('class').split(' ');
+
+            Phorum.debug(
+                func + ': inspect element classes: ' + classes.join(', '), 10
+            );
+
+            // Elements might have more than one class name assigned to them.
+            // Inspect each class name separately.
+            for (var i = 0; i < classes.length; i++)
+            {
+                var match = re.exec(classes[i]);
+                if (match)
+                {
+                    var action = match[1];
+
+                    // Handle built-in action.
+                    switch (action) {
+
+                    case 'hide':
+                        $element.fadeOut();
+                        break;
+
+                    case 'css':
+                        $element.addClass('read-flag');
+                        $element.removeClass('new-flag');
+                        break;
+
+                    }
+
+                    // Handle action callback.
+                    if (me.callbacks.action[action] !== undefined) {
+                        var callbacks = me.callbacks.action[action];
+                        for (var j = 0; j < callbacks.length; j++) {
+                            callbacks[j](this, $element);
+                        }
+                    }
+                }
+            }
+        });
+
+        // Call all registered global callback functions
+        // to handle custom mark read functionality.
+        for (var i = 0; i < this.callbacks.global.length; i++) {
+            this.callbacks[i](mode, item_id);
+        }
+    }
+};
+
+/**
+ * An alias for
+ * {@link Phorum.UI.NewFlags#markRead Phorum.UI.NewFlags.markRead()}.
+ * See the documentation of that method for more information.
+ *
+ * @param {String} mode
+ * @param {Integer/Array} item_id
+ * @method Phorum.markRead
+ * @member Phorum markRead
+ */
+Phorum.markRead = Phorum.UI.NewFlags.markRead;
+
+/**
+ * An alias for 
+ * {@link Phorum.Ajax#call Phorum.Ajax.call()}.
+ * See the documentation of that method for more information.
+ *
+ * @param {Object} req
+ * @method Phorum.call
+ * @member Phorum call
+ */
+Phorum.call = Phorum.Ajax.call;
 

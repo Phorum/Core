@@ -18,6 +18,7 @@
    list-style:inside square;
    padding:2px;
 }
+.body-wrap .mdesc p,
 .body-wrap .description p {
    margin:8px 3px !important;
 }

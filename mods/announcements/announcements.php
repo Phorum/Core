@@ -157,17 +157,6 @@ function phorum_mod_announcements_css_register($data)
     return $data;
 }
 
-// Register the additional JavaScript code for this module.
-function phorum_mod_announcements_javascript_register($data)
-{
-    $data[] = array(
-        "module" => "announcements",
-        "source" => "template(announcements::javascript)"
-    );
-    return $data;
-}
-
-
 function phorum_show_announcements ()
 {
     $PHORUM = $GLOBALS['PHORUM'];

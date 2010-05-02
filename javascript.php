@@ -55,14 +55,6 @@ $module_registrations[] = array(
     'source'    => 'file(include/javascript/phorum-javascript-library.php)'
 );
 
-// Add core Phorum posting form object manipulation client JavaScript code.
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/javascript/form_objects.js.php)',
-    'cache_key' => filemtime('./include/javascript/form_objects.js.php')
-);
-
-
 // Add template specific javascript code, if available. The template writer
 // can put the javascript code to include in the file
 // "templates/<name>/javascript.tpl" or "templates/<name>/javascript.php".
@@ -151,14 +143,17 @@ if (isset($PHORUM['hooks']['javascript_register'])) {
     );
 }
 
-// Generate the cache key. While adding cache keys for the module
-// registrations, we also check the validity of the registration data.
-// We start the cache key with the template and language, so template
-// javascript is taken care of and so language strings can be used
-// inside the javascript files.
-$cache_key = $PHORUM['template'] . ':' . $PHORUM['language'];
+// Generate the cache key. Include some variables that could influence
+// the final script code.  
+$cache_key =
+    $PHORUM['template'] . ':' .
+    $PHORUM['language'] . ':' .
+    $PHORUM['http_path'];
+
+// Add cache key data for the registrations.
 foreach ($module_registrations as $id => $r)
 {
+    // Here we check the validity of the registration data.
     if (!isset($r['module'])) {
         trigger_error(
             "javascript_register hook: module registration error: " .
@@ -310,7 +305,7 @@ if (isset($PHORUM['args']['refresh']) || $content === null)
     }
 
     if (!empty($PHORUM['cache_javascript'])) {
-    	$cache_time = time();
+        $cache_time = time();
         phorum_cache_put('js',$cache_key,array($cache_time,$content),86400);
     }    
 
