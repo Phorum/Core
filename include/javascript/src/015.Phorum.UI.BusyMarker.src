@@ -21,11 +21,11 @@ Phorum.UI.BusyMarker.style.padding = '5px';
 // Replace the full style configuration.
 Phorum.UI.BusyMarker.style = {
     position: 'absolute',
-    top: '0px';
-    right: '0px';
-    border: '1px solid #cc7';
-    padding: '5px';
-    background: '#ff9';
+    top: '0px',
+    right: '0px',
+    border: '1px solid #cc7',
+    padding: '5px',
+    background: '#ff9'
 };
  * </code></pre></p>
  * <p>
@@ -174,8 +174,9 @@ Phorum.UI.BusyMarker =
                        .addClass('phorum_busy_marker')
                        .hide();
 
-            // Add the box to the page.
-            $PJ('body').prepend(this.$box);
+            // Add the box to the page. We add it to the #phorum wrapper and
+            // not to the page body to make it inherit CSS styles from #phorum. 
+            $PJ('#phorum').prepend(this.$box);
         }
 
         // <?php $lang = $PHORUM['DATA']['LANG']; ?>

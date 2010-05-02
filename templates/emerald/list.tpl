@@ -5,7 +5,7 @@
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     <a class="icon icon-comment-add" href="{URL->POST}">{LANG->NewTopic}</a>
     {IF URL->MARK_READ}
-        <a onclick="return Phorum.UI.markread('forums', {FORUM_ID})" class="icon icon-tag-green" href="{URL->MARK_READ}">{LANG->MarkForumRead}</a>
+        <a onclick="return Phorum.markRead('forums', {FORUM_ID})" class="icon icon-tag-green" href="{URL->MARK_READ}">{LANG->MarkForumRead}</a>
     {/IF}
     {IF URL->FEED}
         <a class="icon icon-feed" href="{URL->FEED}">{FEED}</a>
@@ -58,17 +58,17 @@
     {/IF}
 
     {IF MESSAGES->new}
-        {VAR newclass "message-new"}
+        {VAR newclass "new-flag"}
     {ELSE}
-        {VAR newclass ""}
+        {VAR newclass "read-flag"}
     {/IF}
 
     <tr>
 
-        <td width="1%" class="{altclass}"><a href="{IF MESSAGES->new}{MESSAGES->URL->NEWPOST}{ELSE}{MESSAGES->URL->READ}{/IF}" title="{title}"><img class="new-flag-icon-{MESSAGES->forum_id}-{MESSAGES->thread}{IF MESSAGES->sort PHORUM_SORT_STICKY} sticky{/IF}" src="{URL->TEMPLATE}/images/{icon}.png" class="icon1616" alt="{alt}" /></a></td>
+        <td width="1%" class="{altclass}"><a href="{IF MESSAGES->new}{MESSAGES->URL->NEWPOST}{ELSE}{MESSAGES->URL->READ}{/IF}" title="{title}"><img class="new-flag[icon,{MESSAGES->forum_id},{MESSAGES->thread}]{IF MESSAGES->sort PHORUM_SORT_STICKY} sticky{/IF}" src="{URL->TEMPLATE}/images/{icon}.png" class="icon1616" alt="{alt}" /></a></td>
         <td width="59%" class="{altclass}">
             <h4>
-                <a href="{MESSAGES->URL->READ}" class="new-flag-subject-{MESSAGES->forum_id}-{MESSAGES->thread} {newclass}" title="{title}">{MESSAGES->subject}</a>
+                <a href="{MESSAGES->URL->READ}" class="new-flag[css,{MESSAGES->forum_id},{MESSAGES->thread}] {newclass}" title="{title}">{MESSAGES->subject}</a>
                 {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" class="icon1616" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
                 {IF MESSAGES->pages}&nbsp;<small>&nbsp;({LANG->Pages}:&nbsp;{MESSAGES->pages})</small>{/IF}
             </h4>

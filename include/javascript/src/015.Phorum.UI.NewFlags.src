@@ -106,7 +106,7 @@ function handleCustomAction(elt, $elt) {
     $elt.css('color', 'green');
 }
 
-Phorum.UI.NewFlags.registerActionCallback(handleCustomAction, 'custom');
+Phorum.UI.NewFlags.registerActionCallback('custom', handleCustomAction);
 
 In template:
 
@@ -115,15 +115,15 @@ In template:
 </span>
      * </code></pre></p>
      *
-     * @param {Function} callback
-     *   The callback function to register.
-     *
      * @param {String} action (optional)
      *   The action for which to register the callback. The action is defined
      *   in the special new-flag[&lt;action&gt;,...] CSS class (see
      *   {@link #updateUI updateUI()} for more info). 
+     *
+     * @param {Function} callback
+     *   The callback function to register.
      */
-    registerActionCallback: function (callback, action)
+    registerActionCallback: function (action, callback)
     {
         if (!(callback instanceof Function)) {
             throw this.className + '.registerActionCallback(): ' +
@@ -345,9 +345,8 @@ For example:
                     // Handle action callback.
                     if (me.callbacks.action[action] !== undefined) {
                         var callbacks = me.callbacks.action[action];
-                        console.warn(callbacks);
                         for (var j = 0; j < callbacks.length; j++) {
-                            callbacks[j](me, $element);
+                            callbacks[j](this, $element);
                         }
                     }
                 }
