@@ -18,7 +18,7 @@
         {VAR title LANG->Announcement}
 
         <tr>
-            <td width="1%"><a href="{read_url}" title="{title}"><img class="new-flag[icon,{ANNOUNCEMENTS->forum_id},{ANNOUNCEMENTS->thread}]" src="{URL->TEMPLATE}/images/{icon}.png" width="16" height="16" border="0" alt="{title}" /></a></td>
+            <td width="1%"><a href="{read_url}" title="{title}"><span class="new-flag[hide,{MESSAGES->forum_id},{MESSAGES->thread}]"><span class="new-indicator">{LANG->New}</span></span></a></td>
             <td width="80%"><a href="{ANNOUNCEMENTS->URL->READ}" title="{title}">{ANNOUNCEMENTS->subject}</a></td>
             <td width="19%" style="white-space: nowrap">{ANNOUNCEMENTS->lastpost}</td>
         </tr>
