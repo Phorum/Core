@@ -3,7 +3,7 @@
     {IF URL->INDEX}&raquo; <a class="icon" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
     &raquo; <a class="icon" href="{URL->POST}">{LANG->NewTopic}</a>
     {IF URL->MARK_READ}
-        &raquo; <a class="icon" href="{URL->MARK_READ}">{LANG->MarkForumRead}</a>
+        &raquo; <a class="icon" href="{URL->MARK_READ}" onclick="return Phorum.markRead('forums', {FORUM_ID})">{LANG->MarkForumRead}</a>
     {/IF}
     {IF URL->FEED}
         &raquo; <a class="icon" href="{URL->FEED}">{FEED}</a>
@@ -46,15 +46,15 @@
     {/IF}
 
     {IF MESSAGES->new}
-        {VAR newclass "message-new"}
+        {VAR newclass "new-flag"}
     {ELSE}
-        {VAR newclass ""}
+        {VAR newclass "read-flag"}
     {/IF}
 
     <tr>
     <td width="65%" class="{altclass}">
         <h4 style="padding-left: {MESSAGES->indent_cnt}px">
-            {IF MESSAGES->new}<span class="new-indicator">{LANG->New}</span>{/IF}{title}
+            {IF MESSAGES->new}<span class="new-flag[hide,{MESSAGES->forum_id},{MESSAGES->thread}]"><span class="new-indicator">{LANG->New}</span></span>{/IF}{title}
             <a href="{MESSAGES->URL->READ}" class="{newclass}" title="{title}">{MESSAGES->subject}</a>
             {IF MESSAGES->meta->attachments}<small>(@ {LANG->Attachments})</small>{/IF}
             {IF MESSAGES->sort PHORUM_SORT_STICKY}<small>({MESSAGES->thread_count} {LANG->Posts})</small>{/IF}

@@ -186,7 +186,7 @@ img {
     color: {new_color};
 }
 
-#phorum a.message-new {
+#phorum h4 a.new-flag {
     font-weight: bold;
 }
 

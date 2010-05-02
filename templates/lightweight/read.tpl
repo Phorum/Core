@@ -22,7 +22,7 @@
                             {IF MESSAGES->URL->PM}<small>[ <a href="{MESSAGES->URL->PM}">{LANG->PrivateReply}</a> ]</small>{/IF}
                         </div>
                         <small>
-                        <strong><a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a></strong>{IF MESSAGES->new} <span class="new-flag">{LANG->New}</span>{/IF}<br />
+                        <strong><a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a></strong>{IF MESSAGES->new} <span class="new-flag[hide,{MESSAGES->forum_id},{MESSAGES->thread}] new-flag">{LANG->New}</span>{/IF}<br />
                         {MESSAGES->datestamp}
                         </small>
                     </td>
@@ -108,7 +108,7 @@
 <div id="thread-options" class="nav">
     <a class="icon icon-printer" href="{URL->PRINTVIEW}" target="_blank">{LANG->PrintView}</a>
     {IF URL->MARKTHREADREAD}
-        <a class="icon icon-tag-green" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>
+        <a class="icon icon-tag-green" href="{URL->MARKTHREADREAD}" onclick="return Phorum.markRead('threads', {TOPIC->thread})" class="icon icon-tag-green">{LANG->MarkThreadRead}</a>
     {/IF}
     {IF TOPIC->URL->FOLLOW}
         <a class="icon icon-note-add" href="{TOPIC->URL->FOLLOW}">{LANG->FollowThread}</a>
