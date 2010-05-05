@@ -1,0 +1,164 @@
+/**
+ * @class Phorum.UI.Editor
+ * @extends Phorum.UI.Element
+ * 
+ * <p>
+ *   This class can be used to access and manipulate the
+ *   posting editor in Phorum.
+ * </p>
+ * <p>
+ *   By default, the constructor will automatically search the page for a
+ *   div element with id "post". If you need more control over the selector(s)
+ *   to use for the editor lookup, then you can provide a jQuery selector or
+ *   selector array as the argument for the constructor.
+ * </p>
+ * <p><pre><code>
+// Retrieve the editor using the built-in selector.
+var e1 = new Phorum.UI.Editor();
+e1.getBody().focus();
+
+// Retrieve the editor using a custom jQuery selector.
+var e2 = new Phorum.UI.Editor('#phorum #myeditor');
+t2.getSubject().addTags(':-)');
+
+// It is possible to access the jQuery wrapper object for the editor.
+t2.$object.hide();
+// Or even shorter.
+t2.$.hide();
+ * </code></pre></p>
+ *
+ * @constructor
+ *   Create a new Phorum.UI.Editor object.
+ * @param {String/Array} selectors (optional)
+ *   The jQuery selector or selectors to use for looking up the editor element.
+ *   The first selector that matches a single element will be used.
+ *   When no selectors are provided, then the built-in selector will be
+ *   used by default.
+ */
+Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
+
+    // Constructor ==========================================================
+
+    function (selectors) {
+
+        this.className = 'Phorum.UI.Editor';
+
+        this.selectors = [
+            '#phorum #post'   // Phorum 5.2+, no need to support older versions
+        ];
+
+        this.parentConstructor(selectors);
+    },
+
+    // Prototype ============================================================
+
+    {
+        /**
+         * Used by the focus() method to automatically find a field to focus.
+         *
+         * @private
+         */
+        focusFields: [
+            'author',
+            'subject',
+            'body'
+        ],
+
+        /**
+         * Focus the editor. By default, this method will move the focus in the
+         * editor to the first logical input field. By providing a field name
+         * as the argument, the exact field to focus can be controlled.
+         *
+         * @param {String} field_name (optional)
+         *   The name of the form field to focus. If not provided, then
+         *   Phorm.UI.Editor will automatically pick a logical field to focus.
+         */
+        focus: function (field_name)
+        {
+            // No field provided? Move the focus to the author, subject or
+            // message body field. The first existing and empty field gets
+            // the focus. If none of the fields is empty, then the body
+            // is focused by default.
+            if (field_name === undefined)
+            {
+                field_name = 'body'
+                for (var i = 0; i < this.focusFields.length; i++)
+                {
+                    // Retrieve the field from the editor.
+                    field_name = this.focusFields[i];
+                    var f = this.getField(this.focusFields[i]);
+
+                    // If this field is empty, then use this one for focusing.
+                    var value = f.$.val();
+                    value = Phorum.trim(value);
+                    if (value === '') {
+                        break;
+                    }
+                }
+            }
+
+            this.getField(field_name).$.focus();
+        },
+
+        /**
+         * A cache that holds the Phorum.UI.Element objects that were
+         * retrieved using getField().
+         * 
+         * @private
+         */
+        fields: { },
+
+        /**
+         * Retrieve the Phorum.UI.Element wrapper for a form field within
+         * this editor.
+         *
+         * @param {String} field_name
+         *   The name of the form field to retrieve.
+         * @return {Phorum.UI.Element} field
+         *   The Phorum.UI.Element object for the form field if exactly one
+         *   element was found.
+         */
+        getField: function (field_name)
+        {
+            // Check the lookup cache.
+            if (this.fields[field_name] === undefined)
+            {
+                // Look up the field by its name.
+                var selector = '*[name=' + field_name + ']';
+                var $fields = this.$object.find(selector);
+
+                // If we found one or more fields, then create a
+                // Phorum.UI.Element wrapper. When more than one field is found,
+                // then the last one is used. This is to accommodate for the
+                // fact that we add all fields as hidden fields to the editor
+                // form and that we add normal form fields to override the
+                // hidden fields.
+                if ($fields.length > 0)
+                {
+                    var $f = $fields.last();
+
+                    // For text input fields, we use a different base class,
+                    // which allows us to do text manipulations on the data.
+                    if ($f.is('textarea') ||
+                        ($f.is('input') && $f.attr('type') === 'text')) {
+                        field = new Phorum.UI.TextElement($f);
+                    }
+                    else {
+                        field = new Phorum.UI.Element($f);
+                    }
+
+                    this.fields[field_name] = field;
+                }
+                // If no fieldwas found, then we don't accept the result.
+                // We always expect there to be exactly one matching field.
+                else {
+                    throw this.className + '.getField(): no matching form ' +
+                    'field found for name=' + field_name;
+                }
+            }
+
+            return this.fields[field_name];
+        }
+    }
+);
+

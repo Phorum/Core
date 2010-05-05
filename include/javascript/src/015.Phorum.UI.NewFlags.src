@@ -150,8 +150,10 @@ In template:
      *   <b>Example code</b>
      * </p>
      * <p><pre><code>
-<a href="http://example.com/index.php?10,markread,0"
-   onclick="return Phorum.UI.NewFlags.markRead('forums', 10)">Mark forum read</a>
+&lt;a href="http://example.com/index.php?10,markread,0"
+   onclick="return Phorum.UI.NewFlags.markRead('forums', 10)"&gt;
+    Mark forum read
+&lt;/a&gt;
      * </code></pre></p>
      *
      * @param {String} mode

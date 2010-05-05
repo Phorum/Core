@@ -29,6 +29,17 @@ Phorum.UI.TextElement = Phorum.extend(Phorum.UI.Element,
 
     {
         /**
+         * @property isTextElement
+         *
+         * This property can be used as an easy way to check if an object
+         * is based on this class. JavaScript's instanceof does not support
+         * checking object inheritance.
+         *
+         * @var {String}
+         */
+        isTextElement: true,
+
+        /**
          * Add tags (e.g. BBcode tags) to the text element.
          * <p>
          *   If some text is selected, then place the tags around the
@@ -54,6 +65,13 @@ body.addTags('[url]', '[/url]', 'Please, enter the URL');
             var posttext;
             var range;
             var res;
+
+            if (pre === undefined || pre === null) {
+                pre = '';
+            }
+            if (post === undefined || post === null) {
+                post = '';
+            }
 
             // Store the current scroll offset, so we can restore it after
             // adding the tags to its contents.

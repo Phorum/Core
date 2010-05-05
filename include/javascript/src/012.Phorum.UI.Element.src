@@ -8,51 +8,78 @@
  *
  * @constructor
  *   Create a new Phorum.UI.Element object.
- * @param {String/Array} selectors (optional)
- *   The jQuery selector or selectors to use for looking up the element to
- *   manage. The first selector that matches a single element will be used.
- *   When no selectors are provided, then the selectors from the
- *   {@link #selectors selectors} configuration property will be used instead.
+ * @param {String/Array/jQuery} selector (optional)
+ *   This parameter determines the page element to wrap. This is one of:
+ *   <div class="mdetail-params"><ul>
+ *     <li>A jQuery selector to use for looking up the element. This
+ *         must result in exactly one matching element.</li>
+ *     <li>An array of jQuery selectors. Each selector is tried in sequence.
+ *         The first selector that results in exactly one matching element
+ *         will be used. This method allows to match multiple selectors for
+ *         backward compatibility.</li>
+ *     <li>A jQuery object. This object must contain exactly one element.</li>
+ *     <li>When this parameter is omitted, then the selectors from the
+ *         {@link #selectors selectors} configuration property will be
+ *         used instead.</li>
+ *   </ul></div>
  */
 Phorum.UI.Element = Phorum.extend(
 
     // Constructor ==========================================================
 
-    function (selectors) {
+    function (selectors)
+    {
+        // jQuery object.
+        if (selectors instanceof Object)
+        {
+            if (selectors.length !== 1) {
+                throw this.className + ' constructor: the selectors ' +
+                      'parameter must match exactly one DOM element when ' +
+                      'a jQuery object is provided.';
+            }
 
+            this.object  = selectors[0];
+            this.$object = selectors;
+            this.$       = selectors;
+            return;
+        }
+
+        // jQuery selectors.
         selectors = (selectors === undefined || selectors === null) ?
                     this.selectors :
                     $PJ.isArray(selectors) ? selectors : [ selectors ];
 
         // Lookup the first selector for which a unique element can be found.
-        var me = this;
-        $PJ.each(selectors, function (id, selector)
+        for (var i = 0; i < selectors.length; i++)
         {
+            var selector = selectors[i];
+
             Phorum.debug(
-                me.className + ': lookup element for "' + selector + '"', 10
+                this.className + ' constructor: lookup element for "' +
+                selector + '"', 10
             );
 
             var $tmp = $PJ(selector);
 
             if ($tmp.length === 1) {
                 Phorum.debug(
-                    me.className + ': found unique element for ' +
+                    this.className + ' constructor: found unique element for ' +
                     '"' + selector + '"', 10
                 );
-                me.$object = $tmp;
-                me.object  = $tmp[0];
-                return false;
+                this.$object = $tmp;
+                this.$       = $tmp;
+                this.object  = $tmp[0];
+                return;
             } else {
                 Phorum.debug(
-                    me.className + ': number of elements for ' +
+                    this.className + ' constructor: number of elements for ' +
                     '"' + selector + '": ' + $tmp.length, 10
                 );
             }
-        });
-        if (!this.$object) {
-            throw this.className + ': No unique matching element found ' +
-                  'on the current page';
         }
+
+        throw this.className + ' constructor: no object found for ' +
+              'selectors: ' + selectors.join(', ');
     },
 
     // Prototype ============================================================
@@ -70,6 +97,17 @@ Phorum.UI.Element = Phorum.extend(
         className: 'Phorum.UI.Element',
 
         /**
+         * @property isElement
+         *
+         * This property can be used as an easy way to check if an object
+         * is based on this class. JavaScript's instanceof does not support
+         * checking object inheritance.
+         *
+         * @var {String}
+         */
+        isElement: true,
+
+        /**
          * @property selectors
          *
          * The array of jQuery selectors to search for.
@@ -82,19 +120,9 @@ Phorum.UI.Element = Phorum.extend(
         selectors: [ ],
 
         /**
-         * @property $object
-         *
-         * A reference to the jQuery wrapper object for the managed element.
-         *
-         * @var jQuery
-         * @private
-         */
-        $object: null,
-
-        /**
          * @property object
          *
-         * A reference to the managed element object.
+         * A reference to the managed DOM element.
          *
          * @var Object
          * @private
@@ -102,12 +130,30 @@ Phorum.UI.Element = Phorum.extend(
         object: null,
 
         /**
-         * Return the jQuery wrapper for the element.
+         * @property $object
+         *
+         * A reference to the jQuery wrapper object for the managed DOM element.
+         *
+         * @var jQuery
+         */
+        $object: null,
+
+        /**
+         * A shortcut alias for the {@link #$object $object} property.
+         * It contains the jQuery wrapper for the managed element.
          *
          * @return {jQuery} $object
          */
-        wrapper: function () {
-            return this.$object;
+        $: null,
+
+        /**
+         * Can be used to check if the constructor found an element to manage.
+         *
+         * @return {Boolean} found
+         *     True in case an element was found, false otherwise.
+         */
+        found: function () {
+            return this.$object ? true : false;
         },
 
         /**
@@ -116,6 +162,33 @@ Phorum.UI.Element = Phorum.extend(
         focus: function ()
         {
             this.$object.focus();
+        },
+
+        /**
+         * For form field elements, retrieve or set the form field value.
+         * When retrieving a value, whitespace is trimmed from it.
+         *
+         * @param {mixed} value (optional)
+         *   The value to set. Omit this parameter to retrieve the
+         *   field value.
+         *
+         * @return {String} value
+         *   The trimmed form field value.
+         */
+        value: function (value)
+        {
+            if (value !== undefined) {
+                this.$object.val(value);
+            }
+
+            var value = this.$object.val();
+            if (value === null || value === undefined) {
+                value = '';
+            } else {
+                value = Phorum.trim(value);
+            }
+
+            return value;
         }
     }
 );
