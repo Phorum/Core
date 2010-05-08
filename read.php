@@ -154,15 +154,6 @@ if(!$PHORUM["threaded_read"]) {
     }
 }
 
-// Add paging info to the breadcrumbs.
-if ($page > 1) {
-    $PHORUM['DATA']['BREADCRUMBS'][]=array(
-        'URL'  => phorum_api_url(PHORUM_READ_URL, $thread, "page=$page"),
-        'TEXT' => $PHORUM['DATA']['LANG']['Page'] . ' ' . $page,
-        'TYPE' => 'message-page'
-    );
-}
-
 /*
  thats the caching part
  */

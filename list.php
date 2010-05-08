@@ -162,12 +162,6 @@ if ($page>1)
         array($PHORUM["forum_id"],$prevpage),
         $list_page_url_template
     );
-
-    $PHORUM['DATA']['BREADCRUMBS'][]=array(
-        'URL'=>'',
-        'TEXT'=>$PHORUM['DATA']['LANG']['Page'] . ' ' . $page,
-        'TYPE'=>'forum-page'
-    );
 }
 
 $min_id=0;
