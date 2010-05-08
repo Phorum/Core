@@ -48,9 +48,9 @@ Phorum.UI.TextElement = Phorum.extend(Phorum.UI.Element,
          *   the tags.
          * </p>
          * <p><pre><code>
-var body = new Phorum.UI.MessageBody();
-body.addTags('[b]', '[/b]');
-body.addTags('[url]', '[/url]', 'Please, enter the URL');
+var elt = new Phorum.UI.TextElement();
+elt.addTags('[b]', '[/b]');
+elt.addTags('[url]', '[/url]', 'Please, enter the URL');
          * </code></pre></p>
          *
          * @param {String} pre

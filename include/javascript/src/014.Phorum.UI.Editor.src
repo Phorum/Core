@@ -48,6 +48,24 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
         ];
 
         this.parentConstructor(selectors);
+
+        /**
+         * @property subject
+         *
+         * A reference to the subject element in the editor.
+         * 
+         * @var Phorum.UI.TextElement
+         */
+        this.subject = this.getField('subject');
+
+        /**
+         * @property body
+         *
+         * A reference to the body element in the editor.
+         * 
+         * @var Phorum.UI.TextElement
+         */
+        this.body = this.getField('body');
     },
 
     // Prototype ============================================================

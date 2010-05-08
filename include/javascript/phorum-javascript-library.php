@@ -733,51 +733,78 @@ Phorum.UI.scrollbarwidth = function (as_integer)
  *
  * @constructor
  *   Create a new Phorum.UI.Element object.
- * @param {String/Array} selectors (optional)
- *   The jQuery selector or selectors to use for looking up the element to
- *   manage. The first selector that matches a single element will be used.
- *   When no selectors are provided, then the selectors from the
- *   {@link #selectors selectors} configuration property will be used instead.
+ * @param {String/Array/jQuery} selector (optional)
+ *   This parameter determines the page element to wrap. This is one of:
+ *   <div class="mdetail-params"><ul>
+ *     <li>A jQuery selector to use for looking up the element. This
+ *         must result in exactly one matching element.</li>
+ *     <li>An array of jQuery selectors. Each selector is tried in sequence.
+ *         The first selector that results in exactly one matching element
+ *         will be used. This method allows to match multiple selectors for
+ *         backward compatibility.</li>
+ *     <li>A jQuery object. This object must contain exactly one element.</li>
+ *     <li>When this parameter is omitted, then the selectors from the
+ *         {@link #selectors selectors} configuration property will be
+ *         used instead.</li>
+ *   </ul></div>
  */
 Phorum.UI.Element = Phorum.extend(
 
     // Constructor ==========================================================
 
-    function (selectors) {
+    function (selectors)
+    {
+        // jQuery object.
+        if (selectors instanceof Object)
+        {
+            if (selectors.length !== 1) {
+                throw this.className + ' constructor: the selectors ' +
+                      'parameter must match exactly one DOM element when ' +
+                      'a jQuery object is provided.';
+            }
 
+            this.object  = selectors[0];
+            this.$object = selectors;
+            this.$       = selectors;
+            return;
+        }
+
+        // jQuery selectors.
         selectors = (selectors === undefined || selectors === null) ?
                     this.selectors :
                     $PJ.isArray(selectors) ? selectors : [ selectors ];
 
         // Lookup the first selector for which a unique element can be found.
-        var me = this;
-        $PJ.each(selectors, function (id, selector)
+        for (var i = 0; i < selectors.length; i++)
         {
+            var selector = selectors[i];
+
             Phorum.debug(
-                me.className + ': lookup element for "' + selector + '"', 10
+                this.className + ' constructor: lookup element for "' +
+                selector + '"', 10
             );
 
             var $tmp = $PJ(selector);
 
             if ($tmp.length === 1) {
                 Phorum.debug(
-                    me.className + ': found unique element for ' +
+                    this.className + ' constructor: found unique element for ' +
                     '"' + selector + '"', 10
                 );
-                me.$object = $tmp;
-                me.object  = $tmp[0];
-                return false;
+                this.$object = $tmp;
+                this.$       = $tmp;
+                this.object  = $tmp[0];
+                return;
             } else {
                 Phorum.debug(
-                    me.className + ': number of elements for ' +
+                    this.className + ' constructor: number of elements for ' +
                     '"' + selector + '": ' + $tmp.length, 10
                 );
             }
-        });
-        if (!this.$object) {
-            throw this.className + ': No unique matching element found ' +
-                  'on the current page';
         }
+
+        throw this.className + ' constructor: no object found for ' +
+              'selectors: ' + selectors.join(', ');
     },
 
     // Prototype ============================================================
@@ -795,6 +822,17 @@ Phorum.UI.Element = Phorum.extend(
         className: 'Phorum.UI.Element',
 
         /**
+         * @property isElement
+         *
+         * This property can be used as an easy way to check if an object
+         * is based on this class. JavaScript's instanceof does not support
+         * checking object inheritance.
+         *
+         * @var {String}
+         */
+        isElement: true,
+
+        /**
          * @property selectors
          *
          * The array of jQuery selectors to search for.
@@ -807,19 +845,9 @@ Phorum.UI.Element = Phorum.extend(
         selectors: [ ],
 
         /**
-         * @property $object
-         *
-         * A reference to the jQuery wrapper object for the managed element.
-         *
-         * @var jQuery
-         * @private
-         */
-        $object: null,
-
-        /**
          * @property object
          *
-         * A reference to the managed element object.
+         * A reference to the managed DOM element.
          *
          * @var Object
          * @private
@@ -827,12 +855,30 @@ Phorum.UI.Element = Phorum.extend(
         object: null,
 
         /**
-         * Return the jQuery wrapper for the element.
+         * @property $object
+         *
+         * A reference to the jQuery wrapper object for the managed DOM element.
+         *
+         * @var jQuery
+         */
+        $object: null,
+
+        /**
+         * A shortcut alias for the {@link #$object $object} property.
+         * It contains the jQuery wrapper for the managed element.
          *
          * @return {jQuery} $object
          */
-        wrapper: function () {
-            return this.$object;
+        $: null,
+
+        /**
+         * Can be used to check if the constructor found an element to manage.
+         *
+         * @return {Boolean} found
+         *     True in case an element was found, false otherwise.
+         */
+        found: function () {
+            return this.$object ? true : false;
         },
 
         /**
@@ -841,6 +887,33 @@ Phorum.UI.Element = Phorum.extend(
         focus: function ()
         {
             this.$object.focus();
+        },
+
+        /**
+         * For form field elements, retrieve or set the form field value.
+         * When retrieving a value, whitespace is trimmed from it.
+         *
+         * @param {mixed} value (optional)
+         *   The value to set. Omit this parameter to retrieve the
+         *   field value.
+         *
+         * @return {String} value
+         *   The trimmed form field value.
+         */
+        value: function (value)
+        {
+            if (value !== undefined) {
+                this.$object.val(value);
+            }
+
+            var value = this.$object.val();
+            if (value === null || value === undefined) {
+                value = '';
+            } else {
+                value = Phorum.trim(value);
+            }
+
+            return value;
         }
     }
 );
@@ -876,6 +949,17 @@ Phorum.UI.TextElement = Phorum.extend(Phorum.UI.Element,
 
     {
         /**
+         * @property isTextElement
+         *
+         * This property can be used as an easy way to check if an object
+         * is based on this class. JavaScript's instanceof does not support
+         * checking object inheritance.
+         *
+         * @var {String}
+         */
+        isTextElement: true,
+
+        /**
          * Add tags (e.g. BBcode tags) to the text element.
          * <p>
          *   If some text is selected, then place the tags around the
@@ -884,9 +968,9 @@ Phorum.UI.TextElement = Phorum.extend(Phorum.UI.Element,
          *   the tags.
          * </p>
          * <p><pre><code>
-var body = new Phorum.UI.MessageBody();
-body.addTags('[b]', '[/b]');
-body.addTags('[url]', '[/url]', 'Please, enter the URL');
+var elt = new Phorum.UI.TextElement();
+elt.addTags('[b]', '[/b]');
+elt.addTags('[url]', '[/url]', 'Please, enter the URL');
          * </code></pre></p>
          *
          * @param {String} pre
@@ -901,6 +985,13 @@ body.addTags('[url]', '[/url]', 'Please, enter the URL');
             var posttext;
             var range;
             var res;
+
+            if (pre === undefined || pre === null) {
+                pre = '';
+            }
+            if (post === undefined || post === null) {
+                post = '';
+            }
 
             // Store the current scroll offset, so we can restore it after
             // adding the tags to its contents.
@@ -1047,114 +1138,187 @@ body.addTags('[url]', '[/url]', 'Please, enter the URL');
 );
 
 /**
- * @class Phorum.UI.MessageBody
- * @extends Phorum.UI.TextElement
+ * @class Phorum.UI.Editor
+ * @extends Phorum.UI.Element
  * 
  * <p>
- *   This class can be used to access and manipulate message body textarea
- *   elements in Phorum.
+ *   This class can be used to access and manipulate the
+ *   posting editor in Phorum.
  * </p>
  * <p>
- *   By default, the constructor will automatically search the page for some
- *   known message body textarea identifiers. If you need more control
- *   over the selector(s) to use for the textarea lookup, then you can provide
- *   a jQuery selector or selector array as the argument for the constructor.
+ *   By default, the constructor will automatically search the page for a
+ *   div element with id "post". If you need more control over the selector(s)
+ *   to use for the editor lookup, then you can provide a jQuery selector or
+ *   selector array as the argument for the constructor.
  * </p>
  * <p><pre><code>
-// Retrieve the message body using the built-in list of possible ids.
-var t1 = new Phorum.UI.MessageBody();
-t1.focus();
+// Retrieve the editor using the built-in selector.
+var e1 = new Phorum.UI.Editor();
+e1.getBody().focus();
 
-// Retrieve using a custom jQuery selector.
-var t2 = new Phorum.UI.MessageBody('#phorum .mytextfield');
-t2.addTags('[i]', '[/i]');
+// Retrieve the editor using a custom jQuery selector.
+var e2 = new Phorum.UI.Editor('#phorum #myeditor');
+t2.getSubject().addTags(':-)');
 
-// Or using an array of selectors.
-var t3 = new Phorum.UI.MessageBody(['#this', '#that']);
-
-// It is possible to access the jQuery wrapper object for
-// the message body input.
-var $jquerytextarea = t3.wrapper();
-$jquerytextarea.css('color', 'blue');
+// It is possible to access the jQuery wrapper object for the editor.
+t2.$object.hide();
+// Or even shorter.
+t2.$.hide();
  * </code></pre></p>
  *
  * @constructor
- *   Create a new Phorum.UI.MessageBody object.
+ *   Create a new Phorum.UI.Editor object.
  * @param {String/Array} selectors (optional)
- *   The jQuery selector or selectors to use for looking up the element to
- *   manage. The first selector that matches a single element will be used.
- *   When no selectors are provided, then some known Phorum message body
- *   identifiers will be used by default.
+ *   The jQuery selector or selectors to use for looking up the editor element.
+ *   The first selector that matches a single element will be used.
+ *   When no selectors are provided, then the built-in selector will be
+ *   used by default.
  */
-Phorum.UI.MessageBody = Phorum.extend(Phorum.UI.TextElement,
+Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
+
+    // Constructor ==========================================================
 
     function (selectors) {
 
-        this.className = 'Phorum.UI.MessageBody';
+        this.className = 'Phorum.UI.Editor';
 
         this.selectors = [
-            '#phorum #phorum_textarea',  // Phorum 5.1
-            '#phorum #body',             // Phorum 5.2+
-            '#phorum #message'           // PM interface
+            '#phorum #post'   // Phorum 5.2+, no need to support older versions
         ];
 
         this.parentConstructor(selectors);
+
+        /**
+         * @property subject
+         *
+         * A reference to the subject element in the editor.
+         * 
+         * @var Phorum.UI.TextElement
+         */
+        this.subject = this.getField('subject');
+
+        /**
+         * @property body
+         *
+         * A reference to the body element in the editor.
+         * 
+         * @var Phorum.UI.TextElement
+         */
+        this.body = this.getField('body');
+    },
+
+    // Prototype ============================================================
+
+    {
+        /**
+         * Used by the focus() method to automatically find a field to focus.
+         *
+         * @private
+         */
+        focusFields: [
+            'author',
+            'subject',
+            'body'
+        ],
+
+        /**
+         * Focus the editor. By default, this method will move the focus in the
+         * editor to the first logical input field. By providing a field name
+         * as the argument, the exact field to focus can be controlled.
+         *
+         * @param {String} field_name (optional)
+         *   The name of the form field to focus. If not provided, then
+         *   Phorm.UI.Editor will automatically pick a logical field to focus.
+         */
+        focus: function (field_name)
+        {
+            // No field provided? Move the focus to the author, subject or
+            // message body field. The first existing and empty field gets
+            // the focus. If none of the fields is empty, then the body
+            // is focused by default.
+            if (field_name === undefined)
+            {
+                field_name = 'body'
+                for (var i = 0; i < this.focusFields.length; i++)
+                {
+                    // Retrieve the field from the editor.
+                    field_name = this.focusFields[i];
+                    var f = this.getField(this.focusFields[i]);
+
+                    // If this field is empty, then use this one for focusing.
+                    var value = f.$.val();
+                    value = Phorum.trim(value);
+                    if (value === '') {
+                        break;
+                    }
+                }
+            }
+
+            this.getField(field_name).$.focus();
+        },
+
+        /**
+         * A cache that holds the Phorum.UI.Element objects that were
+         * retrieved using getField().
+         * 
+         * @private
+         */
+        fields: { },
+
+        /**
+         * Retrieve the Phorum.UI.Element wrapper for a form field within
+         * this editor.
+         *
+         * @param {String} field_name
+         *   The name of the form field to retrieve.
+         * @return {Phorum.UI.Element} field
+         *   The Phorum.UI.Element object for the form field if exactly one
+         *   element was found.
+         */
+        getField: function (field_name)
+        {
+            // Check the lookup cache.
+            if (this.fields[field_name] === undefined)
+            {
+                // Look up the field by its name.
+                var selector = '*[name=' + field_name + ']';
+                var $fields = this.$object.find(selector);
+
+                // If we found one or more fields, then create a
+                // Phorum.UI.Element wrapper. When more than one field is found,
+                // then the last one is used. This is to accommodate for the
+                // fact that we add all fields as hidden fields to the editor
+                // form and that we add normal form fields to override the
+                // hidden fields.
+                if ($fields.length > 0)
+                {
+                    var $f = $fields.last();
+
+                    // For text input fields, we use a different base class,
+                    // which allows us to do text manipulations on the data.
+                    if ($f.is('textarea') ||
+                        ($f.is('input') && $f.attr('type') === 'text')) {
+                        field = new Phorum.UI.TextElement($f);
+                    }
+                    else {
+                        field = new Phorum.UI.Element($f);
+                    }
+
+                    this.fields[field_name] = field;
+                }
+                // If no fieldwas found, then we don't accept the result.
+                // We always expect there to be exactly one matching field.
+                else {
+                    throw this.className + '.getField(): no matching form ' +
+                    'field found for name=' + field_name;
+                }
+            }
+
+            return this.fields[field_name];
+        }
     }
 );
-/**
- * @class Phorum.UI.MessageSubject
- * @extends Phorum.UI.TextElement
- * 
- * <p>
- *   This class can be used to access and manipulate message subject textfield
- *   elements in Phorum.
- * </p>
- * <p>
- *   By default, the constructor will automatically search the page for some
- *   known message subject textfield identifiers. If you need more control
- *   over the selector(s) to use for the textfield lookup, then you can provide
- *   a jQuery selector or selector array as the argument for the constructor.
- * </p>
- * <p><pre><code>
-// Retrieve the message body using the built-in list of possible ids.
-var t1 = new Phorum.UI.MessageSubject();
-t1.focus();
 
-// Retrieve using a custom jQuery selector.
-var t2 = new Phorum.UI.MessageBody('#phorum .mytextfield');
-t2.addTags('[i]', '[/i]');
-
-// Or using an array of selectors.
-var t3 = new Phorum.UI.MessageBody(['#this', '#that']);
-
-// It is possible to access the jQuery wrapper object for
-// the message body input.
-var $jquerytextarea = t3.wrapper();
-$jquerytextarea.css('color', 'blue');
- * </code></pre></p>
- *
- * @constructor
- *   Create a new Phorum.UI.MessageBody object.
- * @param {String/Array} selectors (optional)
- *   The jQuery selector or selectors to use for looking up the element to
- *   manage. The first selector that matches a single element will be used.
- *   When no selectors are provided, then some known Phorum message body
- *   identifiers will be used by default.
- */
-Phorum.UI.MessageSubject = Phorum.extend(Phorum.UI.TextElement,
-
-    function (selectors) {
-
-        this.className = 'Phorum.UI.MessageSubject';
-
-        this.selectors = [
-            '#phorum #phorum_subject',   // Phorum 5.1
-            '#phorum #subject'           // Phorum 5.2+
-        ];
-
-        this.parentConstructor(selectors);
-    }
-);
 // Add base CSS code for Phorum.UI.BusyMarker the page. It is inserted
 // at the beginning of the head section, so template CSS code can be
 // used to override the basic style.
@@ -1487,8 +1651,10 @@ In template:
      *   <b>Example code</b>
      * </p>
      * <p><pre><code>
-<a href="http://example.com/index.php?10,markread,0"
-   onclick="return Phorum.UI.NewFlags.markRead('forums', 10)">Mark forum read</a>
+&lt;a href="http://example.com/index.php?10,markread,0"
+   onclick="return Phorum.UI.NewFlags.markRead('forums', 10)"&gt;
+    Mark forum read
+&lt;/a&gt;
      * </code></pre></p>
      *
      * @param {String} mode
