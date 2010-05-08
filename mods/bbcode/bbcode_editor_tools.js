@@ -233,8 +233,7 @@ function editor_tools_handle_url()
 
 function editor_tools_handle_color()
 {
-    editor_tools_store_range();
-
+    editor_tools_store_range(); 
     // Display the color picker.
     var img_obj = document.getElementById('editor-tools-img-color');
     showColorPicker(img_obj);

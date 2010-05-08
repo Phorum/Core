@@ -169,7 +169,7 @@ function editor_tools_handle_subjectsmiley()
 function editor_tools_handle_subjectsmiley_select(smiley)
 {
     smiley = editor_tools_strip_whitespace(smiley);
-    editor_tools_add_tags(smiley, '', editor_tools_subject_obj);
+    editor_tools_add_tags(smiley, '', 'subject');
     editor_tools_focus_subjectfield();
 }
 
@@ -222,7 +222,7 @@ function editor_tools_handle_subjectsmiley()
 function editor_tools_handle_subjectsmiley_select(smiley)
 {
     smiley = editor_tools_strip_whitespace(smiley);
-    editor_tools_add_tags(smiley, '', editor_tools_subject_obj);
+    editor_tools_add_tags(smiley, '', 'subject');
     editor_tools_focus_subjectfield();
 }
 

@@ -18,33 +18,14 @@
 
 // Javascript code for the Phorum editor_tools module.
 
-// Valid object ids for textarea objects to handle. The first object
-// that can be matched will be use as the object to work with.
-// This is done to arrange for backward compatibility between
-// Phorum versions.
-var editor_tools_textarea_ids = new Array(
-    'phorum_textarea',  // Phorum 5.1
-    'body',             // Phorum 5.2
-    'message'           // PM interface
-);
-
-// Valid object ids for subject text field objects to handle.
-var editor_tools_subject_ids = new Array(
-    'phorum_subject',   // Phorum 5.1
-    'subject'           // Phorum 5.2
-);
-
 // Storage for language translation strings from the Phorum language system.
 var editor_tools_lang = new Array();
 
-// Some variables for storing objects that we need globally.
-var editor_tools_textarea_obj = null;
-var editor_tools_subject_obj = null;
+// Objects that we need globally.
 var editor_tools_help_picker_obj = null;
-
-// A variable for storing the current selection range of the 
-// textarea. Needed for working around an MSIE problem.
-var editor_tools_textarea_range = null;
+var editor;
+var body_element;
+var subject_element;
 
 // A variable for storing all popup objects that we have, so we
 // can hide them all at once.
@@ -90,50 +71,6 @@ var OLD_MSIE =
 // Uitilty functions
 // ----------------------------------------------------------------------
 
-// Find the Phorum textarea object and return it. In case of
-// problems, null will be returned.
-function editor_tools_get_textarea()
-{
-    if (editor_tools_textarea_obj != null) {
-        return editor_tools_textarea_obj;
-    }
-
-    for (var i=0; editor_tools_textarea_ids[i]; i++) {
-        editor_tools_textarea_obj =
-            document.getElementById(editor_tools_textarea_ids[i]);
-        if (editor_tools_textarea_obj) break;
-    }
-
-    if (! editor_tools_textarea_obj) {
-        alert('editor_tools.js library reports: ' +
-              'no textarea found on the current page.');
-        return null;
-    }
-
-    return editor_tools_textarea_obj;
-}
-
-// Find the Phorum subject field object and return it. In case of
-// problems, null will be returned.
-function editor_tools_get_subjectfield()
-{
-    if (editor_tools_subject_obj != null) {
-        return editor_tools_subject_obj;
-    }
-
-    for (var i=0; editor_tools_subject_ids[i]; i++) {
-        editor_tools_subject_obj =
-            document.getElementById(editor_tools_subject_ids[i]);
-        if (editor_tools_subject_obj) break;
-    }
-
-    if (! editor_tools_subject_obj) {
-        return null;
-    }
-
-    return editor_tools_subject_obj;
-}
-
 // Return a translated string, based on the Phorum language system.
 function editor_tools_translate(str)
 {
@@ -144,60 +81,20 @@ function editor_tools_translate(str)
     }
 }
 
-// Strip whitespace from the start and end of a string.
-function editor_tools_strip_whitespace(str, return_stripped)
-{
-    var strip_pre = '';
-    var strip_post = '';
-
-    // Strip whitespace from end of string.
-    for (;;) {
-        var lastchar = str.substring(str.length-1, str.length);
-        if (lastchar == ' '  || lastchar == '\r' ||
-            lastchar == '\n' || lastchar == '\t') {
-            strip_post = lastchar + strip_post;
-
-            str = str.substring(0, str.length-1);
-        } else {
-            break;
-        }
-    }
-
-    // Strip whitespace from start of string.
-    for (;;) {
-        var firstchar = str.substring(0,1);
-        if (firstchar == ' '  || firstchar == '\r' ||
-            firstchar == '\n' || firstchar == '\t') {
-            strip_pre += firstchar;
-            str = str.substring(1);
-        } else {
-            break;
-        }
-    }
-
-    if (return_stripped) {
-        return new Array(str, strip_pre, strip_post);
-    } else {
-        return str;
-    }
-} 
-
 // Close all popup windows and move the focus to the textarea.
 function editor_tools_focus_textarea()
 {
-    var textarea_obj = editor_tools_get_textarea();
-    if (textarea_obj == null) return;
     editor_tools_hide_all_popups();
-    textarea_obj.focus();
+    body_element.focus();
 }
 
 // Close all popup windows and move the focus to the subject field.
 function editor_tools_focus_subjectfield()
 {
-    var subjectfield_obj = editor_tools_get_subjectfield();
-    if (subjectfield_obj == null) return;
-    editor_tools_hide_all_popups();
-    subjectfield_obj.focus();
+    if (subject_element.found()) {
+        editor_tools_hide_all_popups();
+        subject_element.focus();
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -207,105 +104,84 @@ function editor_tools_focus_subjectfield()
 // Add the editor tools panel to the page.
 function editor_tools_construct()
 {
-    var textarea_obj;
-    var div_obj;
-    var parent_obj;
-    var a_obj;
-    var img_obj;
+    $PJ(document).ready(function () {
 
-    // If the browser does not support document.getElementById,
-    // then the javascript code won't run. Do not display the
-    // editor tools at all in that case.
-    if (! document.getElementById) return;
+        // No editor tools selected to display? Then we're done.
+        if (editor_tools.length == 0) return;
 
-    // No editor tools selected to display? Then we're done.
-    if (editor_tools.length == 0) return;
+        // Retrieve the body and subject element.
+        var editor = new Phorum.UI.Editor();
+        body_element    = editor.body;
+        subject_element = editor.subject;
 
-    // Find the textarea and subject field object.
-    textarea_obj = editor_tools_get_textarea();
-    if (textarea_obj == null) return; // we consider this fatal.
-    var subjectfield_obj = editor_tools_get_subjectfield();
-
-    // Insert a <div> for containing the buttons, just before the textarea,
-    // unless there is already an object with id "editor-tools". In that
-    // case, the existing object is used instead.
-    div_obj = document.getElementById('editor-tools');
-    if (! div_obj) {
-        parent_obj = textarea_obj.parentNode;
-        div_obj = document.createElement('div');
-        div_obj.id = 'editor-tools';
-        parent_obj.insertBefore(div_obj, textarea_obj);
-    }
-
-    // Add the buttons to the new <div> for the editor tools.
-    for (var i = 0; i < editor_tools.length; i++)
-    {
-        var toolinfo    = editor_tools[i];
-        var tool        = toolinfo[0];
-        var description = toolinfo[1];
-        var icon        = toolinfo[2];
-        var jsaction    = toolinfo[3];
-        var iwidth      = toolinfo[4];
-        var iheight     = toolinfo[5];
-        var target      = toolinfo[6];
-
-        // Do not use the color picker on MSIE 5. I tested this on a
-        // Macintosh OS9 system and the color picker about hung MSIE.
-        if (tool == 'color' && OLD_MSIE) continue;
-
-        a_obj = document.createElement('a');
-        a_obj.id = 'editor-tools-a-' + tool;
-        a_obj.href = 'javascript:' + jsaction;
-
-        img_obj = document.createElement('img');
-        img_obj.id = 'editor-tools-img-' + tool;
-        img_obj.className = 'editor-tools-button';
-        img_obj.src = icon;
-        img_obj.width = iwidth;
-        img_obj.height = iheight;
-        img_obj.style.padding = '2px';
-        img_obj.alt = description;
-        img_obj.title = description;
-
-        // If an icon is added that is less high than our default icon
-        // height, we try to make the button the same height as the
-        // others by adding some dynamic padding to it.
-        if (iheight < editor_tools_default_iconheight) {
-            var fill = editor_tools_default_iconheight - iheight;
-            var addbottom = Math.round(fill / 2);
-            var addtop = fill - addbottom;
-            img_obj.style.paddingTop = (addtop + 2) + 'px';
-            img_obj.style.paddingBottom = (addbottom + 2) + 'px';
+        // Insert a <div> for containing the buttons, just before the textarea,
+        // unless there is already an object with id "editor-tools". In that
+        // case, the existing object is used instead.
+        var $div_obj = $PJ('#editor-tools');
+        if (!$div_obj.length) {
+            $div_obj = $PJ('<div id="editor-tools"/>');
+            $div_obj.insertBefore(body_element.$object);
         }
-        a_obj.appendChild(img_obj);
 
-        // Add the button to the page.
-        // target = subject is a feature that was added for supporting
-        // the subjectsmiley tool. This one is added to the subject field
-        // instead of the textarea. 
-        if (target == 'subject') {
-            // Find the subject text field. If we can't find one,
-            // then simply ignore this tool.
-            if (subjectfield_obj) {
-                img_obj.style.verticalAlign = 'top';
-                var parent = subjectfield_obj.parentNode;
-                var sibling = subjectfield_obj.nextSibling;
-                parent.insertBefore(a_obj, sibling);
+        // Add the buttons to the new <div> for the editor tools.
+        for (var i = 0; i < editor_tools.length; i++)
+        {
+            var toolinfo    = editor_tools[i];
+            var tool        = toolinfo[0];
+            var description = toolinfo[1];
+            var icon        = toolinfo[2];
+            var jsaction    = toolinfo[3];
+            var iwidth      = toolinfo[4];
+            var iheight     = toolinfo[5];
+            var target      = toolinfo[6];
+
+            // Do not use the color picker on MSIE 5. I tested this on a
+            // Macintosh OS9 system and the color picker about hung MSIE.
+            if (tool == 'color' && OLD_MSIE) continue;
+
+            var a_obj = document.createElement('a');
+            a_obj.id              = 'editor-tools-a-' + tool;
+            a_obj.href            = 'javascript:' + jsaction;
+
+            var img_obj = document.createElement('img');
+            img_obj.id            = 'editor-tools-img-' + tool;
+            img_obj.className     = 'editor-tools-button';
+            img_obj.src           = icon;
+            img_obj.width         = iwidth;
+            img_obj.height        = iheight;
+            img_obj.style.padding = '2px';
+            img_obj.alt           = description;
+            img_obj.title         = description;
+
+            // If an icon is added that is less high than our default icon
+            // height, we try to make the button the same height as the
+            // others by adding some dynamic padding to it.
+            if (iheight < editor_tools_default_iconheight) {
+                var fill = editor_tools_default_iconheight - iheight;
+                var addbottom = Math.round(fill / 2);
+                var addtop = fill - addbottom;
+                img_obj.style.paddingTop = (addtop + 2) + 'px';
+                img_obj.style.paddingBottom = (addbottom + 2) + 'px';
             }
-        } else {
-            div_obj.appendChild(a_obj);
-        }
-    }
+            $PJ(a_obj).append(img_obj);
 
-    // Hide any open popup when the user clicks the textarea or subject field.
-    textarea_obj.onclick = function() {
-        editor_tools_hide_all_popups();
-    };
-    if (subjectfield_obj) {
-        subjectfield_obj.onclick = function() {
-            editor_tools_hide_all_popups();
+            // Add the button to the page.
+            // target = subject is a feature that was added for supporting
+            // the subjectsmiley tool. This one is added to the subject field
+            // instead of the textarea. 
+            if (target === 'subject') {
+                img_obj.style.verticalAlign = 'top';
+                $PJ(a_obj).insertAfter(subject_element.$object);
+            } else {
+                $div_obj.append(a_obj);
+            }
         }
-    }
+
+        // Hide any open popup when the user clicks the textarea
+        // or subject field.
+        body_element.$object.click(editor_tools_hide_all_popups);
+        subject_element.$object.click(editor_tools_hide_all_popups);
+    });
 }
 
 // ----------------------------------------------------------------------
@@ -401,133 +277,6 @@ function editor_tools_hide_all_popups()
     }
 }
 
-// Save the selection range of the textarea. This is needed because
-// sometimes clicking in a popup can clear the selection in MSIE.
-function editor_tools_store_range()
-{
-    var ta = editor_tools_get_textarea();
-    if (ta == null || ta.setSelectionRange || ! document.selection) return;
-    ta.focus();
-    editor_tools_textarea_range = document.selection.createRange();
-}
-
-// Restored a saved textarea selection range.
-function editor_tools_restore_range()
-{
-    if (editor_tools_textarea_range != null)
-    {
-        editor_tools_textarea_range.select();
-        editor_tools_textarea_range = null;
-    }
-}
-
-// ----------------------------------------------------------------------
-// Textarea manipulation
-// ----------------------------------------------------------------------
-
-// Add tags to the textarea. If some text is selected, then place the
-// tags around the selected text. If no text is selected and a prompt_str
-// is provided, then prompt the user for the data to place inside
-// the tags.
-function editor_tools_add_tags(pre, post, target, prompt_str)
-{
-    var text;
-    var pretext;
-    var posttext;
-    var range;
-    var ta = target ? target : editor_tools_get_textarea();
-    if (ta == null) return;
-
-    // Store the current scroll offset, so we can restore it after
-    // adding the tags to its contents.
-    var offset = ta.scrollTop;
-
-    if (ta.setSelectionRange)
-    {
-        // Get the currently selected text.
-        pretext = ta.value.substring(0, ta.selectionStart);
-        text = ta.value.substring(ta.selectionStart, ta.selectionEnd);
-        posttext = ta.value.substring(ta.selectionEnd, ta.value.length);
-
-        // Prompt for input if no text was selected and a prompt is set.
-        if (text == '' && prompt_str) {
-            text = prompt(prompt_str, '');
-            if (text == null) return;
-        }
-
-        // Strip whitespace from text selection and move it to the
-        // pre- and post.
-        var res = editor_tools_strip_whitespace(text, true);
-        text = res[0];
-        pre = res[1] + pre;
-        post = post + res[2];
-
-        ta.value = pretext + pre + text + post + posttext;
-
-        // Reselect the selected text.
-        var cursorpos1 = pretext.length + pre.length;
-        var cursorpos2 = cursorpos1 + text.length;
-        ta.setSelectionRange(cursorpos1, cursorpos2);
-        ta.focus();
-    }
-    else if (document.selection) /* MSIE support */
-    {
-        // Get the currently selected text.
-        ta.focus();
-        range = document.selection.createRange();
-
-        // Fumbling to work around newline selections at the end of
-        // the text selection. MSIE does not include them in the
-        // range.text, but it does replace them when setting range.text
-        // to a new value :-/
-        var virtlen = range.text.length;
-        if (virtlen > 0) {
-            while (range.text.length == virtlen) {
-                range.moveEnd('character', -1);
-            }
-            range.moveEnd('character', +1);
-        }
-
-        // Prompt for input if no text was selected and a prompt is set.
-        text = range.text;
-        if (text == '' && prompt_str) {
-            text = prompt(prompt_str, '');
-            if (text == null) return;
-        }
-
-        // Strip whitespace from text selection and move it to the
-        // pre- and post.
-        var res = editor_tools_strip_whitespace(text, true);
-        text = res[0];
-        pre = res[1] + pre;
-        post = post + res[2];
-
-        // Add pre and post to the text.
-        range.text = pre + text + post;
-
-        // Reselect the selected text. Another MSIE anomaly has to be
-        // taken care of here. MSIE will include carriage returns
-        // in the text.length, but it does not take them into account
-        // when using selection range moving methods :-/
-        // By setting the range.text before, the cursor is now after
-        // the replaced code, so we will move the start and the end
-        // back in the text.
-        var mvstart = post.length + text.length -
-                      ((text + post).split('\r').length - 1);
-        var mvend   = post.length +
-                      (post.split('\r').length - 1);
-        range.moveStart('character', -mvstart);
-        range.moveEnd('character', -mvend);
-        range.select();
-    }
-    else /* Support for really limited browsers, e.g. MSIE5 on MacOS */
-    {
-        ta.value = ta.value + pre + post;
-    }
-
-    ta.scrollTop = offset;
-}
-
 // ----------------------------------------------------------------------
 // Tool: Help
 // ----------------------------------------------------------------------
@@ -594,5 +343,26 @@ function editor_tools_handle_help_select(url)
 
     editor_tools_focus_textarea();
     help_window.focus();
+}
+
+// ----------------------------------------------------------------------
+// Backward compatibility functions
+// ----------------------------------------------------------------------
+
+function editor_tools_add_tags(pre, post, target, prompt_str) {
+    var field = target === 'subject' ? subject_element : body_element;
+    field.addTags(pre, post, prompt_str);
+}
+
+function editor_tools_store_range() {
+    body_element.storeSelection();
+}
+
+function editor_tools_restore_range() {
+    body_element.restoreSelection();
+}
+
+function editor_tools_strip_whitespace(str, return_stripped) {
+    return Phorum.trim(str, return_stripped);
 }
 
