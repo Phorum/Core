@@ -122,6 +122,13 @@ if(is_array($message) && count($message)) {
     $template='message';
 }
 
+$PHORUM['DATA']['BREADCRUMBS'][] = array(
+    'URL'  => '',
+    'TEXT' => $PHORUM['DATA']['LANG']['Report'],
+    'TYPE' => 'report'
+);
+
+
 phorum_api_output($template);
 
 ?>

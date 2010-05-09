@@ -93,7 +93,11 @@ if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
     $template = "follow";
 }
 
-
+$PHORUM['DATA']['BREADCRUMBS'][] = array(
+    'URL'  => '',
+    'TEXT' => $PHORUM['DATA']['LANG']['FollowThread'],
+    'TYPE' => 'follow'
+);
 
 // set all our common URL's
 phorum_build_common_urls();
