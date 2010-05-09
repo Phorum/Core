@@ -191,6 +191,18 @@ function phorum_api_output($templates)
         phorum_api_hook('start_output_' . phorum_page);
     }
 
+    // Add some information to the breadcrumbs to make it easy for the
+    // templates to apply different styling for the first and the
+    // last (i.e. the currently active) breadcrumbs item.
+    //
+    // Reindex the array. It might not be sequential, due to module tinkering.
+    $bc =& $GLOBALS['PHORUM']['DATA']['BREADCRUMBS'];
+    $bc = array_values($bc);
+    // Add a "FIRST" and "LAST" field to the appropriate records.
+    $bc[0]['FIRST'] = TRUE;
+    $bc[count($bc) - 1]['LAST'] = TRUE;
+    $PHORUM['DATA']['BREADCRUMBS'];
+
     // Copy only what we need into the current scope. We do this at
     // this point and not earlier, so the hooks before this code can be
     // used for changing values in the $PHORUM data.
