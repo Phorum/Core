@@ -67,6 +67,7 @@ if ($PHORUM['DATA']['CHARSET']) {
 </div>
 
 <div id="breadcrumb">
+  {LANG->YouAreHere}:
   {LOOP BREADCRUMBS}
     {IF NOT BREADCRUMBS->FIRST} &gt;{/IF}
     {IF BREADCRUMBS->LAST}
