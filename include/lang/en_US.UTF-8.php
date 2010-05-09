@@ -541,6 +541,7 @@
 
         "Year"                  =>      "Year",
         "Yes"                   =>      "Yes",
+        "YouAreHere"            =>      "You are here",
         "YourEmail"             =>      "Your Email",
         "YourName"              =>      "Your Name",
         "YouWantToFollow"       =>      "You have indicated you want to follow the topic",

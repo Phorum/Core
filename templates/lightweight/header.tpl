@@ -67,15 +67,18 @@ if ($PHORUM['DATA']['CHARSET']) {
 </div>
 
 <div id="breadcrumb">
-  {VAR FIRST TRUE}
   {LOOP BREADCRUMBS}
-    {IF NOT FIRST} &gt;{/IF}
-    {IF BREADCRUMBS->URL}
-      <a {IF BREADCRUMBS->ID AND BREADCRUMBS->TYPE}rel="breadcrumb-{BREADCRUMBS->TYPE}[{BREADCRUMBS->ID}]"{/IF} href="{BREADCRUMBS->URL}">{BREADCRUMBS->TEXT}</a>
+    {IF NOT BREADCRUMBS->FIRST} &gt;{/IF}
+    {IF BREADCRUMBS->LAST}
+      {VAR CLASS "breadcrumb active"}
     {ELSE}
-      {BREADCRUMBS->TEXT}
+      {VAR CLASS "breadcrumb"}
     {/IF}
-    {VAR FIRST FALSE}
+    {IF BREADCRUMBS->URL}
+      <a class="{CLASS}" {IF BREADCRUMBS->ID AND BREADCRUMBS->TYPE}rel="breadcrumb-{BREADCRUMBS->TYPE}[{BREADCRUMBS->ID}]"{/IF} href="{BREADCRUMBS->URL}">{BREADCRUMBS->TEXT}</a>
+    {ELSE}
+      <span class="{CLASS}">{BREADCRUMBS->TEXT}</span>
+    {/IF}
   {/LOOP BREADCRUMBS}
 </div>
 

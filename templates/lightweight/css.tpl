@@ -302,6 +302,10 @@ img {
     font-size: {font_small};
 }
 
+#phorum #breadcrumb .active {
+    font-weight: bold;
+}
+
 #phorum #user-info {
     font-size: {font_small};
     margin: 0 0 4px 0;
