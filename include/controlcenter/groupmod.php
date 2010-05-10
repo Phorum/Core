@@ -203,10 +203,12 @@ else{
     foreach ($groups as $groupid => $groupname){
         // get the group members who are unapproved, so we can count them
         $members = phorum_db_get_group_members($groupid, PHORUM_USER_GROUP_UNAPPROVED);
+        $full_members = phorum_db_get_group_members($groupid);
         $PHORUM["DATA"]["GROUPS"][] = array(
             "id" => $groupid,
             "name" => $groupname,
             "unapproved" => count($members),
+            "members" => count($full_members),
             "URL" => array(
                 "VIEW" => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid),
                 "UNAPPROVED" => phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION,  "group=" . $groupid, "filter=" . PHORUM_USER_GROUP_UNAPPROVED)
