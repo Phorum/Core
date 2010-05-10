@@ -56,7 +56,7 @@ Phorum.UI.NewFlags = {
      *   The registered global callback functions will be called with two
      *   parameters, which identify what messages have been marked read:
      *   <div class="mdetail-params"><ul>
-     *     <li><b>mode</b>: "forums", "threads" or "messages"</li>
+     *     <li><b>mode</b>: "vroots", "forums", "threads" or "messages"</li>
      *     <li><b>item_id</b>: the forum, thread or message id</li>
      *   </ul></div>
      * </p>
@@ -138,7 +138,7 @@ In template:
     /**
      * <p>
      *   This method can be called from "mark read" links to handle marking
-     *   forums, threads or messages read through Ajax calls. After the
+     *   vroots, forums, threads or messages read through Ajax calls. After the
      *   call has finished successfully, {@link #updateUI updateUI} will be
      *   called to update the user interface.
      * </p>
@@ -157,10 +157,10 @@ In template:
      * </code></pre></p>
      *
      * @param {String} mode
-     *     One of "forums", "threads" or "messages".
+     *     One of "vroots", "forums", "threads" or "messages".
      *
      * @param {Integer} item_id
-     *     A forum_id, thread id or message_id (which one to use depends
+     *     A vroot, forum, thread or message id (which one to use depends
      *     on the "mode" parameter).
      *
      * @return boolean false
@@ -183,8 +183,9 @@ In template:
             }
         };
 
-        // Because the "mode" is dynamic ("forums", "threads" or "messages"),
-        // we have to assign this property of the request like this.
+        // Because the "mode" is dynamic ("vroots", "forums", "threads"
+        // or "messages"), we have to assign this property of the request
+        // like this.
         request[mode] = [ item_id ];
 
         Phorum.debug(
@@ -285,10 +286,10 @@ For example:
      * </ul></div>
      *
      * @param {String} mode
-     *     One of "forums", "threads" or "messages".
+     *     One of "vroots", "forums", "threads" or "messages".
      *
      * @param {Array} item_id
-     *     The forum, thread or message id (which one to use depends
+     *     The vroot, forum, thread or message id (which one to use depends
      *     on the "mode" parameter).
      */
     updateUI: function (mode, item_id)
@@ -304,6 +305,7 @@ For example:
         // new flag action linked to them.
         var regexp = '^new-flag\\[(\\w+),';
         switch (mode) {
+        case "vroots"   : regexp += '(\\d+)?(,\\d+){0,2}'; break;
         case "forums"   : regexp += item_id + '(,\\d+){0,2}'; break;
         case "threads"  : regexp += '\\d+,' + item_id + '(,\\d+)?'; break;
         case "messages" : regexp += '\\d+,\\d+,' + item_id; break;

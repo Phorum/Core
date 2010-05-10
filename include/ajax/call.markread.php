@@ -18,6 +18,9 @@ ARGUMENTS
 
         An array containing forum_ids of forums to mark read.
 
+    [vroots]
+
+        An array containing vroot ids of vroots to mark read.
 
 EXAMPLE JSON REQUESTS
 
@@ -37,13 +40,18 @@ EXAMPLE JSON REQUESTS
           "threads": [ 4, 13, 96 ],
           "messages": [ 1, 55, 321 ] }
 
+    Mark a full vroot read:
+
+        { "call": "markread",
+          "vroots": [ 10 ] }
+
 RETURN VALUE
 
     A true value in case marking the items read was successful.
 
 ERRORS
 
-    The call will return an error if the messages / threads
+    The call will return an error if the messages / threads / forums / vroots
     array is not in the right format.
 
 AUTHOR
@@ -65,9 +73,11 @@ require_once './include/api/newflags.php';
 foreach (array(
     'messages' => PHORUM_MARKREAD_MESSAGES,
     'threads'  => PHORUM_MARKREAD_THREADS,
-    'forums'   => PHORUM_MARKREAD_FORUMS ) as $arg => $mode)
+    'forums'   => PHORUM_MARKREAD_FORUMS,
+    'vroots'   => PHORUM_MARKREAD_VROOTS) as $arg => $mode)
 {
-    $items = phorum_ajax_getarg($arg, 'array:int>0', array());
+    $check = $arg === 'vroots' ? 'array:int>=0' : 'array:int>0';
+    $items = phorum_ajax_getarg($arg, $check, array());
     if (!empty($items)) {
         phorum_api_newflags_markread($items, $mode);
     }

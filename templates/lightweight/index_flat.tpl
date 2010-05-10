@@ -1,3 +1,9 @@
+<div class="nav">
+    {IF URL->MARKVROOTREAD}
+        <a onclick="return Phorum.markRead('vroots', {VROOT})" class="icon icon-tag-green" href="{URL->MARKVROOTREAD}">{LANG->MarkAllForumsRead}</a>
+    {/IF}
+</div>
+
 <table cellspacing="0" class="list">
     {LOOP FORUMS}
     {IF FORUMS->level 0}

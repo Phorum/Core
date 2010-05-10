@@ -1,4 +1,11 @@
 <!-- BEGIN TEMPLATE index_directory.tpl -->
+
+<div class="nav">
+    {IF URL->MARKVROOTREAD}
+        <a onclick="return Phorum.markRead('vroots', {VROOT})" class="icon icon-tag-green" href="{URL->MARKVROOTREAD}">{LANG->MarkAllForumsRead}</a>
+    {/IF}
+</div>
+
 {IF FOLDERS}
     <table cellspacing="0" class="list">
         <tr>

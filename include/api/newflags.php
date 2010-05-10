@@ -79,6 +79,12 @@ define('PHORUM_MARKREAD_THREADS', 2);
  */
 define('PHORUM_MARKREAD_FORUMS', 3);
 
+/**
+ * Function call flag, which tells {@link phorum_api_newflags_markread()}
+ * that full vroots have to be marked read.
+ */
+define('PHORUM_MARKREAD_VROOTS', 4);
+
 // }}}
 
 // {{{ Function: phorum_api_newflags_by_forum()
@@ -424,7 +430,7 @@ function phorum_api_newflags_firstunread($thread_id)
  * @param mixed $markread_ids
  *     This parameter provides the ids of the items that have to be marked
  *     read. It can be either a single item id (depending on the $mode
- *     parameter either message_id, thread_id or forum_id) or an array
+ *     parameter either vroot, message_id, thread_id or forum_id) or an array
  *     of item ids.
  *
  * @param integer $mode
@@ -432,7 +438,8 @@ function phorum_api_newflags_firstunread($thread_id)
  *     read. Possible values for this parameter are:
  *     {@link PHORUM_MARKREAD_MESSAGES},
  *     {@link PHORUM_MARKREAD_THREADS},
- *     {@link PHORUM_MARKREAD_FORUMS}
+ *     {@link PHORUM_MARKREAD_FORUMS},
+ *     {@link PHORUM_MARKREAD_VROOTS}
  */
 function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MESSAGES)
 {
@@ -455,12 +462,27 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
     // the cache later on.
     $processed_forum_ids = array();
 
+    // Handle marking vroots read.
+    if ($mode == PHORUM_MARKREAD_VROOTS)
+    {
+        foreach ($markread_ids as $vroot)
+        {
+            $forums = phorum_api_forums_by_vroot($vroot, PHORUM_FLAG_FORUMS);
+            foreach ($forums as $forum)
+            {
+                $forum_id = $forum['forum_id'];
+                $PHORUM['forum_id'] = $forum_id;
+                phorum_db_newflag_allread($forum_id);
+                $processed_forum_ids[$forum_id] = $forum_id;
+            }
+        }
+    }
     // Handle marking forums read.
-    if ($mode == PHORUM_MARKREAD_FORUMS)
+    elseif ($mode == PHORUM_MARKREAD_FORUMS)
     {
         foreach ($markread_ids as $forum_id)
         {
-        	$PHORUM['forum_id'] = $forum_id;
+            $PHORUM['forum_id'] = $forum_id;
             phorum_db_newflag_allread($forum_id);
             $processed_forum_ids[$forum_id] = $forum_id;
         }
@@ -484,7 +506,7 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
             // messages in the thread.
             $forum_id = $thread['forum_id'];
             if (!isset($PHORUM['user']['newflags'][$forum_id])) {
-            	$PHORUM['forum_id'] = $forum_id;
+                $PHORUM['forum_id'] = $forum_id;
                 $newflags = phorum_api_newflags_by_forum($forum_id);
             } else {
                 $newflags = $PHORUM['user']['newflags'][$forum_id];
@@ -546,7 +568,7 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
             phorum_api_cache_remove('newflags_index',$cachekey);
         }
     }
-    
+
     $PHORUM['forum_id'] = $orig_forum_id;
 }
 // }}}

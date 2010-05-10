@@ -247,9 +247,9 @@ function phorum_ajax_return($data)
  *
  * @param mixed $type
  *
- *     The type of data to retrieve. Options are: "int", "int>0", "string",
- *     "boolean". These types can be prefixed with "array:" to indicate
- *     that an array of those types has to be returned. If the input
+ *     The type of data to retrieve. Options are: "int", "int>0", "int>=0",
+ *     "string", "boolean". These types can be prefixed with "array:" to
+ *     indicate that an array of those types has to be returned. If the input
  *     argument is not an array in this case, then this function will
  *     convert it to a single item array.
  *
@@ -310,7 +310,7 @@ function phorum_ajax_getarg($arg, $type = NULL, $default = NULL)
             break;
 
         case 'int>0':
-
+        case 'int>=0':
         case 'int':
             foreach ($value as $k => $v) {
                 if (!preg_match('/^[-+]?\d+$/', $v)) phorum_ajax_error(
@@ -321,6 +321,11 @@ function phorum_ajax_getarg($arg, $type = NULL, $default = NULL)
                     "illegal argument: argument \"$arg\" must contain " .
                     ($array ? "only integer values" : "an integer value") .
                     ", larger than zero");
+
+                if ($type == 'int>=0' && $v < 0) phorum_ajax_error(
+                    "illegal argument: argument \"$arg\" must contain " .
+                    ($array ? "only integer values" : "an integer value") .
+                    ", larger than or equal to zero");
             }
             break;
 

@@ -253,6 +253,7 @@
         "MakeSticky"            =>      "Make Sticky",
         "MarkForumRead"         =>      "Mark Forum Read",
         "MarkRead"              =>      "Mark All Messages Read",
+        "MarkAllForumsRead"     =>      "Mark All Forums Read",
         "MarkThreadRead"        =>      "Mark Read",
         "MatchAllForums"        =>      "Search All Forums",
         "MatchAll"              =>      "All Words",
