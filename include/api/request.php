@@ -195,10 +195,6 @@ function phorum_api_request_parse()
                    ? $_SERVER["QUERY_STRING"]
                    : $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
 
-            // The raw query string is URL-encoded.
-            // Decode it to a plain string.
-            $Q_STR = urldecode($Q_STR);
-
             // Ignore stuff past a # (HTML anchors).
             if (strstr($Q_STR, '#')) {
                 list($Q_STR, $other) = explode('#', $Q_STR, 2);
@@ -209,10 +205,13 @@ function phorum_api_request_parse()
 
             // Check for any named parameters. These are parameters that
             // are added to the URL in the "name=value" form.
-            if (strstr($Q_STR, "=" ))
+            if (strstr($Q_STR, "="))
             {
                 foreach($PHORUM['args'] as $key => $arg)
                 {
+                    $arg = rawurldecode($arg);
+                    $PHORUM['args'][$key] = $arg;
+
                     // If an arg has an =, then create an element in the
                     // argument array with the left part as the key and
                     // the right part as the value.
@@ -228,6 +227,12 @@ function phorum_api_request_parse()
                     }
                 }
             }
+            else {
+                foreach($PHORUM['args'] as $key => $arg) {
+                    $PHORUM['args'][$key] = rawurldecode($arg);
+                }
+            }
+
         }
 
         // Handle path info based URLs for the file downloading script.
