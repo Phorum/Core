@@ -195,6 +195,10 @@ function phorum_api_request_parse()
                    ? $_SERVER["QUERY_STRING"]
                    : $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
 
+            // The raw query string is URL-encoded.
+            // Decode it to a plain string.
+            $Q_STR = urldecode($Q_STR);
+
             // Ignore stuff past a # (HTML anchors).
             if (strstr($Q_STR, '#')) {
                 list($Q_STR, $other) = explode('#', $Q_STR, 2);
