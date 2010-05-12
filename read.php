@@ -409,10 +409,12 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         if($pages>$page){
             $nextpage=$page+1;
             $PHORUM["DATA"]["URL"]["NEXTPAGE"]=str_replace(array('%thread_id%','%page_num%'),array($thread,$nextpage),$read_page_url_template);
+            $PHORUM["DATA"]["NEXTPAGE"] = $nextpage;
         }
         if($page>1){
             $prevpage=$page-1;
             $PHORUM["DATA"]["URL"]["PREVPAGE"]=str_replace(array('%thread_id%','%page_num%'),array($thread,$prevpage),$read_page_url_template);
+            $PHORUM["DATA"]["PREVPAGE"] = $prevpage;
         }
     }
 

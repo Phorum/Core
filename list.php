@@ -152,6 +152,7 @@ if($pages>$page){
         array($PHORUM["forum_id"],$nextpage),
         $list_page_url_template
     );
+    $PHORUM["DATA"]["NEXTPAGE"] = $nextpage;
 }
 
 if ($page>1)
@@ -162,6 +163,7 @@ if ($page>1)
         array($PHORUM["forum_id"],$prevpage),
         $list_page_url_template
     );
+    $PHORUM["DATA"]["PREVPAGE"] = $prevpage;
 }
 
 $min_id=0;

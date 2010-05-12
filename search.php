@@ -319,10 +319,12 @@ if(!empty($phorum_search) || !empty($phorum_author)){
         if ($pages > $page){
             $nextpage = $page + 1;
             $PHORUM["DATA"]["URL"]["NEXTPAGE"] = phorum_api_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "author=" . urlencode($phorum_author), "page=$nextpage", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum=".urlencode($PHORUM['args']['match_forum']), "match_threads=".urlencode($PHORUM["args"]["match_threads"]));
+            $PHORUM["DATA"]["NEXTPAGE"] = $nextpage;
         }
         if ($page > 1){
             $prevpage = $page-1;
             $PHORUM["DATA"]["URL"]["PREVPAGE"] = phorum_api_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "author=" . urlencode($phorum_author), "page=$prevpage", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum=".urlencode($PHORUM['args']['match_forum']), "match_threads=".urlencode($PHORUM["args"]["match_threads"]));
+            $PHORUM["DATA"]["PREVPAGE"] = $prevpage;
         }
 
         if (isset($PHORUM["hooks"]["search"]))
