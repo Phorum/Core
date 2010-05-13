@@ -170,8 +170,10 @@ function editor_tools_construct()
             // the subjectsmiley tool. This one is added to the subject field
             // instead of the textarea. 
             if (target === 'subject') {
-                img_obj.style.verticalAlign = 'top';
-                $PJ(a_obj).insertAfter(subject_element.$object);
+                if (!subject_element.$.is('[type=hidden]')) {
+                  img_obj.style.verticalAlign = 'top';
+                  $PJ(a_obj).insertAfter(subject_element.$object);
+                }
             } else {
                 $div_obj.append(a_obj);
             }
