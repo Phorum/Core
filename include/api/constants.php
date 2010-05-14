@@ -40,7 +40,7 @@ define( 'PHORUM', '5.3-dev' );
 /**
  * Our database schema version in the format of year-month-day-serial.
  */
-define( 'PHORUM_SCHEMA_VERSION', '2009051900');
+define( 'PHORUM_SCHEMA_VERSION', '2010051400' );
 
 /**
  * Our database patch level in the format of year-month-day-serial.

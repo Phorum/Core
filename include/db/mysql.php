@@ -7694,7 +7694,9 @@ function phorum_db_create_tables()
            KEY list_page_float (forum_id,status,parent_id,modifystamp),
            KEY forum_recent_messages (forum_id,status,datestamp),
            KEY recent_threads (status,parent_id,datestamp),
-           KEY recent_messages (status,datestamp)
+           KEY recent_messages (status,datestamp),
+           KEY forum_thread_count(forum_id,parent_id,status,moved,message_id),
+           KEY forum_message_count(forum_id,status,moved,message_id)
        ) $charset",
 
       "CREATE TABLE {$PHORUM['settings_table']} (
