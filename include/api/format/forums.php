@@ -58,6 +58,12 @@ function phorum_api_format_forums($forums, $flags = 0)
         $index_url_template = phorum_api_url(
             PHORUM_INDEX_URL, '%forum_id%'
         );
+        $orig_forum_id = $PHORUM['forum_id'];
+        $PHORUM['forum_id'] = '%forum_id%';
+        $post_url_template = phorum_api_url(
+            PHORUM_POSTING_URL
+        );
+        $PHORUM['forum_id'] = $orig_forum_id;
         $list_url_template = phorum_api_url(
             PHORUM_LIST_URL, '%forum_id%'
         );
@@ -99,6 +105,10 @@ function phorum_api_format_forums($forums, $flags = 0)
                     $markread_url_template
                 );
             }
+
+            // A URL to post a new message.
+            $forum['URL']['POST'] =
+                str_replace('%forum_id%', $forum_id, $post_url_template);
 
             // A URL to the syndication feed.
             if (!empty($PHORUM['use_rss'])) {
