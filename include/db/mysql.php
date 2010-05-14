@@ -5432,7 +5432,7 @@ function phorum_db_newflag_add_read($message_ids)
     foreach ($message_ids as $id => $data)
     {
         if (is_array($data)) {
-            $forum_id   = (int)$data['forum'];
+            $forum_id   = (int)$data['forum_id'];
             $message_id = (int)$data['id'];
         } else {
             $forum_id   = (int)$PHORUM['forum_id'];
