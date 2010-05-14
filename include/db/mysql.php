@@ -5035,6 +5035,7 @@ function phorum_db_newflag_add_read($message_ids)
     }
 
     // Insert newflags.
+    $inserts = array();
     foreach ($message_ids as $id => $data)
     {
         if (is_array($data)) {
@@ -5046,13 +5047,20 @@ function phorum_db_newflag_add_read($message_ids)
             $forum_id   = $PHORUM['forum_id'];
             $message_id = (int)$data;
         }
+        $inserts[]="($user_id,$forum_id,$message_id)";
+    }
+    
+    if(count($inserts)) {
+    	
+        $inserts_str = implode(",",$inserts);
+    
 
         // We ignore duplicate record errors here.
         phorum_db_interact(
             DB_RETURN_RES,
             "INSERT INTO {$PHORUM['user_newflags_table']}
                     (user_id, forum_id, message_id)
-             VALUES ($user_id, $forum_id, $message_id)",
+             VALUES $inserts_str",
             NULL,
             DB_DUPKEYOK | DB_MASTERQUERY
         );
