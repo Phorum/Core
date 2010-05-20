@@ -99,7 +99,8 @@ if ( !isset( $PHORUM['DATA']['PROFILE']['tz_offset'] ) || $PHORUM['DATA']['PROFI
 
 // remove dst from tz_offset
 if(isset($PHORUM['DATA']['PROFILE']['is_dst']) && $PHORUM['DATA']['PROFILE']['is_dst']) {
-    $PHORUM['DATA']['PROFILE']['tz_offset']=--$PHORUM['DATA']['PROFILE']['tz_offset']."";
+    $PHORUM['DATA']['PROFILE']['tz_offset']=--$PHORUM['DATA']['PROFILE']['tz_offset'];
+    $PHORUM['DATA']['PROFILE']['tz_offset']=number_format($PHORUM['DATA']['PROFILE']['tz_offset'],2);
 }
 
 $PHORUM["DATA"]["TIMEZONE"][] = array( 'tz' => '-99', 'str' => $PHORUM['DATA']['LANG']['Default'], 'sel' => $defsel );
