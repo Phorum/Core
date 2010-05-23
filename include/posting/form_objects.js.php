@@ -20,9 +20,7 @@ Phorum.subject_obj = null;
 
 // A variable for storing the current selection range of the 
 // textarea. Needed for working around an MSIE problem.
-Phorum.textarea_range = null
-
-
+Phorum.textarea_range = null;
 
 // ----------------------------------------------------------------------
 // Uitilty functions
