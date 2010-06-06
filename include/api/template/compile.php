@@ -464,14 +464,24 @@ function phorum_api_template_compile_pass2($template)
             //
             //     The syntax for the <condition> is:
             //
-            //     [NOT] <variable> [value]
+            //     [NOT] <variable> [operator] [value]
             //
             //     The variable will be compared to the value. If no value is
             //     given, the condition will be true if the variable is set
             //     and not empty.
             //
-            //     If the keyword "not" is prepended, the result of the
+            //     If the keyword "NOT" is prepended, the result of the
             //     comparison will be negated.
+            //
+            //     If the operator is omitted, then "=" will be used as
+            //     the default. The operators that can be used are:
+            //
+            //     =  (equals)
+            //     != (not equals)
+            //     <  (less than)
+            //     <= (less than or equal)
+            //     >  (greater than)
+            //     >= (greater than or equal)
             //
             //     Multiple conditions can be linked using the keywords
             //     AND or OR.
@@ -484,6 +494,7 @@ function phorum_api_template_compile_pass2($template)
             //     {IF thevar phpdefine}thevar and phpdefine are equal{/IF}
             //     {IF thevar othervar}thevar and othervar are equal{/IF}
             //     {IF var1 OR var2}at least one of the vars is not empty{/IF}
+            //     {IF var > 10}value of var is greater than 10{/IF}
             //
             case "if":
             case "elseif":
@@ -515,7 +526,7 @@ function phorum_api_template_compile_pass2($template)
                         continue;
                     }
 
-                    // Determine if we need "==" or "!=" for the condition.
+                    // Determine if we need to negate the condition.
                     if (strtolower($condition[0]) == "not") {
                         $operator = "!";
                         array_shift($condition);
@@ -526,6 +537,18 @@ function phorum_api_template_compile_pass2($template)
                     // Determine what variable we are comparing to in the condition.
                     $variable = phorum_api_template_compile_var2php($loopvars, array_shift($condition));
 
+                    // Check if a comparison operator was used. Only apply
+                    // the comparison operator if we have something to compare
+                    // the variable to, hence the $condition[1] check.
+                    if (isset($condition[1]) && in_array($condition[0], array('=', '!=', '<', '<=', '>', '>='))) {
+                      $comparison_operator = array_shift($condition);
+                      if ($comparison_operator == '=') {
+                        $comparison_operator = '==';
+                      }
+                    } else {
+                      $comparison_operator = '==';
+                    }
+
                     // If there is no value to compare to, then check if
                     // the value for the variable is set and not empty.
                     if (!isset($condition[0])) {
@@ -535,9 +558,9 @@ function phorum_api_template_compile_pass2($template)
                     else {
                         list ($value, $type) = phorum_api_template_compile_val2php($loopvars, array_shift($condition));
                         if ($type == "variable") {
-                            $repl .= "$operator(isset($variable) && isset($value) && $variable == $value)";
+                            $repl .= "$operator(isset($variable) && isset($value) && $variable $comparison_operator $value)";
                         } else {
-                            $repl .= "$operator(isset($variable) && $variable == $value)";
+                            $repl .= "$operator(isset($variable) && $variable $comparison_operator $value)";
                         }
                     }
                 }
