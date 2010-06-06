@@ -655,7 +655,7 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
   .. conditional code ..]
 {/IF}
 
-<CONDITION> Syntax: [NOT] <TEMPLATE VARIABLE> [<VALUE>]
+<CONDITION> Syntax: [NOT] <TEMPLATE VARIABLE> [<OPERATOR>] [<VALUE>]
                   ]]></literal></literallayout>
                 </para>
                 <para>
@@ -665,6 +665,17 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
                   The <literal>&lt;VALUE&gt;</literal> can be any of
                   the data types that are supported by the template
                   language (see <xref linkend="templates.datatypes"/>).
+                </para>
+                <para>
+                  Valid operators are:
+                  =     (equals),
+                  !=    (not equals),
+                  &lt;  (less than),
+                  &lt;= (less than or equal),
+                  &gt;  (greater than) and
+                  &gt;= (greater than or equal).
+                  If no <literal>&lt;OPERATOR&gt;</literal> is provided, then
+                  the "=" operator will be used by default.
                 </para>
                 <para>
                   If a <literal>&lt;VALUE&gt;</literal> is used, the
@@ -703,6 +714,16 @@ The name of the current forum is: {NAME} ]]></programlisting></example>
 
 {IF VARIABLE1 VARIABLE2}
    Variable 1 and 2 have the same value.
+{/IF}
+
+{IF AGE < 18}
+   You are not mature enough for this content.
+{/IF}
+
+which could also be written as:
+
+{IF NOT AGE >= 18}
+   You are not mature enough for this content.
 {/IF} ]]></programlisting></example>
               </para></listitem>
             </varlistentry>
