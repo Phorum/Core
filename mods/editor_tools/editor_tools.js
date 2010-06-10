@@ -332,19 +332,56 @@ function editor_tools_construct_popup(create_id, anchor)
     return new Array(popup_obj, content_obj);
 }
 
+function editor_tools_get_style(obj, element)
+{
+    if (obj.currentStyle) {
+        return obj.currentStyle[element];
+    } else if (window.getComputedStyle) {
+        var s = document.defaultView.getComputedStyle(obj, null);
+        return s.getPropertyValue(element);
+    } else {
+        return null;
+    }
+}
+
+function editor_tools_get_screenpos(obj)
+{
+    var top = left = 0;
+    var rel_top = rel_left = null;
+
+    do {
+        top  += obj.offsetTop;
+        left += obj.offsetLeft;
+        if (obj && rel_top == null) {
+            var pos = editor_tools_get_style(obj, 'position');
+            if (pos == 'relative' || pos == 'absolute') {
+                rel_top  = top;
+                rel_left = left;
+            }
+        }
+        obj = obj.offsetParent;
+    } while (obj);
+
+    if (rel_left == null) {
+        rel_left = left;
+        rel_top  = top;
+    }
+
+    return {
+        top      : top,
+        left     : left,
+        rel_left : rel_left,
+        rel_top  : rel_top
+    };
+}
+
 // Toggle a popup window.
 function editor_tools_toggle_popup(popup_obj, button_obj, width, leftoffset)
 {
     // Determine where to show the popup on screen.
-    var work_obj = button_obj;
-    var top = work_obj.offsetTop + work_obj.offsetHeight + 2;
-    var left = work_obj.offsetLeft;
-
-    while (work_obj.offsetParent != null) {
-        work_obj = work_obj.offsetParent;
-        left += work_obj.offsetLeft;
-        top += work_obj.offsetTop;
-    }
+    var pos  = editor_tools_get_screenpos(button_obj);
+    var top  = pos.top + 2 + button_obj.offsetHeight;
+    var left = pos.left;
 
     if (leftoffset) left -= leftoffset;
     if (width) popup_obj.style.width = width;
