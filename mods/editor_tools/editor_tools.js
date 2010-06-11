@@ -214,15 +214,10 @@ function editor_tools_construct_popup(create_id, anchor)
 function editor_tools_toggle_popup(popup_obj, button_obj, width, leftoffset)
 {
     // Determine where to show the popup on screen.
-    var work_obj = button_obj;
-    var top = work_obj.offsetTop + work_obj.offsetHeight + 2;
-    var left = work_obj.offsetLeft;
-
-    while (work_obj.offsetParent != null) {
-        work_obj = work_obj.offsetParent;
-        left += work_obj.offsetLeft;
-        top += work_obj.offsetTop;
-    }
+    var $button_obj = $PJ(button_obj);
+    var pos  = $button_obj.position();
+    var top  = pos.top + 2 + $button_obj.outerHeight();
+    var left = pos.left;
 
     if (leftoffset) left -= leftoffset;
     if (width) popup_obj.style.width = width;
