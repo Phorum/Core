@@ -337,7 +337,7 @@ function editor_tools_toggle_popup(popup_obj, button_obj, width, leftoffset)
 {
     // Determine where to show the popup on screen.
     var $button_obj = $PJ(button_obj);
-    var pos  = $button_obj.offset();
+    var pos  = $button_obj.position();
     var top  = pos.top + 2 + $button_obj.outerHeight();
     var left = pos.left;
 
