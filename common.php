@@ -387,7 +387,7 @@ if (!defined( "PHORUM_ADMIN" ))
     $PHORUM['language'] = basename($PHORUM['language']);
     if (file_exists(PHORUM_PATH."/include/lang/$PHORUM[language].php")) {
         require_once PHORUM_PATH."/include/lang/$PHORUM[language].php";
-    } else trigger_user_error(
+    } else trigger_error(
         "Language file include/lang/$PHORUM[language].php not found",
         E_USER_ERROR
     );
@@ -413,7 +413,7 @@ if (!defined( "PHORUM_ADMIN" ))
                     break;
                 }
             }
-            if (!$loaded) trigger_user_error(
+            if (!$loaded) trigger_error(
                 "No language file found for module $mod", E_USER_ERROR
             );
         }
