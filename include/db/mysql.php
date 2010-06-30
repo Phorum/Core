@@ -4595,6 +4595,16 @@ function phorum_db_user_delete($user_id)
         DB_GLOBALQUERY | DB_MASTERQUERY
     );
 
+    phorum_db_interact(
+        DB_RETURN_RES,
+        "UPDATE {$PHORUM['message_table']}
+         SET    recent_user_id = 0,
+                recent_author  = $author
+         WHERE  recent_user_id = $user_id",
+        NULL,
+        DB_GLOBALQUERY | DB_MASTERQUERY
+    );
+
     return TRUE;
 }
 // }}}
