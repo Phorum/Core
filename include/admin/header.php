@@ -208,6 +208,63 @@ Phorum Status:
     <td valign="top">
 <?php
         include_once "./include/admin/PhorumAdminMenu.php";
+        include_once "./include/admin/PhorumAdminMenuHookPosition.php";
+
+        /*
+         * [hook]
+         *     admin_menu
+         *
+         * [availability]
+         *     Phorum 5.2.16
+         *
+         * [description]
+         *     This hook allows to inject custom HTML into the Phorum admin
+         *     menu. The hook will receive an instace of
+         *     PhorumAdminMenuHookPosition which is required to determine at
+         *     which position in the Phorum admin menu the module author wishes
+         *     to place his custom menu. Although any HTML can be injected, it
+         *     is advised to use the PhorumAdminMenu class.
+         *
+         *     Use the methods appendAt(position, html) and appendLast(html) to
+         *     tell where you want them to appear.
+         *
+         * [category]
+         *     admin
+         *
+         * [when]
+         *     Admin header
+         *
+         * [input]
+         *     Object of PhorumAdminMenuHookPosition
+         *
+         * [output]
+         *     Return the object
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_admin_menu($pos) {
+         *         $menu = new PhorumAdminMenu("MyImportantLinks");
+         *         $menu->addCustom("Event log", phorum_admin_build_url( array('module=modsettings','mod=event_logging','el_action=logviewer')));
+         *         $menu->addCustom("My module subpage",phorum_admin_build_url( array('module=modsettings','mod=foo','action=subpage')));
+         *
+         *         $pos->appendLast($menu->getHtml();
+         *
+         *         $menu = new PhorumAdminMenu("Who rocks?");
+         *         $menu->addCustom("Guess!", "http://phorum.org/", "Phorum rocks!", "_blank");
+         *
+         *         $pos->appendAt(0, $menu->getHtml());
+         *
+         *         return $pos;
+         *     }
+         *     </hookcode>
+         */
+        $layout = new PhorumAdminMenuHookPosition();
+        # It's an object, not necessary to return/re-assign it. And in case
+        # some hook forgets to return, saves us troubles.
+        phorum_hook('admin_menu', $layout);
+        $layout->reorderPositions();
+
+        echo $layout->fetchAndRemoveNext();
 
         $menu = new PhorumAdminMenu("Main Menu");
 
@@ -216,6 +273,8 @@ Phorum Status:
         $menu->add("Log Out", "logout", "Logs you out of the admin.");
 
         $menu->show();
+
+        echo $layout->fetchAndRemoveNext();
 
         $menu = new PhorumAdminMenu("Global Settings");
 
@@ -227,6 +286,8 @@ Phorum Status:
 
         $menu->show();
 
+        echo $layout->fetchAndRemoveNext();
+
         $menu = new PhorumAdminMenu("Forums");
 
         $menu->add("Manage Forums", "", "Takes you to the default Admin page.");
@@ -236,6 +297,8 @@ Phorum Status:
 
         $menu->show();
 
+        echo $layout->fetchAndRemoveNext();
+
         $menu = new PhorumAdminMenu("Users/Groups");
 
         $menu->add("Edit Users", "users", "Allows administrator to edit users including deactivating them.");
@@ -243,6 +306,9 @@ Phorum Status:
         $menu->add("Custom Profiles", "customprofile", "Allows administrator to add fields to Phorum profile.");
 
         $menu->show();
+
+        echo $layout->fetchAndRemoveNext();
+
         $menu = new PhorumAdminMenu("Maintenance");
 
         $menu->add("Check For New Version", "version", "Check for new releases.");
@@ -254,6 +320,8 @@ Phorum Status:
         $menu->add("Manage Language Files", "manage_languages", "Allows administrator to create new or updated versions of language files.");
 
         $menu->show();
+
+        echo $layout->fetchAndRemoveRemaining();
 
 ?>
 <img src="<?php echo "$PHORUM[http_path]/images/trans.gif"; ?>" alt="" border="0" width="150" height="1" />
