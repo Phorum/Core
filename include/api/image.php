@@ -218,7 +218,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
             $error = "GD: no PNG support available for creating thumbnail";
         }
         elseif (($type == 'gif'  && empty($gd['GIF Read Support'])) ||
-            ($type == 'jpeg' && empty($gd['JPG Support'])) ||
+            ($type == 'jpeg' && (empty($gd['JPG Support']) && empty($gd['JPEG Support']))) ||
             ($type == 'png'  && empty($gd['PNG Support']))) {
             $error = "GD: no support available for image type \"$type\"";
         }
