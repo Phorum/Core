@@ -42,6 +42,38 @@
             phorum_db_drop_folder($cur_folder_id);
             $msg="The folder was deleted.  All forums and folders in this folder have been moved to this folder's parent.";
         } else {
+            /*
+             * [hook]
+             *     admin_forum_delete
+             *
+             * [description]
+             *     This hook is called whenever a forum is deleted.
+             *
+             * [category]
+             *     Admin interface
+             *
+             * [when]
+             *     Right before the forum will be deleted from the database
+             *
+             * [input]
+             *     The ID of the forum.
+             *
+             * [output]
+             *     Same as input.
+             *
+             * [example]
+             *     <hookcode>
+             *     function phorum_mod_foo_admin_forum_delete ($id) 
+             *     {
+             *         // E.g. Notify the external system that the forum has been deleted
+             *
+             *         // Return forum ID for other hooks
+             *         return $id;
+             *
+             *     }
+             *     </hookcode>
+             */
+            phorum_hook("admin_forum_delete", $_GET["forum_id"]);
             phorum_db_drop_forum($_GET["forum_id"]);
             $msg="The forum was deleted.  All messages in that forum were deleted.";
         }
