@@ -211,9 +211,9 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         // image support for the type of image that we are handling.
         $gd = gd_info();
 
-        // We need JPG support for the scaled down image.
+        // We always need JPEG support for the scaled down image.
         if (empty($gd['JPG Support']) && empty($gd['JPEG Support'])) {
-            $error = "GD: no JPG support available for creating thumbnail";
+            $error = "GD: no JPEG support available for creating thumbnail";
         }
         elseif (($type == 'gif'  && empty($gd['GIF Read Support'])) ||
             ($type == 'jpeg' && (empty($gd['JPG Support']) && empty($gd['JPEG Support']))) ||
