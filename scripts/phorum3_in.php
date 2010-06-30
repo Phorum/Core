@@ -39,7 +39,7 @@ function phorum_convert_getForums($link) {
     $res=mysql_unbuffered_query($sql,$link);
     $forums=array();
 
-    if ($err = mysql_error($link)) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($link)) die("ERROR $err: $sql");
 
 
     echo "Reading forums from phorum3-table {$CONVERT['forumstable']} ...{$CONVERT['lbr']}";
@@ -58,7 +58,7 @@ function phorum_convert_getGroups($link) {
     $res=mysql_unbuffered_query($sql,$link);
     $groups=array();
 
-    if ($err = mysql_error($link)) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($link)) die("ERROR $err: $sql");
 
     while($row=mysql_fetch_array($res)) {
        $groups[$row['id']]=$row;
@@ -212,7 +212,7 @@ function phorum_convert_selectMessages($forumdata,$link) {
     $sql="SELECT a.*,b.body,UNIX_TIMESTAMP(a.datestamp) as unixtime  FROM ".$forumdata['table_name']." as a, ".$forumdata['table_name']."_bodies as b WHERE b.id = a.id ORDER BY a.id ASC";
     $res=mysql_unbuffered_query($sql, $link);
 
-    if ($err = mysql_error($link)) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($link)) die("ERROR $err: $sql");
 
     return $res;
 }
