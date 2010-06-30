@@ -114,6 +114,7 @@ function phorum_setup_announcements ()
         }
 
         // Setup template data for the message.
+        unset($message['body']);
         $message["lastpost"] = phorum_date($PHORUM["short_date_time"], $message["modifystamp"]);
         $message["raw_datestamp"] = $message["datestamp"];
         $message["datestamp"] = phorum_date($PHORUM["short_date_time"], $message["datestamp"]);
@@ -124,14 +125,9 @@ function phorum_setup_announcements ()
     // If all announcements were skipped, then we are done.
     if (!isset($PHORUM["DATA"]["ANNOUNCEMENTS"])) return;
 
-    // Apply standard formatting to the messages.
-    if (isset($PHORUM["hooks"]["format"]))
-        $PHORUM["DATA"]["ANNOUNCEMENTS"] = phorum_hook("format", $PHORUM["DATA"]["ANNOUNCEMENTS"]);
-        
-    // A hook for module writers for doing post formatting fixups.
-    if (isset($PHORUM["hooks"]["format_fixup"]))
-        $PHORUM["DATA"]["ANNOUNCEMENTS"] = phorum_hook("format_fixup", $PHORUM["DATA"]["ANNOUNCEMENTS"]);        
-
+    // format / clean etc. the messages found
+    $PHORUM["DATA"]["ANNOUNCEMENTS"]= phorum_format_messages($PHORUM["DATA"]["ANNOUNCEMENTS"]);
+    
     // Build the announcements code.
     ob_start();
     include phorum_get_template("announcements::announcements");
