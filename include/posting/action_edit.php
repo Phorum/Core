@@ -321,4 +321,39 @@ $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_api_url(
     $message["message_id"]
 );
 
+/*
+ * [hook]
+ *     posting_action_edit_post
+ *
+ * [description]
+ *     Allow modules to perform custom action whenever the user edits his post.
+ *     This can be used to e.g. redirect the user immediately back to the edited
+ *     post where he came from.
+ *
+ * [category]
+ *     Message handling
+ *
+ * [when]
+ *     In <filename>action_edit.php</filename> at the end of the file when 
+ *     everything has been done.
+ *
+ * [input]
+ *     Array containing message data.
+ *
+ * [output]
+ *     Same as input.
+ *
+ * [example]
+ *     <hookcode>
+ *     function phorum_mod_foo_posting_action_edit_post ($message)
+ *     {
+ *         global $PHORUM;
+ *
+ *         // perform a custom redirect
+ *         phorum_redirect_by_url($PHORUM["DATA"]["URL"]["REDIRECT"]);
+ *     }
+ *     </hookcode>
+ */
+if (isset($PHORUM["hooks"]["posting_action_edit_post"]))
+    phorum_api_hook("posting_action_edit_post", $message);
 ?>

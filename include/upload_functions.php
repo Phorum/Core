@@ -89,7 +89,7 @@ function phorum_get_system_max_upload()
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["system_max_upload"])) {
-        $data = phorum_hook("system_max_upload", $data);
+        $data = phorum_api_hook("system_max_upload", $data);
     }
 
     return $data;

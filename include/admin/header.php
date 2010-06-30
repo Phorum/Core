@@ -74,7 +74,7 @@ $admin_css_path = preg_replace('!^//!', '/', $admin_css_path);
  *     </hookcode>
  */
 if (isset($PHORUM['hooks']['admin_css_file'])) {
-	$admin_css_path = phorum_hook('admin_css_file', $admin_css_path);
+	$admin_css_path = phorum_api_hook('admin_css_file', $admin_css_path);
 }
 
 ?>

@@ -110,7 +110,7 @@ if (count($_POST))
          *     }
          *     </hookcode>
          */
-        $error = phorum_hook("admin_editforum_form_save_after_defaults", $error);
+        $error = phorum_api_hook("admin_editforum_form_save_after_defaults", $error);
     }    
     
     // If there were no errors, then store the data in the database.
