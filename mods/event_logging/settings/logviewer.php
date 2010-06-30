@@ -82,7 +82,7 @@ if ($filter_mode)
     }
     $filter["categories"] = $categories;
 
-    foreach (array("source", "user_id", "username", "ip") as $fld) {
+    foreach (array("source", "user_id", "username", "ip", "message", "details") as $fld) {
         if (isset($_POST[$fld])) {
             $filter[$fld] = $_POST[$fld];
             $filter_base .= "&$fld=".urlencode($_POST[$fld]);
@@ -197,6 +197,13 @@ if ($filter_mode)
 
     $row = $frm->addrow("Filter by IP address", $frm->text_box("ip", isset($_POST["ip"]) ? $_POST["ip"] : "", 20));
     $frm->addhelp($row, "Filter by IP address", "Using this field, you can specify for what IP address you want to display the event logs.<br/><br/>In the field, you can use the \"*\" wildcard (e.g. searching for \"172.16.12.*\" will find both the IP addresses \"172.16.12.1\" and \"172.16.12.211\").");
+
+    $row = $frm->addrow("Filter by message", $frm->text_box("message", isset($_POST["message"]) ? htmlspecialchars($_POST["message"]) : "", 40));
+    $frm->addhelp($row, "Filter by message", "Filter all events where the message matches the specified text.<br/><br/>In the field, you can use the \"*\" wildcard (e.g. searching for \"fail*\" would find both entries with \"failure\" and \"failacity\").");
+
+    $row = $frm->addrow("Filter by details", $frm->text_box("details", isset($_POST["details"]) ? htmlspecialchars($_POST["details"]) : "", 40));
+    $frm->addhelp($row, "Filter by details", "Filter all events where the details match the specified text .<br/><br/>In the field, you can use the \"*\" wildcard (e.g. searching for \"fail*\" would find both entries with \"failure\" and \"failacity\").");
+
 }
 
 $frm->show();

@@ -299,6 +299,8 @@ function event_logging_create_where($filter)
         "user_id"  => "int",
         "username" => "string",
         "ip"       => "string",
+        "message"  => "string",
+        "details"  => "string",
     ) as $field => $type) {
         if (isset($filter[$field]) && trim($filter[$field]) != '') {
             $val = trim($filter[$field]);
