@@ -728,6 +728,12 @@ switch ($mod_step)
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
+        
+        $invalidate_message_cache[] = array(
+            "message_id" => $msgthd_id,
+            "forum_id"   => $PHORUM["forum_id"]
+        );
+        
         break;
 
     case PHORUM_APPROVE_MESSAGE_TREE: // approve a message and all answers to it
@@ -745,6 +751,11 @@ switch ($mod_step)
             // setting the new status
             phorum_db_update_message($mid, $newpost);
 
+            $invalidate_message_cache[] = array(
+                "message_id" => $mid,
+                "forum_id"   => $PHORUM["forum_id"]
+            );
+            
         }
 
         // updating the thread-info
@@ -774,6 +785,7 @@ switch ($mod_step)
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
+        
         break;
 
     case PHORUM_HIDE_POST: // hiding a message (and its replies)
