@@ -3791,8 +3791,12 @@ function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
  *
  * @param mixed $operator
  *     The operator (string) or operators (array) to use. Valid operators are
- *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
- *     "*" operator is for executing a "LIKE '%value%'" matching query.
+ *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*", "?*", "*?", "()". The
+ *     "*" operator is for executing a "LIKE '%value%'" matching query. The 
+ *     "?*" and "*?" operators are for executing a "LIKE 'value%'" or a
+ *     "LIKE '%value' matching query. The "()" operator is for executing a
+ *     "IN ('value[0]',value[1]')" matching query.  The "()" operator requires
+ *     its $value to be an array.
  *
  * @param boolean $return_array
  *     If this parameter has a true value, then an array of all matching
@@ -3851,16 +3855,25 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
         E_USER_ERROR
     );
 
-    $valid_operators = array('=', '<>', '!=', '>', '<', '>=', '<=', '*');
+    $valid_operators = array('=', '<>', '!=', '>', '<', '>=', '<=', '*', '?*', '*?','()');
 
     // Construct the required "WHERE" clause.
     $clauses = array();
     foreach ($field as $key => $name) {
         if (in_array($operator[$key], $valid_operators) &&
             phorum_db_validate_field($name)) {
-            $value[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value[$key]);
+            if ($operator[$key] != '()') $value[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value[$key]);
             if ($operator[$key] == '*') {
                 $clauses[] = "$name LIKE '%$value[$key]%'";
+            } else if ($operator[$key] == '?*') {
+                $clauses[] = "$name LIKE '$value[$key]%'";
+            } else if ($operator[$key] == '*?') {
+                $clauses[] = "$name LIKE '%$value[$key]'";
+            } else if ($operator[$key] == '()') {
+                foreach ($value[$key] as $in_key => $in_value) {
+                    $value[$key][$in_key] = phorum_db_interact(DB_RETURN_QUOTED, $value[$key][$in_key]);
+                }
+                $clauses[] = "$name IN ('" . implode("','",$value[$key]) ."')";
             } else {
                 $clauses[] = "$name $operator[$key] '$value[$key]'";
             }
@@ -7161,8 +7174,10 @@ function phorum_db_rebuild_user_posts()
  *
  * @param mixed $operator
  *     The operator (string) or operators (array) to use. Valid operators are
- *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
- *     "*" operator is for executing a "LIKE '%value%'" matching query.
+ *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*", '?*', '*?'. The
+ *     "*" operator is for executing a "LIKE '%value%'" matching query. The 
+ *     "?*" and "*?" operators are for executing a "LIKE 'value%'" or a
+ *     "LIKE '%value' matching query.
  *
  * @param boolean $return_array
  *     If this parameter has a true value, then an array of all matching
@@ -7273,7 +7288,7 @@ function phorum_db_search_custom_profile_field($fieldtype,$field_id, $value, $op
         E_USER_ERROR
     );
 
-    $valid_operators = array('=', '<>', '!=', '>', '<', '>=', '<=', '*');
+    $valid_operators = array('=', '<>', '!=', '>', '<', '>=', '<=', '*', '?*', '*?');
 
     // Construct the required "WHERE" clause.
     $clauses = array();
@@ -7283,6 +7298,10 @@ function phorum_db_search_custom_profile_field($fieldtype,$field_id, $value, $op
             $value[$key] = phorum_db_interact(DB_RETURN_QUOTED, $value[$key]);
             if ($operator[$key] == '*') {
                 $clauses[] = "(field_type = ".$fieldtype." AND type = $id AND data LIKE '%$value[$key]%')";
+            } else if ($operator[$key] == '?*') {
+                $clauses[] = "(type = $id AND data LIKE '$value[$key]%')";
+            } else if ($operator[$key] == '*?') {
+                $clauses[] = "(type = $id AND data LIKE '%$value[$key]')";
             } else {
                 $clauses[] = "(field_type = ".$fieldtype." AND type = $id AND data $operator[$key] '$value[$key]')";
             }
