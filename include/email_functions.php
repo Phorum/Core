@@ -246,6 +246,9 @@ function phorum_email_user($addresses, $data)
             'bcc'        => $PHORUM['use_bcc'],
             'messageid'  => $messageid
         );
+        if(isset($data['attachments'])) {
+            $hook_data['attachments'] = $data['attachments'];
+        }
 
         $send_messages = phorum_hook("send_mail", $hook_data);
     }
