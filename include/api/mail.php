@@ -363,6 +363,10 @@ function phorum_api_mail($addresses, $data)
             'bcc'        => $PHORUM['use_bcc'],
             'messageid'  => $messageid
         );
+        if(isset($data['attachments'])) {
+            $hook_data['attachments'] = $data['attachments'];
+        }
+        
 
         $send_messages = phorum_api_hook('mail_send', $hook_data);
     }
