@@ -27,7 +27,7 @@
       {/IF}
     {/IF}
     <tr>
-      <td class="PhorumTableRow{altclass}" style="padding-left: {MESSAGES->indent_cnt}px">&nbsp;{MESSAGES->indent}{marker}
+      <td class="PhorumTableRow{altclass}" style="padding-left: {MESSAGES->indent_cnt}px">&nbsp;{marker}
         {IF MESSAGES->sort PHORUM_SORT_STICKY}
           <span class="PhorumListSubjPrefix">{LANG->Sticky}:</span>
         {/IF}
