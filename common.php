@@ -1932,7 +1932,7 @@ function phorum_get_template_info()
 
     $d = dir( $PHORUM['template_path'] );
     while ( false !== ( $entry = $d->read() ) ) {
-        if ( $entry != "." && $entry != ".." && file_exists($PHORUM['template_path'].'/'.$entry.'/info.php' ) ) {
+        if ($entry[0] !== '.' && file_exists($PHORUM['template_path'].'/'.$entry.'/info.php')) {
             include $PHORUM['template_path'].'/'.$entry.'/info.php';
             if ( !isset( $template_hide ) || empty( $template_hide ) || defined( "PHORUM_ADMIN" ) ) {
                 $tpls[$entry] = "$name $version";
