@@ -48,6 +48,9 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
 // include required files
 require_once('./common.php');
 
+// Set the vroot id, which is not set automatically from common.php.
+$PHORUM['vroot'] = 0;
+
 require_once PHORUM_PATH.'/include/api/thread.php';
 require_once PHORUM_PATH.'/include/api/newflags.php';
 
