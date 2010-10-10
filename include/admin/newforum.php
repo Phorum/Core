@@ -20,7 +20,7 @@
 if (!defined("PHORUM_ADMIN")) return;
 
 require_once './include/api/forums.php';
-require_once './include/upload_functions.php';
+require_once './include/api/system.php';
 
 $errors = array();
 
@@ -373,8 +373,9 @@ $frm->addrow("Number Allowed (0 to disable)", $frm->text_box("max_attachments", 
 
 $frm->addrow("Allowed Files (eg: gif;jpg;png, empty for any)", $frm->text_box("allow_attachment_types", $allow_attachment_types, 10, false, false, $disabled_form_input));
 
-$system_max_upload = phorum_get_system_max_upload();
-$max_size = phorum_api_format_filesize($system_max_upload[0]);
+list ($system_max_upload, $php_max_upload, $db_max_upload) =
+    phorum_get_system_max_upload();
+$max_size = phorum_api_format_filesize($system_max_upload);
 
 $row=$frm->addrow("Max File Size In KB ($max_size maximum)", $frm->text_box("max_attachment_size", $max_attachment_size, 10, false, false, $disabled_form_input));
 $frm->addhelp($row, "Max File Size", "This is the maximum that one uploaded file can be.  If you see a maximum here, that is the maximum imposed by either your PHP installation, database server or both.  Leaving this field as 0 will use this maximum.");

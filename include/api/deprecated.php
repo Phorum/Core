@@ -325,4 +325,13 @@ function phorum_cache_purge($full = false) {
 function phorum_cache_clear() {
 	   return phorum_api_cache_clear();
 }
+
+/**
+ * @deprecated Replaced by {@link phorum_api_system_get_max_upload()}.
+ */
+function phorum_get_system_max_upload() {
+    require_once PHORUM_PATH.'/include/api/system.php'; 
+    return phorum_api_system_get_max_upload();
+}
+
 ?>

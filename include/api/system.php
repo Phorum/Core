@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2009  Phorum Development Team                              //
+//   Copyright (C) 2010  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -17,24 +17,39 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-if (!defined("PHORUM")) return;
-
 /**
- * Determines the system's upload limit. This limit is determined by
- * the maximum upload filesize (PHP), the maximum POST request size (PHP)
- * and the maximum database packet size.
+ * This script implements the Phorum system API.
  *
- * @return An array containing three elements: the overall system's maximum
- *         upload size, the maximum as imposed by PHP and the maximum as
- *         imposed by the database.
+ * The system API is used for finding information about the system on which
+ * Phorum is running.
+ *
+ * @package    PhorumAPI
+ * @subpackage System
+ * @copyright  2010, Phorum Development Team
+ * @license    Phorum License, http://www.phorum.org/license.txt
  */
-function phorum_get_system_max_upload()
+
+// {{{ phorum_api_system_get_max_upload()
+/**
+ * Retrieve the maximum possible file upload size.
+ *
+ * This function determines the system's upload limit. This limit is
+ * defined by the maximum upload filesize (PHP), the maximum POST request
+ * size (PHP) and the maximum database packet size.
+ *
+ * @return array
+ *     An array containing three elements:
+ *     - The overall system's maximum upload size
+ *     - The maximum as imposed by PHP
+ *     - The maximum as imposed by the database
+ */
+function phorum_api_system_get_max_upload()
 {
     global $PHORUM;
 
     // Determine limit as imposed by PHP.
-    $pms = phorum_phpcfgsize2bytes(ini_get('post_max_size'));
-    $umf = phorum_phpcfgsize2bytes(ini_get('upload_max_filesize'));
+    $pms = phorum_api_system_phpsize2bytes(ini_get('post_max_size'));
+    $umf = phorum_api_system_phpsize2bytes(ini_get('upload_max_filesize'));
     $php_limit = ($umf > $pms ? $pms : $umf);
 
     // Determines the database server's limit for file uploads. This limit
@@ -66,9 +81,8 @@ function phorum_get_system_max_upload()
      *     File storage
      *
      * [when]
-     *     In
-     *     <filename>include/upload_functions.php</filename>,
-     *     in the function phorum_get_system_max_upload.
+     *     In <filename>include/api/system.php</filename>,
+     *     in the function phorum_api_system_get_max_upload().
      *
      * [input]
      *     An array containing the default limit, the data layer limit and
@@ -94,26 +108,33 @@ function phorum_get_system_max_upload()
 
     return $data;
 }
+// }}}
 
+// {{{ phorum_api_system_phpsize2bytes()
 /**
- * Converts the size parameters that can be used in the PHP ini-file
+ * Converts a size parameter as used in the PHP ini-file
  * (e.g. 1024, 10k, 8M) to a number of bytes.
  *
- * @param The PHP size parameter
- * @return The size parameter, converted to a number of bytes
+ * @param string $size
+ *     The PHP size parameter to convert.
+ * @return integer
+ *     The size parameter, converted to a number of bytes.
  */
-function phorum_phpcfgsize2bytes($val) {
-    $val = trim($val);
-    $last = strtolower($val{strlen($val)-1});
+function phorum_api_system_phpsize2bytes($size)
+{
+    $size = trim($size);
+    $last = strtolower($size{strlen($size)-1});
     switch($last) {
        // The 'G' modifier is available since PHP 5.1.0
        case 'g':
-           $val *= 1024;
+           $size *= 1024;
        case 'm':
-           $val *= 1024;
+           $size *= 1024;
        case 'k':
-           $val *= 1024;
+           $size *= 1024;
     }
-    return $val;
+    return $size;
 }
+// }}}
 
+?>

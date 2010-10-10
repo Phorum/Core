@@ -258,11 +258,13 @@ function phorum_api_file_check_write_access($file)
             // Find the maximum allowed attachment size. This depends on
             // both the settings for the current forum and the limits
             // that are enforced by the system.
-            require_once PHORUM_PATH.'/include/upload_functions.php';
-            $max_upload = phorum_get_system_max_upload();
+            require_once PHORUM_PATH.'/include/api/system.php';
+            list ($max_upload, $php_max_upload, $db_max_upload) =
+                phorum_get_system_max_upload();
             $max_forum = $PHORUM["max_attachment_size"] * 1024;
-            if ($max_forum > 0 && $max_forum < $max_upload)
+            if ($max_forum > 0 && $max_forum < $max_upload) {
                 $max_upload = $max_forum;
+            }
 
             // Check if the file doesn't exceed the maximum allowed size.
             if ($max_upload > 0 && $file["filesize"] > $max_upload) {

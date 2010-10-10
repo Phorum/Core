@@ -642,12 +642,13 @@ if ($PHORUM["posting_template"] == 'posting')
     if($PHORUM["max_attachments"]){
 
         // Retrieve upload limits as imposed by the system.
-        require_once './include/upload_functions.php';
-        $system_max_upload = phorum_get_system_max_upload();
+        require_once PHORUM_PATH.'/include/api/system.php';
+        list ($system_max_upload, $php_max_upload, $db_max_upload) =
+            phorum_get_system_max_upload();
 
         // Apply the upload limits to the max attachment size.
-        if($PHORUM["max_attachment_size"]==0) $PHORUM["max_attachment_size"]=$system_max_upload[0]/1024;
-        $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"],$system_max_upload[0]/1024);
+        if($PHORUM["max_attachment_size"]==0) $PHORUM["max_attachment_size"]=$system_max_upload/1024;
+        $PHORUM["max_attachment_size"] = min($PHORUM["max_attachment_size"],$system_max_upload/1024);
 
         if ($PHORUM["max_totalattachment_size"]) {
             if ($PHORUM["max_totalattachment_size"] < $PHORUM["max_attachment_size"]) {

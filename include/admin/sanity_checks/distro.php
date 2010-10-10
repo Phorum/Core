@@ -93,7 +93,6 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/javascript/jquery.json-1.3.min.js',
     'include/javascript/jquery-1.4.2.min.js',
     'include/moderation_functions.php',
-    'include/upload_functions.php',
     'include/version_functions.php',
 
     'include/posting/action_attachments.php',
@@ -156,6 +155,7 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/api/generate.php',
     'include/api/read_file.php',
     'include/api/request.php',
+    'include/api/system.php',
     'include/api/http_get.php',
 
     'admin.'.PHORUM_FILE_EXTENSION,

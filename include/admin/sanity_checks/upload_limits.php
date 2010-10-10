@@ -24,8 +24,8 @@
 // The upload size can be limited by Apache's LimitRequestBody directive,
 // but we cannot check that one from PHP.
 
-require_once './include/upload_functions.php';
 require_once './include/api/forums.php';
+require_once './include/api/system.php';
 
 $phorum_check = "File uploading (personal files and attachments)";
 
@@ -40,7 +40,8 @@ function phorum_check_upload_limits($is_install) {
     $upload_used = false;
 
     // Get the maximum file upload size for PHP.
-    list ($system_max_upload, $php_max_upload, $db_max_upload) = phorum_get_system_max_upload();
+    list ($system_max_upload, $php_max_upload, $db_max_upload) =
+        phorum_api_system_get_max_upload();
 
     // Check limits for file uploading in personal profile.
     if ($PHORUM["file_uploads"] && $PHORUM["max_file_size"]) {

@@ -19,7 +19,6 @@
 
 if (!defined("PHORUM")) return;
 
-require_once './include/api/file.php';
 require_once PHORUM_PATH.'/include/api/file.php';
 
 if ($do_detach)
@@ -104,13 +103,14 @@ if ($do_detach)
 elseif ($do_attach && ! empty($_FILES))
 {
     // Find the maximum allowed attachment size.
-    require_once './include/upload_functions.php';
-    $system_max_upload = phorum_get_system_max_upload();
+    require_once PHORUM_PATH.'/include/api/system.php';
+    list ($system_max_upload, $php_max_upload, $db_max_upload) =
+        phorum_get_system_max_upload();
     if ($PHORUM["max_attachment_size"] == 0)
-        $PHORUM["max_attachment_size"] = $system_max_upload[0] / 1024;
+        $PHORUM["max_attachment_size"] = $system_max_upload / 1024;
     $PHORUM["max_attachment_size"] = min(
         $PHORUM["max_attachment_size"],
-        $system_max_upload[0] / 1024
+        $system_max_upload / 1024
     );
 
     // The editor template that I use only supports one upload
