@@ -91,6 +91,9 @@ if ($PHORUM['CACHECONFIG']['type'] == 'file' &&
         substr(__FILE__, 0, 1) == '/' ? '/tmp' : 'C:\\Windows\\Temp';
 }
 
+// Backward compatibility for scripts that use the old $PHORUM['cache'] var.
+$PHORUM['cache'] = $PHORUM['CACHECONFIG']['directory'];
+
 // For command line scripts, we use the NULL caching layer in case file
 // caching is in use. The command line user is often different from the web
 // server user, causing permission problems on the cache.
