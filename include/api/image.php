@@ -32,6 +32,88 @@
 
 require_once PHORUM_PATH.'/include/api/write_file.php';
 
+// {{{ Function: phorum_api_image_info()
+/**
+ * Retrieve information for an image.
+ *
+ * @param string $image
+ *     The raw binary image data.
+ *
+ * @return mixed
+ *     FALSE is returned in case retrieving the image information failed.
+ *     The function {@link phorum_api_error_message()} can be used to
+ *     retrieve information about the error that occurred.
+ *
+ *     An array is returned in case retrieving the information did work.
+ *     This array contains the following fields:
+ *
+ *     - width  : the width of the image in pixels
+ *     - height : the height of the image in pixels
+ *     - mime   : the MIME type for the image
+ */
+function phorum_api_image_info($image)
+{
+    global $PHORUM;
+
+    static $cache;
+    if (!$cache) $cache = array();
+
+    // Return cached results when available.
+    $cache_id = md5($image);
+    if (isset($cache[$cache_id])) {
+        return $cache[$cache_id];
+    }
+
+    // Check if PHP supports the getimagesize() function. I think it
+    // always should, but let's check it to be sure.
+    if (!function_exists('getimagesize')) return phorum_api_error(
+        PHORUM_ERRNO_ERROR,
+        'Your PHP installation lacks "getimagesize()" support'
+    );
+
+    // Try to determine the image type and size using the getimagesize()
+    // PHP function. Unfortunately, this function requires a file on disk
+    // to process. Therefore we create a temporary file in the Phorum cache
+    // for doing this.
+    $tmpdir = $PHORUM['CACHECONFIG']['directory'];
+    $tmpfile = $tmpdir .'/scale_image_tmp_'. $cache_id . microtime(TRUE);
+    if (!phorum_api_write_file($tmpfile, $image)) return FALSE;
+
+    // Get the image information and clean up the temporary file.
+    $image_info = @getimagesize($tmpfile);
+    @unlink($tmpfile);
+    if ($image_info === FALSE) return phorum_api_error(
+        PHORUM_ERRNO_ERROR,
+        'Running getimagesize() on the image data failed'
+    );
+
+    // We support only GIF, JPG and PNG images.
+    if (substr($image_info['mime'], 0, 6) == 'image/') {
+        $type = substr($image_info['mime'], 6);
+        if ($type != 'jpeg' && $type != 'gif' && $type != 'png') {
+            return phorum_api_error(
+                PHORUM_ERRNO_ERROR,
+                "Scaling image type \"{$image_info['mime']}\" is not supported"
+            );
+        }
+    } else {
+        return phorum_api_error(
+            PHORUM_ERRNO_ERROR,
+            'The file does not appear to be an image'
+        );
+    }
+
+    $info = array(
+      'width'  => $image_info[0],
+      'height' => $image_info[1],
+      'mime'   => $image_info['mime']
+    );
+
+    $cache[$cache_id] = $info;
+
+    return $info;
+}
+
 // {{{ Function: phorum_api_image_thumbnail()
 /**
  * Create an image thumbnail.
@@ -58,33 +140,36 @@ require_once PHORUM_PATH.'/include/api/write_file.php';
  *     will try to autodetect a working method. Providing a $method parameter
  *     is mostly useful for debugging purposes. Available methods (in the
  *     order in which they are probed in the code) are:
- *     - gd: using the GD library (requires extension "gd")
- *     - imagick: using the ImageMagick library (requires extension "imagick")
- *     - convert: using the ImageMagick "convert" tool (requires the
- *       ImageMagick package to be installed on the server, does not work
- *       in combination with some PHP safety restrictions).
+ *     - imagick : using the ImageMagick library (requires extension "imagick")
+ *     - gd      : using the GD library (requires extension "gd")
+ *     - convert : using the ImageMagick "convert" tool (requires the
+ *                 ImageMagick package to be installed on the server and does
+ *                 not work in combination with some PHP safety restrictions).
  *
  * @return mixed
- *     NULL is returned in case creating the thumbnail failed. The function
+ *     FALSE is returned in case creating the thumbnail failed. The function
  *     {@link phorum_api_error_message()} can be used to retrieve information
  *     about the error that occurred.
  *
  *     An array is returned in case creating the thumbnail did work.
  *     This array contains the following fields:
- *     - image:     The scaled down image. NULL if no scaling was needed.
- *     - method:    The method that was used to create the thumbnail.
- *     - cur_w:     The width of the original $image.
- *     - cur_h:     The height of the original $image.
- *     - cur_mime:  The MIME type of the original $image.
- *     - new_w:     The width of the scaled down image.
- *     - new_h:     The height of the scaled down image.
- *     - new_mime:  The MIME type of the scaled down image,
+ *     - image    : The scaled down image. NULL if no scaling was needed.
+ *     - method   : The method that was used to create the thumbnail.
+ *     - cur_w    : The width of the original $image.
+ *     - cur_h    : The height of the original $image.
+ *     - cur_mime : The MIME type of the original $image.
+ *     - new_w    : The width of the scaled down image.
+ *     - new_h    : The height of the scaled down image.
+ *     - new_mime : The MIME type of the scaled down image,
  */
-function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $method = NULL)
+function phorum_api_image_thumbnail(
+    $image, $max_w = NULL, $max_h = NULL, $method = NULL)
 {
+    global $PHORUM;
+
     // Reset error storage.
-    $GLOBALS['PHORUM']['API']['errno'] = NULL;
-    $GLOBALS['PHORUM']['API']['error'] = NULL;
+    $PHORUM['API']['errno'] = NULL;
+    $PHORUM['API']['error'] = NULL;
     $error = NULL;
 
     if (empty($max_w)) $max_w = NULL;
@@ -96,49 +181,14 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         'new_mime' => NULL
     );
 
-    // Check if PHP supports the getimagesize() function. I think it
-    // always should, but let's check it to be sure.
-    if (!function_exists('getimagesize')) return phorum_api_error(
-        PHORUM_ERRNO_ERROR,
-        'Your PHP installation lacks "getimagesize()" support'
-    );
-
-    // Try to determine the image type and size using the getimagesize()
-    // PHP function. Unfortunately, this function requires a file on disk
-    // to process. Therefore we create a temporary file in the Phorum cache
-    // for doing this.
-    $tmpdir = $GLOBALS['PHORUM']['CACHECONFIG']['directory'];
-    $tmpfile = $tmpdir .'/scale_image_tmp_'. md5($image . microtime());
-    if (!phorum_api_write_file($tmpfile, $image)) return NULL;
-
-    // Get the image information and clean up the temporary file.
-    $file_info = getimagesize($tmpfile);
-    @unlink($tmpfile);
-    if ($file_info === FALSE) return phorum_api_error(
-        PHORUM_ERRNO_ERROR,
-        'Running getimagesize() on the image data failed'
-    );
+    // Retrieve image info.
+    $image_info = phorum_api_image_info($image);
+    if ($image_info === FALSE) return FALSE;
 
     // Add the image data to the return array.
-    $img['cur_w']     = $img['new_w']    = $file_info[0];
-    $img['cur_h']     = $img['new_h']    = $file_info[1];
-    $img['cur_mime']  = $img['new_mime'] = $file_info['mime'];
-
-    // We support only GIF, JPG and PNG images.
-    if (substr($img['cur_mime'], 0, 6) == 'image/') {
-        $type = substr($img['cur_mime'], 6);
-        if ($type != 'jpeg' && $type != 'gif' && $type != 'png') {
-            return phorum_api_error(
-                PHORUM_ERRNO_ERROR,
-                "Scaling image type \"{$img['cur_mime']}\" is not supported"
-            );
-        }
-    } else {
-        return phorum_api_error(
-            PHORUM_ERRNO_ERROR,
-            'The file does not appear to be an image'
-        );
-    }
+    $img['cur_w']     = $img['new_w']    = $image_info['width'];
+    $img['cur_h']     = $img['new_h']    = $image_info['height'];
+    $img['cur_mime']  = $img['new_mime'] = $image_info['mime'];
 
     // Check if scaling is required and if yes, what the new size should be.
     // First, determine width and height scale factors.
@@ -163,17 +213,159 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         $img['new_h'] = $max_h;
     }
 
+    // Use phorum_api_image_clip() to scale the image.
+    return phorum_api_image_clip(
+      $image, 0, 0, $img['cur_w'], $img['cur_h'],
+      $img['new_w'], $img['new_h'], $method
+    );
+}
+// }}}
+
+// {{{ Function: phorum_api_image_clip()
+/**
+ * Clip a part from an image and optionally, resize it.
+ *
+ * This function can be used to clip a part of an image. You can specifiy
+ * width and/or a height to which to scale the clipped image.
+ *
+ * Below, you see an image of the way in which a clip is defined by the
+ * function parameters. $clip_x, $clip_y, $clip_w and $clip_h.
+ * <code>
+ * +------------------------------------------+
+ * |                       ^                  |
+ * |                       |                  |
+ * |                     clip_y               |
+ * |                       |                  |
+ * |                       v                  |
+ * |            +-------------------+   ^     |
+ * |            |                   |   |     |
+ * |<--clip_x-->|                   |   |     |
+ * |            |      CLIPPED      |   |     |
+ * |            |       IMAGE       | clip_h  |
+ * |            |                   |   |     |
+ * |            |                   |   |     |
+ * |            +-------------------+   v     |
+ * |                                          |
+ * |            <-------clip_w------>         |
+ * |                                          |
+ * +------------------------------------------+
+ * </code>
+ *
+ * @param string $image
+ *     The raw binary image data.
+ *
+ * @param integer $clip_x
+ *     The X-offset for the clip, where 0 indicates the left of the image.
+ * @param integer $clip_y
+ *     The Y-offset for the clip, where 0 indicates the top of the image.
+ * @param integer $clip_w
+ *     The width of the clip to take out of the image.
+ * @param integer $clip_h
+ *     The height of the clip to take out of the image.
+ *
+ * @param integer $dst_w
+ *     The width for the created clip image in pixels.
+ *     Use NULL or 0 (zero) to indicate that the width should be
+ *     the same as the $clip_w parameter.
+ * @param integer $dst_h
+ *     The height for the created clip image in pixels.
+ *     Use NULL or 0 (zero) to indicate that the height should be
+ *     the same as the $clip_h parameter.
+ *
+ * @param string $method
+ *     The method to use for scaling the image. By default, this function
+ *     will try to autodetect a working method. Providing a $method parameter
+ *     is mostly useful for debugging purposes. Available methods (in the
+ *     order in which they are probed in the code) are:
+ *     - imagick : using the ImageMagick library (requires extension "imagick")
+ *     - gd      : using the GD library (requires extension "gd")
+ *     - convert : using the ImageMagick "convert" tool (requires the
+ *                 ImageMagick package to be installed on the server and does
+ *                 not work in combination with some PHP safety restrictions).
+ *
+ * @return mixed
+ *     FALSE is returned in case creating the clip image failed. The function
+ *     {@link phorum_api_error_message()} can be used to retrieve information
+ *     about the error that occurred.
+ *
+ *     An array is returned in case creating the clip image did work.
+ *     This array contains the following fields:
+ *     - image    : The scaled down image. NULL if no scaling was needed.
+ *     - method   : The method that was used to create the thumbnail.
+ *     - cur_w    : The width of the original $image.
+ *     - cur_h    : The height of the original $image.
+ *     - cur_mime : The MIME type of the original $image.
+ *     - new_w    : The width of the scaled down image.
+ *     - new_h    : The height of the scaled down image.
+ *     - new_mime : The MIME type of the scaled down image,
+ */
+function phorum_api_image_clip(
+    $image,
+    $clip_x = 0,    $clip_y = 0,
+    $clip_w = NULL, $clip_h = NULL, 
+    $dst_w  = NULL, $dst_h  = NULL,
+    $method = NULL)
+{
+    global $PHORUM;
+
+    settype($clip_x, 'int');
+    settype($clip_y, 'int');
+    settype($clip_w, 'int');
+    settype($clip_h, 'int');
+    settype($dst_w,  'int');
+    settype($dst_h,  'int');
+
+    // Reset error storage.
+    $PHORUM['API']['errno'] = NULL;
+    $PHORUM['API']['error'] = NULL;
+    $error = NULL;
+
+    // Initialize the return array.
+    $img = array(
+        'image'    => NULL,
+        'new_mime' => NULL
+    );
+
+    // Retrieve image info.
+    $image_info = phorum_api_image_info($image);
+    if ($image_info === FALSE) return FALSE;
+
+    // The clip width and height are inherited from the image
+    // width and height, unless they are set.
+    if (empty($clip_w)) $clip_w = $image_info['width']  - $clip_x;
+    if (empty($clip_h)) $clip_h = $image_info['height'] - $clip_y;
+
+    // The target image width and height are inherited from the clip
+    // width and height, unless they are set.
+    if (empty($dst_w)) $dst_w = $clip_w;
+    if (empty($dst_h)) $dst_h = $clip_h;
+
+    // Add the image data to the return array.
+    $img['cur_w']     = $image_info['width'];
+    $img['cur_h']     = $image_info['height'];
+    $img['new_w']     = $dst_w;
+    $img['new_y']     = $dst_h;
+    $img['cur_mime']  = $img['new_mime'] = $image_info['mime'];
+
+    // Check if the requested clip fits the source image size.
+    if (($clip_x + $clip_w) > $img['cur_w']) {
+        return phorum_api_error(
+            PHROM_ERRNO_ERROR,
+            "The clip X offset $clip_x + clip width $clip_w exceeds " .
+            "the source image width {$img['cur_w']}"
+        );
+    }
+    if (($clip_y + $clip_h) > $img['cur_h']) {
+        return phorum_api_error(
+            PHROM_ERRNO_ERROR,
+            "The clip Y offset $clip_y + clip height $clip_h exceeds " .
+            "the source image height {$img['cur_h']}"
+        );
+    }
+
     // -----------------------------------------------------------------
     // Try to use the imagick library tools
     // -----------------------------------------------------------------
-
-    // First, try to load the imagick extension if it is not loaded yet.
-    // This way we can make this work on systems where imagick is not built-in
-    // or loaded from the PHP ini.
-    if (($method === NULL || $method == 'imagick') &&
-        !extension_loaded('imagick')) {
-        @dl('imagick.so');
-    }
 
     if (($method === NULL || $method == 'imagick') &&
         extension_loaded('imagick') && class_exists('Imagick'))
@@ -182,8 +374,14 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
 
         $imagick = new Imagick();
         $imagick->readImageBlob($image);
-        $imagick->thumbnailImage($img['new_w'], $img['new_h'], TRUE);
+        $imagick->cropImage($clip_w, $clip_h, $clip_x, $clip_y);
+
+        // Remove the canvas around the cropped image (necessary for GIFs.)
+        $imagick->setImagePage(0, 0, 0, 0);
+
+        $imagick->thumbnailImage($dst_w, $dst_h, FALSE);
         $imagick->setFormat("jpg");
+
         $img['image']    = $imagick->getimageblob();
         $img['new_mime'] = 'image/'.$imagick->getFormat();
         $img['method']   = 'imagick';
@@ -194,14 +392,6 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     // -----------------------------------------------------------------
     // Try to use the GD library tools
     // -----------------------------------------------------------------
-
-    // First, try to load the GD extension if it is not loaded yet.
-    // This way we can make this work on systems where gd is not built-in
-    // or loaded from the PHP ini.
-    if (($method === NULL || $method == 'gd') &&
-        !extension_loaded('gd')) {
-        @dl('gd.so');
-    }
 
     if (($method === NULL || $method == 'gd') &&
         extension_loaded('gd') &&
@@ -248,7 +438,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
             else
             {
                 // Create the scaled image.
-                $scaled = imagecreatetruecolor($img['new_w'], $img['new_h']);
+                $scaled = imagecreatetruecolor($dst_w, $dst_h);
 
                 //Retain transparency.
                 $trans_idx = imagecolortransparent($original);
@@ -269,9 +459,12 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
 
                 // Scale the image.
                 imagecopyresampled(
-                    $scaled, $original, 0, 0, 0, 0,
-                    $img['new_w'], $img['new_h'],
-                    $img['cur_w'], $img['cur_h']
+                    $scaled,          // destination image
+                    $original,        // source image
+                    0,       0,       // destination x + y 
+                    $clip_x, $clip_y, // source x + y
+                    $dst_w,  $dst_h,  // destination width + height
+                    $clip_w, $clip_h  // source width + height
                 );
 
                 // Create the jpeg output data for the scaled image.
@@ -311,9 +504,10 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         // Build the command line.
         $cmd = escapeshellcmd($convert) . ' ' .
                '- ' .
-               '-thumbnail ' . $img['new_w'] .'x'. $img['new_h'] . ' ' .
-               '-write jpeg:- ' .
-               '--'; // Otherwise I get: option requires an argument `-write'
+               "-crop {$clip_w}x{$clip_h}+{$clip_x}+{$clip_y} " .
+               '+repage ' .
+               '-thumbnail ' . $dst_w .'x'. $dst_h . '\! ' .
+               'jpeg:-';
 
         // Run the command.
         $descriptors = array(
