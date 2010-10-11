@@ -554,15 +554,17 @@
 	}
 	
 	
+  /* Changed for Phorum editor tools */
 	function showColorPicker(inputObj)
 	{
-		if(!color_picker_div){
-			color_picker_div = document.createElement('DIV');
+		if (!color_picker_div)
+    {
+			color_picker_div = document.createElement('div');
 			color_picker_div.id = 'dhtmlgoodies_colorPicker';
 			color_picker_div.style.display='none';
 			document.body.appendChild(color_picker_div);
 			createColorPickerTopRow(color_picker_div);			
-			var contentDiv = document.createElement('DIV');
+			var contentDiv = document.createElement('div');
 			contentDiv.id = 'color_picker_content';
 			color_picker_div.appendChild(contentDiv);			
 			createWebColors(contentDiv);
@@ -570,14 +572,10 @@
 			createAllColorDiv(contentDiv);
 			createStatusBar(color_picker_div);			
 
-      /* Changed for Phorum editor tools */
       editor_tools_register_popup_object(color_picker_div);
 		}		
 
-        /* Changed for Phorum editor tools */
-		if(color_picker_div.style.display=='none' || color_picker_active_input!=inputObj){editor_tools_hide_all_popups(); color_picker_div.style.display='block';} else color_picker_div.style.display='none';		
-		color_picker_div.style.left = colorPickerGetLeftPos(inputObj) + 'px';
-		color_picker_div.style.top = colorPickerGetTopPos(inputObj) + inputObj.offsetHeight + 2 + 'px';
+    editor_tools_toggle_popup(color_picker_div, inputObj);
 		color_picker_active_input = inputObj;		
 	}
 
