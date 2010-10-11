@@ -1,5 +1,0 @@
-<Files ~ "(^README$|\.(gif|js|css$))">
-    Order allow,deny
-    Allow from all
-</Files>
-
