@@ -27,6 +27,7 @@
 }
 
 #spamhurdles_captcha_asciiart {
+    font-family: "courier new", courier, monospace;
     line-height: 4px;
     font-size: 6px;
     font-weight: bold;
