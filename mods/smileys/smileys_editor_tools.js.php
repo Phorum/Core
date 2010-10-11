@@ -79,7 +79,7 @@ function editor_tools_handle_smiley()
     if (!editor_tools_smiley_picker_obj)
     {
         // Create a new popup.
-        var popup = editor_tools_construct_popup('editor-tools-smiley-picker','l');
+        var popup = editor_tools_construct_popup('editor-tools-smiley-picker','r');
         editor_tools_smiley_picker_obj = popup[0];
         var content_obj = popup[1];
 
@@ -124,55 +124,6 @@ function editor_tools_handle_smiley_select(smiley)
     editor_tools_focus_textarea();
 }
 
-function editor_tools_handle_subjectsmiley()
-{
-    // Create the smiley picker on first access.
-    if (!editor_tools_subjectsmiley_picker_obj)
-    {
-        // Create a new popup.
-        var popup = editor_tools_construct_popup('editor-tools-subjectsmiley-picker','l');
-        editor_tools_subjectsmiley_picker_obj = popup[0];
-        var content_obj = popup[1];
-
-        // Populate the new popup.
-        for (var i = 0; i < editor_tools_subjectsmileys.length; i++)
-        {
-            var s = editor_tools_subjectsmileys[i];
-            var r = editor_tools_subjectsmileys_r[i];
-            var a = editor_tools_subjectsmileys_a[i];
-
-            var a_obj = document.createElement('a');
-            a_obj.href = 'javascript:editor_tools_handle_subjectsmiley_select("'+s+'")';
-            var img_obj = document.createElement('img');
-            img_obj.src = r;
-            img_obj.alt = a;
-            img_obj.title = a;
-            a_obj.appendChild(img_obj);
-            content_obj.appendChild(a_obj);
-        }
-
-        // Register the popup with the editor tools.
-        editor_tools_register_popup_object(editor_tools_subjectsmiley_picker_obj);
-    }
-
-    // Display the popup.
-    var button_obj = document.getElementById('editor-tools-img-subjectsmiley');
-    editor_tools_toggle_popup(
-        editor_tools_subjectsmiley_picker_obj,
-        button_obj,
-        editor_tools_subjectsmileys_popupwidth,
-        editor_tools_subjectsmileys_popupoffset
-    );
-}
-
-// Called by the subject smiley picker.
-function editor_tools_handle_subjectsmiley_select(smiley)
-{
-    smiley = editor_tools_strip_whitespace(smiley);
-    editor_tools_add_tags(smiley, '', 'subject');
-    editor_tools_focus_subjectfield();
-}
-
 // ----------------------------------------------------------------------
 // Tool: subject smiley
 // ----------------------------------------------------------------------
@@ -183,7 +134,7 @@ function editor_tools_handle_subjectsmiley()
     if (!editor_tools_subjectsmiley_picker_obj)
     {
         // Create a new popup.
-        var popup = editor_tools_construct_popup('editor-tools-subjectsmiley-picker','l');
+        var popup = editor_tools_construct_popup('editor-tools-subjectsmiley-picker','r');
         editor_tools_subjectsmiley_picker_obj = popup[0];
         var content_obj = popup[1];
 
