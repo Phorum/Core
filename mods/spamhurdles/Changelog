@@ -1,0 +1,278 @@
+Changelog:
+----------
+
+v2.0.2
+
+    - Implemented more complete logging of blocked form posts using the
+      Event Logging module.
+
+    - Extended the settings for this module to make it possible to enable
+      or disable the logging of form posts that are blocked by the
+      Spam Hurdles module.
+
+    - Added code to the settings screen that will check if all templates 
+      contain the required template hooks. If there are template files that
+      do not contain the required hooks, then a warning message is printed
+      in the settings screen, telling the admin what templates to update
+      with what hook.
+
+v2.0.1
+
+    - Fixed a problem in the reCapthca component.
+      Thanks to Phorum.org user DavidVB for the patch!
+
+v2.0.0
+
+    - Fully restructured the code by splitting the functions into API
+      functions (in api.php) and hook implementation functions
+      (in spamhurdles.php).
+
+    - The spam hurdles are now implemented using a plugin system,
+      which keeps the code for the various spam hurdles nicely separated
+      and which makes it easier to implement extra spam hurdles.
+
+    - Due to the plugin system, all spam hurdles are now available
+      for all protected forms. Therefore, user registration
+      is now protected by all hurdles and not only by a CAPTCHA.
+
+    - It is now possible to protect multiple forms on a single page.
+
+    - Encryption technology (AES) is now used to be able to send the spam
+      hurdles data encrypted to the client, instead of having to store this
+      data in the database server. Only if the duplicate submit check is
+      enabled, the database will be used to store posting keys that have
+      already been used. Still, the database load caused by storing used
+      keys is a lot less than storing all generated keys, like the
+      predecessor of this module did.
+
+    - Put the modified iScramble() in the API code as spamhurdles_iScramble(),
+      so we won't run into name space issues when other code wants to use
+      the original iScramble code.
+
+    - The path to the "flite" binary is discovered by the settings screen
+      automatically now. Before, it was only discovered by the defaults.php
+      script on first load, but that doesn't help the case where Flite
+      is installed after the module was installed.
+
+    - Generating a spoken CAPTCHA or a CAPTCHA image is now done using the
+      "addon" hook. This prevents the need to do this kind of task from
+      some more generic hook like "common" (which makes Phorum load the module
+      code on each request and not only when neccessary).
+
+    - From Phorum 5.2.15 and up, this module can also be used to protect
+      the private message (PM) interface.
+
+v1.1.6
+
+    - Added a fix for making the module database install code work for
+      MySQL strict mode. Thanks to phorum.org user "shaneshack" for
+      finding and reporting the problem!
+
+v1.1.5
+
+    - Added Turkish language file.
+      Thanks to Serdar of paticik.com.
+
+    - Added Latin American Spanish translation.
+      Thanks to Phorum user marcelarr.
+
+v1.1.4
+
+    - Added a patch to the database layer as provided by Adam Donnison
+      of mysql.com. This patch makes sure that the DB_MASTERQUERY flag
+      is used when needed, so the module will work correctly when using
+      it within a replicated database setup.
+      Adam also suggested a change to allow calling spamhurdles_db_put()
+      twice for the same data, without raising a duplicate key error.
+      This feature was implemented, only a little differently than suggested,
+      because the code was MySQL specific, while the database layer is
+      written with generic SQL in mind.
+      Thanks a lot Adam!
+
+v1.1.3
+
+    - Implemented new CAPTCHA type: reCAPTCHA.
+      See http://www.recaptcha.net/ for more info.
+
+    - Checking of the CAPTCHA answer is now done from the CAPTCHA objects
+      (new method check_answer()). Before, we had a generic piece of code
+      in the spamhurdles.php module script.
+      This is done to be able to implement the non-standard answer check
+      that is needed for reCAPTCHA.
+
+v1.1.2
+
+    - Fixed some problems in the Postgres database layer code.
+      I do not run a postgresql installation, so I could not test
+      the db layer myself. Thanks to Rick (user eeek on phorum.org)
+      for finding and fixing the problems.
+
+v1.1.1
+
+    - Fixed a non fatal typo bug in the defaults.php. The key_min_ttl and
+      key_max_ttl were always set to a default value, because of a wrong
+      if() statement in front of them. But since these parameters are not
+      (yet) configurable through the admin interface, no harm was done.
+
+    - Fixed the database table definition for the mysqli database layer.
+      That table description was missing the create and expire time fields.
+
+    - Language support:
+      * Added French language support (thanks to Yves Julien).
+      * Added German (Sie, formal) language support (thanks to Katrin Luethi).
+
+v1.1.0
+
+    - Added new check: Check if an HTML commented form field is submitted
+
+      If this option is enabled, then an extra form field is added
+      to the posting form. However, this form field is embedded within
+      an HTML comment block. Because of that, normal web browsers will
+      fully ignore this extra field. On the other hand, some badly written
+      spam bots will recognize the code as a form field. If such a spam
+      bot posts a message including this extra form field, the message
+      will be blocked.
+
+      (thanks to Jerome Combaz for suggesting this check)
+
+
+    - The storage system for server side storage of data for the module
+      was changed to use the database instead of the Phorum cache layer.
+      The main reason for this was because some users on busy sites ran
+      into problems because of the large number of cache files that
+      was generated in the cache directory.
+      Installation of the required database table should be handled
+      automatically by the module.
+
+    - Language support:
+      * Fixed typo in the English language file (thanks Adam).
+      * Added Danish language support (thanks to Pascal d'Hermilly).
+      * Added Norwegian language support (thanks to Gustavo Zaera).
+
+v1.0.9
+
+    - Added a feature to make the CAPTCHA functionality
+      of this module available to external scripts (as requested
+      by Peter Hanula). Implementation could look like this:
+
+        // Show the CAPTCHA in one hook.
+        phorum_mod_spamhurdles_init("external_captcha");
+        phorum_mod_spamhurdles_build_form("external_captcha");
+
+        /* . . . */
+
+        // Check for CAPTCHA validity when posting the form.
+        $error = phorum_mod_spamhurdles_run_submitcheck("external_captcha");
+
+      Implementation details for putting the CAPTCHA in your own
+      scripts are left as an exercise to the reader.
+
+v1.0.8
+
+    - Specifically check if the tpl_editor_before_textarea hook
+      is run from the forum message editor. Some add that hook
+      to the PM editor as well, but there we do not use the
+      Spam Hurdles. Thanks to NetWalker for reporting the
+      problem.
+
+    - Added protection against upgraded Phorum installs that have
+      and old post.php script lying around (the new posting script
+      is called posting.php). The old post.php script is not
+      protected against spam and might be abused by spammers.
+      Thanks to Martin for his cooperation in tracking down
+      this problem.
+
+v1.0.7
+
+    - Fixed an error condition that could occur for the cache
+      management on the settings screen (cleaning cache before
+      a spam_hurdles cache directory is created).
+
+    - Fixed an error which could cause skipping of the
+      CAPTCHA checks. Thanks to Thomas for helping me tracking
+      down this problem.
+
+2006-09-04 v1.0.6
+
+    - Added a German (du) language file to the distribution.
+      Thanks to Netwalker.
+
+2006-08-31 v1.0.5
+
+    - Disabled all Spam Hurdles for editing posts. Before fixing
+      this, the duplicate message posting check was run and caused
+      a spam error when editing a message. Thanks to Netwalker
+      for discovering and reporting the problem.
+
+2006-08-31 v1.0.4
+
+    - Removed unused file from the package: lib/postdelay.js
+
+    - Tuned the automatic cache data cleanup a bit more. The cleanup
+      code was sometimes fired at wrong times, causing the cache
+      data to be cleaned up, while the user could still be using it,
+      resulting in an error message for the user.
+      This problem was seen on Phorum 5.1 with the Phorum 5.1 Editor
+      Tools module (the simple smiley panel one) enabled.
+
+    - On the register page, the CAPTCHA code was re-generated on
+      every click. Now the code stays the same during the
+      registration process.
+
+2006-08-30 v1.0.3
+
+    - Setting the cookie for automatically deleting old cached
+      data did trigger a PHP warning about headers that were already
+      sent in Phorum 5.1. The code is changed to set the cookie
+      through JavaScript in the page.
+
+2006-08-30 v1.0.2
+
+    - Changed the JavaScript code for disabling the post button when
+      the blockquickpost option is active. Now it checks if it can
+      actually find the post button, so it won't spawn javascript
+      errors if for some reason the form does not look like I
+      expected there.
+
+    - Since the Phorum cache will grow when spam hurdles are created,
+      an option was added to do automatic cleanup of hurdles that are
+      no longer in use. A cookie is set, to remember the last
+      key that was in use. If another key is used in the module,
+      then the key in the cookie can be cleaned up automatically.
+      This will remove most of the stale data in the Phorum cache.
+
+    - Added cache management to the module's settings screen, so the
+      cache data that is generated by this module can be purged
+      easily once in a while.
+
+    - Added a Dutch language file to the distribution.
+
+2006-08-30 v1.0.1
+
+    - Added a configuration option to set the blocking method to use
+      when a block is encountered while posting messages. You can now
+      allow users to still post their message, only make the message
+      unapproved, so a moderator can take a look at it first.
+
+      If you were running version 1.0.0 of the module, then disable
+      and re-enable the module to let Phorum see the new hooks that
+      are needed for this feature.
+
+    - Fixed a bug, which allowed spammers to bypass the checks by
+      posting final formdata without any key in it, directly to the script.
+
+    - Whether to show a CAPTCHA on signup and posting pages was not
+      determined correctly, based on the module config. The CAPTCHA would
+      always show on both pages if at least the posting CAPTCHA was enabled.
+
+    - Generated spamhurdles information does now contain information about
+      the type of form that it was generated for. This is used to prevent
+      spammers from trying to grab a registration spamhurdles key and use
+      that for processing a message form (if the registration does not
+      use a CAPTCHA, the message posting wouldn't require one either in
+      this case).
+
+2006-08-27 v1.0.0
+
+    - Initial revision
+

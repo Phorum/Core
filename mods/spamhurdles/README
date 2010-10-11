@@ -1,0 +1,241 @@
+Module  : Spam Hurdles
+Version : 2.0.2
+Author  : Maurice Makaay <maurice@phorum.org>
+
+This module sets up some hurdles for forum spammers. It implements both
+interactive and non-interactive anti-spam methods to keep away spam bots.
+On the settings page, you can control exactly what hurdles to enable.
+
+Interactive CAPTCHA's can be enabled for letting visitor solve a CAPTCHA
+before posting a form to the server. Below, you will find a description of
+all the built-in CAPTCHA types that are available for this module.
+
+
+Installation instructions:
+--------------------------
+
+- Unpack the archive;
+
+- Move the directory "spamhurdles" to the directory "mods"
+  within your Phorum installation;
+
+- Login as administrator in Phorum's administrative interface and
+  go to the "Modules" section;
+
+- Enable the module "Spam Hurdles".
+
+- Go to the settings page of the Spam Hurdles module to configure how
+  you want the Spam Hurdles module to act.
+
+
+Spoken CAPTCHA:
+---------------
+
+To help vision impaired people with solving CAPTCHA checks, it's possible
+to have the CAPTCHA spoken by a speech synthesizer.
+
+To make spoken CAPTCHA work, you need to have the program "Flite" installed
+on your system. This is not something that I can help you with. Compilation
+was pretty easy for me. I unpacked the sources, followed the build
+instructions and finally copied the program "flite" over to /usr/local/bin
+(the other parts of the package are not needed, only the flite binary).
+
+For information on Flite, see:
+http://www.speech.cs.cmu.edu/flite/
+
+If people are using other speech synthesizers and want to have support
+added to the Spam Hurdles for those, please contact me.
+
+
+Description of the available CAPTCHA types:
+-------------------------------------------
+
+This module does support multiple types of CAPTCHA. Here is an overview
+of the built-in CAPTCHA types, with a descriptions of their strong and
+weak points.
+
+********************************
+* Code, drawn using JavaScript *
+********************************
+
+  This one uses only <div> elements to draw a CAPTCHA code. The <div>
+  elements are used as pixels to build the characters. JavaScript code
+  is used to create the "pixels" and move them to the right position in
+  the CAPTCHA. Colors to use in the CAPTCHA are generated at random.
+
+  I think that this might be a quite strong CAPTCHA (at least at the
+  time of writing). Most CAPTCHA systems that exist nowadays make use
+  of a real image for displaying the code. Spammers can easily grab
+  those images to have them solved by humans in some way (workers in
+  sweatshops and porn viewers are often mentioned in this respect).
+  Because this system uses javascript and <div> elements to build the
+  code, a real image file is never created. The code is only visible
+  after rendering the HTML page and executing the JavaScript code.
+  This all will make it hard for automated bots to grab a captcha
+  "image" from the page.
+  Also, this is a system that I made up myself and that I haven't
+  encountered on my search for suitable CAPTCHA systems for Phorum.
+  That might make it something totally new that spammers don't yet
+  know.
+
+  Pro:
+  - Spammers might not yet be prepared for this type of CAPTCHA;
+  - No real image is used. The code is only visible after rendering the page;
+  - Because of the two previous pro's, the text does not have to be
+    extremely distorted to work against spammers that use OCR (optical
+    character recognition) to break CAPTCHA's.
+
+  Contra:
+  - The client will only be able to see the code if their browser
+    supports JavaScript;
+  - Not friendly for text-only browsers;
+  - Not friendly for vision impaired people (enabling the spoken
+    CAPTCHA is very much recommended when using this CAPTCHA type).
+
+*********************************
+* Code, drawn using a GIF image *
+*********************************
+
+  This one displays the CAPTCHA code using a GIF image. This is currently
+  the de facto standard for creating CAPTCHA's on websites.
+
+  For drawing characters, random fonts are used. The script
+  automatically uses all available *.ttf font files that are in
+  the module's directory mods/spamhurdles/captcha/fonts/
+  There are several resources on the net which provide free ttf fonts
+  that you can use for this CAPTCHA. See for example the site
+  http://www.webpagepublicity.com/free-fonts.html
+
+  Pro:
+  - By using different fonts, colors, rotations and backgrounds, it's
+    hard to solve this CAPTCHA by means of OCR;
+  - Visitors are probably accustomed to this type of CAPTCHA.
+
+  Contra:
+  - Because a GIF image is used, this image can be easily grabbed from
+    the page and presented to a human to have it solved;
+  - Because of its wide spread use, spammers might be very prepared
+    for handling this type of CAPTCHA;
+  - Not friendly for text-only browsers;
+  - Not friendly for vision impaired people (enabling the spoken
+    CAPTCHA is very much recommended when using this CAPTCHA type).
+  - This type of CAPTCHA requires the most system resources of them all.
+    On most systems, this is not a problem. On performance sensitive
+    systems however, you might consider using some other CAPTCHA type.
+
+*******************************
+* Code, drawn using ASCII art *
+*******************************
+
+  This one shows the CAPTCHA code using a simple ASCII art image. The
+  HTML font size is kept small, so the ASCII art won't show up too large
+  in the web page. Here's an example of how the code "UWGV9" would be
+  formatted:
+
+    **     **  **      **   ******    **     **   *******
+    **     **  **  **  **  **    **   **     **  **     **
+    **     **  **  **  **  **         **     **  **     **
+    **     **  **  **  **  **   ****  **     **   ********
+    **     **  **  **  **  **    **    **   **          **
+    **     **  **  **  **  **    **     ** **    **     **
+     *******    ***  ***    ******       ***      *******
+
+  I'm not sure if this type of CAPTCHA can be read by vision
+  impaired people, who use special tools for reading the screen.
+  I do not think this format can be easily read by those people,
+  but I found some references on the web where the same type of
+  ASCII art based CAPTCHA's were created to help blind people.
+  If anybody has conclusive information on this, let me know.
+
+  Pro:
+  - The CAPTCHA is easy to read;
+  - The CAPTCHA can even be read from text-only browsers.
+
+  Contra:
+  - It is reasonably easy for spammers to write automated bots for
+    bypassing this CAPTCHA;
+  - Not friendly for vision impaired people (enabling the spoken
+    CAPTCHA is very much recommended when using this CAPTCHA type).
+
+***************************
+* Code, plain text format *
+***************************
+
+  The simplest of them all. This CAPTCHA will not try to obfuscate the
+  CAPTCHA code in any way. It will simply display the code as a plain
+  text string on screen. Believe it or not, for a lot of websites, using
+  this CAPTCHA will already stop a lot (if not all) spam messages.
+
+  Pro:
+  - The CAPTCHA is extremely easy to read;
+  - The CAPTCHA can be read from text-only browser;
+  - The CAPTCHA is fully readable for vision impaired people.
+
+  Contra:
+  - It is very easy for spammers to write automated bots for bypassing
+    this CAPTCHA;
+
+********************************
+* Solve a simple math question *
+********************************
+
+  This CAPTCHA takes a different approach than the CAPTCHA systems above.
+  Instead of generating a code that the user has to copy, this CAPTCHA
+  generates a simple mathematics question (like "How much is 5 plus 21?").
+  The user has to provide the correct answer to this question.
+
+  Pro:
+  - The CAPTCHA is extremely easy to read;
+  - The CAPTCHA can be read from text-only browser;
+  - The CAPTCHA is fully readable for vision impaired people.
+
+  Contra:
+  - It is reasonably easy for spammers to write automated bots for
+    bypassing this CAPTCHA;
+
+*************************************
+* Code, using the reCAPTCHA service *
+*************************************
+
+  This CAPTCHA uses the service from http://recaptcha.net/ to display and
+  check a CAPTCHA. The service uses digitally scanned books as the source
+  for the CAPTCHA images. By solving CAPTCHAs, your users will participate
+  in converting these books into real text. For information on how this
+  CAPTCHA does do its job, please visit the reCAPTCHA web site.
+
+  Pro:
+  - The reason for setting up reCAPTCHA, was that the existing OCR software
+    could not correctly read the scanned books. So it has been proven that
+    the CAPTCHA itself is not really easy to process by a computer.
+  - There is an audio CAPTCHA available as a backup for vision impaired
+    people.
+  - The service runs on the reCAPTCHA systems, so there's not much
+    extra load on your server.
+  - CAPTCHAs are solved for a good cause. It's not wasted time for your users.
+
+  Contra:
+  - Sometimes, the CAPTCHAs are hard to read for humans as well.
+  - The CAPTCHA is added to the page using JavaScript. This makes the
+    accessibility options less attractive, because they will probably
+    not work for text-only browsers.
+
+
+COMPARISON TABLE:
+
+Below, I tried to do a comparison between the different CAPTCHA types.
+Part of it is subjective of course (people who have trouble with math
+will for example rate the MAPTCHA as being very user unfriendly :-),
+but it does give a general idea.
+
++--------------+----------+----------+----------+-----------+
+|              | user     | browser  | accessi- | hard for  |
+| CAPTCHA type | friendly | friendly | bility   | spammers  |
++--------------+----------+----------+----------+-----------+
+| JavaScript   | +++      | ++       | +        | +++++     |
+| GIF image    | +++      | +++      | +        | ++++      |
+| ASCII art    | ++++     | ++++     | +++      | +++       |
+| plain text   | +++++    | +++++    | +++++    | +         |
+| MAPTCHA      | +++      | +++++    | +++++    | ++        |
+| reCAPTCHA    | +++      | +++      | ++++     | ++++      |
++--------------+----------+----------+----------+-----------+
+
