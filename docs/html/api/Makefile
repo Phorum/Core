@@ -1,10 +1,12 @@
-FILES="include/api.php,include/db/mysql.php"
-DIRECTORIES="include/api"
+FILES="./include/api.php,./include/db/mysql.php"
+DIRECTORIES="./include/api"
+IGNORE="compile.php"
 
 all:
 	(cd ../../..; phpdoc \
 	       -f $(FILES) \
 	       -d $(DIRECTORIES) \
+	       -i $(IGNORE) \
 	       -t docs/html/api \
 	       -ti "Phorum API Documentation" \
 	       -o HTML:frames:phphtmllib \
