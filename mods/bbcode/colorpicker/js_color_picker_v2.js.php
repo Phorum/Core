@@ -556,11 +556,12 @@
   /* Changed for Phorum editor tools */
 	function showColorPicker(inputObj)
 	{
-		if(!color_picker_div){
+		if (!color_picker_div)
+    {
 			color_picker_div = document.createElement('div');
 			color_picker_div.id = 'dhtmlgoodies_colorPicker';
 			color_picker_div.style.display='none';
-      document.getElementById('editor-tools').appendChild(color_picker_div);
+      document.body.appendChild(color_picker_div);
 			createColorPickerTopRow(color_picker_div);			
 			var contentDiv = document.createElement('div');
 			contentDiv.id = 'color_picker_content';

@@ -198,7 +198,7 @@ function editor_tools_construct_popup(create_id, anchor)
     popup_obj.id = create_id;
     popup_obj.className = 'editor-tools-popup';
     popup_obj.style.display = 'none';
-    document.getElementById('editor-tools').appendChild(popup_obj);
+    document.body.appendChild(popup_obj);
 
     popup_obj._anchor = anchor;
 
@@ -215,7 +215,7 @@ function editor_tools_toggle_popup(popup_obj, button_obj, width, leftoffset)
 {
     // Determine where to show the popup on screen.
     var $button_obj = $PJ(button_obj);
-    var pos  = $button_obj.position();
+    var pos  = $button_obj.offset();
     var top  = pos.top + 2 + $button_obj.outerHeight();
     var left = pos.left;
 
