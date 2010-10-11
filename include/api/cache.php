@@ -52,31 +52,22 @@ if (file_exists($cacheconfig) && ! include_once $cacheconfig)
     print '<html><head><title>Phorum error</title></head><body>';
     print '<h2>Phorum cache configuration error</h2>';
 
-    // No database configuration found.
-    if (!file_exists($cacheconfig)) { ?>
-            Phorum has been installed on this server, but the 
-            configuration<br />for the caching systen has not yet been made. 
-            Please read<br /> <a href="docs/install.txt">docs/install.txt</a>
-            for installation instructions.
+    $fp = fopen($cacheconfig, 'r');
+    // Unable to read the configuration file.
+    if (!$fp) { ?>
+        A cache configuration file was found in
+        {phorum dir}/include/config/cache.php,<br />
+        but Phorum was unable to read it. Please check the file 
+        permissions<br />for this file.
     <?php
+    // Unknown error.
     } else {
-        $fp = fopen($cacheconfig, 'r');
-        // Unable to read the configuration file.
-        if (!$fp) { ?>
-            A cache configuration file was found in {phorum
-            dir}/include/config/cache.php,<br />
-            but Phorum was unable to read it. Please check the file 
-            permissions<br />for this file.
+        fclose($fp); ?>
+        A cache configuration file was found in 
+        {phorum dir}/include/config/cache.php,<br />but it could not be 
+        loaded. It possibly contains one or more syntax errors.<br />
+        Please check your configuration file.
         <?php
-        // Unknown error.
-        } else {
-            fclose($fp); ?>
-            A cache configuration file was found in 
-            {phorum dir}/include/config/cache.php,<br />but it could not be 
-            loaded. It possibly contains one or more syntax errors.<br />
-            Please check your configuration file.
-            <?php
-        }
     }
 
     print '</body></html>';
