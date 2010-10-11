@@ -1,0 +1,34 @@
+title: Spam Hurdles
+desc: This module sets up some hurdles for forum spammers. It implements both interactive (CAPTCHA) and non-interactive anti-spam methods to keep away spam bots. On the settings page, you can control exactly what hurdles to enable.
+version: 2.0.2
+author: Phorum Dev Team
+url: http://www.phorum.org/
+
+hook: lang|
+hook: css_register|phorum_mod_spamhurdles_css_register
+hook: javascript_register|phorum_mod_spamhurdles_javascript_register
+
+# For allowing spam hurdles to run addon scripts.
+# Currently used by the speech system and by the image captcha.
+hook: addon|phorum_mod_spamhurdles_addon
+
+# For implementing spam hurdles in the message posting process.
+hook: before_editor|phorum_mod_spamhurdles_before_editor
+hook: tpl_editor_before_textarea|phorum_mod_spamhurdles_tpl_editor_before_textarea
+hook: before_post|phorum_mod_spamhurdles_pre_post
+hook: check_post|phorum_mod_spamhurdles_check_post
+hook: after_post|phorum_mod_spamhurdles_after_post
+
+# For implementing spam hurdles in the registration proces.
+hook: tpl_register_form|phorum_mod_spamhurdles_tpl_register_form
+hook: before_register|phorum_mod_spamhurdles_before_register
+hook: after_register|phorum_mod_spamhurdles_after_register
+
+# For implementing spam hurdles in the PM posting process.
+hook: tpl_pm_editor_before_textarea|phorum_mod_spamhurdles_tpl_pm_editor_before_textarea
+hook: pm_before_send|phorum_mod_spamhurdles_pm_before_send
+
+# Used for javascript that has to run after page loading and for
+# garbage cleaning purposes, so let's push it as far down as possible.
+hook: before_footer|phorum_mod_spamhurdles_before_footer
+priority: run hook before_footer after *

@@ -1,0 +1,22 @@
+Once 5.2 goes stable, we can remove 5.1 specific code / documentation and
+make this module fully 5.2-only.
+
+Possible checks to add:
+
+- Limit the amount of URL's that a user can use in a single post;
+
+- http://translate.google.com/translate?hl=en&sl=fr&u=http%3A%2F%2Fconseil-recherche-innovation.net%2Findex.php%2F2006%2F03%2F23%2F61-un-antispam-simpliste-pour-dotclear
+
+Possible CAPTCHA types to add:
+
+- A simple trivia quiz CAPTCHA type.
+  ("what's larger: elephant or mouse?");
+
+- A captcha for the non-graphical captcha that's in the modules forum
+  and made by Sheik.
+
+Features:
+
+- Add an option to give a CAPTCHA class a chance to create its own
+  settings screen.
+
