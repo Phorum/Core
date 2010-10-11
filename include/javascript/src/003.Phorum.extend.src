@@ -7,7 +7,7 @@ var Parent = Phorum.extend(function (args) {
     // Constructor code
     ...
 }, {
-    // Properties and methods to add to the prototype of Foo.
+    // Properties and methods to add to the prototype of Parent.
     prop: 'parent property',
     func: function () { alert('cool'); }
     ...

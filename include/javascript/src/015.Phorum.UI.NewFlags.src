@@ -44,7 +44,7 @@ Phorum.UI.NewFlags = {
      */
     callbacks: {
         global: [ ],
-        action: { },
+        action: { }
     },
 
     /**
@@ -76,7 +76,7 @@ Phorum.UI.NewFlags.registerCallback(function (mode, item_id) {
     {
         if (!(callback instanceof Function)) {
             throw this.className + '.registerCallback(): ' +
-            'the callback must be a function'
+                  'the callback must be a function';
         }
 
         this.callbacks.global.push(callback);
@@ -127,7 +127,7 @@ In template:
     {
         if (!(callback instanceof Function)) {
             throw this.className + '.registerActionCallback(): ' +
-            'the callback must be a function'
+                  'the callback must be a function';
         }
         if (this.callbacks.action[action] === undefined) {
             this.callbacks.action[action] = [ ];
@@ -305,12 +305,21 @@ For example:
         // new flag action linked to them.
         var regexp = '^new-flag\\[(\\w+),';
         switch (mode) {
-        case "vroots"   : regexp += '(\\d+)?(,\\d+){0,2}'; break;
-        case "forums"   : regexp += item_id + '(,\\d+){0,2}'; break;
-        case "threads"  : regexp += '\\d+,' + item_id + '(,\\d+)?'; break;
-        case "messages" : regexp += '\\d+,\\d+,' + item_id; break;
-        default         : throw func + ': ' +
-                          'processMatchingTags(): illegal mode: ' + mode;
+        case "vroots":
+            regexp += '(\\d+)?(,\\d+){0,2}';
+            break;
+        case "forums":
+            regexp += item_id + '(,\\d+){0,2}';
+            break;
+        case "threads":
+            regexp += '\\d+,' + item_id + '(,\\d+)?';
+            break;
+        case "messages":
+            regexp += '\\d+,\\d+,' + item_id;
+            break;
+        default:
+            throw func + ': ' +
+                  'processMatchingTags(): illegal mode: ' + mode;
         }
         regexp += '\\]';
         var re = new RegExp();

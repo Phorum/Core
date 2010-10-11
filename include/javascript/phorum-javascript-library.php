@@ -167,7 +167,7 @@ var Parent = Phorum.extend(function (args) {
     // Constructor code
     ...
 }, {
-    // Properties and methods to add to the prototype of Foo.
+    // Properties and methods to add to the prototype of Parent.
     prop: 'parent property',
     func: function () { alert('cool'); }
     ...
@@ -906,7 +906,7 @@ Phorum.UI.Element = Phorum.extend(
                 this.$object.val(value);
             }
 
-            var value = this.$object.val();
+            value = this.$object.val();
             if (value === null || value === undefined) {
                 value = '';
             } else {
@@ -1238,7 +1238,7 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
             // is focused by default.
             if (field_name === undefined)
             {
-                field_name = 'body'
+                field_name = 'body';
                 for (var i = 0; i < this.focusFields.length; i++)
                 {
                     // Retrieve the field from the editor.
@@ -1292,6 +1292,7 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
                 // hidden fields.
                 if ($fields.length > 0)
                 {
+                    var field;
                     var $f = $fields.last();
 
                     // For text input fields, we use a different base class,
@@ -1545,7 +1546,7 @@ Phorum.UI.NewFlags = {
      */
     callbacks: {
         global: [ ],
-        action: { },
+        action: { }
     },
 
     /**
@@ -1577,7 +1578,7 @@ Phorum.UI.NewFlags.registerCallback(function (mode, item_id) {
     {
         if (!(callback instanceof Function)) {
             throw this.className + '.registerCallback(): ' +
-            'the callback must be a function'
+                  'the callback must be a function';
         }
 
         this.callbacks.global.push(callback);
@@ -1628,7 +1629,7 @@ In template:
     {
         if (!(callback instanceof Function)) {
             throw this.className + '.registerActionCallback(): ' +
-            'the callback must be a function'
+                  'the callback must be a function';
         }
         if (this.callbacks.action[action] === undefined) {
             this.callbacks.action[action] = [ ];
@@ -1806,12 +1807,21 @@ For example:
         // new flag action linked to them.
         var regexp = '^new-flag\\[(\\w+),';
         switch (mode) {
-        case "vroots"   : regexp += '(\\d+)?(,\\d+){0,2}'; break;
-        case "forums"   : regexp += item_id + '(,\\d+){0,2}'; break;
-        case "threads"  : regexp += '\\d+,' + item_id + '(,\\d+)?'; break;
-        case "messages" : regexp += '\\d+,\\d+,' + item_id; break;
-        default         : throw func + ': ' +
-                          'processMatchingTags(): illegal mode: ' + mode;
+        case "vroots":
+            regexp += '(\\d+)?(,\\d+){0,2}';
+            break;
+        case "forums":
+            regexp += item_id + '(,\\d+){0,2}';
+            break;
+        case "threads":
+            regexp += '\\d+,' + item_id + '(,\\d+)?';
+            break;
+        case "messages":
+            regexp += '\\d+,\\d+,' + item_id;
+            break;
+        default:
+            throw func + ': ' +
+                  'processMatchingTags(): illegal mode: ' + mode;
         }
         regexp += '\\]';
         var re = new RegExp();

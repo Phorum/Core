@@ -181,7 +181,7 @@ Phorum.UI.Element = Phorum.extend(
                 this.$object.val(value);
             }
 
-            var value = this.$object.val();
+            value = this.$object.val();
             if (value === null || value === undefined) {
                 value = '';
             } else {

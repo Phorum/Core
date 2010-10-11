@@ -99,7 +99,7 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
             // is focused by default.
             if (field_name === undefined)
             {
-                field_name = 'body'
+                field_name = 'body';
                 for (var i = 0; i < this.focusFields.length; i++)
                 {
                     // Retrieve the field from the editor.
@@ -153,6 +153,7 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
                 // hidden fields.
                 if ($fields.length > 0)
                 {
+                    var field;
                     var $f = $fields.last();
 
                     // For text input fields, we use a different base class,
