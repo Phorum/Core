@@ -4,6 +4,8 @@
 // Direct access to this file is not allowed.
 if (! defined("PHORUM_ADMIN")) return;
 
+require_once './mods/event_logging/db.php';
+
 // Load the constants and defaults that we use.
 require_once PHORUM_PATH.'/mods/event_logging/constants.php';
 require_once PHORUM_PATH.'/mods/event_logging/defaults.php';

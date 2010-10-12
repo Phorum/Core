@@ -18,8 +18,8 @@ global $PHORUM;
 $PHORUM["MOD_EVENT_LOGGING"]["LOOPLOCK"] = 0;
 $PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"]  = 0;
 
-require_once('./mods/event_logging/db.php');
-require_once('./mods/event_logging/defaults.php');
+require_once './mods/event_logging/db.php';
+require_once './mods/event_logging/defaults.php';
 
 function phorum_mod_event_logging_common_pre()
 {
