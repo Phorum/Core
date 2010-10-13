@@ -69,14 +69,6 @@ function phorum_api_http_get($url, $method = NULL)
     // Try to use the CURL library tools
     // -----------------------------------------------------------------
 
-    // First, try to load the curl extension if it is not loaded yet.
-    // This way we can make this work on systems where curl is not built-in
-    // or loaded from the PHP ini.
-    if (($method === NULL || $method == 'curl') &&
-        !extension_loaded('curl')) {
-        @dl('curl.so');
-    }
-
     if (($method === NULL || $method == 'curl') &&
         extension_loaded('curl'))
     {
@@ -187,14 +179,6 @@ function phorum_api_http_get($url, $method = NULL)
     // Try to use a direct fsockopen call.
     // -----------------------------------------------------------------
 
-    // First, try to load the socket extension if it is not loaded yet.
-    // This way we can make this work on systems where sockets are not
-    // built-in or loaded from the PHP ini.
-    if (($method === NULL || $method == 'socket') &&
-        !extension_loaded('socket')) {
-        @dl('socket.so');
-    }
-
     if (($method === NULL || $method == 'socket') &&
         extension_loaded('sockets'))
     {
@@ -211,13 +195,6 @@ function phorum_api_http_get($url, $method = NULL)
         $work_url = $url;
         for(;;)
         {
-            // Only HTTP allowed.
-            if (!preg_match('!^https?://!i', $work_url)) {
-                $error = "Denying non-HTTP URL: $work_url";
-                $fatal = TRUE;
-                break;
-            }
-
             // Looping prevention.
             if ($max_redirects-- == 0) {
                 $error = "Bailed out after too many page redirects.";
@@ -508,6 +485,20 @@ function phorum_api_http_get_analyze($requested_url, $code, $header)
                 'fatal' => TRUE
             );
     }
+}
+
+/**
+ * Check if there is support available for retrieving files via HTTP using
+ * phorum_api_http_get_supported().
+ *
+ * @return boolean
+ *     TRUE in case files can be retrieving using HTTP, FALSE otherwise.
+ */
+function phorum_api_http_get_supported()
+{
+    return extension_loaded('curl')    ||
+           extension_loaded('sockets') ||
+           ini_get('allow_url_fopen');
 }
 
 ?>
