@@ -50,6 +50,7 @@ require_once PHORUM_PATH.'/include/api/write_file.php';
  *     - width  : the width of the image in pixels
  *     - height : the height of the image in pixels
  *     - mime   : the MIME type for the image
+ *     - type   : one of the IMAGETYPE_XXX constants indicating the image type
  */
 function phorum_api_image_info($image)
 {
@@ -106,13 +107,15 @@ function phorum_api_image_info($image)
     $info = array(
       'width'  => $image_info[0],
       'height' => $image_info[1],
-      'mime'   => $image_info['mime']
+      'mime'   => $image_info['mime'],
+      'type'   => $image_info[2]
     );
 
     $cache[$cache_id] = $info;
 
     return $info;
 }
+// }}}
 
 // {{{ Function: phorum_api_image_thumbnail()
 /**
