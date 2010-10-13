@@ -377,15 +377,17 @@ function phorum_api_image_clip(
 
         $imagick = new Imagick();
         $imagick->readImageBlob($image);
-        $imagick->cropImage($clip_w, $clip_h, $clip_x, $clip_y);
 
-        // Remove the canvas around the cropped image (necessary for GIFs.)
-        $imagick->setImagePage(0, 0, 0, 0);
+        foreach ($imagick as $frame)
+        {
+            $frame->cropImage($clip_w, $clip_h, $clip_x, $clip_y);
+            $frame->thumbnailImage($dst_w, $dst_h, FALSE);
+        }
 
-        $imagick->thumbnailImage($dst_w, $dst_h, FALSE);
+        $imagick->setImagePage($clip_w, $clip_h, 0, 0);
+
         $imagick->setFormat("jpg");
-
-        $img['image']    = $imagick->getimageblob();
+        $img['image']    = $imagick->getImagesblob();
         $img['new_mime'] = 'image/'.$imagick->getFormat();
         $img['method']   = 'imagick';
 
