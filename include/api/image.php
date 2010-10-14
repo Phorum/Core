@@ -90,8 +90,9 @@ function phorum_api_image_info($image)
 
     // We support only GIF, JPG and PNG images.
     if (substr($image_info['mime'], 0, 6) == 'image/') {
-        $type = substr($image_info['mime'], 6);
-        if ($type != 'jpeg' && $type != 'gif' && $type != 'png') {
+        if ($image_info[2] !== IMAGETYPE_JPEG &&
+            $image_info[2] !== IMAGETYPE_GIF  &&
+            $image_info[2] !== IMAGETYPE_PNG) {
             return phorum_api_error(
                 PHORUM_ERRNO_ERROR,
                 "Scaling image type \"{$image_info['mime']}\" is not supported"
@@ -126,6 +127,10 @@ function phorum_api_image_info($image)
  * down the image. The aspect ratio will always be kept. If both a width
  * and height are provided, then the one that requires the largest scale
  * down will be leading.
+ *
+ * In case the image already has the correct size, then still image
+ * processing is done. This will take care of normalizing all images
+ * that pass this method to JPG.
  *
  * @param string $image
  *     The raw binary image data.
@@ -203,9 +208,6 @@ function phorum_api_image_thumbnail(
     // Need vertical scaling?
     if ($max_h !== NULL && $max_h < $img['cur_h'])
         $scale_h = $max_h / $img['cur_h'];
-
-    // No scaling needed, return.
-    if ($scale_w === NULL && $scale_h === NULL) return $img;
 
     // The lowest scale factor wins. Compute the required image size.
     if ($scale_h === NULL || ($scale_w !== NULL && $scale_w < $scale_h)) {
@@ -333,6 +335,14 @@ function phorum_api_image_clip(
     $image_info = phorum_api_image_info($image);
     if ($image_info === FALSE) return FALSE;
 
+    // Derive a name for the image type.
+    switch ($image_info['type']) {
+        case IMAGETYPE_JPEG : $type = 'jpeg'; break;
+        case IMAGETYPE_GIF  : $type = 'gif';  break;
+        case IMAGETYPE_PNG  : $type = 'png';  break;
+        default             : $type = 'unknown'; // should not occur
+    }
+
     // The clip width and height are inherited from the image
     // width and height, unless they are set.
     if (empty($clip_w)) $clip_w = $image_info['width']  - $clip_x;
@@ -377,17 +387,20 @@ function phorum_api_image_clip(
 
         $imagick = new Imagick();
         $imagick->readImageBlob($image);
+        $imagick->flattenImages();
 
-        foreach ($imagick as $frame)
-        {
-            $frame->cropImage($clip_w, $clip_h, $clip_x, $clip_y);
-            $frame->thumbnailImage($dst_w, $dst_h, FALSE);
-        }
+        $tmp = new Imagick();
+        $tmp->newPseudoImage($img['cur_w'], $img['cur_h'], 'xc:black');
+        $tmp->compositeImage($imagick, imagick::COMPOSITE_OVER, 0, 0);
+        $imagick = $tmp;
+
+        $imagick->cropImage($clip_w, $clip_h, $clip_x, $clip_y);
+        $imagick->thumbnailImage($dst_w, $dst_h, FALSE);
 
         $imagick->setImagePage($clip_w, $clip_h, 0, 0);
 
         $imagick->setFormat("jpg");
-        $img['image']    = $imagick->getImagesblob();
+        $img['image']    = $imagick->getImagesBlob();
         $img['new_mime'] = 'image/'.$imagick->getFormat();
         $img['method']   = 'imagick';
 
@@ -408,10 +421,11 @@ function phorum_api_image_clip(
 
         // We always need JPEG support for the scaled down image.
         if (empty($gd['JPG Support']) && empty($gd['JPEG Support'])) {
-            $error = "GD: no JPEG support available for creating thumbnail";
+            $error = "GD: no JPEG support available for processing images";
         }
         elseif (($type == 'gif'  && empty($gd['GIF Read Support'])) ||
-            ($type == 'jpeg' && (empty($gd['JPG Support']) && empty($gd['JPEG Support']))) ||
+            ($type == 'jpeg' &&
+             (empty($gd['JPG Support']) && empty($gd['JPEG Support']))) ||
             ($type == 'png'  && empty($gd['PNG Support']))) {
             $error = "GD: no support available for image type \"$type\"";
         }
@@ -425,15 +439,17 @@ function phorum_api_image_clip(
             // usable error message.
             if (defined('EVENT_LOGGING')) phorum_mod_event_logging_suspend();
             ob_start();
-            $original = imagecreatefromstring($image);
+            $original = @imagecreatefromstring($image);
             $error = ob_get_contents();
             ob_end_clean();
+
             $error = trim(preg_replace(
                 '!(^(?:\w+:\s*).*?:|in /.*$)!', '',
                 trim($error)
             ));
             if (defined('EVENT_LOGGING')) phorum_mod_event_logging_resume();
-            if (!$original) {
+            if (!$original)
+            {
                 if ($error == '') {
                     $error = "GD: Cannot process the $type image using GD";
                 } else {
@@ -455,11 +471,6 @@ function phorum_api_image_clip(
                     );
                     imagefill($scaled, 0, 0, $idx);
                     imagecolortransparent($scaled, $idx);
-                } elseif ($type == 'png') {
-                    imagealphablending($scaled, FALSE);
-                    $trans = imagecolorallocatealpha($scaled, 0, 0, 0, 127);
-                    imagefill($scaled, 0, 0, $trans);
-                    imagesavealpha($scaled, TRUE);
                 }
 
                 // Scale the image.
@@ -479,9 +490,13 @@ function phorum_api_image_clip(
                 $size = ob_get_length();
                 ob_end_clean();
 
+                imagedestroy($orignal);
+                imagedestroy($scaled);
+
                 $img['image']    = $image;
                 $img['new_mime'] = 'image/jpeg';
                 $img['method']   = 'gd';
+
                 return $img;
             }
         }
@@ -509,6 +524,7 @@ function phorum_api_image_clip(
         // Build the command line.
         $cmd = escapeshellcmd($convert) . ' ' .
                '- ' .
+               '-background black -flatten ' . // handles transparent PNG
                "-crop {$clip_w}x{$clip_h}+{$clip_x}+{$clip_y} " .
                '+repage ' .
                '-thumbnail ' . $dst_w .'x'. $dst_h . '\! ' .
