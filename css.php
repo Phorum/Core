@@ -250,15 +250,17 @@ foreach ($module_registrations as $id => $r)
     $cache_key .= '|' . $r['module'] . ':' . $r['cache_key'];
 }
 
+$cache_key = md5($cache_key);
 
 $content = NULL;
 $cache_time = 0;
 
-if(!empty($PHORUM['cache_css'])) {
-	$cache_data = phorum_cache_get('css',$cache_key);
-	if($cache_data !== null) {
-		list($cache_time,$content) = $cache_data;
-	}
+if (!empty($PHORUM['cache_css']))
+{
+    $cache_data = phorum_cache_get('css', $cache_key);
+    if ($cache_data !== null) {
+        list($cache_time,$content) = $cache_data;
+    }
 }
 
 // Create the cache file if it does not exist or if caching is disabled.
