@@ -29,7 +29,7 @@ if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 define( "PHORUM", "5.2.16-RC1" );
 
 // our database schema version in format of year-month-day-serial
-define( "PHORUM_SCHEMA_VERSION", "2007031400" );
+define( "PHORUM_SCHEMA_VERSION", "2010101500" );
 
 // our database patch level in format of year-month-day-serial
 define( "PHORUM_SCHEMA_PATCHLEVEL", "2008091900" );
