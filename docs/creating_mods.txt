@@ -221,17 +221,19 @@ Table of contents:
    |          | priority: run hook foo after *                            |
    |          | priority: run hook bar before smileys                     |
    |          |                                                           |
-   +----------+-----------------------------------------------------------+-------+
-   | required_version | This describes which phorum version is required to use    |
-   |          		  | this module. Modules with a requirement above the current |
-   |          		  | phorum version are automatically disabled when going to   |
-   |          		  | the modules page.										  |
-   |         		  |                                                           |
-   |         		  | Example:                                                  |`
-   |         		  |                                                           |
-   |         		  | required_version: 5.2.0                                   |
-   |				  | This will require to be the phorum version at least 5.2.0 |
-   +------------------+-----------------------------------------------------------+
+   +----------+-------+---------------------------------------------------+
+   | required_version | This describes which phorum version is required   |
+   |                  | to use this module. Modules with a requirement    |
+   |                  | above the current phorum version are              |
+   |                  | automatically disabled when going to the modules  |
+   |                  | page.			                                        |
+   |            		  |                                                   |
+   |            		  | Example:                                          |
+   |            		  |                                                   |
+   |            		  | required_version: 5.2.0                           |
+   |				          | This will require the Phorum version at be at     |
+   |                  | least 5.2.0                                       |
+   +------------------+---------------------------------------------------+
 
    It is allowed to use multiple hook lines in your module information,
    so your module can hook into multiple hooks. When doing this, it

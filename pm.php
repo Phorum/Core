@@ -775,8 +775,6 @@ switch ($page) {
         $buddy_list = phorum_db_pm_buddy_list(NULL, true);
         if (count($buddy_list)) {
             $buddy_users = phorum_api_user_get(array_keys($buddy_list));
-            if (isset($PHORUM["hooks"]["read_user_info"]))
-                $buddy_users = phorum_api_hook("read_user_info", $buddy_users);
         } else {
             $buddy_users = array();
         }

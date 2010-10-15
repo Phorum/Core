@@ -48,7 +48,7 @@ require_once PHORUM_PATH.'/include/api/newflags.php';
  *     By providing extra $author_specs, this formatting can be done on
  *     more author fields. This argument should be an array, containing
  *     arrays with five fields:
-
+ *
  *     - the name of the field that contains a user_id
  *     - the name of the field that contains the name of the author
  *     - the name of the field that contains the email address

@@ -1036,6 +1036,12 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
         $users = phorum_api_hook('user_get', $users, $detailed);
     }
 
+    // A backward compatibility hook. The advised hook for modifying
+    // loaded user dadta is "user_get" from above.
+    if (isset($PHORUM["hooks"]["read_user_info"])) {
+        $users = phorum_api_hook("read_user_info", $users);
+    }
+
     // Return the results.
     if (is_array($user_id)) {
         return $users;

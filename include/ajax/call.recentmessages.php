@@ -99,7 +99,7 @@ $format       = phorum_ajax_getarg('format',       'format',  'html');
 $recent = phorum_db_get_recent_messages(
     $count, 0, $forum_id, $thread_id, $threads_only
 );
-$fetch_user_ids = $recent["users"];
+
 unset($recent["users"]);
 
 // Add newflag info to the messages.
@@ -114,6 +114,11 @@ if ($PHORUM["DATA"]["LOGGEDIN"])
 // Format the messages.
 $recent = phorum_api_format_messages($recent);
 
+// Apply the list hook to the messages.
+if (isset($PHORUM["hooks"]["list"])) {
+    $recent = phorum_api_hook("list", $recent);
+}
+
 // Retrieve information about the forums for the active user.
 $allowed_forums = phorum_api_user_check_access(
   PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_LIST
@@ -123,7 +128,7 @@ foreach ($forums as $id => $forum) {
   $forums[$id]['url'] = phorum_get_url(PHORUM_LIST_URL, $forum['forum_id']);
 }
 
-// Add forum info to the messages.
+// Add forum info to the messages and clean up data.
 foreach ($recent as $id => $message)
 {
   $recent[$id]['foruminfo'] = array(
@@ -131,6 +136,12 @@ foreach ($recent as $id => $message)
     'name' => $forums[$message['forum_id']]['name'],
     'url'  => $forums[$message['forum_id']]['url']
   );
+
+  // Strip fields that the caller should not see in the return data.
+  unset($recent[$id]['email']);
+  unset($recent[$id]['ip']);
+  unset($recent[$id]['meta']);
+  unset($recent[$id]['msgid']);
 }
 
 // Return the results.
