@@ -430,8 +430,8 @@ function phorum_api_output($templates)
 // {{{ Function: phorum_api_output_last_modify_time()
 /**
  * Check if an If-Modified-Since header is in the request. If yes, then
- * check if the provided content modification time lies before the time
- * from that header.
+ * check if the provided content modification equals the time from that
+ * header.
  *
  * If yes, then the content did not change and we return
  * a HTTP 304 status (Not Modified) to notify the browser about this.
@@ -448,8 +448,8 @@ function phorum_api_output_last_modify_time($last_modified)
     {
         $header = preg_replace('/;.*$/','',$_SERVER['HTTP_IF_MODIFIED_SINCE']);
         $modified_since = strtotime($header);
-        
-        if ($modified_since >= $last_modified)
+
+        if ($modified_since == $last_modified)
         {
             $proto = empty($_SERVER['SERVER_PROTOCOL'])
                    ? 'HTTP/1.0' : $_SERVER['SERVER_PROTOCOL'];
@@ -462,7 +462,6 @@ function phorum_api_output_last_modify_time($last_modified)
     // Set the Last-Modified header, so the browser can use that
     // on the next request to bootstrap this client side caching mechanism.
     header("Last-Modified: " . gmdate('D, d M Y H:i:s \G\M\T', $last_modified));
-    
 }
 // }}}
 
