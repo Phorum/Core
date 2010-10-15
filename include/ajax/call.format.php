@@ -56,8 +56,9 @@ $body    = phorum_ajax_getarg('body',    'string', '');
 
 // Format the strings.
 $data = phorum_api_format_messages(array(1 => array(
-    'subject' => $subject,
-    'body'    => $body
+    'message_id' => 1,
+    'subject'    => $subject,
+    'body'       => $body
 )));
 
 // Apply the read hook to the messages.
