@@ -5454,7 +5454,7 @@ function phorum_db_newflag_add_read($message_ids)
     {
         if (is_array($data)) {
             $user_id    = $PHORUM['user']['user_id'];
-            $forum_id   = (int)$data['forum'];
+            $forum_id   = (int)$data['forum_id'];
             $message_id = (int)$data['id'];
         } else {
             $user_id    = $PHORUM['user']['user_id'];
