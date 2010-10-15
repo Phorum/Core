@@ -229,7 +229,7 @@ Phorum Status:
          *     tell where you want them to appear.
          *
          * [category]
-         *     admin
+         *     Admin interface
          *
          * [when]
          *     Admin header
