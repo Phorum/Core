@@ -5194,7 +5194,6 @@ function phorum_db_newflag_check($forum_ids)
 }
 // }}}
 
-
 // {{{ Function: phorum_db_newflag_count()
 /**
  * Gets a count of new messages and threads for the forum ids given
@@ -5381,7 +5380,7 @@ function phorum_db_newflag_get_unread_count($forum_id=NULL)
 }
 // }}}
 
-
+// {{{ Function: phorum_db_newflag_add_min_id()
 function phorum_db_newflag_add_min_id($min_ids)
 {
     global $PHORUM;
@@ -5416,6 +5415,7 @@ function phorum_db_newflag_add_min_id($min_ids)
         }
     }
 }
+// }}}
 
 // {{{ Function: phorum_db_newflag_add_read()
 /**
@@ -5432,7 +5432,7 @@ function phorum_db_newflag_add_min_id($min_ids)
  */
 function phorum_db_newflag_add_read($message_ids)
 {
-    global $PHORUM;
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Find the number of newflags for the user
     $num_newflags = phorum_db_newflag_get_count();
@@ -5448,36 +5448,53 @@ function phorum_db_newflag_add_read($message_ids)
         phorum_db_newflag_delete($num_end - PHORUM_MAX_READ_COUNT_PER_FORUM);
     }
 
-    $user_id = $PHORUM['user']['user_id'];
-
     // Insert newflags.
     $inserts = array();
     foreach ($message_ids as $id => $data)
     {
         if (is_array($data)) {
-            $forum_id   = (int)$data['forum_id'];
+            $user_id    = $PHORUM['user']['user_id'];
+            $forum_id   = (int)$data['forum'];
             $message_id = (int)$data['id'];
         } else {
-            $forum_id   = (int)$PHORUM['forum_id'];
+            $user_id    = $PHORUM['user']['user_id'];
+            $forum_id   = $PHORUM['forum_id'];
             $message_id = (int)$data;
         }
-        $inserts[]="($user_id,$forum_id,$message_id)";
+        $values = "($user_id,$forum_id,$message_id)";
+        $inserts[$values] = $values;
     }
-    
-    if(count($inserts)) {
-        
-        $inserts_str = implode(",",$inserts);
-    
 
-        // We ignore duplicate record errors here.
-        phorum_db_interact(
+    if (count($inserts))
+    {
+        // Try to insert the values (in a single query for speed.)
+        $res = phorum_db_interact(
             DB_RETURN_RES,
             "INSERT INTO {$PHORUM['user_newflags_table']}
                     (user_id, forum_id, message_id)
-             VALUES $inserts_str",
+             VALUES " . implode(",", $inserts),
             NULL,
             DB_DUPKEYOK | DB_MASTERQUERY
         );
+
+        // If inserting the values failed, then this most probably means
+        // that one of the values already existed in the database, causing
+        // a duplicate key error. In this case, fallback to one-by-one
+        // insertion, so the other records in the list will be created.
+        if (!$res && count($inserts) > 1)
+        {
+            foreach ($inserts as $values)
+            {
+                $res = phorum_db_interact(
+                    DB_RETURN_RES,
+                    "INSERT INTO {$PHORUM['user_newflags_table']}
+                            (user_id, forum_id, message_id)
+                     VALUES $values",
+                     NULL,
+                     DB_DUPKEYOK | DB_MASTERQUERY
+                );
+            }
+        }
     }
 }
 // }}}
