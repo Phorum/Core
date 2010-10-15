@@ -219,7 +219,7 @@ Phorum Status:
          *
          * [description]
          *     This hook allows to inject custom HTML into the Phorum admin
-         *     menu. The hook will receive an instace of
+         *     menu. The hook will receive an instance of
          *     PhorumAdminMenuHookPosition which is required to determine at
          *     which position in the Phorum admin menu the module author wishes
          *     to place his custom menu. Although any HTML can be injected, it
@@ -242,15 +242,35 @@ Phorum Status:
          *
          * [example]
          *     <hookcode>
-         *     function phorum_mod_foo_admin_menu($pos) {
+         *     function phorum_mod_foo_admin_menu($pos)
+         *     {
          *         $menu = new PhorumAdminMenu("MyImportantLinks");
-         *         $menu->addCustom("Event log", phorum_admin_build_url( array('module=modsettings','mod=event_logging','el_action=logviewer')));
-         *         $menu->addCustom("My module subpage",phorum_admin_build_url( array('module=modsettings','mod=foo','action=subpage')));
+         *         $menu->addCustom(
+         *             "Event log",
+         *             phorum_admin_build_url(array(
+         *                 'module=modsettings',
+         *                 'mod=event_logging',
+         *                 'el_action=logviewer'
+         *             ))
+         *         );
+         *         $menu->addCustom(
+         *             "My module subpage",
+         *             phorum_admin_build_url(array(
+         *                 'module=modsettings',
+         *                 'mod=foo',
+         *                 'action=subpage'
+         *             ))
+         *         );
          *
-         *         $pos->appendLast($menu->getHtml();
+         *         $pos->appendLast($menu->getHtml());
          *
          *         $menu = new PhorumAdminMenu("Who rocks?");
-         *         $menu->addCustom("Guess!", "http://phorum.org/", "Phorum rocks!", "_blank");
+         *         $menu->addCustom(
+         *             "Guess!",
+         *             "http://phorum.org/",
+         *             "Phorum rocks!",
+         *             "_blank"
+         *         );
          *
          *         $pos->appendAt(0, $menu->getHtml());
          *
