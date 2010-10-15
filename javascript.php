@@ -356,7 +356,7 @@ if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
     $header = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
     $if_modified_since = strtotime($header);
 
-    if ($if_modified_since >= $last_modified) {
+    if ($if_modified_since == $last_modified) {
         header("HTTP/1.0 304 Not Modified");
         exit(0);
     }
