@@ -22,6 +22,11 @@ require_once './common.php';
 
 require_once PHORUM_PATH.'/include/api/feed.php';
 
+// Check if feeds are allowed.
+if (empty($PHORUM['use_rss'])) {
+    exit();
+}     
+
 // Find out for what entity / entities we have to create the feed.
 if (empty($PHORUM['forum_id']) || $PHORUM['forum_id'] == $PHORUM['vroot']) {
     $what  = PHORUM_FEED_VROOT;
