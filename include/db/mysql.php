@@ -5071,16 +5071,16 @@ function phorum_db_newflag_add_read($message_ids)
             $forum_id   = $PHORUM['forum_id'];
             $message_id = (int)$data;
         }
-        $inserts[]="($user_id,$forum_id,$message_id)";
+        $values = "($user_id,$forum_id,$message_id)";
+	$inserts[$values] = $values;
     }
     
     if(count($inserts)) {
     	
         $inserts_str = implode(",",$inserts);
-    
 
-        // We ignore duplicate record errors here.
-        phorum_db_interact(
+        // Try to insert the values.
+        $res = phorum_db_interact(
             DB_RETURN_RES,
             "INSERT INTO {$PHORUM['user_newflags_table']}
                     (user_id, forum_id, message_id)
@@ -5088,6 +5088,25 @@ function phorum_db_newflag_add_read($message_ids)
             NULL,
             DB_DUPKEYOK | DB_MASTERQUERY
         );
+
+	// If inserting the values failed, then this most probably means
+	// that one of the values already existed in the database, causing
+	// a duplicate key error. In this case, fallback to one-by-one
+	// insertion, so the other records in the list will be created.
+	if (!$res && count($inserts) > 1)
+	{
+	    foreach ($inserts as $values)
+	    {
+                $res = phorum_db_interact(
+                    DB_RETURN_RES,
+                    "INSERT INTO {$PHORUM['user_newflags_table']}
+                            (user_id, forum_id, message_id)
+                     VALUES $values",
+                    NULL,
+                    DB_DUPKEYOK | DB_MASTERQUERY
+                );
+	    }
+	}
     }
 }
 // }}}
