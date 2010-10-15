@@ -1,6 +1,6 @@
 <?php
 /*
-FUNCTION
+CALL
 
     helloworld - the obligatory hello world example
 
@@ -13,10 +13,10 @@ ARGUMENTS
 
 EXAMPLE JSON REQUESTS
 
-    { "call": "helloworld" }
+    { call : "helloworld" }
 
-    { "call": "helloworld",
-      "who": "John Doe" }
+    { call : "helloworld",
+      who  : "John Doe" }
 
 RETURN VALUE
 

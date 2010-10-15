@@ -1,6 +1,6 @@
 <?php
 /*
-FUNCTION
+CALL
 
     markread - mark messages read
 
@@ -26,24 +26,24 @@ EXAMPLE JSON REQUESTS
 
     Mark a couple of messages read:
 
-        { "call": "markread",
-          "messages": [ 2, 12, 65, 987 ] }
+        { call     : "markread",
+          messages : [ 2, 12, 65, 987 ] }
 
     Mark forums 2 and 13 read:
 
-        { "call": "markread",
-          "forums": [ 2, 13 ] }
+        { call     : "markread",
+          forums   : [ 2, 13 ] }
 
     Mark a couple of threads and messages read:
 
-        { "call": "markread",
-          "threads": [ 4, 13, 96 ],
-          "messages": [ 1, 55, 321 ] }
+        { call     : "markread",
+          threads  : [ 4, 13, 96 ],
+          messages : [ 1, 55, 321 ] }
 
     Mark a full vroot read:
 
-        { "call": "markread",
-          "vroots": [ 10 ] }
+        { call     : "markread",
+          vroots   : [ 10 ] }
 
 RETURN VALUE
 

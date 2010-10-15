@@ -3,7 +3,7 @@
 // TODO take care of date and URL formatting (this is currenctly hardcoded
 //      in read.php, but it might be better off in the message formatting API.
 /*
-FUNCTION
+CALL
 
     getrecentmessages - retrieve the most recent messages 
 
@@ -38,19 +38,19 @@ ARGUMENTS
 
 EXAMPLE JSON REQUESTS
 
-    { "function": "getrecentmessages",
-      "count": 10 }
+    { call          : "getrecentmessages",
+      count         : 10 }
 
-    { "function": "getrecentmessages",
-      "count": 5,
-      "format": "collapsed",
-      "threads_only": "true" }
+    { call          : "getrecentmessages",
+      count         : 5,
+      format        : "collapsed",
+      threads_only  : "true" }
 
-    { "function": "getrecentmessages",
-      "count": 20,
-      "thread_id": 1234,
-      "format": "text",
-      "threads_only": "true" }
+    { call          : "getrecentmessages",
+      count         : 20,
+      thread_id     : 1234,
+      format"       : "text",
+      threads_only" : "true" }
 
 RETURN VALUE
 
@@ -59,11 +59,11 @@ RETURN VALUE
 
     A single message object looks like this:
 
-        { "message_id": 1234,
-          "subject": "The message subject",
-          "body": "The message body",
-          "datestamp": "21 Feb, 2007 12:01:34",
-          "etc": ... }
+        { message_id : 1234,
+          subject    : "The message subject",
+          body       : "The message body",
+          datestamp  : "21 Feb, 2007 12:01:34",
+          etc        : ... }
 
     The returned messages array looks like this:
 
@@ -74,7 +74,7 @@ RETURN VALUE
 
 ERRORS
 
-    The function will return an error if one of the arguments is not in
+    The call will return an error if one of the arguments is not in
     the right format.
 
 AUTHOR
@@ -93,7 +93,7 @@ $count        = phorum_ajax_getarg('count',        'int>0',   NULL);
 $forum_id     = phorum_ajax_getarg('forum_id',     'int',     0);
 $thread_id    = phorum_ajax_getarg('thread_id',    'int',     0);
 $threads_only = phorum_ajax_getarg('threads_only', 'boolean', 0);
-$format       = phorum_ajax_getarg('format',       'format',  'html');
+$format       = phorum_ajax_getarg('format',       'string',  'html');
 
 // Retrieve the recent messages.
 $recent = phorum_db_get_recent_messages(

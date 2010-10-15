@@ -1,6 +1,6 @@
 <?php
 /*
-FUNCTION
+CALL
 
     checkpm - check for availability of new unread private messages.
 
@@ -15,10 +15,10 @@ ARGUMENTS
 
 EXAMPLE JSON REQUESTS
 
-    { "call": "checkpm" }
+    { call    : "checkpm" }
 
-    { "call": "checkpm",
-      "user_id": 1234 }
+    { call    : "checkpm",
+      user_id : 1234 }
 
 RETURN VALUE
 
