@@ -130,4 +130,9 @@
         {IF TOPIC->URL->MOVE}<a class="icon icon-move" href="{TOPIC->URL->MOVE}">{LANG->MoveThread}</a>{/IF}
     {/IF}
 </div>
+
+{IF REPLY_ON_READ}
+  <a name="REPLY"></a>
+{/IF}
+
 <!-- END TEMPLATE read.tpl -->

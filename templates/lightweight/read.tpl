@@ -128,3 +128,6 @@
     {/IF}
 </div>
 
+{IF REPLY_ON_READ}
+  <a name="REPLY"></a>
+{/IF}
