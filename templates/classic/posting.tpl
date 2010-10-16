@@ -1,7 +1,3 @@
-{IF REPLY_ON_READ}
-<a name="REPLY"></a>
-{/IF}
-
 <div id="phorum-post-form" align="center">
   {IF ERROR}<div class="PhorumUserError">{ERROR}</div>{/IF}
   {IF OKMSG}<div class="PhorumOkMsg">{OKMSG}</div>{/IF}
