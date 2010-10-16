@@ -210,12 +210,23 @@ function phorum_api_image_thumbnail(
         $scale_h = $max_h / $img['cur_h'];
 
     // The lowest scale factor wins. Compute the required image size.
-    if ($scale_h === NULL || ($scale_w !== NULL && $scale_w < $scale_h)) {
+    if ($scale_h !== NULL && $scale_w !== NULL)
+    {
+        if ($scale_w < $scale_h) {
+            $img['new_w'] = $max_w;
+            $img['new_h'] = floor($img['cur_h']*$scale_w + 0.5);
+        } else {
+            $img['new_h'] = $max_h;
+            $img['new_w'] = floor($img['cur_w']*$scale_h + 0.5);
+        }
+    }
+    elseif ($scale_h !== NULL) {
+        $img['new_h'] = $max_h;
+        $img['new_w'] = floor($img['cur_w']*$scale_h + 0.5);
+    }
+    elseif ($scale_w !== NULL) {
         $img['new_w'] = $max_w;
         $img['new_h'] = floor($img['cur_h']*$scale_w + 0.5);
-    } else {
-        $img['new_w'] = floor($img['cur_w']*$scale_h + 0.5);
-        $img['new_h'] = $max_h;
     }
 
     // Use phorum_api_image_clip() to scale the image.
