@@ -324,6 +324,8 @@ function phorum_api_image_clip(
 {
     global $PHORUM;
 
+    $method = 'imagick'; // TODO MAURICE
+
     settype($clip_x, 'int');
     settype($clip_y, 'int');
     settype($clip_w, 'int');
@@ -401,7 +403,7 @@ function phorum_api_image_clip(
         $imagick->flattenImages();
 
         $tmp = new Imagick();
-        $tmp->newPseudoImage($img['cur_w'], $img['cur_h'], 'xc:black');
+        $tmp->newPseudoImage($img['cur_w'], $img['cur_h'], 'xc:white');
         $tmp->compositeImage($imagick, imagick::COMPOSITE_OVER, 0, 0);
         $imagick = $tmp;
 
@@ -472,17 +474,9 @@ function phorum_api_image_clip(
                 // Create the scaled image.
                 $scaled = imagecreatetruecolor($dst_w, $dst_h);
 
-                //Retain transparency.
-                $trans_idx = imagecolortransparent($original);
-                if ($trans_idx >= 0) {
-                    $trans = imagecolorsforindex($original, $trans_idx);
-                    $idx = imagecolorallocate(
-                        $scaled,
-                        $trans['red'], $trans['green'], $trans['blue']
-                    );
-                    imagefill($scaled, 0, 0, $idx);
-                    imagecolortransparent($scaled, $idx);
-                }
+                // Fill the image to have a background for transparent pixels.
+                $white = imagecolorallocate($scaled, 255, 255, 255);
+                imagefill($scaled, 0, 0, $white);
 
                 // Scale the image.
                 imagecopyresampled(
@@ -535,7 +529,7 @@ function phorum_api_image_clip(
         // Build the command line.
         $cmd = escapeshellcmd($convert) . ' ' .
                '- ' .
-               '-background black -flatten ' . // handles transparent PNG
+               '-background white -flatten ' . // handles transparent PNG
                "-crop {$clip_w}x{$clip_h}+{$clip_x}+{$clip_y} " .
                '+repage ' .
                '-thumbnail ' . $dst_w .'x'. $dst_h . '\! ' .
