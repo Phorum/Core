@@ -357,7 +357,7 @@ function phorum_api_image_clip(
     $img['cur_w']     = $image_info['width'];
     $img['cur_h']     = $image_info['height'];
     $img['new_w']     = $dst_w;
-    $img['new_y']     = $dst_h;
+    $img['new_h']     = $dst_h;
     $img['cur_mime']  = $img['new_mime'] = $image_info['mime'];
 
     // Check if the requested clip fits the source image size.
