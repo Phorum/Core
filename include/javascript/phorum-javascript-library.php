@@ -69,7 +69,17 @@ var Phorum = {
      *
      * @var Integer
      */
-    debuglevel: 0
+    debuglevel: 0,
+
+    /**
+     * @property http_path
+     *
+     * The base URL for the forum. JavaScript code can use this URL to build 
+     * URLs for this forum.
+     *
+     * @var String
+     */
+    http_path: '<?php print phorum_api_url_base() ?>'
 };
 /**
  * @class Phorum.jQuery
