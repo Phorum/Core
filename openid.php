@@ -35,14 +35,14 @@ $path = PHORUM_PATH . '/include/open_id' . PATH_SEPARATOR . $path;
 ini_set('include_path', $path);
 
 require_once "Auth/OpenID/Consumer.php";
-require_once "Auth/OpenID/PhorumStore.php";
+require_once "PhorumStore.php";
 require_once "Auth/OpenID/SReg.php";
 require_once "Auth/OpenID/PAPE.php";
 
 if (!session_id()) session_start();
 
-if(isset($_POST["openid"])){
-
+if (isset($_POST["openid"]))
+{
     // process open id auth
 
     $error = PHORUM_OPENID_ERROR_UNKOWN;
@@ -69,11 +69,18 @@ if(isset($_POST["openid"])){
             $auth_request->addExtension($pape_request);
         }
 
-        // For OpenID 1, send a redirect.  For OpenID 2, use a Javascript
-        // form to send a POST request to the server.
-        if ($auth_request->shouldSendRedirect()) {
-            $redirect_url = $auth_request->redirectURL($PHORUM["http_path"],
-                                                       phorum_api_url(PHORUM_OPENID_URL, "forum_id=".$PHORUM["forum_id"]));
+        $phorum_openid_url = phorum_api_url(
+            PHORUM_OPENID_URL,
+            "forum_id=" . $PHORUM["forum_id"]
+        );
+
+        // For OpenID 1, send a redirect.
+        if ($auth_request->shouldSendRedirect())
+        {
+            $redirect_url = $auth_request->redirectURL(
+                phorum_api_url(PHORUM_BASE_URL),
+                $phorum_openid_url
+            );
 
             // If the redirect URL can't be built, display an error
             // message.
@@ -84,14 +91,17 @@ if(isset($_POST["openid"])){
                 header("Location: ".$redirect_url);
                 exit();
             }
-
-        } else {
-
+        }
+        // For OpenID 2, use a Javascript
+        // form to send a POST request to the server.
+        else
+        {
             // Generate form markup and render it.
             $form_id = 'openid_message';
-            $form_html = $auth_request->formMarkup($PHORUM["http_path"],
-                                                   phorum_api_url(PHORUM_OPENID_URL, "forum_id=".$PHORUM["forum_id"]),
-                                                   false, array('id' => $form_id));
+            $form_html = $auth_request->formMarkup(
+                $PHORUM["http_path"], $phorum_openid_url,
+                false, array('id' => $form_id)
+            );
 
             // Display an error if the form markup couldn't be generated;
             // otherwise, render the HTML.
@@ -102,9 +112,11 @@ if(isset($_POST["openid"])){
                    "<html><head><title>",
                    "OpenID transaction in progress",
                    "</title></head>",
-                   "<body onload='document.getElementById(\"".$form_id."\").submit()'><div style='display:none;'>",
+                   "<body onload=\"document.getElementById('$form_id').submit()\">",
+                   "<div style=\"display:none\">",
                    $form_html,
-                   "</div></body></html>");
+                   "</div>",
+                   "</body></html>");
 
                 echo implode("\n", $page_contents);
                 exit();
@@ -113,11 +125,11 @@ if(isset($_POST["openid"])){
     }
 
     // if you get here, there was an error
-    if($error == PHORUM_OPENID_ERROR_INVALID){
+    if ($error == PHORUM_OPENID_ERROR_INVALID) {
 
         $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["OpenIDInvalid"];
 
-    } elseif($error == PHORUM_OPENID_ERROR_REDIRECT){
+    } elseif ($error == PHORUM_OPENID_ERROR_REDIRECT) {
 
         $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["OpenIDRedirect"];
 

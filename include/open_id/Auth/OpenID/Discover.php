@@ -571,7 +571,7 @@ function Auth_OpenID_discoverXRI($iname, $fetcher)
     return array($iname, $openid_services);
 }
 
-function Auth_OpenID_discover($uri, &$fetcher)
+function Auth_OpenID_discover($uri, $fetcher)
 {
     // If the fetcher (i.e., PHP) doesn't support SSL, we can't do
     // discovery on an HTTPS URL.

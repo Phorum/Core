@@ -17,7 +17,7 @@ require_once 'Auth/OpenID/Nonce.php';
 
 /**
  * This is a store for OpenID associations and nonces which uses the
-*  Phorum caching functions.
+ * Phorum caching functions.
  *
  * Most of the methods of this class are implementation details.
  * People wishing to just use this store need only pay attention to
@@ -120,6 +120,7 @@ class Auth_OpenID_PhorumStore extends Auth_OpenID_OpenIDStore {
         }
 
         $cacheobj = phorum_api_cache_get("openid", $server_url);
+        if (!$cacheobj) return null;
 
         // find the highest issued param
         if(empty($handle)){

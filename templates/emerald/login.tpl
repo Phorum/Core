@@ -1,4 +1,5 @@
 <!-- BEGIN TEMPLATE login.tpl -->
+
 {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
 {IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
 
@@ -58,4 +59,5 @@
         </tr>
     </table>
 </div>
+
 <!-- END TEMPLATE login.tpl -->
