@@ -29,10 +29,15 @@ define("PHORUM_OPENID_ERROR_INVALID", 1);
 define("PHORUM_OPENID_ERROR_REDIRECT", 2);
 define("PHORUM_OPENID_ERROR_UNKOWN", 99);
 
-require_once "./include/open_id/OpenID/Consumer.php";
-require_once "./include/open_id/OpenID/PhorumStore.php";
-require_once "./include/open_id/OpenID/SReg.php";
-require_once "./include/open_id/OpenID/PAPE.php";
+// Setup the include path for the OpenID libraries.
+$path = ini_get('include_path');
+$path = PHORUM_PATH . '/include/open_id' . PATH_SEPARATOR . $path;
+ini_set('include_path', $path);
+
+require_once "Auth/OpenID/Consumer.php";
+require_once "Auth/OpenID/PhorumStore.php";
+require_once "Auth/OpenID/SReg.php";
+require_once "Auth/OpenID/PAPE.php";
 
 if (!session_id()) session_start();
 

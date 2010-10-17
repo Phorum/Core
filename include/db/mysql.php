@@ -5426,7 +5426,7 @@ function phorum_db_newflag_add_min_id($min_ids)
  *     array description of messages to mark read. Elements in this array
  *     can be:
  *     - Simple message_id values, to mark messages read in the active forum.
- *     - An array containing two fields: "forum" containing a forum_id and
+ *     - An array containing two fields: "forum_id" containing a forum_id and
  *       "id" containing a message_id. This notation can be used to mark
  *       messages read in other forums than te active one.
  */

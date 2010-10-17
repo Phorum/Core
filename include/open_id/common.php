@@ -1,8 +1,8 @@
 <?php
 
-$path_extra = dirname(dirname(dirname(__FILE__)));
+// Setup the include path for the OpenID libraries.
 $path = ini_get('include_path');
-$path = $path_extra . PATH_SEPARATOR . $path;
+$path = didrname(__FILE__) . PATH_SEPARATOR . $path;
 ini_set('include_path', $path);
 
 function displayError($message) {
@@ -15,23 +15,23 @@ function doIncludes() {
     /**
      * Require the OpenID consumer code.
      */
-    require_once "./include/open_id/OpenID/Consumer.php";
+    require_once "Auth/OpenID/Consumer.php";
 
     /**
      * Require the "file store" module, which we'll need to store
      * OpenID information.
      */
-    require_once "./include/open_id/OpenID/FileStore.php";
+    require_once "Auth/OpenID/FileStore.php";
 
     /**
      * Require the Simple Registration extension API.
      */
-    require_once "./include/open_id/OpenID/SReg.php";
+    require_once "Auth/OpenID/SReg.php";
 
     /**
      * Require the PAPE extension module.
      */
-    require_once "./include/open_id/OpenID/PAPE.php";
+    require_once "Auth/OpenID/PAPE.php";
 }
 
 doIncludes();
