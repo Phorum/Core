@@ -34,27 +34,6 @@
         <br />
       {/IF}
     </div>
-{IF OPENID}
-  <div align="center" style="margin-top: 30px;">
-    <div class="PhorumStdBlockHeader PhorumNarrowBlock PhorumHeaderText" style="text-align: left;">{LANG->OpenIDLogin}</div>
-    <div align="center" class="PhorumStdBlock PhorumNarrowBlock">
-      <form action="{URL->open_id}" method="post" style="display: inline;">
-      {POST_VARS}
-      <table cellspacing="0" align="center">
-        <tr>
-          <td>{LANG->OpenID}:&nbsp;</td>
-          <td><input type="text" id="openid" name="openid" size="30" value="" /><br />
-              <small>(<a target="_blank" href="http://openid.net/what/">{LANG->OpenIDWhat}</a>)</small></td>
-        </tr>
-        <tr>
-          <td colspan="2" align="right"><input type="submit" class="PhorumSubmit" value="{LANG->Submit}" /></td>
-        </tr>
-      </table>
-      </form>
-        <br />
-    </div>
-  </div>
-{/IF}
   <div align="center" style="margin-top: 30px;">
     <form action="{URL->ACTION}" method="post" style="display: inline;">
       {POST_VARS}

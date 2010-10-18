@@ -1,10 +1,6 @@
 <!-- BEGIN TEMPLATE cc_start.tpl -->
 <div class="generic">
     <dl>
-        {IF PROFILE->open_id}
-            <dt>{LANG->OpenID}:</dt>
-            <dd>{PROFILE->open_id}</dd>
-        {/IF}
         <dt>{LANG->Username}:</dt>
         <dd>{PROFILE->username}</dd>
         <dt>{LANG->RealName}:</dt>

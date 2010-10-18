@@ -1,12 +1,6 @@
 <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->PersProfile}</div>
 <div class="PhorumStdBlock" style="text-align: left;">
   <table class="PhorumFormTable" cellspacing="0" border="0">
-    {IF PROFILE->open_id}
-        <tr>
-          <td>{LANG->OpenID}:</td>
-          <td>{PROFILE->open_id}</td>
-        </tr>
-    {/IF}
     <tr>
       <td>{LANG->Username}:</td>
       <td>{PROFILE->username}</td>

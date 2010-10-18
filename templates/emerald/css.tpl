@@ -633,13 +633,6 @@ img {
 
 /* Icon Styles */
 
-#openid {
-    background-image: url('templates/{TEMPLATE}/images/openid.png');
-    background-repeat: no-repeat;
-    background-position: 2px 0;
-    padding-left: 20px;
-}
-
 .icon-accept {
     background-image: url('templates/{TEMPLATE}/images/accept.png');
 }

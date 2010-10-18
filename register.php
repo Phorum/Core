@@ -189,7 +189,6 @@ if (count($_POST)) {
               !phorum_api_mail_check_address($_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
     } elseif ($todo_checks['password'] && 
-              empty($_POST["open_id"]) && 
              (empty($_POST["password"]) || $_POST["password"] != $_POST["password2"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
     }
@@ -499,60 +498,24 @@ if (count($_POST)) {
     }
 }
 
-if(empty($PHORUM["open_id"]) || !isset($_POST["open_id"])){
+// fill the breadcrumbs-info.
+$PHORUM['DATA']['BREADCRUMBS'][]=array(
+    'URL'=>'',
+    'TEXT'=>$PHORUM['DATA']['LANG']['Register'],
+    'TYPE'=>'register'
+);
 
-    // we are on a normal register page
+// fill the page heading info.
+$PHORUM['DATA']['HEADING'] = $PHORUM['DATA']['LANG']['Register'];
+$PHORUM['DATA']['HTML_DESCRIPTION'] = '';
+$PHORUM['DATA']['DESCRIPTION'] = '';
 
-    // fill the breadcrumbs-info.
-    $PHORUM['DATA']['BREADCRUMBS'][]=array(
-        'URL'=>'',
-        'TEXT'=>$PHORUM['DATA']['LANG']['Register'],
-        'TYPE'=>'register'
-    );
+# Setup static template data.
+$PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url( PHORUM_REGISTER_ACTION_URL );
+$PHORUM["DATA"]["REGISTER"]["forum_id"] = $PHORUM["forum_id"];
+$PHORUM["DATA"]["REGISTER"]["block_title"] = $PHORUM["DATA"]["LANG"]["Register"];
 
-    // fill the page heading info.
-    $PHORUM['DATA']['HEADING'] = $PHORUM['DATA']['LANG']['Register'];
-    $PHORUM['DATA']['HTML_DESCRIPTION'] = '';
-    $PHORUM['DATA']['DESCRIPTION'] = '';
-
-    # Setup static template data.
-    $PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url( PHORUM_REGISTER_ACTION_URL );
-    $PHORUM["DATA"]["REGISTER"]["forum_id"] = $PHORUM["forum_id"];
-    $PHORUM["DATA"]["REGISTER"]["block_title"] = $PHORUM["DATA"]["LANG"]["Register"];
-
-    // Display the registration page.
-    phorum_api_output("register");
-
-} else {
-
-    // this is an open id sign up
-
-    if (!session_id()) session_start();
-
-    $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["OpenIDComplete"];
-
-    $PHORUM["DATA"]["HTML_DESCRIPTION"] = $PHORUM["DATA"]["LANG"]["OpenIDCompleteExplain"];
-    $PHORUM['DATA']['DESCRIPTION'] = '';
-
-    $PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url( PHORUM_REGISTER_ACTION_URL );
-
-    $PHORUM["DATA"]["OPENID"]["open_id"] = htmlspecialchars($_SESSION["open_id"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-
-    if(isset($_POST["real_name"])){
-        $PHORUM["DATA"]["OPENID"]["real_name"] = htmlspecialchars($_POST["real_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-    }
-
-    if(isset($_POST["username"])){
-        $PHORUM["DATA"]["OPENID"]["username"] = htmlspecialchars($_POST["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-    }
-
-    if(isset($_POST["email"])){
-        $PHORUM["DATA"]["OPENID"]["email"] = $_POST["email"];
-    }
-
-    phorum_api_output("openid_register");
-
-
-}
+// Display the registration page.
+phorum_api_output("register");
 
 ?>
