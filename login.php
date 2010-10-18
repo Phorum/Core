@@ -30,7 +30,23 @@ $template = 'login'; // the template to display
 $error = '';         // error message to show
 $okmsg = '';         // success message to show
 $focus = 'username'; // id of the field to focus to after loading the page
-$redir = NULL;       // the URL to redirect to after login
+
+// Determine to what URL the user must be redirected after login.
+if (!empty($PHORUM['args']['redir'])) {
+    $redir = urldecode($PHORUM['args']['redir']);
+} elseif (!empty($_GET['redir'])) {
+    $redir = $_GET['redir'];
+} elseif (!empty($_POST['redir'])) {
+    $redir = $_POST['redir'];
+} elseif (!empty($_SERVER['HTTP_REFERER'])) {
+    $base = strtolower(phorum_api_url_base());
+    $len = strlen($base);
+    if (strtolower(substr($_SERVER['HTTP_REFERER'], 0, $len)) == $base) {
+        $redir = $_SERVER['HTTP_REFERER'];
+    }
+} else {
+    $redir = phorum_api_url(PHORUM_LIST_URL);
+}
 
 // ----------------------------------------------------------------------------
 // Handle a logout request
@@ -61,7 +77,7 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM['args']['logout']))
      *     None
      */
     if (isset($PHORUM['hooks']['before_logout'])) {
-        phorum_hook('before_logout');
+        phorum_api_hook('before_logout');
     }
 
     phorum_api_user_session_destroy(PHORUM_FORUM_SESSION);
@@ -176,7 +192,8 @@ if (empty($_POST) && $PHORUM['use_cookies'] > PHORUM_NO_COOKIES) {
  *         modules can fill this field with an ok message to show.</li>
  *     <li>redir:
  *         modules can fill this field with the URL to redirect to after
- *         a successful login.</li>
+ *         a successful login. The URL that Phorum will use by default
+ *         is already available in the field.</li>
  *     <li>focus:
  *         modules can fill this field with the id of the form field to
  *         focus after loading the page.</li>
@@ -192,7 +209,7 @@ $hook_info = array(
     'handled'  => FALSE,
     'error'    => NULL,
     'okmsg'    => NULL,
-    'redir'    => NULL,
+    'redir'    => $redir,
     'focus'    => NULL
 );
 if (isset($PHORUM['hooks']['login_custom_action'])) {
@@ -742,7 +759,7 @@ if (!$hook_info['handled'] && isset($_POST['lostpass']))
      *     </hookcode>
      */
     if ($hook_args && isset($PHORUM['hooks']['password_reset'])) {
-        phorum_hook("password_reset", $hook_args);
+        phorum_api_hook("password_reset", $hook_args);
     }
 }
 
@@ -750,27 +767,6 @@ if (!$hook_info['handled'] && isset($_POST['lostpass']))
 // Build template data and output the page
 // ----------------------------------------------------------------------------
 
-// Determine to what URL the user must be redirected after login.
-// I a module already set the redir variable, then that one will be used.
-if ($redir === NULL)
-{
-    if (!empty($PHORUM['args']['redir'])) {
-        $redir = urldecode($PHORUM['args']['redir']);
-    } elseif (!empty($_GET['redir'])) {
-        $redir = $_GET['redir'];
-    } elseif (!empty($_POST['redir'])) {
-        $redir = $_POST['redir'];
-    } elseif (!empty($_SERVER['HTTP_REFERER'])) {
-        $base = strtolower(phorum_api_url_base());
-        $len = strlen($base);
-        if (strtolower(substr($_SERVER['HTTP_REFERER'], 0, $len)) == $base) {
-            $redir = $_SERVER['HTTP_REFERER'];
-        }
-    }
-}
-if ($redir === NULL) {
-    $redir = phorum_api_url(PHORUM_LIST_URL);
-}
 $redir = htmlspecialchars($redir, ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
 
 // Fill the breadcrumbs-info.
