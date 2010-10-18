@@ -303,11 +303,11 @@ function phorum_api_url()
      * @todo document the 'url_build' hook.
      */
     if (isset($PHORUM['hooks']['url_build'])) {
-        $url = phorum_api_hook(
+        $hook_url = phorum_api_hook(
             'url_build', NULL,
             $name, $query_params, $suffix, $pathinfo
         );
-        if ($url) return $url;
+        if ($hook_url !== NULL) return $hook_url;
     }
 
     // Allow full overriding of the URL building mechanism by
