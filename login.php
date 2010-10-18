@@ -30,6 +30,7 @@ $template = 'login'; // the template to display
 $error = '';         // error message to show
 $okmsg = '';         // success message to show
 $focus = 'username'; // id of the field to focus to after loading the page
+$redir = NULL;       // the URL to redirect to after login
 
 // ----------------------------------------------------------------------------
 // Handle a logout request
@@ -132,10 +133,84 @@ if (empty($_POST) && $PHORUM['use_cookies'] > PHORUM_NO_COOKIES) {
 }
 
 // ----------------------------------------------------------------------------
+// Handle custom module requests
+// ----------------------------------------------------------------------------
+
+/**
+ * [hook]
+ *     login_custom_action
+ *
+ * [description]
+ *     This hook can be used to implement a custom login page request
+ *     handler in a module. The handler can modify the POST data when
+ *     needed, but it can also be used to fully override the login
+ *     page POST handling.<br/>
+ *     <br/>
+ *     Note that for most authentication-related modifications, the user
+ *     related hooks are the way to go. This hook was mainly added for
+ *     supporting systems like OpenID, which require a totally different
+ *     login mechanism (only an OpenID string is provided and no
+ *     username + password, account registration might have to be
+ *     triggered at first login.)
+ *
+ * [category]
+ *     Login/Logout
+ *
+ * [when]
+ *     Right before login.php starts processing a request.
+ *
+ * [input]
+ *     An array containing the following fields:
+ *     <ul>
+ *     <li>template:
+ *         the name of the template that has to be loaded. This field should
+ *         be filled by the module if it wants to load a specific
+ *         template.</li>
+ *     <li>handled:
+ *         if a module does handle the login page request, then it can set
+ *         this field to a true value, to prevent Phorum from running the
+ *         standard login script code.</li>
+ *     <li>error:
+ *         modules can fill this field with an error message to show.</li>
+ *     <li>okmsg:
+ *         modules can fill this field with an ok message to show.</li>
+ *     <li>redir:
+ *         modules can fill this field with the URL to redirect to after
+ *         a successful login.</li>
+ *     <li>focus:
+ *         modules can fill this field with the id of the form field to
+ *         focus after loading the page.</li>
+ *     </ul>
+ *
+ * [output]
+ *     The same array as the one that was used for the hook call
+ *     argument, possibly with the "template", "handled", "error",
+ *     "okmsg" and "redir" fields updated in it.
+ */
+$hook_info = array(
+    'template' => NULL,
+    'handled'  => FALSE,
+    'error'    => NULL,
+    'okmsg'    => NULL,
+    'redir'    => NULL,
+    'focus'    => NULL
+);
+if (isset($PHORUM['hooks']['login_custom_action'])) {
+    $hook_info = phorum_api_hook('login_custom_action', $hook_info);
+}
+
+// Retrieve template, error and okmsg info from the module info.
+if ($hook_info['template'] !== NULL) { $template = $hook_info['template']; }
+if ($hook_info['okmsg']    !== NULL) { $okmsg    = $hook_info['okmsg']; }
+if ($hook_info['error']    !== NULL) { $error    = $hook_info['error']; }
+if ($hook_info['redir']    !== NULL) { $redir    = $hook_info['redir']; }
+if ($hook_info['focus']    !== NULL) { $focus    = $hook_info['focus']; }
+
+// ----------------------------------------------------------------------------
 // Handle login requests
 // ----------------------------------------------------------------------------
 
-if (isset($_POST['username']))
+if (!$hook_info['handled'] && isset($_POST['username']))
 {
     $_POST['username'] = trim($_POST['username']);
     $_POST['password'] = trim($_POST['password']);
@@ -215,7 +290,7 @@ if (isset($_POST['username']))
                 else {
                     $redir = phorum_api_url( PHORUM_LIST_URL );
                 }
-                
+
                 // Checking if redirection is done to the same domain, 
                 // localhost or a URL defined through the settings.
                 // This is done to prevent arbitrary redirection of
@@ -228,7 +303,7 @@ if (isset($_POST['username']))
                 }
                 $check_urls[] = 'http://localhost';
                 $check_urls[] = $PHORUM['http_path'];
-                                    
+
                 foreach ($check_urls as $check_url)
                 {
                      // The redir-url has to start with one of these URLs.
@@ -375,7 +450,7 @@ if (isset($_POST['username']))
 // Handle password reminder requests
 // ----------------------------------------------------------------------------
 
-if (isset($_POST['lostpass']))
+if (!$hook_info['handled'] && isset($_POST['lostpass']))
 {
     // Trim the email address.
     $_POST['lostpass'] = trim($_POST['lostpass']);
@@ -676,18 +751,21 @@ if (isset($_POST['lostpass']))
 // ----------------------------------------------------------------------------
 
 // Determine to what URL the user must be redirected after login.
-$redir = NULL;
-if (!empty($PHORUM['args']['redir'])) {
-    $redir = urldecode($PHORUM['args']['redir']);
-} elseif (!empty($_GET['redir'])) {
-    $redir = $_GET['redir'];
-} elseif (!empty($_POST['redir'])) {
-    $redir = $_POST['redir'];
-} elseif (!empty($_SERVER['HTTP_REFERER'])) {
-    $base = strtolower(phorum_api_url_base());
-    $len = strlen($base);
-    if (strtolower(substr($_SERVER['HTTP_REFERER'], 0, $len)) == $base) {
-        $redir = $_SERVER['HTTP_REFERER'];
+// I a module already set the redir variable, then that one will be used.
+if ($redir === NULL)
+{
+    if (!empty($PHORUM['args']['redir'])) {
+        $redir = urldecode($PHORUM['args']['redir']);
+    } elseif (!empty($_GET['redir'])) {
+        $redir = $_GET['redir'];
+    } elseif (!empty($_POST['redir'])) {
+        $redir = $_POST['redir'];
+    } elseif (!empty($_SERVER['HTTP_REFERER'])) {
+        $base = strtolower(phorum_api_url_base());
+        $len = strlen($base);
+        if (strtolower(substr($_SERVER['HTTP_REFERER'], 0, $len)) == $base) {
+            $redir = $_SERVER['HTTP_REFERER'];
+        }
     }
 }
 if ($redir === NULL) {

@@ -191,15 +191,15 @@ if ($PHORUM['forum_id'] > 0 && $PHORUM['folder_flag'] == 0) {
  *
  * [output]
  *     The same array as the one that was used for the hook call
- *     argument, possibly with the "template", "handled", "error" and
- *     "okmsg" fields updated in it.
+ *     argument, possibly with the "template", "handled", "error",
+ *     "okmsg", "force_okmsg" and "force_error" fields updated in it.
  */
 $hook_info = array(
-    'panel'    => $panel,
-    'template' => NULL,
-    'handled'  => FALSE,
-    'error'    => NULL,
-    'okmsg'    => NULL,
+    'panel'       => $panel,
+    'template'    => NULL,
+    'handled'     => FALSE,
+    'error'       => NULL,
+    'okmsg'       => NULL,
     'force_okmsg' => FALSE,
     'force_error' => FALSE,
 );
@@ -209,8 +209,8 @@ if (isset($PHORUM['hooks']['cc_panel'])) {
 
 // Retrieve template, error and okmsg info from the module info.
 if ($hook_info['template'] !== NULL) { $template = $hook_info['template']; }
-if ($hook_info['okmsg'] !== NULL)    { $okmsg    = $hook_info['okmsg']; }
-if ($hook_info['error'] !== NULL)    { $error    = $hook_info['error']; }
+if ($hook_info['okmsg']    !== NULL) { $okmsg    = $hook_info['okmsg']; }
+if ($hook_info['error']    !== NULL) { $error    = $hook_info['error']; }
 
 // If no module did handle the control center panel, then try to load
 // a standard control center panel file.
