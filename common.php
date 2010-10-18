@@ -394,10 +394,16 @@ if (!defined( "PHORUM_ADMIN" ))
 
     // Add the active language and the default language to compat_languages,
     // so we can simply use the language array to scan for language files.
-    $PHORUM['compat_languages'][] = $PHORUM['language'];
+    $PHORUM['compat_languages'][$PHORUM['language']] = $PHORUM['language'];
     $PHORUM['compat_languages'] = array_reverse($PHORUM['compat_languages']);
-    if (PHORUM_DEFAULT_LANGUAGE !== $PHORUM['language']) {
-        $PHORUM['compat_languages'][] = PHORUM_DEFAULT_LANGUAGE;
+    if (!isset($PHORUM['compat_languages'][PHORUM_DEFAULT_LANGUAGE])) {
+        $PHORUM['compat_languages'][PHORUM_DEFAULT_LANGUAGE] =
+            PHORUM_DEFAULT_LANGUAGE;
+    }
+    foreach (split(',', PHORUM_DEFAULT_LANGUAGE_COMPAT) as $fallback) {
+        if (!isset($PHORUM['compat_languages'][$fallback])) {
+            $PHORUM['compat_languages'][$fallback] = $fallback;
+        }
     }
 
     // Load language file(s) for localized modules.

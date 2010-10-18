@@ -133,6 +133,14 @@ define('PHORUM_DEFAULT_TEMPLATE', 'emerald');
 define('PHORUM_DEFAULT_LANGUAGE', 'en_US.UTF-8');
 
 /**
+ * Before Phorum 5.3, the language filename format was
+ * not standardized, so some other formats might still be in use.
+ * This definition holds a comma separated list of the fallback language
+ * names for the default language.
+ */
+define('PHORUM_DEFAULT_LANGUAGE_COMPAT', 'english');
+
+/**
  * The time in seconds for the admin token to timeout.
  */
 define('PHORUM_ADMIN_TOKEN_TIMEOUT', 1800); // 30 minutes
