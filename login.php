@@ -26,10 +26,11 @@ require_once PHORUM_PATH.'/include/api/mail.php';
 // Set all our URLs.
 phorum_build_common_urls();
 
-$template = 'login'; // the template to display
-$error = '';         // error message to show
-$okmsg = '';         // success message to show
-$focus = 'username'; // id of the field to focus to after loading the page
+$template = 'login';    // the template to display
+$error    = '';         // error message to show
+$okmsg    = '';         // success message to show
+$focus    = 'username'; // id of the field to focus to after loading the page
+$heading  = $PHORUM['DATA']['LANG']['LogIn']; // The page heading
 
 // Determine to what URL the user must be redirected after login.
 if (!empty($PHORUM['args']['redir'])) {
@@ -179,9 +180,13 @@ if (empty($_POST) && $PHORUM['use_cookies'] > PHORUM_NO_COOKIES) {
  *     An array containing the following fields:
  *     <ul>
  *     <li>template:
- *         the name of the template that has to be loaded. This field should
+ *         the name of the template that has to be loaded. This field can
  *         be filled by the module if it wants to load a specific
  *         template.</li>
+ *     <li>heading:
+ *         the page heading (title) to use ("Log In" by default).
+ *         This field can be set by the module if a specific heading
+ *         is required.</li>
  *     <li>handled:
  *         if a module does handle the login page request, then it can set
  *         this field to a true value, to prevent Phorum from running the
@@ -206,6 +211,7 @@ if (empty($_POST) && $PHORUM['use_cookies'] > PHORUM_NO_COOKIES) {
  */
 $hook_info = array(
     'template' => NULL,
+    'heading'  => NULL,
     'handled'  => FALSE,
     'error'    => NULL,
     'okmsg'    => NULL,
@@ -218,6 +224,7 @@ if (isset($PHORUM['hooks']['login_custom_action'])) {
 
 // Retrieve template, error and okmsg info from the module info.
 if ($hook_info['template'] !== NULL) { $template = $hook_info['template']; }
+if ($hook_info['heading']  !== NULL) { $heading  = $hook_info['heading']; }
 if ($hook_info['okmsg']    !== NULL) { $okmsg    = $hook_info['okmsg']; }
 if ($hook_info['error']    !== NULL) { $error    = $hook_info['error']; }
 if ($hook_info['redir']    !== NULL) { $redir    = $hook_info['redir']; }
@@ -777,7 +784,7 @@ $PHORUM['DATA']['BREADCRUMBS'][]=array(
 );
 
 // Fill the page heading info.
-$PHORUM['DATA']['HEADING'] = $PHORUM['DATA']['LANG']['LogIn'];
+$PHORUM['DATA']['HEADING'] = $heading;
 $PHORUM['DATA']['HTML_DESCRIPTION'] = '';
 $PHORUM['DATA']['DESCRIPTION'] = '';
 
