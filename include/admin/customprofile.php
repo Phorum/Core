@@ -147,7 +147,7 @@ if (isset($_GET["curr"]) && isset($_GET["delete"]))
 // Delete a custom field after confirmation.
 if (isset($_POST["curr"]) && isset($_POST["delete"]) &&
     $_POST["confirm"] == "Yes") {
-    phorum_api_custom_field_delete((int)$_POST["curr"],(int)$_POST['type']);
+    phorum_api_custom_field_delete((int)$_POST["curr"], (int)$_POST['type']);
     phorum_admin_okmsg("Profile field deleted");
 }
 
@@ -267,7 +267,7 @@ if ($curr == "NEW")
                 if (!empty($item['deleted'])) continue;
                 
                 $edit_url = phorum_admin_build_url(array('module=customprofile','edit=1',"curr=$key"));
-                $delete_url = phorum_admin_build_url(array('module=customprofile','delete=1',"curr=$key"));                
+                $delete_url = phorum_admin_build_url(array('module=customprofile','delete=1',"curr=$key","type=".$item['type']));                
                 
                 $readable_type = $TYPES_ARRAY[$type];
 

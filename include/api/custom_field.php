@@ -171,6 +171,13 @@ function phorum_api_custom_field_configure($field)
     settype($field['html_disabled'], 'bool');
     settype($field['show_in_admin'], 'bool');
 
+    if ($field['type'] !== PHORUM_CUSTOM_FIELD_USER &&
+        $field['type'] !== PHORUM_CUSTOM_FIELD_FORUM &&
+        $field['type'] !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
+        'phorum_api_custom_field_configure(): Illegal custom field type: ' .
+        $field['type'], E_USER_ERROR
+    );
+
     // Check the custom field name.
     if (!preg_match('/^[a-z][\w_]*$/i', $field['name'])) {
         return phorum_api_error(
@@ -289,21 +296,35 @@ function phorum_api_custom_field_configure($field)
  */
 function phorum_api_custom_field_byname($name, $type)
 {
-	static $profile_fields_reverse = array();
-	
-    if(isset($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type]) &&
-       is_array($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type])) {
-       	
-       	if( !isset($profile_fields_reverse[$type]) || !count($profile_fields_reverse[$type])) {
+    global $PHORUM;
 
-	        foreach ($GLOBALS['PHORUM']['PROFILE_FIELDS'][$type] as $id => $custom_field) {
-	        	if($id !== 'num_fields') {
-	        		$profile_fields_reverse[$type][$custom_field['name']] = $custom_field;
-	        	}
-	        }
+    static $profile_fields_reverse = array();
+
+    if ($type === NULL) trigger_error(
+        'phorum_api_custom_field_byname(): $type parameter cannot be NULL',
+        E_USER_ERROR
+    );
+
+    settype($type, "int");
+
+    if ($type !== PHORUM_CUSTOM_FIELD_USER &&
+        $type !== PHORUM_CUSTOM_FIELD_FORUM &&
+        $type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
+        'phorum_api_custom_field_byname(): Illegal custom field type: ' . $type,
+        E_USER_ERROR
+    );
+
+    if (isset($PHORUM['PROFILE_FIELDS'][$type]) &&
+        is_array($PHORUM['PROFILE_FIELDS'][$type])) {
+       	if (empty($profile_fields_reverse[$type])) {
+            foreach ($PHORUM['PROFILE_FIELDS'][$type] as $id => $custom_field) {
+                if ($id !== 'num_fields') {
+                    $profile_fields_reverse[$type][$custom_field['name']] = $custom_field;
+                }
+            }
        	}
-       	
-        if(isset($profile_fields_reverse[$type][$name])) {
+
+        if (isset($profile_fields_reverse[$type][$name])) {
             return $profile_fields_reverse[$type][$name];
         }
     }
@@ -334,8 +355,21 @@ function phorum_api_custom_field_byname($name, $type)
 function phorum_api_custom_field_delete($id, $type, $hard_delete = FALSE)
 {
     settype($id, "int");
-    settype($type, "int");
     settype($hard_delete, "bool");
+
+    if ($type === NULL) trigger_error(
+        'phorum_api_custom_field_delete(): $type parameter cannot be NULL',
+        E_USER_ERROR
+    );
+
+    settype($type, "int");
+
+    if ($type !== PHORUM_CUSTOM_FIELD_USER &&
+        $type !== PHORUM_CUSTOM_FIELD_FORUM &&
+        $type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
+        'phorum_api_custom_field_delete(): Illegal custom field type: ' . $type,
+        E_USER_ERROR
+    );
 
     // Only act if we really have something to delete.
     if (isset($GLOBALS["PHORUM"]["PROFILE_FIELDS"][$type][$id]))
@@ -373,9 +407,23 @@ function phorum_api_custom_field_delete($id, $type, $hard_delete = FALSE)
  *     {@link phorum_api_error_code()} can be used to retrieve information
  *     about the error that occurred.
  */
-function phorum_api_custom_field_restore($id,$type)
+function phorum_api_custom_field_restore($id, $type)
 {
     settype($id, "int");
+
+    if ($type === NULL) trigger_error(
+        'phorum_api_custom_field_restore(): $type parameter cannot be NULL',
+        E_USER_ERROR
+    );
+
+    settype($type, 'int');
+
+    if ($type !== PHORUM_CUSTOM_FIELD_USER &&
+        $type !== PHORUM_CUSTOM_FIELD_FORUM &&
+        $type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
+        'phorum_api_custom_field_restore(): Illegal custom field type: ' . $type,
+        E_USER_ERROR
+    );
 
     if (isset($GLOBALS["PHORUM"]["PROFILE_FIELDS"][$type][$id]))
     {
@@ -480,7 +528,7 @@ function phorum_api_custom_field_checkconfig()
 /**
  * Retrieve custom fields and add/apply them to the given array
  *
- * @param int $custom_field_type
+ * @param int $type
  *     The type of the custom fields to retrieve for the input array
  *
  * @param array $data_array
@@ -490,24 +538,31 @@ function phorum_api_custom_field_checkconfig()
  * @return array
  *     Returns the input array with the custom fields added.
  */
-function phorum_api_custom_field_apply($custom_field_type = NULL, $data_array,$raw_data=FALSE)
+function phorum_api_custom_field_apply($type = NULL, $data_array,$raw_data=FALSE)
 {
     global $PHORUM;
 
-    if ($custom_field_type === NULL) {
-        return phorum_api_error(
-	        PHORUM_ERRNO_INVALIDINPUT,
-	        "No custom field type given to function phorum_api_custom_field_apply."
-        );    
-    }
+    if ($type === NULL) trigger_error(
+        'phorum_api_custom_field_apply(): $type parameter cannot be NULL',
+        E_USER_ERROR
+    );
+
+    settype($type, 'int');
+
+    if ($type !== PHORUM_CUSTOM_FIELD_USER &&
+        $type !== PHORUM_CUSTOM_FIELD_FORUM &&
+        $type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
+        'phorum_api_custom_field_apply(): Illegal custom field type: ' . $type,
+        E_USER_ERROR
+    );
 
     // If no custom fields are defined for the type, then we are done.
-    if (empty($PHORUM['PROFILE_FIELDS'][$custom_field_type])) {
+    if (empty($PHORUM['PROFILE_FIELDS'][$type])) {
         return $data_array;
     }
 
     $custom_fields = phorum_db_get_custom_fields(
-        $custom_field_type,
+        $type,
         array_keys($data_array),
         $raw_data
     );
