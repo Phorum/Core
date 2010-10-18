@@ -603,21 +603,6 @@ img {
     text-align: center;
 }
 
-
-/*  Open ID box  */
-
-#openid {
-    background-image: url('templates/{TEMPLATE}/images/openid.png');
-    background-repeat: no-repeat;
-    background-position: 2px 0;
-    padding-left: 20px;
-}
-
-
-
-
-
-
 /*   BBCode styles  */
 
 #phorum blockquote.bbcode {

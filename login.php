@@ -797,11 +797,6 @@ $PHORUM['DATA']['LOGIN']['username'] = (!empty($_POST['username'])) ? htmlspecia
 $PHORUM['DATA']['ERROR'] = $error;
 $PHORUM['DATA']['OKMSG'] = $okmsg;
 
-$PHORUM['DATA']['OPENID'] = $PHORUM['open_id'];
-if ($PHORUM['open_id']) {
-    $PHORUM['DATA']['URL']['open_id'] = phorum_api_url(PHORUM_OPENID_URL);
-}
-
 $PHORUM['DATA']['POST_VARS'] .=
     "<input type=\"hidden\" name=\"redir\" value=\"$redir\" />\n";
 

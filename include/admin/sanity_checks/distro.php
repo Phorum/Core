@@ -172,7 +172,6 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'list.'.PHORUM_FILE_EXTENSION,
     'login.'.PHORUM_FILE_EXTENSION,
     'moderation.'.PHORUM_FILE_EXTENSION,
-    'openid.'.PHORUM_FILE_EXTENSION,
     'pm.'.PHORUM_FILE_EXTENSION,
     'posting.'.PHORUM_FILE_EXTENSION,
     'profile.'.PHORUM_FILE_EXTENSION,

@@ -64,8 +64,7 @@ define('PHORUM_POSTING_URL',              33);
 define('PHORUM_POSTING_ACTION_URL',       34);
 define('PHORUM_JAVASCRIPT_URL',           35);
 define('PHORUM_AJAX_URL',                 36);
-define('PHORUM_OPENID_URL',               37);
-define('PHORUM_FOREIGN_PM_URL',           38);
+define('PHORUM_FOREIGN_PM_URL',           37);
 
 global $PHORUM;
 
@@ -128,7 +127,6 @@ $PHORUM['API']['url_patterns'] = array
     PHORUM_SUBSCRIBE_URL            => array('subscribe',  2, TRUE,  '', NULL),
     PHORUM_ADDON_URL                => array('addon',      2, TRUE,  '', NULL),
     PHORUM_AJAX_URL                 => array('ajax',       1, FALSE, '', NULL),
-    PHORUM_OPENID_URL               => array('openid',     1, FALSE, '', NULL),
     PHORUM_READ_URL                 => array('read',       2, TRUE, '#msg-', 2),
     PHORUM_FOREIGN_READ_URL         => array('read',       1, TRUE, '#msg-', 3),
 );

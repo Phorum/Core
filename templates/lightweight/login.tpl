@@ -27,21 +27,6 @@
                     <br />
                     <input type="submit" value="{LANG->Submit}" />
                 </form>
-
-                {IF OPENID}
-                    <p>&nbsp;</p>
-
-                    <h4>{LANG->OpenIDLogin}</h4>
-                    <form action="{URL->open_id}" method="post">
-                        {POST_VARS}
-                        {LANG->OpenID}:<br />
-                        <input type="text" id="openid" name="openid" size="30" value="" /><br />
-                        <small>(<a target="_blank" href="http://openid.net/what/">{LANG->OpenIDWhat}</a>)</small><br />
-                        <br />
-                        <input type="submit" value="{LANG->Submit}" />
-                    </form>
-                {/IF}
-
             </td>
             <td width="50%" valign="top">
                 <h4>{LANG->LostPassword}</h4>
