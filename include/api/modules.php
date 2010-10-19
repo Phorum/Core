@@ -334,7 +334,8 @@ function phorum_api_modules_save()
  * $PHORUM['moddblayers'] with the correct values.
  *
  */
-function phorum_api_modules_generate_moduleinfo() {
+function phorum_api_modules_generate_moduleinfo()
+{
     global $PHORUM;
 
     // Load the module info if this was not done yet.
@@ -520,7 +521,7 @@ function phorum_api_modules_generate_moduleinfo() {
     $moddblayers = array();
     foreach ($modules as $mod) {
         if (isset($mod['dbversion']) &&
-            preg_match('/^\d+$/', $mod['dbversion'])) {
+            preg_match('/^\d{10}$/', $mod['dbversion'])) {
             $moddblayers[$mod['module']] = $mod['dbversion'];
         }
     }
