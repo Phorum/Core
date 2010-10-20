@@ -1066,7 +1066,7 @@ function phorum_require_login()
     $PHORUM = $GLOBALS['PHORUM'];
     if ( !$PHORUM["user"]["user_id"] ) {
         $url = phorum_get_url(
-            PHORUM_LOGIN_URL, "redir=" . phorum_get_current_url()
+            PHORUM_LOGIN_URL, "redir=" . urlencode(phorum_get_current_url())
         );
         phorum_redirect_by_url( $url );
         exit();
