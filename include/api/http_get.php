@@ -504,7 +504,7 @@ function phorum_api_http_get_analyze($requested_url, $code, $header)
             );
         default:
             return array(
-                'error' => 'HTTP request failed with code $code.',
+                'error' => "HTTP request failed with code $code.",
                 'fatal' => TRUE
             );
     }
