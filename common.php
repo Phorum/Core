@@ -844,6 +844,7 @@ function phorum_build_common_urls()
     if ($GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"]) {
         $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_api_url( PHORUM_LOGIN_URL, "logout=1" );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = phorum_api_url( PHORUM_CONTROLCENTER_URL );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["VIEWPROFILE"] = phorum_api_url(PHORUM_PROFILE_URL, $PHORUM['user']['user_id']);
         $GLOBALS["PHORUM"]["DATA"]["URL"]["PM"] = phorum_api_url( PHORUM_PM_URL );
     } else {
         $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_api_url( PHORUM_LOGIN_URL );
