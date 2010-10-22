@@ -1066,7 +1066,7 @@ function bbcode_api_render($text, $tokens, &$message)
                         array(
                             $buffers[$bufferidx],
                             isset($token[2]) ? $token[2] : NULL, // 2 = args
-                            $message
+                            &$message
                         )
                     );
                     unset($buffers[$bufferidx]);
@@ -1151,7 +1151,7 @@ function bbcode_email_handler($content, $args)
             strpos($content, '"') !== FALSE ||
             strpos($content, '>') !== FALSE) 
             $content = preg_replace('/[<">].*[<">]/', '', $content);
-      	$args['email'] = $content;
+        $args['email'] = $content;
     }
 
     $append = '';
