@@ -97,11 +97,11 @@ function phorum_mod_bbcode_format($data)
         // "[" character in the body by now.
         if (strpos($body, '[') !== FALSE)
         {
-            // Tokenize the body code.·
+            // Tokenize the body code.
             $tokens = bbcode_api_tokenize($body);
 
             // Render the tokens into an HTML page.
-            $body = bbcode_api_render($body, $tokens);
+            $body = bbcode_api_render($body, $tokens, $data[$message_id]);
         }
 
         $data[$message_id]["body"] = $body;
