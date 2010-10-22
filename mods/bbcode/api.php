@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-// Copyright (C) 2008  Phorum Development Team                                //
+// Copyright (C) 2010  Phorum Development Team                                //
 // http://www.phorum.org                                                      //
 //                                                                            //
 // This program is free software. You can redistribute it and/or modify       //
@@ -133,7 +133,7 @@ define('BBCODE_INFO_CALLBACK', 8);
  * BBcod tag description field: whether the tag is a tag that only needs
  * an open tag. For example the [hr] tag, which does not use a closing [/hr].
  */
-define('BBCODE_INFO_OPENONLY', 10);
+define('BBCODE_INFO_OPENONLY', 9);
 
 /**
  * BBcode tag description field: whether the tag is a tag that does not use
@@ -1146,7 +1146,7 @@ function bbcode_api_render($text, $tokens, &$message)
 // Tag handler functions
 // --------------------------------------------------------------------
 
-function bbcode_email_handler($content, $args)
+function bbcode_email_handler($content, $args, $message)
 {
     if ($args['email'] == '') {
         if (strpos($content, '<') !== FALSE ||
@@ -1192,7 +1192,7 @@ function bbcode_html_encode($string)
     return $ret_string;
 }
 
-function bbcode_img_handler($content, $args)
+function bbcode_img_handler($content, $args, $message)
 {
     if ($args['img'] == '') {
         if (strpos($content, '<') !== FALSE ||
@@ -1224,7 +1224,7 @@ function bbcode_img_handler($content, $args)
     return "<img src=\"{$args['img']}\" class=\"bbcode\" border=\"0\" $append/>";
 }
 
-function bbcode_url_handler($content, $args)
+function bbcode_url_handler($content, $args, $message)
 {
     global $PHORUM;
 
@@ -1266,7 +1266,7 @@ function bbcode_url_handler($content, $args)
     }
 }
 
-function bbcode_list_handler($content, $args)
+function bbcode_list_handler($content, $args, $message)
 {
     // Fix breaks that are inbetween the rendered contained list tags.
     $content = preg_replace('/\s+/', ' ', $content);
@@ -1292,7 +1292,7 @@ function bbcode_list_handler($content, $args)
     return $open . $content . $close;
 }
 
-function bbcode_quote_handler($content, $args)
+function bbcode_quote_handler($content, $args, $message)
 {
     global $PHORUM;
 
@@ -1310,7 +1310,7 @@ function bbcode_quote_handler($content, $args)
            '</blockquote>';
 }
 
-function bbcode_size_handler($content, $args)
+function bbcode_size_handler($content, $args, $message)
 {
     // Prevent XSS attacks by allowing a strict set of characters.
     if (!preg_match('/^[A-Z0-9.\s-]+$/i', $args['size'])) {
@@ -1320,7 +1320,7 @@ function bbcode_size_handler($content, $args)
     return '<span style="font-size:' . $args['size'] . '">'.$content.'</span>';
 }
 
-function bbcode_color_handler($content, $args)
+function bbcode_color_handler($content, $args, $message)
 {
     // Prevent XSS attacks by allowing a strict set of characters.
     if (!preg_match('/^[A-Z0-9#\s]+$/i', $args['color'])) {
