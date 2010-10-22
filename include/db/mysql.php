@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2009  Phorum Development Team                              //
+//   Copyright (C) 2010  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -37,7 +37,7 @@
  *     belong here and could better go into the core maybe?
  *
  * @package    PhorumDBLayer
- * @copyright  2007, Phorum Development Team
+ * @copyright  2010, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
