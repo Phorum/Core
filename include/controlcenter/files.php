@@ -21,8 +21,6 @@ if (!defined("PHORUM_CONTROL_CENTER")) return;
 
 require_once PHORUM_PATH.'/include/api/file.php';
 
-$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditMyFiles"];
-
 // First a basic write access check for user files in general, so we
 // can tell the user that personal files are not allowed. Specific checks
 // for newly uploaded files are done below here.

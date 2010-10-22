@@ -233,7 +233,6 @@ else{
     }
 }
 
-$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["GroupMembership"];
 $PHORUM["DATA"]['POST_VARS'].="<input type=\"hidden\" name=\"group\" value=\"$group_id\" />\n";
 
 $template = "cc_groupmod";

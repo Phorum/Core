@@ -135,8 +135,6 @@ foreach ($subscr_array_final as $id => $message) {
 }
 $PHORUM["DATA"]["ALLOW_EMAIL_NOTIFY_COUNT"] = $count;
 
-$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["Subscriptions"];
-
 $PHORUM['DATA']['TOPICS'] = $subscr_array_final;
 
 $template = "cc_subscriptions";

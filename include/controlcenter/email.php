@@ -112,9 +112,6 @@ if(phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCE
 
 $PHORUM["DATA"]["PROFILE"]["EMAIL_CONFIRM"]=$PHORUM["registration_control"];
 
-
-$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["EditMailsettings"];
-
 $PHORUM['DATA']['PROFILE']['MAILSETTINGS'] = 1;
 $template = "cc_usersettings";
 

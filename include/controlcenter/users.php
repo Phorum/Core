@@ -87,6 +87,4 @@ if(empty($users)){
     $template = "cc_users";
 }
 
-$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["UnapprovedUsers"];
-
 ?>

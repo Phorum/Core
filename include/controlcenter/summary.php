@@ -41,8 +41,6 @@ if (isset($PHORUM["hooks"]["profile"])) {
     );
 }
 
-$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["PersProfile"];
-
 /* --------------------------------------------------------------- */
 
 function phorum_readable_permissions()

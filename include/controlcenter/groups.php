@@ -57,8 +57,6 @@ $PHORUM['DATA']['Groups'] = phorum_readable_groups();
 $PHORUM['DATA']['JOINGROUP'] = phorum_joinable_groups();
 $PHORUM["DATA"]["GROUP"]["url"] = phorum_api_url(PHORUM_CONTROLCENTER_ACTION_URL, "panel=" . PHORUM_CC_GROUP_MEMBERSHIP);
 
-$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["ViewJoinGroups"];
-
 /* --------------------------------------------------------------- */
 
 function phorum_readable_groups()
