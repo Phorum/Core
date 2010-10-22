@@ -26,7 +26,7 @@
  *
  * @package    PhorumAPI
  * @subpackage Tools
- * @copyright  2007, Phorum Development Team
+ * @copyright  2010, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
@@ -309,35 +309,37 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         );
         $process = proc_open($cmd, $descriptors, $pipes);
         if ($process == FALSE) {
-            $error = 'Failed to run "convert".';
+            $error = 'Failed to execute "convert".';
         }
+        else
+        {
+            // Feed convert the image data on STDIN.
+            fwrite($pipes[0], $image);
+            fclose($pipes[0]);
 
-        // Feed convert the image data on STDIN.
-        fwrite($pipes[0], $image);
-        fclose($pipes[0]);
+            // Read the scaled image from STDOUT.
+            $scaled = stream_get_contents($pipes[1]);
+            fclose($pipes[1]);
 
-        // Read the scaled image from STDOUT.
-        $scaled = stream_get_contents($pipes[1]);
-        fclose($pipes[1]);
+            // Read errors.
+            $errors = trim(stream_get_contents($pipes[2]));
+            fclose($pipes[2]);
 
-        // Read errors.
-        $errors = trim(stream_get_contents($pipes[2]));
-        fclose($pipes[2]);
+            $exit = proc_close($process);
 
-        $exit = proc_close($process);
+            if ($exit == 0) {
+                $img['image']    = $scaled;
+                $img['new_mime'] = 'image/jpeg';
+                $img['method']   = 'convert';
+                return $img;
+            }
 
-        if ($exit == 0) {
-            $img['image']    = $scaled;
-            $img['new_mime'] = 'image/jpeg';
-            $img['method']   = 'convert';
-            return $img;
-        }
-
-        // Some error occurred.
-        if ($errors == '') {
-            $error = 'Got exit code ' . $exit . ' from "convert".';
-        } else {
-            $error = $errors;
+            // Some error occurred.
+            if ($errors == '') {
+                $error = 'Got exit code ' . $exit . ' from "convert".';
+            } else {
+                $error = $errors;
+            }
         }
     }
 
@@ -364,6 +366,35 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         PHORUM_ERRNO_ERROR,
         'No working image scaling method found'
     );
+}
+// }}}
+
+// {{{ Function: phorum_api_image_supported()
+/**
+ * Check if platform support is available for scaling images.
+ *
+ * @return boolean|string
+ *   FALSE is returned in case no platform support is available for
+ *   scaling images. When support is available, then the name of
+ *   the scaling method is returned.
+ */
+function phorum_api_image_supported()
+{
+    // Simple grey box, 140x140 pixels.
+    $test_image = base64_decode(
+        'R0lGODlhjACMAIAAAJWVlQAAACH5BAAAAAAALAAAAACMAIwAAAKshI+py+0Po5y02ou' .
+        'z3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is' .
+        '1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4C' .
+        'BkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7Cxws' .
+        'PExcbHyMnFxWAAA7'
+    );
+
+    // Try to create a thumbnail out of the image. 
+    $clipped = phorum_api_image_thumbnail($test_image, 100, 100);
+    if ($clipped === FALSE) return FALSE;
+
+    // Creating the thumbnail worked. Return the method that was used.
+    return $clipped['method'];
 }
 // }}}
 
