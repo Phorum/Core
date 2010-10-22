@@ -169,14 +169,6 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     // Try to use the imagick library tools
     // -----------------------------------------------------------------
 
-    // First, try to load the imagick extension if it is not loaded yet.
-    // This way we can make this work on systems where imagick is not built-in
-    // or loaded from the PHP ini.
-    if (($method === NULL || $method == 'imagick') &&
-        !extension_loaded('imagick')) {
-        @dl('imagick.so');
-    }
-
     if (($method === NULL || $method == 'imagick') &&
         extension_loaded('imagick') && class_exists('Imagick'))
     {
@@ -196,14 +188,6 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
     // -----------------------------------------------------------------
     // Try to use the GD library tools
     // -----------------------------------------------------------------
-
-    // First, try to load the GD extension if it is not loaded yet.
-    // This way we can make this work on systems where gd is not built-in
-    // or loaded from the PHP ini.
-    if (($method === NULL || $method == 'gd') &&
-        !extension_loaded('gd')) {
-        @dl('gd.so');
-    }
 
     if (($method === NULL || $method == 'gd') &&
         extension_loaded('gd') &&

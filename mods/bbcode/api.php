@@ -133,7 +133,7 @@ define('BBCODE_INFO_CALLBACK', 8);
  * BBcod tag description field: whether the tag is a tag that only needs
  * an open tag. For example the [hr] tag, which does not use a closing [/hr].
  */
-define('BBCODE_INFO_OPENONLY', 9);
+define('BBCODE_INFO_OPENONLY', 10);
 
 /**
  * BBcode tag description field: whether the tag is a tag that does not use
@@ -1023,10 +1023,18 @@ function bbcode_api_tokenize($text)
  * @param array $tokens
  *     The tokens as returned by the {@link bbcode_api_tokenize()} function.
  *
+ * @param array $message
+ *     The message that is being parsed. This message is passed on to
+ *     tag handling callback functions (BBCODE_INFO_CALLBACK), to provide
+ *     context information to the callback.
+ *     This argument is treated as a reference argument, making it possible
+ *     for the tag callback to do the same. This can be useful for things
+ *     like passing information for a later hook (e.g. format_fixup).
+ *
  * @return string
  *     The rendered HTML code.
  */
-function bbcode_api_render($text, $tokens)
+function bbcode_api_render($text, $tokens, &$message)
 {
     global $PHORUM;
 
@@ -1059,7 +1067,8 @@ function bbcode_api_render($text, $tokens)
                         $tag[BBCODE_INFO_CALLBACK],
                         array(
                             $buffers[$bufferidx],
-                            isset($token[2]) ? $token[2] : NULL // 2 = args
+                            isset($token[2]) ? $token[2] : NULL, // 2 = args
+                            $message
                         )
                     );
                     unset($buffers[$bufferidx]);
