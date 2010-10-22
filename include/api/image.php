@@ -179,7 +179,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         $imagick->thumbnailImage($img['new_w'], $img['new_h'], TRUE);
         $imagick->setFormat("jpg");
         $img['image']    = $imagick->getimageblob();
-        $img['new_mime'] = 'image/'.$imagick->getFormat();
+        $img['new_mime'] = 'image/jpeg';
         $img['method']   = 'imagick';
 
         return $img;
@@ -331,6 +331,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
                 $img['image']    = $scaled;
                 $img['new_mime'] = 'image/jpeg';
                 $img['method']   = 'convert';
+
                 return $img;
             }
 
