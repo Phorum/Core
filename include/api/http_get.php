@@ -27,6 +27,7 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
+// {{{ Function: phorum_api_http_get()
 /**
  * This function can be used to retrieve data from a URL using
  * an HTTP GET request.
@@ -486,10 +487,12 @@ function phorum_api_http_get_analyze($requested_url, $code, $header)
             );
     }
 }
+// }}}
 
+// {{{ Function: phorum_api_http_get_supported()
 /**
- * Check if there is support available for retrieving files via HTTP using
- * phorum_api_http_get_supported().
+ * Check if platform support is available for retrieving files via HTTP using
+ * phorum_api_http_get().
  *
  * @return boolean
  *     TRUE in case files can be retrieving using HTTP, FALSE otherwise.
@@ -500,5 +503,6 @@ function phorum_api_http_get_supported()
            extension_loaded('sockets') ||
            ini_get('allow_url_fopen');
 }
+// }}}
 
 ?>
