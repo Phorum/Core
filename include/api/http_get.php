@@ -494,4 +494,18 @@ function phorum_api_http_get_analyze($requested_url, $code, $header)
     }
 }
 
+/**
+ * Check if there is support available for retrieving files via HTTP using
+ * phorum_api_http_get_supported().
+ *
+ * @return boolean
+ *     TRUE in case files can be retrieving using HTTP, FALSE otherwise.
+ */
+function phorum_api_http_get_supported()
+{
+    return extension_loaded('curl')    ||
+           extension_loaded('sockets') ||
+           ini_get('allow_url_fopen');
+}
+
 ?>
