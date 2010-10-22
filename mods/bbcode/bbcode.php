@@ -191,9 +191,9 @@ function phorum_mod_bbcode_editor_tool_plugin()
         // Check if the editor tool should be shown. If not, then skip
         // to the next tag. If there are no settings saved yet for the
         // module, then use the settings from the builtin tag list.
-        if ((isset($PHORUM['mod_bbcode']['enabled'][$id]) &&
-             $enabled[$id] != 2) ||
+        if ((isset($enabled[$id]) && $enabled[$id] != 2) ||
             (!isset($PHORUM['mod_bbcode']['enabled'][$id]) &&
+             isset($builtin[$id]) &&
              $builtin[$id][BBCODE_INFO_DEFAULTSTATE] != 2)) {
              continue;
         }
