@@ -414,7 +414,7 @@ function phorum_api_image_clip(
 
         $imagick->setFormat("jpg");
         $img['image']    = $imagick->getImagesBlob();
-        $img['new_mime'] = 'image/'.$imagick->getFormat();
+        $img['new_mime'] = 'image/jpeg';
         $img['method']   = 'imagick';
 
         return $img;
@@ -565,6 +565,7 @@ function phorum_api_image_clip(
                 $img['image']    = $scaled;
                 $img['new_mime'] = 'image/jpeg';
                 $img['method']   = 'convert';
+
                 return $img;
             }
 
