@@ -298,16 +298,17 @@ if ($success)
      *
      * [description]
      *     This hook can be used for performing actions based on what the
-     *     message contained. It is specifically useful for altering the
-     *     redirect behavior.
+     *     message contained. It is specifically useful for fully overriding
+     *     the redirect behavior. When you only need to provide a different
+     *     URL, then make use of the after_post_redirect hook.
      *
      * [category]
      *     Message handling
      *
      * [when]
      *     In <filename>include/posting/action_post.php</filename>, after all 
-     *     the posting work is done and just before the user is redirected back
-     *     to the message list page.
+     *     the posting work is done and before executing the built-in
+     *     redirect behavior.
      *
      * [input]
      *     An array containing message data.
@@ -383,20 +384,56 @@ if ($success)
         $redir_url = phorum_get_url(PHORUM_LIST_URL);
     }
 
+    /*
+     * [hook]
+     *     after_post_redirect
+     *
+     * [description]
+     *     This hook can be used for modifying the URL that will be used
+     *     to redirect the user after posting a message.
+     *
+     * [category]
+     *     Message handling
+     *
+     * [when]
+     *     In <filename>include/posting/action_post.php</filename>, after the 
+     *     redirect URL has been constructed and just before the user is
+     *     redirected (back to the message list or read page.)
+     *
+     * [input]
+     *     The redirect URL as the first argument and the message data
+     *     as the second argument.
+     *
+     * [output]
+     *     This hook must return the redirect URL to use.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_after_post_redirect($url, $message)
+     *     {
+     *         // For some reason, we find it interesting to redirect
+     *         // the user to the Disney site after posting a message.
+     *         return "http://www.disney.com/";
+     *     }
+     *     </hookcode>
+     */
+    if (isset($PHORUM["hooks"]["after_post_redirect"]))
+        $redir_url = phorum_hook("after_post_redirect", $redir_url, $message);
+
     if ($message["status"] > 0) {
         phorum_redirect_by_url($redir_url);
     } else {
     	// give a message about this being a moderated forum before redirecting
     	$PHORUM['DATA']['OKMSG']=$PHORUM['DATA']['LANG']['ModeratedForum'];
     	$PHORUM['DATA']["URL"]["REDIRECT"]=$redir_url;
-    	
+
     	// BACKMSG is depending on the place we are returning to
     	if ($PHORUM["redirect_after_post"] == "read") {
     		$PHORUM['DATA']['BACKMSG'] = $PHORUM['DATA']['LANG']['BackToThread'];
     	} else {
     		$PHORUM['DATA']['BACKMSG'] = $PHORUM['DATA']['LANG']['BackToList'];
     	}
-    	
+
     	// make it a little bit more visible
     	$PHORUM['DATA']["URL"]["REDIRECT_TIME"]=10;
     	phorum_output('message');
