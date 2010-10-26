@@ -1599,6 +1599,37 @@ function phorum_output($templates) {
         include phorum_get_template($template);
     }
 
+    /* 
+     * [availability]
+     *     Phorum 5 >= 5.2.16
+     *
+     * [hook]
+     *     before_footer_<page>
+     *
+     * [description]
+     *     This hook provides the same functionality as the
+     *     <hook>before_footer</hook> hook. The difference is that this
+     *     hook is called for a specific phorum_page, which makes
+     *     this a lightweight hook if you only need to do processing
+     *     for a single phorum_page.
+     *
+     * [category]
+     *     Page output
+     *
+     * [when]
+     *     After sending the main page content, but before sending the
+     *     page footer template.
+     *
+     * [input]
+     *     No input.
+     *
+     * [output]
+     *     No output.
+     */
+    if (isset($GLOBALS['PHORUM']['hooks']['before_footer_' . phorum_page])) {
+        phorum_hook('before_footer_' . phorum_page);
+    }
+
     /*
      * [hook]
      *     before_footer
@@ -1634,37 +1665,6 @@ function phorum_output($templates) {
      */
     if (isset($PHORUM["hooks"]["before_footer"])) {
         phorum_hook("before_footer");
-    }
-
-    /* 
-     * [availability]
-     *     Phorum 5 >= 5.2.16
-     *
-     * [hook]
-     *     before_footer_<page>
-     *
-     * [description]
-     *     This hook provides the same functionality as the
-     *     <hook>before_footer</hook> hook. The difference is that this
-     *     hook is called for a specific phorum_page, which makes
-     *     this a lightweight hook if you only need to do processing
-     *     for a single phorum_page.
-     *
-     * [category]
-     *     Page output
-     *
-     * [when]
-     *     After sending the main page content, but before sending the
-     *     page footer template.
-     *
-     * [input]
-     *     No input.
-     *
-     * [output]
-     *     No output.
-     */
-    if (isset($GLOBALS['PHORUM']['hooks']['before_footer_' . phorum_page])) {
-        phorum_hook('before_footer_' . phorum_page);
     }
 
     include phorum_get_template("footer");
