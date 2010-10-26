@@ -146,7 +146,7 @@ function event_logging_writelog($loginfo)
     $lvl = isset($loginfo["loglevel"]) ? (int)$loginfo["loglevel"] : 0;
     if ($lvl < $PHORUM["mod_event_logging"]["min_log_level"]) return;
 
-    $loginfo = phorum_hook("event_logging_writelog", $loginfo);
+    $loginfo = phorum_api_hook("event_logging_writelog", $loginfo);
 
     // The record that we will insert in the database.
     $record = array();

@@ -355,8 +355,8 @@ if (!empty($action))
                          *     </hookcode>
                          */                        
                          if (isset($PHORUM['hooks']['pm_delete'])) { 
- 	                         phorum_api_hook('pm_delete', $pm_id);        
-                         }                     	
+                             phorum_api_hook('pm_delete', $pm_id);        
+                         }
                     }
                 }
 
@@ -1236,7 +1236,7 @@ switch ($page) {
          *     </hookcode>
          */
         if (isset($PHORUM['hooks']['pm_before_editor'])) {
-            $msg = phorum_hook('pm_before_editor', $msg, $action);
+            $msg = phorum_api_hook('pm_before_editor', $msg, $action);
         }
 
         $PHORUM["DATA"]["MESSAGE"] = $msg;
