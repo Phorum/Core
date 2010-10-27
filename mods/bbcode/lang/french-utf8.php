@@ -3,8 +3,8 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     # Button descriptions.
     'b'             => 'Gras',
     'i'             => 'Italique',
-    'u'             => 'Souligné',
-    's'             => 'Barré',
+    'u'             => 'SoulignÃ©',
+    's'             => 'BarrÃ©',
     'sub'           => 'Indice',
     'sup'           => 'Exposant',
     'color'         => 'Couleur du texte',
@@ -12,11 +12,11 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'center'        => 'Centrer le texte',
     'left'          => 'Left align text',
     'right'         => 'Right align text',
-    'url'           => 'Insérer un lien',
-    'email'         => 'Insérer une adresse e-mail',
-    'img'           => 'Insérer une image distante',
-    'hr'            => 'Insérer une ligne horizontale',
-    'code'          => 'Code formaté',
+    'url'           => 'InsÃ©rer un lien',
+    'email'         => 'InsÃ©rer une adresse e-mail',
+    'img'           => 'InsÃ©rer une image distante',
+    'hr'            => 'InsÃ©rer une ligne horizontale',
+    'code'          => 'Code formatÃ©',
     'quote'         => 'Citation',
     'list'          => 'Liste',
     'help'          => 'Help',
@@ -25,7 +25,7 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'quote_title'   => 'Citation',
 
     # Dialogs and errors.
-    'enter url'     => 'Veuillez entrer l\'URL vers laquelle vous voulez créer un lien.',
+    'enter url'     => 'Veuillez entrer l\'URL vers laquelle vous voulez crÃ©er un lien.',
     'enter url description' => 'Veuillez saisir une description pour ce lien.',
     'invalid url'   => 'L\'URL est incorrecte. Elle doit commencer par http://, https://, ftp:// ou mailto:',
     'enter image url' => 'Veuillez entrer l\'URL de l\'image que vous voulez ajouter.',
@@ -33,11 +33,11 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
     'enter who you quote' => 'Veuillez entrer le nom de l\'auteur du texte que vous citez (facultatif).',
 
     # For the size picker.
-    'x-large'      => 'Police très large',
+    'x-large'      => 'Police trÃ¨s large',
     'large'        => 'Police large',
     'medium'       => 'Police moyenne',
     'small'        => 'Petite police',
-    'x-small'      => 'Police très petite',
+    'x-small'      => 'Police trÃ¨s petite',
 
     # For the list type picker.
     'list type b'  => 'Bullets',
@@ -52,7 +52,7 @@ $PHORUM["DATA"]["LANG"]["mod_bbcode"] = array(
 
     # Color picker tab names and sizes.
     'rgb'          => 'RGB',
-    'named'        => 'Coul. définies',
+    'named'        => 'Coul. dÃ©finies',
     'slides'       => 'Personnaliser',
     'rgb_size'     => '40',
     'named_size'   => '90',
