@@ -36,7 +36,8 @@
 
     // set the path to the CSS file to pull in
     $default_admin_css_file = 'default.css';
-    $admin_css_path = $PHORUM["http_path"].'/include/admin/css/' . $default_admin_css_file;
+    $admin_css_path = dirname($PHORUM['admin_http_path']) .
+                      '/include/admin/css/' . $default_admin_css_file;
 
     /**
      * [hook]
@@ -88,6 +89,8 @@ if (isset($PHORUM["DATA"]['CHARSET'])) {
 }
 
 ?>
+
+<script src="<?php print dirname($PHORUM['admin_http_path']) . "/javascript." . PHORUM_FILE_EXTENSION ?>?admin=1" type="text/javascript"></script>
 
 <link rel="stylesheet" type="text/css" href="<?php echo $admin_css_path; ?>" />
 
