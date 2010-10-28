@@ -127,6 +127,7 @@ img {
     padding: 8px;
     background-color: {alt_background_color};
     border: 1px solid {border_color};
+    overflow: hidden;
 }
 
 #phorum div.generic-lower {
