@@ -36,7 +36,8 @@ if (isset($PHORUM["DATA"]['CHARSET'])) {
 }
 
 // Set the path to the CSS file to use.
-$admin_css_path = $PHORUM['http_path'].'/include/admin/css/default.css';
+$admin_css_path = dirname($PHORUM['admin_http_path']) .
+                  '/include/admin/css/default.css';
 
 // Chrome doesn't like the double slash in "//path/to/file.css".
 $admin_css_path = preg_replace('!^//!', '/', $admin_css_path);
@@ -89,6 +90,8 @@ if (isset($PHORUM["DATA"]['CHARSET'])) {
 }
 
 ?>
+
+<script src="<?php print dirname($PHORUM['admin_http_path']) . "/javascript." . PHORUM_FILE_EXTENSION ?>?admin=1" type="text/javascript"></script>
 
 <link rel="stylesheet" type="text/css" href="<?php echo $admin_css_path; ?>" />
 

@@ -20,6 +20,11 @@
 define('phorum_page', 'javascript');
 require_once './common.php';
 
+// When loaded from the admin interface, the admin parameter will be set
+// in the URL. We use that parameter to not load template and module
+// related javascript code.
+$for_admin = !empty($PHORUM['args']['admin']);
+
 // So we can use {URL->HTTP_PATH} in the templates.
 phorum_build_common_urls();
 
@@ -41,7 +46,6 @@ $module_registrations[] = array(
     'cache_key' => '1.3.min'
 );
 
-
 // Add the jQuery bgiframe plugin.
 $module_registrations[] = array(
     'module'    => 'core',
@@ -58,12 +62,14 @@ $module_registrations[] = array(
 // Add template specific javascript code, if available. The template writer
 // can put the javascript code to include in the file
 // "templates/<name>/javascript.tpl" or "templates/<name>/javascript.php".
-if (file_exists("./templates/{$PHORUM['template']}/javascript.tpl") ||
-    file_exists("./templates/{$PHORUM['template']}/javascript.php")) {
-    $module_registrations[] = array(
-        'module' => $PHORUM['template'] . ' template',
-        'source' => 'template(javascript)'
-    );
+if (!$for_admin) {
+    if (file_exists("./templates/{$PHORUM['template']}/javascript.tpl") ||
+        file_exists("./templates/{$PHORUM['template']}/javascript.php")) {
+        $module_registrations[] = array(
+            'module' => $PHORUM['template'] . ' template',
+            'source' => 'template(javascript)'
+        );
+    }
 }
 
 /**
@@ -137,7 +143,7 @@ if (file_exists("./templates/{$PHORUM['template']}/javascript.tpl") ||
  *     The same array as the one that was used as the hook call
  *     argument, possibly extended with one or more registrations.
  */
-if (isset($PHORUM['hooks']['javascript_register'])) {
+if (!$for_admin && isset($PHORUM['hooks']['javascript_register'])) {
     $module_registrations = phorum_api_hook(
         'javascript_register', $module_registrations
     );
