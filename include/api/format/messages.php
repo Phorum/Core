@@ -84,6 +84,14 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
     // Apply Phorum's formatting rules to all messages.
     foreach($messages as $id => $message)
     {
+        // Normally, the message_id must be set, since we should be handling
+        // message data. It might not be set however, because sometimes
+        // the message formatting is called using some fake message data
+        // for formatting something else than a message.
+        if (!isset($message['message_id'])) {
+            $messages[$id]['message_id'] = $message['message_id'] = $id;
+        }   
+
         // -----------------------------------------------------------------
         // Message body
         // -----------------------------------------------------------------
