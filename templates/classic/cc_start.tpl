@@ -5,10 +5,12 @@
       <td>{LANG->Username}:</td>
       <td>{PROFILE->username}</td>
     </tr>
-    <tr>
-      <td>{LANG->RealName}:</td>
-      <td>{PROFILE->real_name}</td>
-    </tr>
+    {IF PROFILE->real_name}
+      <tr>
+        <td>{LANG->RealName}:</td>
+        <td>{PROFILE->real_name}</td>
+      </tr>
+    {/IF}
     <tr>
       <td>{LANG->Email}:</td>
       <td>{PROFILE->email}</td>
