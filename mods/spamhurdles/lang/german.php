@@ -56,7 +56,7 @@ $PHORUM["DATA"]["LANG"]["mod_spamhurdles"] = array
     // might be lack of javascript support in the browser (either
     // absent or disabled).
     "NeedJavascript" =>
-        "If your browser has no JavaScript support or if JavaScript is diabled,
+        "If your browser has no JavaScript support or if JavaScript is disabled,
          then this might be the cause of the problem.
          JavaScript must be enabled for submitting this form.",
 
