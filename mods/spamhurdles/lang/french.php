@@ -5,27 +5,27 @@ $PHORUM["DATA"]["LANG"]["mod_spamhurdles"] = array
     "CaptchaTitle" =>
         "Mesure anti-SPAM :",
     "CaptchaExplain" =>
-        "Inscrivez le code que vous voyez dans le champs approprié.
+        "Recopiez le code que vous voyez dans le champ ci-dessous.
          Cette mesure sert à bloquer les robots informatiques qui tentent
          de polluer ce site.",
     "CaptchaUnclearExplain" =>
-        "Si le code n'est pas clair, essayer de le deviner. Si vous
-         faites erreur, une nouvelle image sera crée et vous aurez la
-         chance de ré-essayer.",
+        "Si le code n'est pas clair, essayez de le deviner. Si vous
+         faites erreur, une nouvelle image sera créée et vous pourrez
+		 essayer à nouveau.",
     "CaptchaSpoken" =>
         "Écoutez la version orale du code (en anglais seulement).",
     "CaptchaFieldLabel" =>
-        "Répéter le code ici :",
+        "Saisissez le code ici :",
     "CaptchaWrongCode" =>
         "Le code que vous avez entré pour la mesure anti-SPAM est incorrect.
          SVP ré-essayer.",
 
     // CAPTCHA Mathématique
     "MaptchaTitle" =>
-        " Mesure anti-SPAM :",
+        "Mesure anti-SPAM :",
     "MaptchaExplain" =>
-        "Résoudre la question mathématique et insérer la réponse dans le
-         champs approprié. Cette mesure sert à bloquer les robots
+        "Résoudre la question mathématique et saisir la réponse dans le
+         champ ci-dessous. Cette mesure sert à bloquer les robots
          informatiques qui tentent de polluer ce site.",
     "MaptchaQuestion" =>
         "Question : que font {NUMBER1} plus {NUMBER2}?",
@@ -43,26 +43,26 @@ $PHORUM["DATA"]["LANG"]["mod_spamhurdles"] = array
 
     // A message that is shown when a bot post is suspected.
     "PostingRejected" =>
-        "The data that you have submitted to the server have been rejected,
-         because it looks like they were posted by an automated bot.",
+        "Les informations que vous avez envoyées ont été rejetées,
+		 parce qu'elles semblent envoyées par un robot d'envois automatiques.",
 
     // A message for failed spam hurdle checks, for which a repost
     // of the form could make a difference.
     "TryResubmit" =>
-        "You can try to resubmit your form data.",
+        "Vous pouvez essayer à nouveau d'envoyer les informations.",
 
     // A message for failed spam hurdle checks, for which the problem
     // might be lack of javascript support in the browser (either
     // absent or disabled).
     "NeedJavascript" =>
-        "If your browser has no JavaScript support or if JavaScript is diabled,
-         then this might be the cause of the problem.
-         JavaScript must be enabled for submitting this form.",
+        "Si votre navigateur n'a pas de javascript, ou s'il est désactivé,
+         cela peut-être la raison de l'échec.
+         Le Javavascript doit être activé pour que ce formulaire fonctionne.",
 
     // A message that tells the user to contact the site owner
     // if the problems persist.
     "ContactSiteOwner" =>
-        "If you keep having problems with your data being blocked,
-         then please contact the site owner for help."
+        "Si le problème d'envoi des informations persiste,
+		 contactez le responsable du site."
 );
 ?>

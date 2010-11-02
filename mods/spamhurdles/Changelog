@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+2010-11-02 v2.0.2
+
+    - Updated the French language file with the new version as provided
+		  by phorum.org user cactux.
+
 v2.0.2
 
     - Implemented more complete logging of blocked form posts using the
