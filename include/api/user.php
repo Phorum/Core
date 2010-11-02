@@ -2744,6 +2744,47 @@ function phorum_api_user_save_groups($user_id, $groups)
 
         $dbgroups[$id] = $perm;
     }
+    
+    /**
+     * [hook]
+     *     user_save_groups
+     *
+     * [description]
+     *     This hook can be used to handle the groups data that is going to be
+     *     stored in the database for a user. Modules can do some last
+     *     minute change on the data or keep some external system in sync
+     *     with the Phorum user data.
+     *
+     * [category]
+     *     User data handling
+     *
+     * [when]
+     *     Just before the groups for a user are stored in the database.
+     *
+     * [input]
+     *     An array containing user_id and groups-data as another array.
+     *
+     * [output]
+     *     The same array as the one that was used for the hook call
+     *     argument, possibly with some updated fields in it.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_user_save_groups($data)
+     *     {
+     *     	   list($user_id,$groups) = $data;
+     *         foreach($groups as $group_id => $group_permission) {
+     *				// do something with the groups permissions
+     *	       }
+     *     
+     *         return array($user_id,$groups);
+     *     }
+     *     </hookcode>
+     */
+    if (isset($GLOBALS['PHORUM']['hooks']['user_save_groups'])) {
+        list($user_id,$dbgroups) = phorum_hook('user_save_groups', array($user_id,$dbgroups));
+    }
+    
 
     return phorum_db_user_save_groups($user_id, $dbgroups);
 }
