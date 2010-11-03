@@ -324,8 +324,6 @@ function phorum_api_image_clip(
 {
     global $PHORUM;
 
-    $method = 'imagick'; // TODO MAURICE
-
     settype($clip_x, 'int');
     settype($clip_y, 'int');
     settype($clip_w, 'int');
