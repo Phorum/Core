@@ -1231,16 +1231,15 @@ function bbcode_url_handler($content, $args, $message)
     // Setup special URL options.
     static $extratags = NULL;
     static $show_full_urls = FALSE;
+    
+    $settings = $PHORUM['mod_bbcode'];
     if ($extratags === NULL)
     {
         $extratags = '';
-        $settings = $PHORUM['mod_bbcode'];
         if (!empty($settings['links_in_new_window'])) {
             $extratags .= 'target="_blank" ';
         }
-        if (!empty($settings['rel_no_follow'])) {
-            $extratags .= 'rel="nofollow" ';
-        }
+
         if (!empty($settings['show_full_urls'])) {
             $show_full_urls = TRUE;
         }
@@ -1258,11 +1257,41 @@ function bbcode_url_handler($content, $args, $message)
     if (!preg_match('!^\w+://!', $args['url'])) {
         $args['url'] = 'http://'.$args['url'];
     }
+    // we need the full url for nofollow handling
+    $nofollow='';
+    if (!empty($settings['rel_no_follow'])) {
+    	if($settings['rel_no_follow'] == 1) {
+    		// always add nofollow
+    		$nofollow .= ' rel="nofollow"';
+    	} else {
+    		
+    		// check for defined urls
+    		$follow = false;
+    		$check_urls = array();
+    		if(!empty($settings['follow_urls'])) {
+    			$check_urls = explode(",",$settings['follow_urls']);
+    		}
+    		$check_urls[]=$PHORUM['http_path'];
+
+    		foreach($check_urls as $check_url) {
+    			// the url has to start with one of these URLs
+    			if(stripos($args['url'],$check_url) === 0) {
+    				$follow = true;
+    				break;
+    			}
+    		}
+    		// we didn't find a matching url, make it nofollow
+    		if($follow === false) {
+    			$nofollow .= ' rel="nofollow"';
+    		}
+    	}
+    }
+    
     if ($strip_url && !$show_full_urls) {
         $parts = @parse_url($args['url']);
-        return "[<a href=\"{$args['url']}\" $extratags>{$parts['host']}</a>]";
+        return "[<a href=\"{$args['url']}\" $extratags{$nofollow}>{$parts['host']}</a>]";
     } else {
-        return "<a href=\"{$args['url']}\" $extratags>$content</a>";
+        return "<a href=\"{$args['url']}\" $extratags{$nofollow}>$content</a>";
     }
 }
 

@@ -42,7 +42,8 @@ if (count($_POST))
     // Add options to the settings array.
     $PHORUM["mod_bbcode"] = array(
       "links_in_new_window"    => empty($_POST["links_in_new_window"])    ?0:1,
-      "rel_no_follow"          => empty($_POST["rel_no_follow"])          ?0:1,
+      "rel_no_follow"          => empty($_POST["rel_no_follow"])          ?0:$_POST["rel_no_follow"],
+      "follow_urls"            => empty($_POST["follow_urls"])          ?'':$_POST["follow_urls"],
       "quote_hook"             => empty($_POST["quote_hook"])             ?0:1,
       "show_full_urls"         => empty($_POST["show_full_urls"])         ?0:1,
       "process_bare_urls"      => empty($_POST["process_bare_urls"])      ?0:1,
@@ -93,8 +94,12 @@ $frm->addhelp($row, "Turn bare email addresses into clickable links", "If you en
 $row = $frm->addrow("Show full URLs", $frm->checkbox("show_full_urls", "1", "Yes", $PHORUM["mod_bbcode"]["show_full_urls"]));
 $frm->addhelp($row, "Show full URLs", "By default, URLs are truncated by phorum to show only [www.example.com]. This is done to prevent very long URLs from cluttering and distrurbing the web site layout. By enabling this feature, you can suppress the truncation, so full URLs are shown.");
 
-$row = $frm->addrow("Add 'rel=nofollow' to links that are posted in your forum", $frm->checkbox("rel_no_follow", "1", "Yes", $PHORUM["mod_bbcode"]["rel_no_follow"]));
+$row = $frm->addrow("Add 'rel=nofollow' to links that are posted in your forum", $frm->select_tag('rel_no_follow', array('No','Yes, always','Yes, to external urls and urls not defined below.'),$PHORUM["mod_bbcode"]["rel_no_follow"]) );
 $frm->addhelp($row, "Add 'rel=nofollow' to links", 'You can enable Google\'s rel="nofollow" tag for links that are posted in your forums. This tag is used to discourage spamming links to web sites in forums (which can be done to influence search engines by implying that the site is a popular one, because of all the links).<br/><br/>Note that this does not stop spam links from being posted, but it does mean that spammers do not get any credit from Google for that link.');
+
+$row = $frm->addrow("Allowed URLs that won't get the nofollow attribute as defined above", $frm->text_box("follow_urls", $PHORUM["mod_bbcode"]["follow_urls"], 75 ) );
+$frm->addhelp($row, "Allowed URLs that won't get the nofollow attribute as defined above", 'If the preceding setting is set to "Yes, to external urls and urls not defined below." this list is checked for allowed URLs which won\'t get the rel=nofollow attribute added. By default only the Phorum URL is allowed. I you want to allow a different URL, then enter that URL here. Multiple URLs can be provided as a comma separated list. All URLs not starting with the URLs listed here, besides the Phorum URL, will get the nofollow attribute added.<br /><br />A full URL should be like http://www.domainname.com/path or http://www.domain.com ... ');
+
 
 $row = $frm->addrow("Enable BBcode quoting using the [quote] tag", $frm->checkbox("quote_hook", "1", "Yes", $PHORUM["mod_bbcode"]["quote_hook"]));
 $frm->addhelp($row, "Enable BBcode [quote]", "If this feature is enabled, then quoting of messages is not done using the standard Phorum method (which resembles email message quoting), but using the BBcode module's quoting method instead. This means that the quoted text is placed within a [quote Author]...[/quote] bbcode block.<br/><br/>Two of the advantages of using this quote method is that the quoted message can be styles though CSS code and that no word wrapping is applied to the text.");

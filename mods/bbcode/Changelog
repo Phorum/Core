@@ -1,5 +1,10 @@
 Changelog:
 ----------
+
+2010-11-06 v2.0.11
+
+   - added option to add the nofollow attribute only to external URLs
+
 2010-02-12 v2.0.10
 
    - added left/right alignment tags
