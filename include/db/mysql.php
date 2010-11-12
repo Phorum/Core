@@ -1719,6 +1719,8 @@ function phorum_db_get_message_index($thread=0, $message_id=0)
  *
  * @param boolean $return_threads
  *     Whether to return the results as threads (TRUE) or messages (FALSE).
+ *     When searching for a user ($match_type = USER_ID), then only the
+ *     thread starter messages that were posted by the user are returned.
  *
  * @param integer $offset
  *     The result page offset starting with 0.
@@ -1822,13 +1824,14 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
         if (empty($user_id)) return $return;
 
         // Search for messages.
+        $where = "user_id = $user_id AND
+                  status=".PHORUM_STATUS_APPROVED." AND
+                  moved=0";
+        if ($return_threads) $where .= " AND parent_id = 0";
         $sql = "SELECT SQL_CALC_FOUND_ROWS *
                 FROM   {$PHORUM['message_table']}
                 USE    KEY(user_messages)
-                WHERE  user_id = $user_id AND
-                       status=".PHORUM_STATUS_APPROVED." AND
-                       moved=0
-                       $forum_where
+                WHERE  $where $forum_where
                 ORDER  BY datestamp DESC
                 LIMIT  $start, $length";
         $rows = phorum_db_interact(DB_RETURN_ASSOCS, $sql);
