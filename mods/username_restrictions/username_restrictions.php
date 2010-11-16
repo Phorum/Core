@@ -1,5 +1,7 @@
 <?php
 
+require_once "./mods/username_restrictions/defaults.php";
+
 function phorum_mod_username_restrictions_before_register($data)
 {
     // If another module returned an error already, then we won't run
