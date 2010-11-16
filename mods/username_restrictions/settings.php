@@ -1,7 +1,7 @@
 <?php
     if (!defined("PHORUM_ADMIN")) return;
 
-    include("./mods/username_restrictions/defaults.php");
+    require_once "./mods/username_restrictions/defaults.php";
 
     // Options for the valid username characters.
     $valid_chars_options = array(
