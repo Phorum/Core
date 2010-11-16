@@ -1674,10 +1674,11 @@ function phorum_api_user_authenticate($type, $username, $password)
 /**
  * Set the active Phorum user.
  *
- * This function can be used to setup the Phorum data to indicate which
- * user is logged in or to setup the anonymous user. Calling this function
- * is all that is needed to tell Phorum which user is logged in (or to
- * tell that no user is logged in by setting up the anonymous user).
+ * This function can be used to setup the Phorum data in $PHORUM['user']
+ * to indicate which user is logged in or to setup the anonymous user.
+ * Calling this function is all that is needed to tell Phorum which user
+ * is logged in (or to tell that no user is logged in by setting up the
+ * anonymous user in $PHORUM['user']).
  *
  * Next to setting up the user data, the function will handle user activity
  * tracking (based on the "track_user_activity" setting) and setup some
@@ -1849,6 +1850,21 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
     }
 
     return TRUE;
+}
+// }}}
+
+// {{{ Function: phorum_api_user_get_active_user()
+/**
+ * Retrieve the active Phorum user. 
+ *
+ * @return NULL|array
+ *   This method will return the data for the active Phorum user or 
+ *   NULL when this user is an anonymous user (i.e. not logged in.)
+ */
+function phorum_api_user_get_active_user()
+{
+  global $PHORUM;
+  return empty($PHORUM['user']['user_id']) ? NULL : $PHORUM['user'];
 }
 // }}}
 
