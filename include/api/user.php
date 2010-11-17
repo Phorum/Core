@@ -469,7 +469,7 @@ function phorum_api_user_save($user, $flags = 0)
                 break;
                 
             case 'float':
-            	$dbuser[$fld] = $val === NULL ? NULL : (float) $val;
+              $dbuser[$fld] = $val === NULL ? NULL : (float) $val;
                 break;
                 
             case 'string':
@@ -1834,6 +1834,8 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 /**
  * Retrieve the active Phorum user. 
  *
+ * This function was added in Phorum 5.1.16.
+ *
  * @return NULL|array
  *   This method will return the data for the active Phorum user or 
  *   NULL when this user is an anonymous user (i.e. not logged in.)
@@ -2770,10 +2772,10 @@ function phorum_api_user_save_groups($user_id, $groups)
      *     <hookcode>
      *     function phorum_mod_foo_user_save_groups($data)
      *     {
-     *     	   list($user_id,$groups) = $data;
+     *         list($user_id,$groups) = $data;
      *         foreach($groups as $group_id => $group_permission) {
-     *				// do something with the groups permissions
-     *	       }
+     *             // do something with the groups permissions
+     *         }
      *     
      *         return array($user_id,$groups);
      *     }
