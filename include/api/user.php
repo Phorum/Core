@@ -1857,7 +1857,7 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 /**
  * Retrieve the active Phorum user. 
  *
- * This function was added in Phorum 5.1.16.
+ * This function was added in Phorum 5.2.16.
  *
  * @return NULL|array
  *   This method will return the data for the active Phorum user or 
