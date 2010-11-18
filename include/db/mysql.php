@@ -8157,14 +8157,16 @@ if (isset($PHORUM['DBCONFIG']['mysql_php_extension'])) {
    // Up to here, no PHP extension was found. This probably means that no
    // MySQL extension is loaded. Here we'll try to dynamically load an
    // extension ourselves.
-   @dl("mysqli.so");
-   if (function_exists('mysqli_connect')) {
-       $ext = "mysqli";
-   } else {
-       @dl("mysql.so");
-       if (function_exists('mysql_connect')) {
-           $ext = "mysql";
-       }
+   if(function_exists('dl')) {
+	   @dl("mysqli.so");
+	   if (function_exists('mysqli_connect')) {
+	       $ext = "mysqli";
+	   } else {
+	       @dl("mysql.so");
+	       if (function_exists('mysql_connect')) {
+	           $ext = "mysql";
+	       }
+	   }
    }
 }
 
