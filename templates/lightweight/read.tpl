@@ -22,7 +22,7 @@
                             {IF MESSAGES->URL->PM}<small>[ <a href="{MESSAGES->URL->PM}">{LANG->PrivateReply}</a> ]</small>{/IF}
                         </div>
                         <small>
-                        <strong><a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a></strong>{IF MESSAGES->new} <span class="new-flag[hide,{MESSAGES->forum_id},{MESSAGES->thread}] new-flag">{LANG->New}</span>{/IF}<br />
+                        <strong><a href="{MESSAGES->URL->READ}" rel="nofollow">{MESSAGES->subject}</a></strong>{IF MESSAGES->new} <span class="new-flag[hide,{MESSAGES->forum_id},{MESSAGES->thread}] new-flag">{LANG->New}</span>{/IF}<br />
                         {MESSAGES->datestamp}
                         </small>
                     </td>
@@ -61,8 +61,8 @@
                         <a class="icon icon-comment-edit" href="{MESSAGES->URL->EDIT}">{LANG->EditPost}</a>
                     {/IF}
                 {/IF}
-                <a class="icon icon-comment-add" href="{MESSAGES->URL->REPLY}">{LANG->Reply}</a>
-                <a class="icon icon-comment-add" href="{MESSAGES->URL->QUOTE}">{LANG->QuoteMessage}</a>
+                <a class="icon icon-comment-add" href="{MESSAGES->URL->REPLY}" rel="nofollow">{LANG->Reply}</a>
+                <a class="icon icon-comment-add" href="{MESSAGES->URL->QUOTE}" rel="nofollow">{LANG->QuoteMessage}</a>
                 {IF MESSAGES->URL->REPORT}<a class="icon icon-exclamation" href="{MESSAGES->URL->REPORT}">{LANG->Report}</a>{/IF}
             </div>
 
