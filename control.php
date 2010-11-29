@@ -222,8 +222,19 @@ if (!$hook_info['handled']) {
     }
 }
 
+// set the page title correctly
+$PHORUM['DATA']['HTML_TITLE'].=PHORUM_SEPARATOR.$PHORUM["DATA"]["LANG"]["MyProfile"];
+
 if(empty($PHORUM["DATA"]["HEADING"])){
     $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["MyProfile"];
+} else {
+    // set the breadcrumb with the heading
+    $PHORUM['DATA']['BREADCRUMBS'][]=array(
+        'URL'=>phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=$panel"),
+        'TEXT'=>$PHORUM['DATA']['HEADING'],
+        'TYPE'=>'control'
+    );
+    $PHORUM['DATA']['HTML_TITLE'].=PHORUM_SEPARATOR.$PHORUM['DATA']['HEADING'];
 }
 
 // unset default description
