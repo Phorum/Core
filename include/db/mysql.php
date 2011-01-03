@@ -1834,7 +1834,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
                 WHERE  $where $forum_where
                 ORDER  BY datestamp DESC
                 LIMIT  $start, $length";
-        $rows = phorum_db_interact(DB_RETURN_ASSOCS, $sql);
+        $rows = phorum_db_interact(DB_RETURN_ASSOCS, $sql,"message_id");
 
         // Retrieve the number of found messages.
         $count = phorum_db_interact(
@@ -2058,7 +2058,8 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
                     $forum_where
                     $datestamp_where
              ORDER  BY datestamp DESC
-             LIMIT  $start, $length"
+             LIMIT  $start, $length",
+             "message_id"
         );
 
         // Retrieve the number of found messages.
