@@ -27,6 +27,7 @@ if (!defined("PHORUM")) return;
 /* initializing our real cache-dir */
 $PHORUM['real_cache'] = $PHORUM['CACHECONFIG']['directory']."/".md5(__FILE__);
 
+// {{{ Function: phorum_api_cache_get()
 /**
  * Retrieve an object from the cache.
  *
@@ -107,7 +108,9 @@ function phorum_api_cache_get($type, $key, $version=NULL)
       return array_key_exists($key, $ret) ? $ret[$key] : NULL;
     }
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_put()
 /**
  * Store an object in the cache.
  *
@@ -163,7 +166,9 @@ function phorum_api_cache_put(
 
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_remove()
 /**
  * Remove an object from the cache
  *
@@ -191,9 +196,11 @@ function phorum_api_cache_remove($type, $key)
 
     return $ret;
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_purge()
 /**
- * Delete all expired objects from the cache.
+ * Remove all expired objects from the cache.
  *
  * @param boolean $full
  *     If TRUE, then the full cache will be expired, not only the
@@ -215,7 +222,9 @@ function phorum_api_cache_purge($full = FALSE)
            "Purged " . phorum_api_format_filesize($purged) . " of " .
            phorum_api_format_filesize($total) . "<br/>\n";
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_clear()
 /**
  * Remove all objects from the cache.
  *
@@ -235,7 +244,9 @@ function phorum_api_cache_clear()
 
     return $ret;
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_check()
 /**
  * Check the cache functionality
  *
@@ -266,12 +277,14 @@ function phorum_api_cache_check()
 
     return $ret;
 }
+// }}}
 
 // ----------------------------------------------------------------------
 // Functions below here are helper functions that are not part of the
 // file storage API.
 // ----------------------------------------------------------------------
 
+// {{{ Function: phorum_api_cache_purge_recursive()
 /**
  * Recursively delete all files/dirs in a directory.
  *
@@ -354,7 +367,9 @@ function phorum_api_cache_purge_recursive(
 
     return array($total, $purged, $did_purge);
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_mkdir()
 /**
  * Recursively create a directory tree.
  * 
@@ -374,7 +389,9 @@ function phorum_api_cache_mkdir($path)
     @mkdir($path);
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_rmdir()
 /**
  * Recursively delete all files/dirs in a directory.
  *
@@ -423,5 +440,6 @@ function phorum_api_cache_rmdir( $path )
     if (defined('EVENT_LOGGING')) phorum_mod_event_logging_resume();
     return TRUE;
 }
+// }}}
 
 ?>

@@ -17,12 +17,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-// original version of this cache-layer provided by john wards                //
-// modified by thomas seifert to work with multi-gets                         //
+// The original version of this cache-layer was provided by John Wards.       //
+// Modified by Thomas Seifert to work with multi-gets.                        //
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-
+// {{{ Function: phorum_api_cache_get()
 /**
  * Retrieve an object from the cache.
  *
@@ -30,9 +30,10 @@
  *     A name for the group of data that is being cached.
  *     Examples are "user" and "message".
  *
- * @param string $key
+ * @param string|array $key
  *     A unique key that identifies the object to retrieve.
  *     This could for example be the user_id of a cached user.
+ *     This can also be an array of keys.
  *
  * @param integer $version
  *     The version of the object to retrieve. If the cached object's
@@ -42,44 +43,65 @@
  * @return mixed
  *     This function returns the cached object for the given key
  *     or NULL if no data is cached or if the cached data has expired.
+ *
+ *     When an array of keys is provided in the $key argument, then
+ *     an array will be returned. The keys in this array are the cache keys
+ *     for which cached data is available. If no cached data is available
+ *     for any of the keys, then NULL is returned.
  */
-function phorum_api_cache_get($type,$key,$version=NULL) {
-    if(is_array($key)) {
-        $ret=array();
-        foreach($key as $realkey) {
-            $getkey=$type."_".$realkey;
-            $data = apc_fetch($getkey);
+function phorum_api_cache_get($type, $key, $version = NULL)
+{
+    if (is_array($key))
+    {
+        $ret = array();
 
-            if($data !== false) {
-                if ($version == NULL ||
-                    ($data[1] != NULL && $data[1] == $version)) {
-                    $ret[$realkey]=$data[0];
+        foreach ($key as $realkey)
+        {
+            $getkey = $type . "_" . $realkey;
+            $data   = apc_fetch($getkey);
+
+            if ($data !== FALSE)
+            {
+                if (
+                    $version == NULL ||
+                    ($data[1] != NULL && $data[1] == $version)
+                ) {
+                    $ret[$realkey] = $data[0];
                 }
             }
         }
-    } else {
-        $getkey=$type."_".$key;
-        $data = apc_fetch($getkey);
+    }
+    else
+    {
+        $getkey = $type . "_" . $key;
+        $data   = apc_fetch($getkey);
 
-        if($data !== false) {
-            if ($version == NULL ||
-                ($data[1] != NULL && $data[1] == $version)) {
-                $ret=$data[0];
+        if ($data !== FALSE)
+        {
+            if (
+                $version == NULL ||
+                ($data[1] != NULL && $data[1] == $version)
+            ) {
+                $ret = $data[0];
             }
-        } else {
-            $ret = false;
+        }
+        else
+        {
+            $ret = FALSE;
         }
     }
 
-    if($ret === false || (is_array($ret) && count($ret) == 0))
-        $ret=NULL;
+    if ($ret === FALSE || (is_array($ret) && count($ret) == 0)) {
+        $ret = NULL;
+    }
 
     return $ret;
-
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_put()
 /**
- * Puts some data into the cache.
+ * Store an object in the cache.
  *
  * @param string $type 
  *     A name for the group of data that is being cached.
@@ -102,15 +124,17 @@ function phorum_api_cache_get($type,$key,$version=NULL) {
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
-function phorum_api_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL) {
-
-    $ret=apc_store($type."_".$key, array($data,$version), $ttl);
+function phorum_api_cache_put(
+    $type, $key, $data, $ttl = PHORUM_CACHE_DEFAULT_TTL, $version = NULL)
+{
+    $ret = apc_store($type . "_" . $key, array($data, $version), $ttl);
     return $ret;
 }
+// }}}
 
-
+// {{{ Function: phorum_api_cache_remove()
 /**
- * Removes an object from the cache
+ * Remove an object from the cache
  *
  * @param string $type 
  *     A name for the group of data that is being cached.
@@ -122,75 +146,78 @@ function phorum_api_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$ve
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
-function phorum_api_cache_remove($type,$key) {
-
-    $ret=apc_delete( $type."_".$key);
-
-    return $ret;
+function phorum_api_cache_remove($type, $key)
+{
+    return apc_delete($type . "_" . $key);
 }
+// }}}
+
+// {{{ Function: phorum_api_cache_purge()
 /**
- * Delete all expired objects from the cache.
+ * Remove all expired objects from the cache.
  *
- * Note: for the apc cache, we have no option to only purge
+ * Note: for the APC cache, we have no option to only purge
  * the expired objects. Instead, the full cache will be flushed.
- * 
+ *
  * @param boolean $full
- *     If true, then the full cache will be expired, not only the
+ *     If TRUE, then the full cache will be expired, not only the
  *     expired part of the cache.
  *
  * @return string
  *     A string describing the result status. This is used by the
  *     cache purging screen in the admin interface to show the result.
  */
-function phorum_api_cache_purge($full = false) {
+function phorum_api_cache_purge($full = FALSE)
+{
     phorum_api_cache_clear();
     return "APC cache purged";
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_clear()
 /**
- * Removes all objects from the cache.
+ * Remove all objects from the cache.
  *
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
-function phorum_api_cache_clear() {
-
-    $ret=apc_clear_cache("user");
-
-    return $ret;
+function phorum_api_cache_clear()
+{
+    return apc_clear_cache("user");
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_check()
 /**
- * Checks the cache functionality
+ * Check the cache functionality
  *
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
-function phorum_api_cache_check() {
-    
+function phorum_api_cache_check()
+{
     $data = time();
-    $ret  = false;
-    
+    $ret  = FALSE;
+
     $retval = phorum_api_cache_get('check','connection');
-    
+
     // only retry the cache check if last check was more than 1 hour ago
-    if($retval === NULL || $retval < ($data-3600)) {
-    
-        phorum_api_cache_put('check','connection',$data,7200);
-        
-        $gotten_data = phorum_api_cache_get('check','connection');
-        
-        if($gotten_data === $data) {
-            $ret = true;
+    if ($retval === NULL || $retval < ($data-3600))
+    {
+        phorum_api_cache_put('check', 'connection', $data, 7200);
+
+        $gotten_data = phorum_api_cache_get('check', 'connection');
+
+        if ($gotten_data === $data) {
+            $ret = TRUE;
         }
-    
-    } else {
-        $ret = true;
     }
-    
+    else {
+        $ret = TRUE;
+    }
+
     return $ret;
 }
-
-
+// }}}
 
 ?>

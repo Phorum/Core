@@ -27,6 +27,7 @@
  * than the owner of the website), it's best to not use file caching.
  */
 
+// {{{ Function: phorum_api_cache_get()
 /**
  * Retrieve an object from the cache.
  *
@@ -34,9 +35,10 @@
  *     A name for the group of data that is being cached.
  *     Examples are "user" and "message".
  *
- * @param string $key
+ * @param string|array $key
  *     A unique key that identifies the object to retrieve.
  *     This could for example be the user_id of a cached user.
+ *     This can also be an array of keys.
  *
  * @param integer $version
  *     The version of the object to retrieve. If the cached object's
@@ -46,14 +48,21 @@
  * @return mixed
  *     This function returns the cached object for the given key
  *     or NULL if no data is cached or if the cached data has expired.
+ *
+ *     When an array of keys is provided in the $key argument, then
+ *     an array will be returned. The keys in this array are the cache keys
+ *     for which cached data is available. If no cached data is available
+ *     for any of the keys, then NULL is returned.
  */
 function phorum_api_cache_get($type, $key, $version = NULL)
 {
     return NULL;
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_put()
 /**
- * Puts some data into the cache.
+ * Store an object in the cache.
  *
  * @param string $type 
  *     A name for the group of data that is being cached.
@@ -76,13 +85,16 @@ function phorum_api_cache_get($type, $key, $version = NULL)
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
-function phorum_api_cache_put($type, $key, $data, $ttl = PHORUM_CACHE_DEFAULT_TTL, $version = NULL)
+function phorum_api_cache_put(
+    $type, $key, $data, $ttl = PHORUM_CACHE_DEFAULT_TTL, $version = NULL)
 {
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_remove()
 /**
- * Removes an object from the cache
+ * Remove an object from the cache
  *
  * @param string $type 
  *     A name for the group of data that is being cached.
@@ -98,25 +110,29 @@ function phorum_api_cache_remove($type,$key)
 {
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_purge()
 /**
- * Delete all expired objects from the cache.
+ * Remove all expired objects from the cache.
  *
  * @param boolean $full
- *     If true, then the full cache will be expired, not only the
+ *     If TRUE, then the full cache will be expired, not only the
  *     expired part of the cache.
  *
  * @return string
  *     A string describing the result status. This is used by the
  *     cache purging screen in the admin interface to show the result.
  */
-function phorum_api_cache_purge($full = false)
+function phorum_api_cache_purge($full = FALSE)
 {
     return "No purging is done, because the NULL cache layer is in use.";
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_clear()
 /**
- * Removes all objects from the cache.
+ * Remove all objects from the cache.
  *
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
@@ -125,9 +141,11 @@ function phorum_api_cache_clear()
 {
     return TRUE;
 }
+// }}}
 
+// {{{ Function: phorum_api_cache_check()
 /**
- * Checks the cache functionality
+ * Check the cache functionality
  *
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
@@ -136,5 +154,6 @@ function phorum_api_cache_check()
 {
     return TRUE;    
 }
+// }}}
 
 ?>
