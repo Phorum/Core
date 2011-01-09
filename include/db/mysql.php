@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2010  Phorum Development Team                              //
+//   Copyright (C) 2011  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -37,7 +37,7 @@
  *     belong here and could better go into the core maybe?
  *
  * @package    PhorumDBLayer
- * @copyright  2010, Phorum Development Team
+ * @copyright  2011, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
@@ -7791,7 +7791,7 @@ function phorum_db_create_tables()
            sessid_st_timeout        int unsigned   NOT NULL default '0',
            email                    varchar(100)   NOT NULL default '',
            email_temp               varchar(110)   NOT NULL default '',
-           hide_email               tinyint(1)     NOT NULL default '0',
+           hide_email               tinyint(1)     NOT NULL default '1',
            active                   tinyint(1)     NOT NULL default '0',
            signature                text           NOT NULL,
            threaded_list            tinyint(1)     NOT NULL default '0',
