@@ -425,7 +425,6 @@ function phorum_api_forums_save($data, $flags = 0)
 
     // Used for keeping track of an existing db record.
     $existing = NULL;
-
     // Initialize data for saving default forum settings.
     if ($flags & PHORUM_FLAG_DEFAULTS)
     {
@@ -482,7 +481,6 @@ function phorum_api_forums_save($data, $flags = 0)
     foreach ($data as $fld => $val) {
         $dbdata[$fld] = $val;
     }
-
     // Some checks when we are not handling saving of default settings.
     if (!($flags & PHORUM_FLAG_DEFAULTS))
     {
@@ -591,7 +589,6 @@ function phorum_api_forums_save($data, $flags = 0)
             }
         }
     }
-
     // Apply inheritance driven settings to the data if some sort of
     // inheritance is configured. Options for this field are:
     // - NULL       : no inheritance used
@@ -1240,8 +1237,9 @@ function phorum_api_forums_tree($vroot = NULL, $flags = 0)
     {
         if ($forum["folder_flag"])
         {
-            // Skip empty folders.
-            if (empty($forums[$forum['forum_id']]['childcount'])) continue;
+            // Skip empty folders, if we didn't request them
+            if (empty($forums[$forum['forum_id']]['childcount']) && 
+               !($flags & PHORUM_FLAG_INCLUDE_EMPTY_FOLDERS)) continue;
 
             $url = phorum_api_url(PHORUM_INDEX_URL, $forum["forum_id"]);
         } else {
