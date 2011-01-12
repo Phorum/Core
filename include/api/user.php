@@ -550,6 +550,13 @@ function phorum_api_user_save($user, $flags = 0)
     // Handle password encryption.
     foreach (array('password', 'password_temp') as $fld)
     {
+        // Ignore handling if the field is not available when editing an
+        // existing user. When the field is not available for a new user,
+        // we will set a secure default for the field in the code below.
+        if ($existing && !array_key_exists($fld, $dbuser)) {
+            continue;
+        }
+
         // Sometimes, this function is (accidentally) called with existing
         // passwords in the data. Prevent duplicate encryption.
         if ($existing && strlen($existing[$fld]) == 32 &&
@@ -563,8 +570,9 @@ function phorum_api_user_save($user, $flags = 0)
         // case of bugs in the code or in case external user auth is used
         // (in which case Phorum can have empty passwords, since the Phorum
         // passwords are not used at all).
-        if (!isset($dbuser[$fld]) || $dbuser[$fld] === NULL ||
-            $dbuser[$fld] == '' || $dbuser[$fld] == '*NO PASSWORD SET*') {
+        if (!isset($dbuser[$fld])  ||
+            $dbuser[$fld] === ''   ||
+            $dbuser[$fld] === '*NO PASSWORD SET*') {
             $dbuser[$fld] = '*NO PASSWORD SET*';
             continue;
         }
