@@ -650,9 +650,11 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
         }
     }
 
-    if($include_bodies && count($messages)) {
+    if ($include_bodies && count($messages))
+    {
         // get custom fields
-        $custom_fields = phorum_db_get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages));
+        $custom_fields = phorum_db_get_custom_fields(
+            PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages));
 
         // Add custom fields to the messages
         foreach ($custom_fields as $message_id => $fields)
@@ -1239,9 +1241,14 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
          FROM   {$PHORUM['message_table']}
          WHERE  message_id = $message_id"
     );
-    if (empty($msg)) trigger_error(
-        "No message found for message_id $message_id", E_USER_ERROR
-    );
+
+    // The message was not found in the database. Since this is the
+    // situation that we want to end up with, consider this an okay
+    // situation. If we would trigger an error here, moderators that
+    // accidentally try to remove the same message twice (or two
+    // moderators that try to delete the same message) would get
+    // a nasty error message as a result.
+    if (empty($msg)) return;
 
     // Find all message_ids that have to be deleted, based on the mode.
     if ($mode == PHORUM_DELETE_TREE) {
@@ -3573,14 +3580,19 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE)
  *     The id of the object the custom fields belong to
  *
  * @param integer $db_flags
- *     database flags needed to be sent to the database functions
+ *     Database flags needed to be sent to the database functions
+ *
+ * @param boolean $raw_data
+ *     When this parameter is TRUE (default is FALSE), then custom fields
+ *     that are configured with html_disabled will not be HTML encoded in
+ *     the return data.
  *
  * @return mixed
  *     An array of custom fields is returned, indexed by relation_id.
  *     For relation_ids that cannot be found, there will be no array element at all.
  */
-function phorum_db_get_custom_fields($type,$relation_id,$db_flags=0,$raw_data=FALSE) {
-
+function phorum_db_get_custom_fields($type, $relation_id, $db_flags = 0, $raw_data = FALSE)
+{
     global $PHORUM;
 
     phorum_db_sanitize_mixed($relation_id, 'int');
@@ -8159,15 +8171,15 @@ if (isset($PHORUM['DBCONFIG']['mysql_php_extension'])) {
    // MySQL extension is loaded. Here we'll try to dynamically load an
    // extension ourselves.
    if(function_exists('dl')) {
-	   @dl("mysqli.so");
-	   if (function_exists('mysqli_connect')) {
-	       $ext = "mysqli";
-	   } else {
-	       @dl("mysql.so");
-	       if (function_exists('mysql_connect')) {
-	           $ext = "mysql";
-	       }
-	   }
+       @dl("mysqli.so");
+       if (function_exists('mysqli_connect')) {
+           $ext = "mysqli";
+       } else {
+           @dl("mysql.so");
+           if (function_exists('mysql_connect')) {
+               $ext = "mysql";
+           }
+       }
    }
 }
 

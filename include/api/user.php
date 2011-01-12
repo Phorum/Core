@@ -436,8 +436,20 @@ function phorum_api_user_save($user, $flags = 0)
     }
 
     // Create a user data array that is understood by the database layer.
-    // We start out with the existing record, if we have one.
-    $dbuser = $existing === NULL ? array() : $existing;
+    // If we are updating an existing user record, then we start out with
+    // some data from that record, otherwise we start with a clean slate.
+    $dbuser = array();
+    if ($existing)
+    {
+        // To identify the record to update.
+        $dbuser['user_id']   = $existing['user_id'];
+
+        // To accommodate for the username + email checks and the
+        // display_name update from below.
+        $dbuser['username']  = $existing['username'];
+        $dbuser['email']     = $existing['email'];
+        $dbuser['real_name'] = $existing['real_name'];
+    }
 
     // Merge in the fields from the $user argument.
     foreach ($user as $fld => $val) {
@@ -467,11 +479,11 @@ function phorum_api_user_save($user, $flags = 0)
             case 'int':
                 $dbuser[$fld] = $val === NULL ? NULL : (int) $val;
                 break;
-                
+
             case 'float':
               $dbuser[$fld] = $val === NULL ? NULL : (float) $val;
                 break;
-                
+
             case 'string':
                 $dbuser[$fld] = $val === NULL ? NULL : trim($val);
                 break;
@@ -864,6 +876,12 @@ function phorum_api_user_save_settings($settings)
  *     are using this API call in your own code, then you most probably do
  *     not need to use this parameter.
  *
+ * @param boolean $raw_data
+ *     This parameter is for internal use only.
+ *     When this parameter is TRUE (default is FALSE), then custom fields
+ *     that are configured with html_disabled will not be HTML encoded in
+ *     the return data.
+ *
  * @return mixed
  *     If the $user_id parameter is a single user_id, then either an array
  *     containing user data is returned or NULL if the user was not found.
@@ -872,7 +890,8 @@ function phorum_api_user_save_settings($settings)
  *     Users for user_ids that are not found are not included in the
  *     returned array.
  */
-function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE, $raw_data = FALSE)
+function phorum_api_user_get(
+    $user_id, $detailed = FALSE, $use_write_server = FALSE, $raw_data = FALSE)
 {
     global $PHORUM;
 
@@ -928,7 +947,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
         // Retrieve and apply the custom fields for users.
         if (!empty($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_USER])) {
             $db_users = phorum_api_custom_field_apply(
-                PHORUM_CUSTOM_FIELD_USER, $db_users,$raw_data
+                PHORUM_CUSTOM_FIELD_USER, $db_users, $raw_data
             );
         }
 
@@ -1037,7 +1056,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
     }
 
     // A backward compatibility hook. The advised hook for modifying
-    // loaded user dadta is "user_get" from above.
+    // loaded user data is "user_get" from above.
     if (isset($PHORUM["hooks"]["read_user_info"])) {
         $users = phorum_api_hook("read_user_info", $users);
     }

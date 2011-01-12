@@ -316,13 +316,13 @@ function phorum_api_custom_field_byname($name, $type)
 
     if (isset($PHORUM['PROFILE_FIELDS'][$type]) &&
         is_array($PHORUM['PROFILE_FIELDS'][$type])) {
-       	if (empty($profile_fields_reverse[$type])) {
+        if (empty($profile_fields_reverse[$type])) {
             foreach ($PHORUM['PROFILE_FIELDS'][$type] as $id => $custom_field) {
                 if ($id !== 'num_fields') {
                     $profile_fields_reverse[$type][$custom_field['name']] = $custom_field;
                 }
             }
-       	}
+        }
 
         if (isset($profile_fields_reverse[$type][$name])) {
             return $profile_fields_reverse[$type][$name];
@@ -535,10 +535,15 @@ function phorum_api_custom_field_checkconfig()
  *     The data array where the custom fields should be added to.
  *     Keys should be the ids to retrieve custom fields for.
  *
+ * @param boolean $raw_data
+ *     When this parameter is TRUE (default is FALSE), then custom fields
+ *     that are configured with html_disabled will not be HTML encoded in
+ *     the return data.
+ *
  * @return array
  *     Returns the input array with the custom fields added.
  */
-function phorum_api_custom_field_apply($type = NULL, $data_array,$raw_data=FALSE)
+function phorum_api_custom_field_apply($type = NULL, $data_array, $raw_data = FALSE)
 {
     global $PHORUM;
 
