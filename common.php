@@ -230,22 +230,10 @@ if (!defined( "PHORUM_ADMIN" ))
     // Try to restore a user session.
     if (!$skipsession && phorum_api_user_session_restore(PHORUM_FORUM_SESSION))
     {
-        // If the user has overridden thread settings, change it here.
-        if (!isset($PHORUM['display_fixed']) || !$PHORUM['display_fixed'])
-        {
-            if ($PHORUM["user"]["threaded_list"] == PHORUM_THREADED_ON) {
-                $PHORUM["threaded_list"] = TRUE;
-            } elseif ($PHORUM["user"]["threaded_list"] == PHORUM_THREADED_OFF) {
-                $PHORUM["threaded_list"] = FALSE;
-            }
-            if ($PHORUM["user"]["threaded_read"] == PHORUM_THREADED_ON) {
-                $PHORUM["threaded_read"] = 1;
-            } elseif ($PHORUM["user"]["threaded_read"] == PHORUM_THREADED_OFF) {
-                $PHORUM["threaded_read"] = 0;
-            } elseif ($PHORUM["user"]["threaded_read"] == PHORUM_THREADED_HYBRID) {
-                $PHORUM["threaded_read"] = 2;
-            }
-        }
+        // If the user has overridden thread settings, change them here.
+        $modes = phorum_api_forums_get_display_modes($PHORUM);
+        $PHORUM["threaded_list"] = $modes['list'];
+        $PHORUM["threaded_read"] = $modes['read'];
 
         // check if the user has new private messages
         if (!empty($PHORUM["enable_new_pm_count"]) &&

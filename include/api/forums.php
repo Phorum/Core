@@ -316,7 +316,7 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id
         $forums[$id]['inherit_id'] = $forum['inherit_id'] === NULL
                                    ? -1 : (int) $forum['inherit_id'];
     }
-    
+
     // retrieve and apply the custom fields for forums
     if (!empty($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_FORUM])) {
         $forums = phorum_api_custom_field_apply(PHORUM_CUSTOM_FIELD_FORUM, $forums);
@@ -1393,6 +1393,68 @@ function phorum_api_forums_get_inherit_id_options($forum_id = NULL)
     $options = array_reverse($options, TRUE);
 
     return $options;
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_get_display_modes()
+/**
+ * Retrieve the display modes for the list and read pages for a given forum.
+ *
+ * @param integer|array $forum
+ *   The id of the forum for which to retrieve the display modes or
+ *   a forum data array.
+ *
+ * @return array
+ *   An array containing two fields: "list" and "read".
+ *   The values of these fields indicate the read mode.
+ *   This is one of the values:
+ *   - 0 : flat reading
+ *   - 1 : threaded reading
+ *   - 2 : hybrid reading (only applicable for "read")
+ */
+function phorum_api_forums_get_display_modes($forum)
+{
+    global $PHORUM;
+
+    if (!is_array($forum))
+    {
+        $forum = phorum_api_forums_by_forum_id($forum);
+        if (!$forum) trigger_error(
+          "phorum_api_forums_get_display_modes(): no forum found for " .
+          "forum id $forum",
+          E_USER_ERROR
+        );
+    }
+
+    // Fetch the display modes from the forum settings.
+    $read_mode = $forum['threaded_read'];
+    $list_mode = $forum['threaded_list'];
+
+    // Apply user overrides, when applicable.
+    if (empty($forum['display_fixed']) && $PHORUM['user']['user_id'])
+    {
+        $user = $PHORUM['user'];
+
+        if ($user["threaded_read"] == PHORUM_THREADED_ON) {
+            $read_mode = 1;
+        } elseif ($user["threaded_read"] == PHORUM_THREADED_OFF) {
+            $read_mode = 0;
+        } elseif ($user["threaded_read"] == PHORUM_THREADED_HYBRID) {
+            $read_mode = 2;
+        }
+
+        if ($PHORUM["user"]["threaded_list"] == PHORUM_THREADED_ON) {
+            $list_mode = 1;
+        } elseif ($PHORUM["user"]["threaded_list"] == PHORUM_THREADED_OFF) {
+            $list_mode = 0;
+        }
+    }
+
+    // Return the results.
+    return array(
+        'list' => $list_mode,
+        'read' => $read_mode
+    );
 }
 // }}}
 
