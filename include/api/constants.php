@@ -177,6 +177,9 @@ define("PHORUM_SORT_STICKY", 1);
 define("PHORUM_SORT_DEFAULT", 2);
 
 // threaded on/off
+// These are constants that are used in the settings data of a user.
+// Note that these are not the values that are used for threaded_list and
+// threaded_read in the settings for a forum.
 define("PHORUM_THREADED_DEFAULT", 0);
 define("PHORUM_THREADED_ON", 1);
 define("PHORUM_THREADED_OFF", 2);
