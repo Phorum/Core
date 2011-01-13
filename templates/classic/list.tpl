@@ -26,7 +26,6 @@
       <td class="PhorumTableRow{altclass}">
         {marker}
         {IF MESSAGES->sort PHORUM_SORT_STICKY}<span class="PhorumListSubjPrefix">{LANG->Sticky}:</span>{/IF}
-        {IF MESSAGES->sort PHORUM_SORT_ANNOUNCEMENT}<span class="PhorumListSubjPrefix">{LANG->Announcement}:</span>{/IF}
         {IF MESSAGES->moved}<span class="PhorumListSubjPrefix">{LANG->MovedSubject}:</span>{/IF}
         <a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a>
         {IF MESSAGES->new}&nbsp;<span class="PhorumNewFlag">{MESSAGES->new}</span>{/IF}
