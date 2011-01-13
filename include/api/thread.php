@@ -250,5 +250,63 @@ function phorum_api_thread_update_metadata($thread_id)
 }
 // }}}
 
+// {{{ Function: phorum_api_thread_set_sort()
+/**
+ * Set the sort type to use for a thread.
+ *
+ * Note: Historically, there were more sort types available in the Phorum core,
+ * which is the reason why sticky threads aren't simply implemented using a
+ * single is_sticky field or so.
+ *
+ * @param integer $thread_id
+ *     The id of the thread to set the sort type for.
+ *
+ * @param integer $sort
+ *     PHORUM_SORT_DEFAULT (default) to make the thread a default thread.
+ *     PHORUM_SORT_STICKY to make the thread a sticky thread.
+ */
+function phorum_api_thread_set_sort($thread_id, $sort = PHORUM_SORT_DEFAULT)
+{
+    global $PHORUM;
+
+    // Check the $sort parameter.
+    if ($sort !== PHORUM_SORT_DEFAULT &&
+        $sort !== PHORUM_SORT_STICKY) trigger_error(
+        'phorum_api_thread_set_sort(): Illegal sort type provided',
+        E_USER_ERROR
+    );
+
+    // Retrieve the messages for the provided thread id.
+    $messages = phorum_db_get_messages($thread_id, 0, TRUE, TRUE, FALSE);
+    unset($messages['users']);
+
+    // Update all messages with the new sort value.
+    $forum_id = NULL;
+    foreach ($messages as $id => $message)
+    {
+        if ($message['sort'] !== $sort)
+        {
+            $forum_id = $message['forum_id'];
+
+            phorum_db_update_message($id, array('sort' => $sort));
+
+            if ($PHORUM['cache_messages'])
+            {
+                $cache_key = $PHORUM["forum_id"] . "-" . $message["message_id"];
+                phorum_api_cache_remove('message', $cache_key);
+            }
+        }
+    }
+
+    // Update the forum statistics to update the sticky_count.
+    if ($forum_id !== NULL)
+    {
+        $tmp = $PHORUM['forum_id'];
+        $PHORUM['forum_id'] = $forum_id;
+        phorum_db_update_forum_stats(true);
+        $PHORUM['forum_id'] = $tmp;
+    }
+}
+// }}}
 
 ?>
