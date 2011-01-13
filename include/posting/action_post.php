@@ -426,14 +426,14 @@ if ($success)
         // give a message about this being a moderated forum before redirecting        
         $PHORUM['DATA']['OKMSG']=$PHORUM['DATA']['LANG']['ModeratedForum'];
         $PHORUM['DATA']["URL"]["REDIRECT"]=$redir_url;
-        
+
         // clickheremsg is depending on the place we are returning to
         if ($PHORUM["redirect_after_post"] == "read") {
             $PHORUM['DATA']['BACKMSG'] = $PHORUM['DATA']['LANG']['BackToThread'];
         } else {
             $PHORUM['DATA']['BACKMSG'] = $PHORUM['DATA']['LANG']['BackToList'];
         }
-        
+
         // make it a little bit longer visible
         $PHORUM['DATA']["URL"]["REDIRECT_TIME"]=10;
         phorum_api_output('message');

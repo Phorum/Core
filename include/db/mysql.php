@@ -1533,18 +1533,19 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
  *     a moderator.
  *
  * @param boolean $write_server
- *     This value can be set to true to specify that the message should be retrieved
- *     from the master (aka write-server) in case replication is used
+ *     This value can be set to true to specify that the message should be
+ *     retrieved from the master (aka write-server) in case replication is used
  *
  * @param boolean $get_custom_fields
  *     This value can be set to false to specify that no custom fields should be
- *     retrieved for the message, avoids another query and therefore speed up things
+ *     retrieved for the message, avoids another query and therefore speed
+ *     up things
  *
  * @return array
  *     An array of messages, indexed by message_id. One special key "users"
  *     is set too. This one contains an array of all involved user_ids.
  */
-function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $write_server = FALSE,$get_custom_fields = true)
+function phorum_db_get_messages($thread, $page = 0, $ignore_mod_perms = FALSE, $write_server = FALSE, $get_custom_fields = TRUE)
 {
     $PHORUM = $GLOBALS['PHORUM'];
 
@@ -1653,8 +1654,6 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $writ
 
     // Store the involved users in the message array.
     $messages['users'] = $involved_users;
-
-
 
     return $messages;
 }
