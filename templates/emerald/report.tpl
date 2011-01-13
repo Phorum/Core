@@ -14,6 +14,7 @@
         <textarea name="explanation" rows="5" cols="60" wrap="virtual">{explanation}</textarea><br />
         <br />
         <input type="submit" name="report" value="{LANG->Report}" />
+        <input type="submit" name="cancel" value="{LANG->Cancel}" />
     </form>
 </div>
 

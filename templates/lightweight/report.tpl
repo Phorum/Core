@@ -12,6 +12,7 @@
     <form method="post" action="{ReportURL}">
         <textarea name="explanation" rows="5" cols="60" wrap="virtual">{explanation}</textarea><br />
         <input type="submit" name="report" value="{LANG->Report}" />
+        <input type="submit" name="cancel" value="{LANG->Cancel}" />
     </form>
 </div>
 

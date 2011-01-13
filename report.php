@@ -41,10 +41,18 @@ if (isset($PHORUM["args"][1]) && is_numeric($PHORUM["args"][1])) {
     $message = phorum_db_get_message($message_id);
 }
 
-if(is_array($message) && count($message)) {
-
+if (is_array($message) && count($message))
+{
     // check for report requests
-    if(!empty($_POST["report"])) {
+    if (!empty($_POST["cancel"]))
+    {
+        return phorum_api_redirect(phorum_api_url(
+            PHORUM_FOREIGN_READ_URL,
+            $message["forum_id"], $message["thread"], $message['message_id']
+        ));
+    }
+    if (!empty($_POST["report"]))
+    {
         if ($PHORUM["DATA"]["LOGGEDIN"]){
             if (empty($_POST["explanation"])){
                 $_POST["explanation"] = "<" . $PHORUM["DATA"]["LANG"]["None"] . ">";
@@ -87,7 +95,10 @@ if(is_array($message) && count($message)) {
 
                 phorum_api_mail($mail_users, $mail_data);
 
-                $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_api_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"]);
+                $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_api_url(
+                    PHORUM_FOREIGN_READ_URL,
+                    $message["forum_id"], $message["thread"], $message['message_id']
+                );
                 $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
                 $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["ReportPostSuccess"];
                 $template="message";
