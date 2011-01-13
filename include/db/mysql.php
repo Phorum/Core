@@ -4137,18 +4137,18 @@ function phorum_db_user_save($userdata)
 // }}}
 
 // {{{ Function: phorum_db_save_custom_fields()
-function phorum_db_save_custom_fields($relation_id,$field_type,$customfield_data)
+function phorum_db_save_custom_fields($relation_id, $field_type, $customfield_data)
 {
     global $PHORUM;
 
-    // Update custom  fields for the object.
+    // Update custom fields for the object.
     if (isset($customfield_data))
     {
         // Insert new custom profile fields.
         foreach ($customfield_data as $name => $val)
         {
-            require_once PHORUM_PATH.'/include/api/custom_field.php';
-            $custom = phorum_api_custom_field_byname($name,$field_type);
+            require_once PHORUM_PATH . '/include/api/custom_field.php';
+            $custom = phorum_api_custom_field_byname($name, $field_type);
 
             // Arrays and NULL values are left untouched.
             // Other values are truncated to their configured field length.
@@ -5185,7 +5185,7 @@ function phorum_db_newflag_check($forum_ids)
 
     foreach($forum_ids as $forum_id){
 
-        if(empty($list[$forum_id]) || empty($counts[$forum_id])){
+        if (empty($list[$forum_id]) || empty($counts[$forum_id])){
 
             $new_checks[$forum_id] = FALSE;
 
@@ -5578,7 +5578,7 @@ function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
         DB_MASTERQUERY
     );
     // lets recalculate the new min_id
-    if($numdelete > 0) {
+    if ($numdelete > 0) {
         // Retrieve the maximum message_id in this forum.
         $min_id = phorum_db_interact(
             DB_RETURN_VALUE,
@@ -8143,48 +8143,39 @@ function phorum_db_sanitychecks()
 // then this one is used for loading the specific PHP database extension code.
 // Otherwise, we try to auto-detect which one is available.
 
-$ext = NULL;
 // could be unset in Phorum < 5.2.7
-if(!isset($PHORUM['DBCONFIG']['socket'])) {
-    $PHORUM['DBCONFIG']['socket']=NULL;
+if (!isset($PHORUM['DBCONFIG']['socket'])) {
+    $PHORUM['DBCONFIG']['socket'] = NULL;
 }
-if(!isset($PHORUM['DBCONFIG']['port'])) {
-    $PHORUM['DBCONFIG']['port']=NULL;
+if (!isset($PHORUM['DBCONFIG']['port'])) {
+    $PHORUM['DBCONFIG']['port'] = NULL;
 }
 
+$ext = NULL;
+
+// Check for a configured extension to use.
 if (isset($PHORUM['DBCONFIG']['mysql_php_extension'])) {
    $ext = basename($PHORUM['DBCONFIG']['mysql_php_extension']);
-} elseif (function_exists('mysqli_connect')) {
+}
+// Check for the mysqli extension.
+elseif (function_exists('mysqli_connect')) {
    $ext = "mysqli";
-} elseif (function_exists('mysql_connect')) {
+}
+// Check for the mysql extension.
+elseif (function_exists('mysql_connect')) {
    $ext = "mysql";
 
    // build the right hostname for the mysql extension
    // not having separate args for port and socket
-   if(!empty($PHORUM['DBCONFIG']['socket'])) {
+   if (!empty($PHORUM['DBCONFIG']['socket'])) {
        $PHORUM['DBCONFIG']['server'].=":".$PHORUM['DBCONFIG']['socket'];
-   } elseif(!empty($PHORUM['DBCONFIG']['port'])) {
+   } elseif (!empty($PHORUM['DBCONFIG']['port'])) {
        $PHORUM['DBCONFIG']['server'].=":".$PHORUM['DBCONFIG']['port'];
    }
-} else {
-   // Up to here, no PHP extension was found. This probably means that no
-   // MySQL extension is loaded. Here we'll try to dynamically load an
-   // extension ourselves.
-   if(function_exists('dl')) {
-       @dl("mysqli.so");
-       if (function_exists('mysqli_connect')) {
-           $ext = "mysqli";
-       } else {
-           @dl("mysql.so");
-           if (function_exists('mysql_connect')) {
-               $ext = "mysql";
-           }
-       }
-   }
 }
-
-// If we have no extension by now, we are very much out of luck.
-if ($ext === NULL) trigger_error(
+// No PHP MySQL extension was found.
+// We are very much out of luck.
+else trigger_error(
    "The Phorum MySQL database layer is unable to determine the PHP " .
    "MySQL extension to use. This might indicate that there is no " .
    "extension loaded from the php.ini.",
@@ -8200,6 +8191,7 @@ if (!file_exists($extfile)) trigger_error(
    "include/config/database.php (valid options are \"mysql\" and \"mysqli\").",
    E_USER_ERROR
 );
+
 include $extfile;
 
 ?>
