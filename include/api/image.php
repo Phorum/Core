@@ -493,7 +493,7 @@ function phorum_api_image_clip(
                 $size = ob_get_length();
                 ob_end_clean();
 
-                imagedestroy($orignal);
+                imagedestroy($original);
                 imagedestroy($scaled);
 
                 $img['image']    = $image;
