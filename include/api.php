@@ -344,6 +344,22 @@ phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, NULL);
 // Load the Phorum settings from the database.
 phorum_db_load_settings();
 
+// Allow the activated cache layer to check if it is working correctly.
+if (function_exists('phorum_api_cache_check'))
+{
+    $error = phorum_api_cache_check();
+    if ($error)
+    {
+        echo "The cache test has failed. Please check your cache " .
+             "configuration in include/config/cache.php. If the " .
+             "configuration is okay, check if the application used " .
+             "for caching is running.<br/><br/>" .
+             "The error as returned by the cache layer is:<br/>" .
+             "<b>" . htmlspecialchars($error) . "</b>";
+        exit();
+    }   
+}
+
 // Check for an upgrade or a new install.
 if (!defined('PHORUM_ADMIN'))
 {

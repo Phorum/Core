@@ -29,17 +29,6 @@
  */
 if (!defined("PHORUM")) return;
 
-// Connect to the memcached server. If the connection fails, then
-// destroy the memcache object. In this case, caching will not be
-// used during the remaining of the request.
-$PHORUM['memcache_obj'] = new Memcache;
-if (!@$PHORUM['memcache_obj']->connect(
-    $PHORUM['CACHECONFIG']['host'],
-    $PHORUM['CACHECONFIG']['port']
-)) {
-    unset($PHORUM['memcache_obj']);
-}
-
 // {{{ Function: phorum_api_cache_get()
 /**
  * Retrieve an object from the cache.
@@ -67,7 +56,7 @@ if (!@$PHORUM['memcache_obj']->connect(
  *     for which cached data is available. If no cached data is available
  *     for any of the keys, then NULL is returned.
  */
-function phorum_api_cache_get($type,$key,$version=NULL)
+function phorum_api_cache_get($type, $key, $version=NULL)
 {
     global $PHORUM;
 
@@ -77,10 +66,15 @@ function phorum_api_cache_get($type,$key,$version=NULL)
     if (is_array($key))
     {
         $getkey = array();
-        foreach ($key as $realkey) {
+        foreach ($key as $realkey)
+        {
+            $realkey = md5($PHORUM['private_key'] . $realkey);
             $getkey[] = $type . "_" . $realkey;
         }
-    } else {
+    }
+    else
+    {
+        $key = md5($PHORUM['private_key'] . $key);
         $getkey = $type . "_" . $key;
     }
 
@@ -158,6 +152,8 @@ function phorum_api_cache_put(
 {
     global $PHORUM;
 
+    $key = md5($PHORUM['private_key'] . $key);
+
     if (empty($PHORUM['memcache_obj'])) return FALSE;
     return @$PHORUM['memcache_obj']->set(
         $type . "_" . $key, array($data, $version), 0, $ttl
@@ -179,11 +175,12 @@ function phorum_api_cache_put(
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
-function phorum_api_cache_remove($type,$key)
+function phorum_api_cache_remove($type, $key)
 {
     global $PHORUM;
 
     if (empty($PHORUM['memcache_obj'])) return FALSE;
+    $key = md5($PHORUM['private_key'] . $key);
     return @$PHORUM['memcache_obj']->delete($type . "_" . $key, 0);
 }
 // }}}
@@ -235,32 +232,52 @@ function phorum_api_cache_clear()
 /**
  * Check the cache functionality
  *
- * @return boolean
- *     This function returns TRUE on success or FALSE on failure.
+ * @return NULL|string
+ *     This function returns NULL if no problems are found or a string
+ *     describing the problem when one is found.
  */
 function phorum_api_cache_check()
 {
-    $data = time();
-    $ret  = FALSE;
+    global $PHORUM;
 
-    $retval = phorum_api_cache_get('check','connection');
+    if (!function_exists('memcache_connect')) {
+        return "The function memcache_connect() is not available. " .
+               "The PHP installation does not have the Memcache " .
+               "PECL module enabled.";
+    }
+
+    // Connect to the memcached server. If the connection fails, then
+    // destroy the memcache object. In this case, caching will not be
+    // used during the remaining of the request. We will not return
+    // an error for this case, since this might occur when restarting
+    // the memcached server. We don't want to drop nasty error messages
+    // on the users of the system in such case.
+    $PHORUM['memcache_obj'] = new Memcache;
+    if (!@$PHORUM['memcache_obj']->connect(
+        $PHORUM['CACHECONFIG']['host'],
+        $PHORUM['CACHECONFIG']['port']
+    )) {
+        unset($PHORUM['memcache_obj']);
+        return NULL;
+    }
+
+    $retval = phorum_api_cache_get('check', 'connection');
 
     // only retry the cache check if last check was more than 1 hour ago
-    if($retval === NULL || $retval < ($data-3600))
+    $data = time();
+    if ($retval === NULL || $retval < ($data - 3600))
     {
         phorum_api_cache_put('check', 'connection', $data, 7200);
 
         $gotten_data = phorum_api_cache_get('check', 'connection');
 
-        if ($gotten_data === $data) {
-            $ret = TRUE;
+        if ($gotten_data !== $data) {
+            return "Data that was put in the memcached cache could not be " .
+                   "retrieved successfully afterwards.";
         }
-
-    } else {
-        $ret = TRUE;
     }
 
-    return $ret;
+    return NULL;
 }
 // }}}
 

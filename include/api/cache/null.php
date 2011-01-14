@@ -147,12 +147,13 @@ function phorum_api_cache_clear()
 /**
  * Check the cache functionality
  *
- * @return boolean
- *     This function returns TRUE on success or FALSE on failure.
+ * @return NULL|string
+ *     This function returns NULL if no problems are found or a string
+ *     describing the problem when one is found.
  */
 function phorum_api_cache_check()
 {
-    return TRUE;    
+    return NULL;    
 }
 // }}}
 

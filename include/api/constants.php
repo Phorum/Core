@@ -113,11 +113,6 @@ define("PHORUM_SEPARATOR", " :: ");
 define('PHORUM_CACHE_DEFAULT_TTL', 3600);
 
 /**
- * Split-variable for the file-based caching layer.
- */
-define('PHORUM_CACHE_SPLIT',4);
-
-/**
  * The replacement string for masking bad words.
  */
 define('PHORUM_BADWORD_REPLACE', '@#$%&');

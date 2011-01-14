@@ -96,16 +96,6 @@ if ((defined('PHORUM_SCRIPT') || PHP_SAPI == 'cli') &&
 // Load the caching layer.
 $PHORUM['CACHECONFIG']['type'] = basename($PHORUM['CACHECONFIG']['type']);
 
-// Safeguard for wrongly selected cache-layers.
-// Falling back to file-layer if descriptive functions aren't existing.
-if ($PHORUM['CACHECONFIG']['type'] == 'memcached' &&
-    !function_exists('memcache_connect')) {
-    $PHORUM['CACHECONFIG']['type'] = 'file';
-} elseif ($PHORUM['CACHECONFIG']['type'] == 'apc' &&
-    !function_exists('apc_fetch')) {
-    $PHORUM['CACHECONFIG']['type'] = 'file';
-}
-
 $cacheapi_filename =
      PHORUM_PATH.'/include/api/cache/'.$PHORUM['CACHECONFIG']['type'].'.php';
 if (file_exists($cacheapi_filename)) {
@@ -116,12 +106,4 @@ if (file_exists($cacheapi_filename)) {
     exit();
 }
 
-// Check if the cache system is working.
-if (!phorum_api_cache_check())
-{
-    echo "The cache test has failed. Please check your cache configuration in 
-          include/config/cache.php. If the configuration is okay, check if the 
-          application used for caching is running.";
-    exit();
-}   
 ?>

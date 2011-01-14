@@ -20,12 +20,35 @@
 /*
  * Simple file-based caching-layer
  * Recommended are some more sophisticated solutions, like
- * memcached-, apc-layer
+ * the memcached-layer or the apc-layer.
  */
 if (!defined("PHORUM")) return;
 
-/* initializing our real cache-dir */
-$PHORUM['real_cache'] = $PHORUM['CACHECONFIG']['directory']."/".md5(__FILE__);
+/**
+ * The depth of the file cache. This determines the number of subdirectories
+ * that is used for the cache file structure. The default should work on
+ * most modern systems. On some really old systems, the depth might need
+ * to be higher, to prevent performance issues with large directories, but
+ * if that is the case, we'd suggest to upgrade the system or to not
+ * use the file cache, instead of tweaking this parameter.
+ *
+ * Note: when you change this parameter, be sure to understand the logic
+ * from phorum_api_cache_mkpath(), because it does not carry protection
+ * against nonsense settings.
+ */
+define('PHORUM_FILE_CACHE_DEPTH', 4);
+
+/**
+ * The length of the directory names to use for the cache file structure.
+ * Changing this value changes the distribution of directories and files
+ * in the cache structure (lower values result in less directories, but
+ * more cache files at the deepest level.)
+ *
+ * Note: when you change this parameter, be sure to understand the logic
+ * from phorum_api_cache_mkpath(), because it does not carry protection
+ * against nonsense settings.
+ */
+define('PHORUM_FILE_CACHE_DIRLEN', 6);
 
 // {{{ Function: phorum_api_cache_get()
 /**
@@ -61,15 +84,12 @@ function phorum_api_cache_get($type, $key, $version=NULL)
     $ret       = array();
     $checkkeys = is_array($key) ? $key : array($key);
 
-    $partpath = $PHORUM['real_cache'] . "/" . $type;
-
     // Retrieve the cached data.
     foreach ($checkkeys as $checkkey)
     {
         // Generate the path for the file that is used to cache the data.
-        $path = $partpath . "/" .
-                wordwrap(md5($checkkey), PHORUM_CACHE_SPLIT, "/", TRUE) .
-                "/data.php";
+        list ($path, $file) = phorum_api_cache_mkpath($type, $checkkey);
+        $path = "$path/$file";
 
         if (file_exists($path))
         {
@@ -140,9 +160,8 @@ function phorum_api_cache_put(
 {
     global $PHORUM;
 
-    // Generate the path for the directory that is used to cache the data.
-    $path = $PHORUM['real_cache'] . "/$type/" .
-            wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", TRUE);
+    // Generate the path for the file that is used to cache the data.
+    list ($path, $file) = phorum_api_cache_mkpath($type, $key);
 
     // Create the cache path if it does not already exist.
     if (!file_exists($path))
@@ -153,14 +172,13 @@ function phorum_api_cache_put(
     }
 
     // Write the cache file.
-    $file     = $path . "/data.php";
     $ttl_time = time() + $ttl;
-    if (!($fp = @fopen($file, "w"))) { 
+    if (!($fp = @fopen("$path/$file", "w"))) { 
         return FALSE; 
     } 
     $ret = fwrite($fp, serialize(array($ttl_time, $data, $version)));
     if (!$ret || !fclose($fp)) {
-      @unlink($file);
+      @unlink("$path/$file");
       return FALSE;
     }
 
@@ -188,10 +206,11 @@ function phorum_api_cache_remove($type, $key)
 
     $ret  = TRUE;
 
-    $path = $PHORUM['real_cache'] . "/$type/" .
-            wordwrap(md5($key), PHORUM_CACHE_SPLIT, "/", TRUE) . "/data.php";
-    if (file_exists($path)) {
-        $ret = @unlink($path);
+    // Generate the path for the file that is used to cache the data.
+    list ($path, $file) = phorum_api_cache_mkpath($type, $key);
+
+    if (file_exists("$path/$file")) {
+        $ret = @unlink("$path/$file");
     }
 
     return $ret;
@@ -214,8 +233,9 @@ function phorum_api_cache_purge($full = FALSE)
 {
     global $PHORUM;
 
+    $cache_path = phorum_api_cache_mkpath();
     list ($total, $purged, $dummy) =
-      phorum_api_cache_purge_recursive($PHORUM['real_cache'], "", 0, 0, $full);
+      phorum_api_cache_purge_recursive($cache_path, "", 0, 0, $full);
 
     // Return a report about the purging action.
     return "Finished purging the file based data cache<br/>\n" .
@@ -235,11 +255,11 @@ function phorum_api_cache_clear()
 {
     global $PHORUM;
 
-    $dir = $PHORUM['real_cache'];
+    $cache_path = phorum_api_cache_mkpath();
     $ret = TRUE;
 
-    if (!empty($dir) && $dir != "/") {
-        $ret = phorum_api_cache_rmdir($dir);
+    if (!empty($cache_path) && $cache_path != "/") {
+        $ret = phorum_api_cache_rmdir($cache_path);
     }
 
     return $ret;
@@ -250,39 +270,73 @@ function phorum_api_cache_clear()
 /**
  * Check the cache functionality
  *
- * @return boolean
- *     This function returns TRUE on success or FALSE on failure.
+ * @return NULL|string
+ *     This function returns NULL if no problems are found or a string
+ *     describing the problem when one is found.
  */
 function phorum_api_cache_check()
 {
-    $data = time();
-    $ret  = FALSE;
-
     $retval = phorum_api_cache_get('check','connection');
 
     // only retry the cache check if last check was more than 1 hour ago
-    if ($retval === NULL || $retval < ($data-3600))
+    $data = time();
+    if ($retval === NULL || $retval < ($data - 3600))
     {
-        phorum_api_cache_put('check','connection',$data,7200);
+        phorum_api_cache_put('check', 'connection', $data, 7200);
 
-        $gotten_data = phorum_api_cache_get('check','connection');
+        $gotten_data = phorum_api_cache_get('check', 'connection');
 
-        if ($gotten_data === $data) {
-            $ret = TRUE;
+        if ($gotten_data !== $data) {
+            return "Data that was put in the file cache could not be " .
+                   "retrieved successfully afterwards.";
         }
     }
-    else {
-        $ret = TRUE;
-    }
 
-    return $ret;
+    return NULL;
 }
 // }}}
 
 // ----------------------------------------------------------------------
 // Functions below here are helper functions that are not part of the
-// file storage API.
+// file cache layer.
 // ----------------------------------------------------------------------
+
+// {{{ Function: phorum_api_cache_mkpath()
+/**
+ * Generate the storage path for a given cache type + key or the storage
+ * path for all data.
+ *
+ * @param NULL|string $type
+ *     The type of cache data. When NULL (the default), the path to
+ *     the directory where all data is cached is returned.
+ * @param NULL|string $key
+ *     The unique key for the cache data.
+ * @return string|array
+ *     An array containing the path and the filename for the cache file
+ *     or the path to all cached data when $type was NULL.
+ */
+function phorum_api_cache_mkpath($type = NULL, $key = NULL)
+{
+    global $PHORUM;
+
+    $md5     = md5($key);
+    $pathlen = PHORUM_FILE_CACHE_DEPTH * PHORUM_FILE_CACHE_DIRLEN;
+
+    $path    = $PHORUM['CACHECONFIG']['directory'] . '/' .
+               md5($PHORUM['private_key']);
+
+    if ($type === NULL) return $path;
+
+    $path .= "/$type/" . wordwrap(
+        substr($md5, 0, $pathlen),
+        PHORUM_FILE_CACHE_DIRLEN, '/', TRUE
+    );
+
+    $file    = substr($md5, $pathlen) . '.php';
+
+    return array($path, $file);
+}
+// }}}
 
 // {{{ Function: phorum_api_cache_purge_recursive()
 /**
@@ -332,8 +386,10 @@ function phorum_api_cache_purge_recursive(
         if (is_dir("$dir/$subdir/$entry")) {
             $subdirs[] = "$subdir/$entry";
         }
-        elseif ($entry == "data.php" && is_file("$dir/$subdir/$entry"))
-        {
+        elseif (
+            substr($entry, -4, 4) === ".php" &&
+            is_file("$dir/$subdir/$entry")
+        ) {
             $contents = @file_get_contents("$dir/$subdir/$entry");
             $total += strlen($contents);
             $data = unserialize($contents);

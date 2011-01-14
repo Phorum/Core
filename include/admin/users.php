@@ -293,7 +293,7 @@ if(!defined("PHORUM_ORIGINAL_USER_CODE") || PHORUM_ORIGINAL_USER_CODE!==true){
 
 if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !isset($_POST['section']))
 {
-	$users_url = phorum_admin_build_url(array('module=users'));
+    $users_url = phorum_admin_build_url(array('module=users'));
     $users_add_url = phorum_admin_build_url(array('module=users','add=1'));
     print "<a href=\"$users_url\">" .
           "Show all users</a> | <a href=\"$users_add_url\">Add User</a><br/>";

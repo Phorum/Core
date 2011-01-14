@@ -57,6 +57,7 @@ function phorum_api_cache_get($type, $key, $version = NULL)
 
         foreach ($key as $realkey)
         {
+            $realkey = md5($PHORUM['private_key'] . $realkey);
             $getkey = $type . "_" . $realkey;
             $data   = apc_fetch($getkey);
 
@@ -73,6 +74,7 @@ function phorum_api_cache_get($type, $key, $version = NULL)
     }
     else
     {
+        $key = md5($PHORUM['private_key'] . $key);
         $getkey = $type . "_" . $key;
         $data   = apc_fetch($getkey);
 
@@ -127,6 +129,7 @@ function phorum_api_cache_get($type, $key, $version = NULL)
 function phorum_api_cache_put(
     $type, $key, $data, $ttl = PHORUM_CACHE_DEFAULT_TTL, $version = NULL)
 {
+    $key = md5($PHORUM['private_key'] . $key);
     $ret = apc_store($type . "_" . $key, array($data, $version), $ttl);
     return $ret;
 }
@@ -148,6 +151,7 @@ function phorum_api_cache_put(
  */
 function phorum_api_cache_remove($type, $key)
 {
+    $key = md5($PHORUM['private_key'] . $key);
     return apc_delete($type . "_" . $key);
 }
 // }}}
@@ -191,33 +195,36 @@ function phorum_api_cache_clear()
 /**
  * Check the cache functionality
  *
- * @return boolean
- *     This function returns TRUE on success or FALSE on failure.
+ * @return NULL|string
+ *     This function returns NULL if no problems are found or a string
+ *     describing the problem when one is found.
  */
 function phorum_api_cache_check()
 {
-    $data = time();
-    $ret  = FALSE;
+    global $PHORUM;
+
+    if (!function_exists('apc_fetch')) {
+        return "The function apc_fetch() is not available. " .
+               "The PHP installation does not have the APC module enabled.";
+    }
 
     $retval = phorum_api_cache_get('check','connection');
 
     // only retry the cache check if last check was more than 1 hour ago
-    if ($retval === NULL || $retval < ($data-3600))
+    $data = time();
+    if ($retval === NULL || $retval < ($data - 3600))
     {
         phorum_api_cache_put('check', 'connection', $data, 7200);
 
         $gotten_data = phorum_api_cache_get('check', 'connection');
 
-        if ($gotten_data === $data) {
-            $ret = TRUE;
+        if ($gotten_data !== $data) {
+            return "Data that was put in the APC cache could not be " .
+                   "retrieved successfully afterwards.";
         }
     }
-    else {
-        $ret = TRUE;
-    }
 
-    return $ret;
+    return NULL;
 }
 // }}}
-
 ?>
