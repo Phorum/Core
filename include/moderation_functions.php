@@ -114,6 +114,7 @@ function phorum_show_confirmation_form($message, $action, $args)
 
             <input type="hidden"
                 name="forum_id" value="<?php echo $PHORUM["forum_id"]; ?>" />
+            <input type="hidden" name="confirmation" value="1" />
 
             <?php foreach($args as $name=>$value){ ?>
                 <input type="hidden"
@@ -124,11 +125,11 @@ function phorum_show_confirmation_form($message, $action, $args)
             <?php echo $PHORUM["DATA"]["POST_VARS"]; ?>
 
             <input type="submit"
-                name="confirmation"
+                name="confirmation_yes"
                 value="<?php echo $PHORUM["DATA"]["LANG"]["Yes"]; ?>" />
 
             <input type="submit"
-                name="confirmation"
+                name="confirmation_no"
                 value="<?php echo $PHORUM["DATA"]["LANG"]["No"]; ?>" />
 
         </form>
