@@ -252,9 +252,12 @@ function phorum_api_cache_check()
     // an error for this case, since this might occur when restarting
     // the memcached server. We don't want to drop nasty error messages
     // on the users of the system in such case.
+    if (empty($PHORUM['CACHECONFIG']['server'])) {
+        $PHORUM['CACHECONFIG']['server'] = 'localhost';
+    }
     $PHORUM['memcache_obj'] = new Memcache;
     if (!@$PHORUM['memcache_obj']->connect(
-        $PHORUM['CACHECONFIG']['host'],
+        $PHORUM['CACHECONFIG']['server'],
         $PHORUM['CACHECONFIG']['port']
     )) {
         unset($PHORUM['memcache_obj']);
