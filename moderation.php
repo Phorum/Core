@@ -34,11 +34,12 @@ if (!phorum_check_read_common()) {
 // in the request.
 phorum_api_request_check_token();
 
-// Check if the active user is a moderator for the active forum.
+// Check if the active user has moderation permissions for the active forum.
 $PHORUM["DATA"]["MODERATOR"] =
     phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
-// Retrieve the id of the thread on which to perform a moderation operation.
+// Retrieve the id of the thread or message on which to perform a
+// moderation operation.
 if (isset($_POST["thread"])) {
     $msgthd_id = (int)$_POST["thread"];
 } elseif(isset($PHORUM['args'][2])) {
@@ -56,10 +57,10 @@ if (isset($_POST["mod_step"])) {
     $mod_step = 0;
 }
 
-// When no thread id is provided or if the user isn't a moderator,
+// When no thread or message id is provided or if the user isn't a moderator,
 // then redirect the user back to the message list.
 if (empty($msgthd_id) || !$PHORUM["DATA"]["MODERATOR"]) {
-   phorum_return_to_list();
+   phorum_redirect_back_from_moderation();
 }
 
 // If the user is not fully logged in, send him to the login page.
@@ -70,20 +71,14 @@ if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
         PHORUM_LOGIN_URL, "redir=".urlencode($_SERVER["HTTP_REFERER"]));
 }
 
-// TODO write a utility function that can be used to send a user back
-// to a logical location.
+// If we gave the user a confirmation form and he clicked "No", send him back.
+if (isset($_POST["confirmation"]) && empty($_POST["confirmation_yes"])) {
+    phorum_redirect_back_from_moderation();
+}
 
-// If we gave the user a confirmation form and they clicked No, send them back.
-if (isset($_POST["confirmation"]) && empty($_POST["confirmation_yes"]))
-{
-    if (isset($_POST["prepost"])) {
-        $url = phorum_api_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
-    } else {
-        $message = phorum_db_get_message($msgthd_id);
-        $url = phorum_api_url(PHORUM_READ_URL, $message["thread"], $message["message_id"]);
-    }
-
-    phorum_api_redirect($url);
+// The user cancelled the moderation action.
+if (isset($_POST['cancel'])) {
+    phorum_redirect_back_from_moderation();
 }
 
 // Build all our common URL's.
@@ -92,7 +87,7 @@ phorum_build_common_urls();
 // The template to load at the end of this script.
 $template = "message";
 
-// Messages for which to invalidate the cache for at the end of this script.
+// Messages for which to invalidate the cache at the end of this script.
 $invalidate_message_cache = array();
 
 /*
@@ -200,20 +195,22 @@ switch ($mod_step)
         break;
 
     default:
-        phorum_return_to_list();
+        phorum_redirect_back_from_moderation();
 }
 
-// remove the affected messages from the cache if caching is enabled.
-if ($PHORUM['cache_messages']) {
-    foreach($invalidate_message_cache as $message) {
-        phorum_api_cache_remove('message', $message['forum_id']."-".$message["message_id"]);
-        phorum_db_update_forum(array('forum_id'=>$PHORUM['forum_id'],'cache_version'=>($PHORUM['cache_version']+1)));
+// Remove the affected messages from the cache if caching is enabled.
+if ($PHORUM['cache_messages'])
+{
+    foreach ($invalidate_message_cache as $message) {
+        phorum_api_cache_remove(
+            'message', $message['forum_id']."-".$message["message_id"]);
     }
+
+    phorum_api_forums_increment_cache_version($PHORUM['forum_id']);
 }
 
-
-if(!isset($PHORUM['DATA']['BACKMSG'])) {
-    $PHORUM['DATA']["BACKMSG"]=$PHORUM['DATA']["LANG"]["BackToList"];
+if (!isset($PHORUM['DATA']['BACKMSG'])) {
+    $PHORUM['DATA']["BACKMSG"] = $PHORUM['DATA']["LANG"]["BackToList"];
 }
 
 phorum_api_output($template);

@@ -275,7 +275,9 @@ $GLOBALS['PHORUM']['API']['forum_fields'] = array(
  *     return array will have no entry available in the returned array for
  *     those forum_ids.
  */
-function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id = NULL, $vroot = NULL, $flags = 0)
+function phorum_api_forums_get(
+    $forum_ids = NULL, $parent_id = NULL, $inherit_id = NULL,
+    $vroot = NULL, $flags = 0)
 {
     global $PHORUM;
 
@@ -319,7 +321,8 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $inherit_id
 
     // retrieve and apply the custom fields for forums
     if (!empty($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_FORUM])) {
-        $forums = phorum_api_custom_field_apply(PHORUM_CUSTOM_FIELD_FORUM, $forums);
+        $forums = phorum_api_custom_field_apply(
+            PHORUM_CUSTOM_FIELD_FORUM, $forums);
     }
 
     // If forum_id 0 (zero) is requested, then we create a fake folder
@@ -610,6 +613,7 @@ function phorum_api_forums_save($data, $flags = 0)
                     'allowed.',
                     E_USER_ERROR
                 );
+                return NULL;
             }
         }
 
@@ -629,6 +633,7 @@ function phorum_api_forums_save($data, $flags = 0)
                     'forum_id set as the inherit_id.',
                     E_USER_ERROR
                 );
+                return NULL;
             }
 
             $defaults = phorum_api_forums_by_forum_id(
@@ -653,6 +658,7 @@ function phorum_api_forums_save($data, $flags = 0)
                     'a forum. You can only inherit from forums.',
                     E_USER_ERROR
                 );
+                return NULL;
             }
 
             // Inherited inheritance is not allowed.
@@ -664,6 +670,7 @@ function phorum_api_forums_save($data, $flags = 0)
                     'not allowed.',
                     E_USER_ERROR
                 );
+                return NULL;
             }
         }
 
@@ -1075,6 +1082,7 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
                 'parameter "'.htmlspecialchars($movement) . '" used',
                 E_USER_ERROR
             );
+            return NULL;
     }
 
     // Keep the new position within boundaries.
@@ -1419,11 +1427,14 @@ function phorum_api_forums_get_display_modes($forum)
     if (!is_array($forum))
     {
         $forum = phorum_api_forums_by_forum_id($forum);
-        if (!$forum) trigger_error(
-          "phorum_api_forums_get_display_modes(): no forum found for " .
-          "forum id $forum",
-          E_USER_ERROR
-        );
+        if (!$forum) {
+            trigger_error(
+                "phorum_api_forums_get_display_modes(): no forum found for " .
+                "forum id $forum",
+                E_USER_ERROR
+            );
+            return NULL;
+        }
     }
 
     // Fetch the display modes from the forum settings.
@@ -1455,6 +1466,31 @@ function phorum_api_forums_get_display_modes($forum)
         'list' => $list_mode,
         'read' => $read_mode
     );
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_increment_cache_version()
+/**
+ * Increment the cache_version value for a forum.
+ *
+ * @param integer $forum_id
+ */
+function phorum_api_forums_increment_cache_version($forum_id)
+{
+    $forum = phorum_api_forums_by_forum_id($forum_id);
+    if (!$forum) {
+        trigger_error(
+            "phorum_api_forums_increment_cache_version(): no forum found for " .
+            "forum id $forum_id",
+            E_USER_ERROR
+        );
+        return NULL;
+    }
+
+    phorum_api_forums_save(array(
+        'forum_id'      => $forum['forum_id'],
+        'cache_version' => $forum['cache_version'] + 1
+    ));
 }
 // }}}
 

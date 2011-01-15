@@ -17,79 +17,15 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM")) return;
+if (!defined("PHORUM")) return;
 
 /**
- * just returns to the list and exits the program
- */
-function phorum_return_to_list()
-{
-    global $PHORUM;
-    if(!empty($PHORUM["forum_id"])){
-        phorum_api_redirect(PHORUM_LIST_URL);
-    }else{
-        phorum_api_redirect(PHORUM_INDEX_URL);
-    }
-    exit();
-}
-
-/* A function to get moderator_data from the user's profile.
- * Without an argument, all moderator_data is returned. With a key as
- * argument, the data for that key is returned or NULL in case the
- * key does not exist.
- */
-function phorum_moderator_data_get($key = null)
-{
-    global $PHORUM;
-
-    $user_data = phorum_api_user_get($PHORUM['DATA']['USER']['user_id']);
-    if( $user_data['moderator_data'] ) {
-        $moderator_data =unserialize($user_data['moderator_data']);
-    } else {
-        $moderator_data =array();
-    }
-    if (is_null($key)) {
-        return $moderator_data;
-    } else {
-        return isset($moderator_data[$key]) ? $moderator_data[$key] : NULL;
-    }
-}
-
-/* A function to save moderator_data in the user's profile. */
-function phorum_moderator_data_save($moderator_data)
-{
-    global $PHORUM;
-
-    // Clear value in case no data is left in $moderator_data.
-    $value = count($moderator_data) ? serialize($moderator_data) : '';
-
-    phorum_api_user_save_raw(array(
-        "user_id" => $PHORUM['user']['user_id'],
-        "moderator_data" => $value,
-    ));
-}
-
-/* A function to place a key/value pair in the moderator_data. */
-function phorum_moderator_data_put($key, $val)
-{
-    $moderator_data = phorum_moderator_data_get();
-    $moderator_data[$key] = $val;
-    phorum_moderator_data_save($moderator_data);
-}
-
-/* A function to remove a key/value pair from the moderator_data. */
-function phorum_moderator_data_remove($key)
-{
-    $moderator_data = phorum_moderator_data_get();
-    unset($moderator_data[$key]);
-    phorum_moderator_data_save($moderator_data);
-}
-
-/**
- * Outputs a confirmation form.  To maintain backwards compatibility with
- * the templates, we generate a form in code and output it using stdblock
+ * Outputs a confirmation form.
  *
- * The function exits the script after displaying the form
+ * To maintain backwards compatibility with the templates,
+ * we generate a form in code and output it using stdblock.
+ *
+ * The function exits the script after displaying the form.
  *
  * @param   string    $message  Message to display to users
  * @param   string    $action   The URI to post the form to
@@ -116,7 +52,7 @@ function phorum_show_confirmation_form($message, $action, $args)
                 name="forum_id" value="<?php echo $PHORUM["forum_id"]; ?>" />
             <input type="hidden" name="confirmation" value="1" />
 
-            <?php foreach($args as $name=>$value){ ?>
+            <?php foreach ($args as $name => $value){ ?>
                 <input type="hidden"
                     name="<?php echo htmlspecialchars($name, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?>"
                     value="<?php echo htmlspecialchars($value, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?>" />
@@ -140,6 +76,59 @@ function phorum_show_confirmation_form($message, $action, $args)
     $PHORUM["DATA"]["BLOCK_CONTENT"] = ob_get_clean();
     phorum_api_output("stdblock");
     exit();
+}
+
+/**
+ * A utility function to handle redirecting back from the moderation page.
+ * This function will determine a suitable return page on its own.
+ */
+function phorum_redirect_back_from_moderation()
+{
+    global $PHORUM;
+
+    // When the parameter "prepost" is available in the request, then
+    // the moderation action was initiated from the moderation interface
+    // in the user control center.
+    if (isset($_POST['prepost']) ||
+        isset($_GET['prepost'])  ||
+        isset($PHORUM['args']['prepost']))
+    {
+        phorum_api_redirect(phorum_api_url(
+            PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED
+        ));
+    }
+
+    // Find the id of the thread or message on which the moderation
+    // action has been performed.
+    if (isset($_POST["thread"])) {
+        $msgthd_id = (int)$_POST["thread"];
+    } elseif(isset($PHORUM['args'][2])) {
+        $msgthd_id = (int)$PHORUM['args'][2];
+    } else {
+        $msgthd_id = 0;
+    }
+
+    // If no id was found, then redirect back to the list page for
+    // the active forum or the index page if no active forum is available.
+    if (empty($msgthd_id))
+    {
+        if (empty($PHORUM["forum_id"])) {
+            phorum_api_redirect(PHORUM_INDEX_URL);
+        } else {
+            phorum_api_redirect(PHORUM_LIST_URL);
+        }
+    }
+
+    // Check if the message still exists. It might be gone after a
+    // moderation action. When the message no longer exists, redirect
+    // the user back to the list page for the active forum.
+    $message = phorum_db_get_message($msgthd_id);
+    if (!$message) phorum_return_to_list();
+
+    // Redirect back to the message that we found.
+    phorum_api_redirect(phorum_api_url(
+       PHORUM_READ_URL, $message['thread'], $message['message_id']
+    ));
 }
 
 ?>

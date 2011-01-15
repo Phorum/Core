@@ -187,12 +187,11 @@ if (!defined( "PHORUM_ADMIN" ))
         $PHORUM = array_merge( $PHORUM, $PHORUM["default_forum_options"] );
 
         // some hard settings are needed if we are looking at forum_id 0
-        $PHORUM['vroot']=0;
-        $PHORUM['parent_id']=0;
-        $PHORUM['active']=1;
-        $PHORUM['folder_flag']=1;
-        $PHORUM['cache_version']=0;
-
+        $PHORUM['vroot']         = 0;
+        $PHORUM['parent_id']     = 0;
+        $PHORUM['active']        = 1;
+        $PHORUM['folder_flag']   = 1;
+        $PHORUM['cache_version'] = 0;
     }
 
     // handling vroots

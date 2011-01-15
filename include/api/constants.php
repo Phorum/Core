@@ -40,7 +40,7 @@ define( 'PHORUM', '5.3-dev' );
 /**
  * Our database schema version in the format of year-month-day-serial.
  */
-define( 'PHORUM_SCHEMA_VERSION', '2010051400' );
+define( 'PHORUM_SCHEMA_VERSION', '2011011400' );
 
 /**
  * Our database patch level in the format of year-month-day-serial.
@@ -161,6 +161,11 @@ define("PHORUM_MODERATE_OFF", 0);
 define("PHORUM_MODERATE_ON", 1);
 define("PHORUM_EMAIL_MODERATOR_OFF", 0);
 define("PHORUM_EMAIL_MODERATOR_ON", 1);
+
+// This timeout (in seconds) is used for the multi-step merge moderation
+// action. After selecting the first thread to merge, the moderator must
+// select the thread to merge with within this timeframe.
+define("PHORUM_MODERATE_MERGE_TIME", 300);
 
 // message statuses
 define("PHORUM_STATUS_APPROVED", 2);

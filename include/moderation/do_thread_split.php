@@ -2,16 +2,27 @@
 
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
-$PHORUM['DATA']['OKMSG']=$PHORUM["DATA"]['LANG']['MsgSplitOk'];
-$PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
 settype($_POST['forum_id'], "int");
-settype($_POST['message'], "int");
-settype($_POST['thread'], "int");
-phorum_db_split_thread($_POST['message'],$_POST['forum_id']);
+settype($_POST['message'],  "int");
+settype($_POST['thread'],   "int");
+
+$PHORUM['DATA']['OKMSG'] = $PHORUM["DATA"]['LANG']['MsgSplitOk'];
+$PHORUM['DATA']["URL"]["REDIRECT"] = $PHORUM["DATA"]["URL"]["LIST"];
+
+$new_subject = isset($_POST['new_subject']) ? $_POST['new_subject'] : NULL;
+$update_subjects = isset($_POST['update_subjects']);
+
+phorum_db_split_thread(
+    $_POST['message'],
+    $_POST['forum_id'],
+    $new_subject,
+    $update_subjects
+);
+
 // update message count / stats
 phorum_api_thread_update_metadata($_POST['thread']);
 phorum_api_thread_update_metadata($_POST['message']);
-phorum_db_update_forum_stats(true);
+phorum_db_update_forum_stats(TRUE);
 
 /*
  * [hook]

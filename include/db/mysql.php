@@ -96,7 +96,7 @@ $PHORUM['string_fields_forum'] = array('name', 'description', 'template');
  */
 $PHORUM['string_fields_user'] = array('username', 'real_name', 'display_name',
    'password', 'password_temp', 'sessid_lt', 'sessid_st', 'email', 'email_temp',
-   'signature', 'user_language', 'user_template', 'moderator_data', 'settings_data'
+   'signature', 'user_language', 'user_template', 'settings_data'
 );
 
 
@@ -3987,11 +3987,11 @@ function phorum_db_user_add($userdata)
     // We can set the user_id. If not, then we'll create a new user_id.
     if (isset($userdata['user_id'])) {
         $user_id = (int)$userdata['user_id'];
-        $fields = 'user_id, username, signature, moderator_data, settings_data';
-        $values = "$user_id, '$username', '', '', ''";
+        $fields = 'user_id, username, signature, settings_data';
+        $values = "$user_id, '$username', '', ''";
     } else {
-        $fields = 'username, signature, moderator_data, settings_data';
-        $values = "'$username', '', '', ''";
+        $fields = 'username, signature, settings_data';
+        $values = "'$username', '', ''";
     }
 
     // Insert a bare bone user in the database.
@@ -7008,11 +7008,35 @@ function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = FALSE)
  *
  * @param integer $forum_id
  *     The id of the forum in which the message can be found.
+ *
+ * @param NULL|string $new_subject
+ *     A new subject to use for the thread starter message.
+ *
+ * @param boolean $update_subjects
+ *     When TRUE (default is FALSE), the subject of all split off
+ *     messages will be updated to match the $new_subject.
  */
-function phorum_db_split_thread($message_id, $forum_id)
+function phorum_db_split_thread(
+    $message_id, $forum_id, $new_subject = NULL, $update_subjects = FALSE)
 {
     settype($message_id, 'int');
     settype($forum_id, 'int');
+
+    // By default, use the column name "subject", so we will assign
+    // the existing column value to the subject field.
+    $thread_subject = 'subject';
+    $reply_subject  = 'subject';
+
+    // Override these when requested.
+    if ($new_subject !== NULL)
+    {
+        $quoted = phorum_db_interact(DB_RETURN_QUOTED, $new_subject);
+        $thread_subject = "'$quoted'";
+
+        if ($update_subjects) {
+            $reply_subject = "'Re: $quoted'";
+        }
+    }
 
     if ($message_id > 0 && $forum_id > 0)
     {
@@ -7021,23 +7045,25 @@ function phorum_db_split_thread($message_id, $forum_id)
         // below the split message.
         $tree = phorum_db_get_messagetree($message_id, $forum_id);
 
-        // Turn the message into a thread starter message.
-        phorum_db_interact(
-            DB_RETURN_RES,
-            "UPDATE {$GLOBALS['PHORUM']['message_table']}
-             SET    thread     = $message_id,
-                    parent_id  = 0
-             WHERE  message_id = $message_id",
-            NULL,
-            DB_MASTERQUERY
-        );
-
         // Link the messages below the split message to the split off thread.
         phorum_db_interact(
             DB_RETURN_RES,
             "UPDATE {$GLOBALS['PHORUM']['message_table']}
-             SET    thread = $message_id
+             SET    thread  = $message_id,
+                    subject = $reply_subject 
              WHERE  message_id IN ($tree)",
+            NULL,
+            DB_MASTERQUERY
+        );
+
+        // Turn the split message into a thread starter message.
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "UPDATE {$GLOBALS['PHORUM']['message_table']}
+             SET    thread     = $message_id,
+                    parent_id  = 0,
+                    subject    = $thread_subject
+             WHERE  message_id = $message_id",
             NULL,
             DB_MASTERQUERY
         );
@@ -7820,7 +7846,6 @@ function phorum_db_create_tables()
            is_dst                   tinyint(1)     NOT NULL default '0',
            user_language            varchar(100)   NOT NULL default '',
            user_template            varchar(100)   NOT NULL default '',
-           moderator_data           text           NOT NULL,
            moderation_email         tinyint(1)     NOT NULL default '1',
            settings_data            mediumtext     NOT NULL,
 

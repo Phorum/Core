@@ -3461,11 +3461,11 @@ function phorum_db_user_add($userdata)
     // We can set the user_id. If not, then we'll create a new user_id.
     if (isset($userdata['user_id'])) {
         $user_id = (int)$userdata['user_id'];
-        $fields = 'user_id, username, signature, moderator_data, settings_data';
-        $values = "$user_id, '$username', '', '', ''";
+        $fields = 'user_id, username, signature, settings_data';
+        $values = "$user_id, '$username', '', ''";
     } else {
-        $fields = 'username, signature, moderator_data, settings_data';
-        $values = "'$username', '', '', ''";
+        $fields = 'username, signature, settings_data';
+        $values = "'$username', '', ''";
     }
 
     // Insert a bare bone user in the database.
@@ -7085,7 +7085,6 @@ function phorum_db_create_tables()
            is_dst                   smallint       NOT NULL default 0,
            user_language            varchar(100)   NOT NULL default '',
            user_template            varchar(100)   NOT NULL default '',
-           moderator_data           text           NOT NULL,
            moderation_email         smallint       NOT NULL default 1,
            settings_data            text           NOT NULL,
 

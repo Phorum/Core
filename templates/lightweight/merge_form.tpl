@@ -14,9 +14,21 @@
             <input type="hidden" name="thread" value="{FORM->thread_id}" />
             <input type="hidden" name="thread1" value="{FORM->merge_t1}" />
             <input type="hidden" name="mod_step" value="{FORM->mod_step}" />
+
             <p>{LANG->MergeThreadAction1}</p>
-            {LANG->Thread} 1: <strong>{FORM->merge_subject1}</strong><br />
-            {LANG->Thread} 2: <strong>{FORM->thread_subject}</strong><br /><br />
+
+            <p>
+              {LANG->Thread} 1: <strong>{FORM->merge_subject1}</strong><br />
+              {LANG->Thread} 2: <strong>{FORM->thread_subject}</strong>
+            </p>
+
+            <p>
+              <label>
+                <input type="checkbox" name="update_subjects">
+                {LANG->MergeThreadUpdateSubjects}
+              </label>
+            </p>
+
             <p>{LANG->MergeThreadAction2}</p>
             <input type="submit" name="move" value="{LANG->MergeThreads}" />
         </form>

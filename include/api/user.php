@@ -320,13 +320,12 @@ $PHORUM['API']['user_fields'] = array
     'user_language'           => 'string',
     'user_template'           => 'string',
     'moderation_email'        => 'bool',
-    'moderator_data'          => 'array',
     'settings_data'           => 'array',
-  
+
     // Fields that are used for passing on information about user related,
     // data, which is not stored in a standard user table field.
     'forum_permissions'      => 'array',
-  
+
     // Fields that we do not use for saving data (yet?), but which might
     // be in the user data (e.g. if we store a user data array like it was
     // returned by phorum_api_user_get()).
@@ -826,7 +825,8 @@ function phorum_api_user_save_raw($user)
  *
  * @param array $settings
  *     An array of setting name => value pairs to store as user
- *     settings in the database.
+ *     settings in the database. If the value is NULL, then the setting
+ *     will be deleted.
  */
 function phorum_api_user_save_settings($settings)
 {
@@ -862,6 +862,49 @@ function phorum_api_user_save_settings($settings)
     if (!empty($PHORUM['cache_users'])) {
         phorum_api_cache_remove('user', $user_id);
     }
+}
+// }}}
+
+// {{{ Function: phorum_api_user_get_setting()
+/**
+ * This function can be used to retrieve the value for a user setting
+ * that was stored by the {@link phorum_api_user_save_settings()} function
+ * for the active Phorum user.
+ *
+ * @param string $name
+ *     The name of the setting for which to retrieve the setting value.
+ *
+ * @return mixed
+ *     The value of the setting or NULL if it is not available.
+ */
+function phorum_api_user_get_setting($name)
+{
+    global $PHORUM;
+
+    // No settings available at all?
+    if (empty($PHORUM['user']['settings_data'])) return NULL;
+
+    // The setting is available.
+    if (array_key_exists($name, $PHORUM['user']['settings_data'])) {
+        return $PHORUM['user']['settings_data'][$name];
+    } else {
+        return NULL;
+    }
+}
+// }}}
+
+// {{{ Function: phorum_api_user_delete_setting()
+/**
+ * This function can be used to delete a user setting that was stored by
+ * the {@link phorum_api_user_save_settings()} function for the active
+ * Phorum user.
+ *
+ * @param string $name
+ *     The name of the setting to delete.
+ */
+function phorum_api_user_delete_setting($name)
+{
+    phorum_api_user_save_settings(array($name => NULL));
 }
 // }}}
 
@@ -1074,34 +1117,6 @@ function phorum_api_user_get(
         return $users;
     } else {
         return isset($users[$user_id]) ? $users[$user_id] : NULL;
-    }
-}
-// }}}
-
-// {{{ Function: phorum_api_user_get_setting()
-/**
- * This function can be used to retrieve the value for a user setting
- * that was stored by the {@link phorum_api_user_save_settings()} function
- * for the active Phorum user.
- *
- * @param string $name
- *     The name of the setting for which to retrieve the setting value.
- *
- * @return mixed
- *     The value of the setting or NULL if it is not available.
- */
-function phorum_api_user_get_setting($name)
-{
-    global $PHORUM;
-
-    // No settings available at all?
-    if (empty($PHORUM['user']['settings_data'])) return NULL;
-
-    // The setting is available.
-    if (array_key_exists($name, $PHORUM['user']['settings_data'])) {
-        return $PHORUM['user']['settings_data'][$name];
-    } else {
-        return NULL;
     }
 }
 // }}}
