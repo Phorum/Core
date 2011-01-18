@@ -51,6 +51,8 @@
  */
 function phorum_api_cache_get($type, $key, $version = NULL)
 {
+    global $PHORUM;
+
     if (is_array($key))
     {
         $ret = array();
@@ -129,6 +131,8 @@ function phorum_api_cache_get($type, $key, $version = NULL)
 function phorum_api_cache_put(
     $type, $key, $data, $ttl = PHORUM_CACHE_DEFAULT_TTL, $version = NULL)
 {
+    global $PHORUM;
+
     $key = md5($PHORUM['private_key'] . $key);
     $ret = apc_store($type . "_" . $key, array($data, $version), $ttl);
     return $ret;
@@ -151,6 +155,7 @@ function phorum_api_cache_put(
  */
 function phorum_api_cache_remove($type, $key)
 {
+    global $PHORUM;
     $key = md5($PHORUM['private_key'] . $key);
     return apc_delete($type . "_" . $key);
 }
@@ -201,8 +206,6 @@ function phorum_api_cache_clear()
  */
 function phorum_api_cache_check()
 {
-    global $PHORUM;
-
     if (!function_exists('apc_fetch')) {
         return "The function apc_fetch() is not available. " .
                "The PHP installation does not have the APC module enabled.";
