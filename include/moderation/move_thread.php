@@ -4,11 +4,15 @@ if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
 $message = phorum_db_get_message($msgthd_id);
 
-$PHORUM['DATA']['URL']["ACTION"]=phorum_api_url(PHORUM_MODERATION_ACTION_URL);
-$PHORUM['DATA']["FORM"]["forum_id"]=$PHORUM["forum_id"];
-$PHORUM['DATA']["FORM"]["thread_id"]=$msgthd_id;
-$PHORUM['DATA']["FORM"]["mod_step"]=PHORUM_DO_THREAD_MOVE;
-$PHORUM['DATA']["FORM"]["subject"] =htmlspecialchars($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+$PHORUM['DATA']['HEADING'] =
+    $PHORUM['DATA']['LANG']['Moderate'] . ': ' .
+    $PHORUM['DATA']['LANG']['MoveThread'];
+
+$PHORUM['DATA']['URL']["ACTION"]     = phorum_api_url(PHORUM_MODERATION_ACTION_URL);
+$PHORUM['DATA']["FORM"]["forum_id"]  = $PHORUM["forum_id"];
+$PHORUM['DATA']["FORM"]["thread_id"] = $msgthd_id;
+$PHORUM['DATA']["FORM"]["mod_step"]  = PHORUM_DO_THREAD_MOVE;
+$PHORUM['DATA']["FORM"]["subject"]   = htmlspecialchars($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
 // get all the forums the moderator may move to
 $PHORUM['DATA']["MoveForumsOption"]="";
@@ -28,11 +32,15 @@ $PHORUM['DATA']["MoveForumsOption"]="";
 $forums = phorum_api_forums_tree();
 
 // ignore the current forum
-unset($forums[$PHORUM["forum_id"]]);
-$PHORUM['DATA']['FORUMS']=$forums;
+unset($forums[$PHORUM['forum_id']]);
+$PHORUM['DATA']['FORUMS'] = $forums;
 
-$PHORUM['DATA']['FRM']=1;
+$PHORUM['DATA']['FRM'] = 1;
 
-$template = "move_form";
+// Include the 'message' template, which is used by the
+// do_thread_move.php script to handle error reporting.
+$template = isset($PHORUM['DATA']['ERROR'])
+          ? array('message', 'move_form')
+          : 'move_form';
 
 ?>

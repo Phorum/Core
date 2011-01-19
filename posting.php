@@ -280,6 +280,7 @@ if ($initial)
     );
     $mode = $_POST["mode"];
 }
+
 if (! in_array($mode, $valid_modes)) trigger_error(
     "Illegal mode issued: " . htmlspecialchars($mode), E_USER_ERROR
 );
@@ -519,9 +520,11 @@ if (isset($PHORUM["DATA"]["OPTION_ALLOWED"]["allow_reply"]) && $PHORUM["DATA"]["
 // Check permissions and apply read-only data.
 // Only do this on entering and on finishing up.
 // No checking is needed on intermediate requests.
-if ($initial || $finish) {
+if ($initial || $finish)
+{
     include './include/posting/check_permissions.php';
-    if ($PHORUM["posting_template"] == 'message' && empty($PHORUM["postingargs"]["as_include"])) {
+    if ($PHORUM["posting_template"] == 'message' &&
+        empty($PHORUM["postingargs"]["as_include"])) {
         return phorum_output('message');
     }
 }

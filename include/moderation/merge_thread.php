@@ -4,6 +4,16 @@ if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
 $template = "merge_form";
 
+$PHORUM['DATA']['HEADING'] =
+    $PHORUM['DATA']['LANG']['Moderate'] . ': ' .
+    $PHORUM['DATA']['LANG']['MergeThread'];
+
+$PHORUM['DATA']['BREADCRUMBS'][] = array(
+    'URL'  => NULL,
+    'TEXT' => $PHORUM['DATA']['HEADING'],
+    'TYPE' => 'merge'
+);
+
 $PHORUM['DATA']["FORM"]["forum_id"]  = $PHORUM["forum_id"];
 $PHORUM['DATA']["FORM"]["thread_id"] = $msgthd_id;
 $PHORUM['DATA']["FORM"]["mod_step"]  = PHORUM_DO_THREAD_MERGE;

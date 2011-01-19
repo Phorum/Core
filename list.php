@@ -376,13 +376,13 @@ if($PHORUM['DATA']['LOGGEDIN']) {
 
     // used later if user is moderator
     if($PHORUM["DATA"]["MODERATOR"]){
-        $delete_url_template        = phorum_api_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, '%message_id%');
-        $delete_thread_url_template = phorum_api_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, '%message_id%');
-        $move_thread_url_template   = phorum_api_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, '%message_id%');
-        $merge_thread_url_template  = phorum_api_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, '%message_id%');
+        $delete_url_template        = phorum_api_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, '%message_id%', 'ref_message_id=%message_id%');
+        $delete_thread_url_template = phorum_api_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, '%message_id%', 'ref_message_id=%message_id%');
+        $move_thread_url_template   = phorum_api_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, '%message_id%', 'ref_message_id=%message_id%');
+        $merge_thread_url_template  = phorum_api_url(PHORUM_MODERATION_URL, PHORUM_MERGE_THREAD, '%message_id%', 'ref_message_id=%message_id%');
         if(isset($row['pages_moderators'])) {
-            $recent_page_url_template = phorum_api_url(PHORUM_READ_URL, '%thread_id%','%message_id%','page=%page_num%');
-            $recent_url_template      = phorum_api_url(PHORUM_READ_URL, '%thread_id%','%message_id%');
+            $recent_page_url_template = phorum_api_url(PHORUM_READ_URL, '%thread_id%','%message_id%', 'ref_message_id=%message_id%', 'page=%page_num%');
+            $recent_url_template      = phorum_api_url(PHORUM_READ_URL, '%thread_id%','%message_id%', 'ref_message_id=%message_id%');
         }
     }
     $mark_thread_read_url_template = phorum_api_url(PHORUM_READ_URL, '%thread_id%', "markthreadread", "list");

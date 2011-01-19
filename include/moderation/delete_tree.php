@@ -2,6 +2,13 @@
 
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
+$PHORUM['DATA']['BREADCRUMBS'][] = array(
+    'URL'  => NULL,
+    'TEXT' => $PHORUM['DATA']['LANG']['Moderate'] . ': ' .
+              $PHORUM['DATA']['LANG']['DelMessReplies'],
+    'TYPE' => 'delete'
+);
+
 if (count($_GET) && empty($_POST["thread"]))
 {
     $args = array(
@@ -64,7 +71,7 @@ if(!$delete_handled) {
 
 }
 
-$nummsgs=count($msg_ids);
+$nummsgs = count($msg_ids);
 
 // Run a hook for performing custom actions after cleanup.
 if (isset($PHORUM["hooks"]["delete"])) {

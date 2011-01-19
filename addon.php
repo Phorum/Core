@@ -74,7 +74,7 @@
 //   $url = phorum_api_url(PHORUM_ADDON_URL, "module=foo", "action=bar");
 //
 
-define('phorum_page','addon');
+define('phorum_page', 'addon');
 
 require_once './common.php';
 

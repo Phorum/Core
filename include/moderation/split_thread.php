@@ -2,6 +2,16 @@
 
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
+$PHORUM['DATA']['HEADING'] =
+    $PHORUM['DATA']['LANG']['Moderate'] . ': ' .
+    $PHORUM['DATA']['LANG']['SplitThread'];
+
+$PHORUM['DATA']['BREADCRUMBS'][] = array(
+    'URL'  => NULL,
+    'TEXT' => $PHORUM['DATA']['HEADING'],
+    'TYPE' => 'split'
+);
+
 $PHORUM['DATA']['URL']["ACTION"] = phorum_api_url(PHORUM_MODERATION_ACTION_URL);
 
 $message = phorum_db_get_message($msgthd_id);

@@ -46,6 +46,9 @@
         {POST_VARS}
         <input type="hidden" name="thread" value="{FORM->thread_id}" />
         <input type="hidden" name="mod_step" value="{FORM->mod_step}" />
+        {IF FORM->merge_none}
+          <input type="submit" name="cancel" value="{LANG->BacktoForum}" />
+        {/IF}
         <input type="submit" class="PhorumSubmit" name="move" value="{LANG->MergeThreadCancel}" />
       </form>
     </div>

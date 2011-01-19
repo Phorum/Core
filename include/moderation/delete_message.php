@@ -2,6 +2,13 @@
 
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
+$PHORUM['DATA']['BREADCRUMBS'][] = array(
+    'URL'  => NULL,
+    'TEXT' => $PHORUM['DATA']['LANG']['Moderate'] . ': ' .
+              $PHORUM['DATA']['LANG']['DeleteMessage'],
+    'TYPE' => 'delete'
+);
+
 if (count($_GET) && empty($_POST["thread"]))
 {
     $args = array(

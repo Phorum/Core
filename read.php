@@ -322,7 +322,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     if($PHORUM["DATA"]["MODERATOR"]) {
             $edit_url_template          = phorum_api_url(PHORUM_POSTING_URL, "moderation", '%message_id%');
-            $moderation_url_template    = phorum_api_url(PHORUM_MODERATION_URL, '%action_id%', '%message_id%');
+            $moderation_url_template    = phorum_api_url(PHORUM_MODERATION_URL, '%action_id%', '%message_id%', 'ref_message_id=%message_id%', 'ref_thread_id=%thread_id%');
     }
     if($PHORUM["max_attachments"]>0) {
         $attachment_url_template = phorum_api_url(PHORUM_FILE_URL, 'file=%file_id%', 'filename=%file_name%');
@@ -424,13 +424,31 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     }
 
     // URLS which are common for the thread
-    if($PHORUM["DATA"]["MODERATOR"]) {
-        if($build_move_url) {
-                $URLS["move_url"] = str_replace(array('%action_id%','%message_id%'),array(PHORUM_MOVE_THREAD,$thread),$moderation_url_template);
+    if ($PHORUM['DATA']['MODERATOR'])
+    {
+        if ($build_move_url) {
+            $URLS['move_url'] = str_replace(
+                array('%action_id%', '%message_id%', '%thread_id%'),
+                array(PHORUM_MOVE_THREAD, $thread, $thread),
+                $moderation_url_template
+            );
         }
-        $URLS["merge_url"]  = str_replace(array('%action_id%','%message_id%'),array(PHORUM_MERGE_THREAD,$thread),$moderation_url_template);
-        $URLS["close_url"]  = str_replace(array('%action_id%','%message_id%'),array(PHORUM_CLOSE_THREAD,$thread),$moderation_url_template);
-        $URLS["reopen_url"] = str_replace(array('%action_id%','%message_id%'),array(PHORUM_REOPEN_THREAD,$thread),$moderation_url_template);
+
+        $URLS['merge_url']  = str_replace(
+            array('%action_id%', '%message_id%', '%thread_id%'),
+            array(PHORUM_MERGE_THREAD, $thread, $thread),
+            $moderation_url_template
+        );
+        $URLS['close_url']  = str_replace(
+            array('%action_id%', '%message_id%', '%thread_id%'),
+            array(PHORUM_CLOSE_THREAD, $thread, $thread),
+            $moderation_url_template
+        );
+        $URLS['reopen_url'] = str_replace(
+            array('%action_id%', '%message_id%', '%thread_id%'),
+            array(PHORUM_REOPEN_THREAD, $thread, $thread),
+            $moderation_url_template
+        );
     }
 
     // Add information about new messages to the thread.
@@ -447,16 +465,27 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         }
 
         // assign user data to the row
-        if($row["user_id"] && isset($user_info[$row["user_id"]])){
-            if(is_numeric($user_info[$row["user_id"]]["date_added"])){
-                $user_info[$row["user_id"]]["raw_date_added"] = $user_info[$row["user_id"]]["date_added"];
-                $user_info[$row["user_id"]]["date_added"] = phorum_api_format_relative_date($user_info[$row["user_id"]]["date_added"]);
-            }
-            if(strlen($user_info[$row["user_id"]]["posts"])>3 && !strstr($user_info[$row["user_id"]]["posts"], $PHORUM["thous_sep"])){
-                $user_info[$row["user_id"]]["posts"] = number_format($user_info[$row["user_id"]]["posts"], 0, "", $PHORUM["thous_sep"]);
+        if ($row["user_id"] && isset($user_info[$row["user_id"]]))
+        {
+            if (is_numeric($user_info[$row["user_id"]]["date_added"]))
+            {
+                $user_info[$row["user_id"]]["raw_date_added"] =
+                    $user_info[$row["user_id"]]["date_added"];
+
+                $user_info[$row["user_id"]]["date_added"] =
+                    phorum_api_format_relative_date(
+                        $user_info[$row["user_id"]]["date_added"]);
             }
 
-            $row["user"]=$user_info[$row["user_id"]];
+            if (strlen($user_info[$row["user_id"]]["posts"]) > 3 && !strstr($user_info[$row["user_id"]]["posts"], $PHORUM["thous_sep"])){
+                $user_info[$row["user_id"]]["posts"] =
+                    number_format(
+                        $user_info[$row["user_id"]]["posts"], 0, "",
+                        $PHORUM["thous_sep"]
+                    );
+            }
+
+            $row["user"] = $user_info[$row["user_id"]];
             unset($row["user"]["password"]);
             unset($row["user"]["password_tmp"]);
         }
@@ -476,22 +505,51 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $row["is_unapproved"] = ($row['status'] < 0) ? 1 : 0;
 
         // all stuff that makes only sense for moderators or admin
-        if($PHORUM["DATA"]["MODERATOR"]) {
+        if ($PHORUM["DATA"]["MODERATOR"])
+        {
+            $m_id = $row['message_id'];
+            $t_id  = $row['thread'];
 
-            $row["URL"]["DELETE_MESSAGE"] = str_replace(array('%action_id%','%message_id%'),array(PHORUM_DELETE_MESSAGE, $row["message_id"]),$moderation_url_template);
-            $row["URL"]["DELETE_THREAD"]  = str_replace(array('%action_id%','%message_id%'),array(PHORUM_DELETE_TREE, $row["message_id"]),$moderation_url_template);
-            $row["URL"]["EDIT"]           = str_replace(array('%action_id%','%message_id%'),array("moderation", $row["message_id"]),$edit_url_template);
-            $row["URL"]["SPLIT"]          = str_replace(array('%action_id%','%message_id%'),array(PHORUM_SPLIT_THREAD, $row["message_id"]),$moderation_url_template);
-            if($row['is_unapproved']) {
-              $row["URL"]["APPROVE"]      = str_replace(array('%action_id%','%message_id%'),array(PHORUM_APPROVE_MESSAGE, $row["message_id"]),$moderation_url_template);
+            $row["URL"]["DELETE_MESSAGE"] = str_replace(
+                array('%action_id%', '%message_id%', '%thread_id%'),
+                array(PHORUM_DELETE_MESSAGE, $m_id, $t_id),
+                $moderation_url_template
+            );
+            $row["URL"]["DELETE_THREAD"] = str_replace(
+                array('%action_id%', '%message_id%', '%thread_id%'),
+                array(PHORUM_DELETE_TREE, $m_id, $t_id),
+                $moderation_url_template
+            );
+            $row["URL"]["EDIT"] = str_replace(
+                array('%action_id%', '%message_id%', '%thread_id%'),
+                array("moderation", $m_id, $t_id),
+                $edit_url_template
+            );
+            $row["URL"]["SPLIT"] = str_replace(
+                array('%action_id%', '%message_id%', '%thread_id%'),
+                array(PHORUM_SPLIT_THREAD, $m_id, $t_id),
+                $moderation_url_template
+            );
+            if ($row['is_unapproved']) {
+                $row["URL"]["APPROVE"] = str_replace(
+                    array('%action_id%', '%message_id%', '%thread_id%'),
+                    array(PHORUM_APPROVE_MESSAGE, $m_id, $t_id),
+                    $moderation_url_template
+                );
             } else {
-              $row["URL"]["HIDE"]         = str_replace(array('%action_id%','%message_id%'),array(PHORUM_HIDE_POST, $row["message_id"]),$moderation_url_template);
+                $row["URL"]["HIDE"] = str_replace(
+                    array('%action_id%', '%message_id%', '%thread_id%'),
+                    array(PHORUM_HIDE_POST, $m_id, $t_id),
+                    $moderation_url_template
+                );
             }
-            if($build_move_url) {
+
+            if ($build_move_url) {
                 $row["URL"]["MOVE"] = $URLS["move_url"];
             }
-            $row["URL"]["MERGE"] = $URLS["merge_url"];
-            $row["URL"]["CLOSE"] = $URLS["close_url"];
+
+            $row["URL"]["MERGE"]  = $URLS["merge_url"];
+            $row["URL"]["CLOSE"]  = $URLS["close_url"];
             $row["URL"]["REOPEN"] = $URLS["reopen_url"];
         }
 
@@ -514,18 +572,32 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $row["raw_datestamp"] = $row["datestamp"];
         $row["datestamp"] = phorum_api_format_date($PHORUM["long_date_time"], $row["datestamp"]);
 
-        $row["URL"]["READ"]   = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$read_url_template_both);
-        $row["URL"]["REPLY"]  = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$reply_url_template);
-        $row["URL"]["QUOTE"]  = str_replace(array('%thread_id%','%message_id%'),array($row["thread"], $row["message_id"]),$reply_url_template_quote);
+        $row["URL"]["READ"]   = str_replace(
+            array('%thread_id%', '%message_id%'),
+            array($row["thread"], $row["message_id"]),
+            $read_url_template_both
+        );
+        $row["URL"]["REPLY"] = str_replace(
+            array('%thread_id%', '%message_id%'),
+            array($row["thread"], $row["message_id"]),
+            $reply_url_template
+        );
+        $row["URL"]["QUOTE"] = str_replace(
+            array('%thread_id%', '%message_id%'),
+            array($row["thread"], $row["message_id"]),
+            $reply_url_template_quote
+        );
 
         $row["URL"]["PM"] = false;
         if ($PHORUM["DATA"]["LOGGEDIN"]) {
             $row["URL"]["FOLLOW"] = str_replace('%thread_id%',$row['thread'],$follow_url_template);
             // can only send private replies if the author is a registered user
             if ($PHORUM["enable_pm"] && $row["user_id"]) {
-                $row["URL"]["PM"] = str_replace('%message_id%',$row['message_id'],$pm_url_template);
+                $row["URL"]["PM"] = str_replace(
+                    '%message_id%', $row['message_id'], $pm_url_template);
             }
-            $row["URL"]["REPORT"] = str_replace('%message_id%',$row['message_id'],$report_url_template);
+            $row["URL"]["REPORT"] = str_replace(
+                '%message_id%', $row['message_id'], $report_url_template);
         }
 
 
@@ -599,14 +671,15 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             }
         }
 
-        $messages[$row["message_id"]]=$row;
+        $messages[$row["message_id"]] = $row;
     }
 
     if($PHORUM["threaded_read"]) {
 
         // run read-threads mods
-        if (isset($PHORUM["hooks"]["readthreads"]))
+        if (isset($PHORUM["hooks"]["readthreads"])) {
             $messages = phorum_api_hook("readthreads", $messages);
+        }
 
         $messages = phorum_api_thread_sort($messages);
 
@@ -785,9 +858,10 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
     phorum_api_output($templates);
 
-
-} elseif($toforum=phorum_check_moved_message($thread)) { // is it a moved thread?
-
+}
+// Is it a moved thread?
+elseif ($toforum=phorum_check_moved_message($thread))
+{
     $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["MovedMessage"];
     $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_api_url(PHORUM_FOREIGN_READ_URL, $toforum, $thread);
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["MovedMessageTo"];
@@ -796,7 +870,10 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // have to include the header here for the Redirect
     phorum_api_output("message");
 
-} else { // message not found
+}
+// Message not found.
+else
+{
     $PHORUM["DATA"]["ERROR"]=$PHORUM["DATA"]["LANG"]["MessageNotFound"];
     $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
     $PHORUM['DATA']["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToList"];

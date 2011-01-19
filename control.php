@@ -91,10 +91,10 @@ $PHORUM['DATA']['SHOW_PM_EMAIL_NOTIFY'] = !empty($PHORUM["allow_pm_email_notify"
 $PHORUM["DATA"]["URL"]["ACTION"] = phorum_api_url(PHORUM_CONTROLCENTER_ACTION_URL);
 
 // fill the breadcrumbs-info
-$PHORUM['DATA']['BREADCRUMBS'][]=array(
-    'URL'=>$PHORUM['DATA']['URL']['REGISTERPROFILE'],
-    'TEXT'=>$PHORUM['DATA']['LANG']['MyProfile'],
-    'TYPE'=>'control'
+$PHORUM['DATA']['BREADCRUMBS'][] = array(
+    'URL'  => $PHORUM['DATA']['URL']['REGISTERPROFILE'],
+    'TEXT' => $PHORUM['DATA']['LANG']['MyProfile'],
+    'TYPE' => 'control'
 );
 
 $user = $PHORUM['user'];
@@ -229,10 +229,10 @@ if(empty($PHORUM["DATA"]["HEADING"])){
     $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["MyProfile"];
 } else {
     // set the breadcrumb with the heading
-    $PHORUM['DATA']['BREADCRUMBS'][]=array(
-        'URL'=>phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=$panel"),
-        'TEXT'=>$PHORUM['DATA']['HEADING'],
-        'TYPE'=>'control'
+    $PHORUM['DATA']['BREADCRUMBS'][] = array(
+        'URL'  => phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=$panel"),
+        'TEXT' => $PHORUM['DATA']['HEADING'],
+        'TYPE' => 'control'
     );
     $PHORUM['DATA']['HTML_TITLE'].=PHORUM_SEPARATOR.$PHORUM['DATA']['HEADING'];
 }

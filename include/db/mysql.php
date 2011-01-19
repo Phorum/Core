@@ -1000,7 +1000,11 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     $NOW = $convert ? $message['datestamp'] : time();
 
     // Check for duplicate posting of messages, unless we are converting a db.
-    if (isset($PHORUM['check_duplicate']) && $PHORUM['check_duplicate'] && !$convert) {
+    if (
+        isset($PHORUM['check_duplicate']) &&
+        $PHORUM['check_duplicate'] &&
+        !$convert
+    ) {
         // Check for duplicate messages in the last hour.
         $check_timestamp = $NOW - 3600;
         $sql = "SELECT message_id
@@ -1016,22 +1020,23 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     }
 
     $insertfields = array(
-        'forum_id'       => $message['forum_id'],
-        'datestamp'      => $NOW,
-        'thread'         => $message['thread'],
-        'parent_id'      => $message['parent_id'],
-        'author'         => "'" . $message['author'] . "'",
-        'subject'        => "'" . $message['subject'] . "'",
-        'email'          => "'" . $message['email'] . "'",
-        'ip'             => "'" . $message['ip'] . "'",
-        'user_id'        => $message['user_id'],
-        'moderator_post' => $message['moderator_post'],
-        'status'         => $message['status'],
-        'sort'           => $message['sort'],
-        'msgid'          => "'" . $message['msgid'] . "'",
-        'body'           => "'" . $message['body'] . "'",
-        'closed'         => $message['closed'],
-        'moved'          => 0
+        'forum_id'          => $message['forum_id'],
+        'datestamp'         => $NOW,
+        'thread'            => $message['thread'],
+        'parent_id'         => $message['parent_id'],
+        'author'            => "'" . $message['author'] . "'",
+        'subject'           => "'" . $message['subject'] . "'",
+        'email'             => "'" . $message['email'] . "'",
+        'ip'                => "'" . $message['ip'] . "'",
+        'user_id'           => $message['user_id'],
+        'moderator_post'    => $message['moderator_post'],
+        'status'            => $message['status'],
+        'sort'              => $message['sort'],
+        'msgid'             => "'" . $message['msgid'] . "'",
+        'body'              => "'" . $message['body'] . "'",
+        'closed'            => $message['closed'],
+        'moved'             => 0,
+        'moved_hide_period' => 0
     );
 
     // The meta field is optional.
@@ -1042,6 +1047,7 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     // The moved field is optional.
     if (!empty($message['moved'])) {
         $insertfields['moved'] = 1;
+        $insertfields['moved_hide_period'] = (int)$message['moved_hide_period'];
     }
 
     // When handling a conversion, the message_id can be set.
@@ -1155,15 +1161,18 @@ function phorum_db_update_message($message_id, $message)
     {
         if (phorum_db_validate_field($field))
         {
-            require_once PHORUM_PATH.'/include/api/custom_field.php';
-            $custom = phorum_api_custom_field_byname($field,PHORUM_CUSTOM_FIELD_MESSAGE);
+            require_once PHORUM_PATH . '/include/api/custom_field.php';
+            $custom = phorum_api_custom_field_byname(
+                $field, PHORUM_CUSTOM_FIELD_MESSAGE);
 
-            if($custom === null) {
+            if ($custom === null)
+            {
                 if (is_numeric($value) &&
                     !in_array($field, $PHORUM['string_fields_message'])) {
                     $fields[] = "$field = $value";
                 } elseif (is_array($value)) {
-                    $value = phorum_db_interact(DB_RETURN_QUOTED,serialize($value));
+                    $value = phorum_db_interact(
+                        DB_RETURN_QUOTED, serialize($value));
                     $message[$field] = $value;
                     $fields[] = "$field = '$value'";
                 } else {
@@ -1171,8 +1180,9 @@ function phorum_db_update_message($message_id, $message)
                     $message[$field] = $value;
                     $fields[] = "$field = '$value'";
                 }
-            } else {
-                $customfields[$key]=$value;
+            }
+            else {
+                $customfields[$key] = $value;
             }
         }
     }
@@ -1186,8 +1196,8 @@ function phorum_db_update_message($message_id, $message)
         DB_MASTERQUERY
     );
 
-    if(count($customfields)) {
-        phorum_db_save_custom_fields($message_id,$customfields);
+    if (count($customfields)) {
+        phorum_db_save_custom_fields($message_id, $customfields);
     }
 
     // Full text searching updates.
@@ -7729,6 +7739,7 @@ function phorum_db_create_tables()
            recent_user_id           int unsigned   NOT NULL default '0',
            recent_author            varchar(255)   NOT NULL default '',
            moved                    tinyint(1)     NOT NULL default '0',
+           moved_hide_period        tinyint(4)     NOT NULL default '0',
 
            PRIMARY KEY (message_id),
            KEY special_threads (sort,forum_id),

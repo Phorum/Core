@@ -45,9 +45,9 @@
  * - If a forum_id is available in the request, then it is stored
  *   in $PHORUM['forum_id'].
  * - If a ref_thread_id is available in the request, then it is stored
- *   in $PHORUM['thread_id']. This is the referring thread id.
+ *   in $PHORUM['ref_thread_id']. This is the referring thread id.
  * - If a ref_message_id is available in the request, then it is stored
- *   in $PHORUM['message_id']. This is the referring message id.
+ *   in $PHORUM['ref_message_id']. This is the referring message id.
  */
 function phorum_api_request_parse()
 {
@@ -267,7 +267,8 @@ function phorum_api_request_parse()
         // Set the active ref_thread_id and ref_message_id if not already set
         // by a request parameter and when these are passed as numeric
         // arguments.
-        if (empty($PHORUM['thread_id'])) {
+        if (empty($PHORUM['ref_thread_id']))
+        {
             if (in_array(phorum_page, array(
                 // The pages that use the numeric "forum,thread,message" format.
                 'list', 'read', 'login', 'register', 'pm', 'control'

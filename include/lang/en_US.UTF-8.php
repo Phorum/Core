@@ -48,7 +48,7 @@
 
     /*------------------------------------------0-----------*/
 
-    $PHORUM["DATA"]["LANG"]=array(
+    $PHORUM["DATA"]["LANG"] = array(
 
         "Action"                =>      "Action",
         "ActionPending"         =>      "%count% action pending ...",
@@ -284,6 +284,8 @@
         "MovedMessage"          =>      "This topic has been moved. You will be redirected to its current location.",
         "MovedMessageTo"        =>      "To the current location of this topic.",
         "MoveNotification"      =>      "Leave behind a move notification",
+        "MoveHideAfter"         =>      "Hide notification after",
+        "MoveSelectHidePeriod"  =>      "Select period ...",
         "MoveThread"            =>      "Move Topic",
         "MoveThreadTo"          =>      "You want to move the following topic",
         "MsgApprovedOk"         =>      "Message(s) approved",
@@ -546,18 +548,19 @@
         // Examples: Today, Yesterday, 1 Day ago, 1 month ago, 1 year ago
 
         "relative_ago"          =>      "ago",
-        "relative_days"         =>      "days",
-        "relative_months"       =>      "months",
         "relative_one_day"      =>      "1 day",
-        "relative_one_year"     =>      "1 year",
-        "relative_today"        =>      "Today",
-        "relative_tomorrow"     =>      "Tomorrow",
+        "relative_days"         =>      "days",
+        "relative_one_week"     =>      "1 week",
         "relative_weeks"        =>      "weeks",
+        "relative_one_month"    =>      "1 month",
+        "relative_months"       =>      "months",
+        "relative_one_year"     =>      "1 year",
         "relative_years"        =>      "years",
         "relative_yesterday"    =>      "Yesterday",
+        "relative_today"        =>      "Today",
+        "relative_tomorrow"     =>      "Tomorrow"
+    );
 
-
-);
     // timezone-variables
     $PHORUM["DATA"]["LANG"]["TIME"]=array(
         "-12" => "(GMT - 12:00 hours) Enitwetok, Kwajalien",
