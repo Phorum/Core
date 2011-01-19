@@ -2391,6 +2391,20 @@ function phorum_db_move_thread($thread_id, $toforum)
     settype($thread_id, 'int');
     settype($toforum, 'int');
 
+    // Check if the thread starter message exists.
+    $message = phorum_db_get_message($thread_id);
+    if ($message['parent_id']) trigger_error(
+        "phorum_db_move_thread(): thread $thread_id does not exist",
+        E_USER_ERROR
+    );  
+
+    // Check if the target forum exists.
+    $forums = phorum_db_get_forums($toforum);
+    if (empty($forums)) trigger_error(
+        "phorum_db_move_thread(): forum $toforum does not exist",
+        E_USER_ERROR
+    );  
+
     if ($toforum > 0 && $thread_id > 0)
     {
         // Retrieve the messages from the thread, so we know for which
@@ -2419,87 +2433,34 @@ function phorum_db_move_thread($thread_id, $toforum)
         phorum_db_update_forum_stats(TRUE);
         $GLOBALS['PHORUM']['forum_id'] = $old_id;
 
-        // Move the newflags and search data to the destination forum.
+        // Handle updates for the data that is related to the
+        // messages in the moved thread.
+        $message_ids = array_keys($thread_messages);
+        $ids_str     = implode(', ',$message_ids);
 
-        /**
-         * @todo In the move thread code, there are some flaws. The
-         *       newflags for the user that is moving the message
-         *       are used as the source for deciding what flags
-         *       to delete or move for all other users. This results
-         *       in strange newflag problems.
-         *
-         *       This main issue here is that the newflags should be
-         *       handled separately for each user; no updates should be
-         *       based on the newflags for the active user. The current
-         *       algorithm will only make sure that the newflags will look
-         *       correct for that specific user. The problem is that we
-         *       do not yet have an idea on how to handle this with
-         *       enough performance.
-         */
-        // First, gather information for doing the updates.
-        $new_newflags = phorum_db_newflag_get_flags($toforum);
-        $message_ids  = array();
-        $delete_ids   = array();
-        $search_ids   = array();
-        foreach ($thread_messages as $mid => $data)
-        {
-            // Gather information for updating the newflags.
-            // Moving the newflag is only useful if it is higher than the
-            // min_id of the target forum.
-            if (!empty($new_newflags['min_id'][$toforum]) &&
-                $mid > $new_newflags['min_id'][$toforum]) {
-                $message_ids[] = $mid;
-            } else {
-            // Other newflags can be deleted.
-                $delete_ids[] = $mid;
-            }
+        // Move the newflags to the destination forum.
+        phorum_db_newflag_update_forum($message_ids);
 
-            // gather the information for updating the search table
-            $search_ids[] = $mid;
-        }
+        // Move the subscriptions to the destination forum.
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "UPDATE {$PHORUM['subscribers_table']}
+             SET    forum_id = $toforum
+             WHERE  thread IN ($ids_str)",
+            NULL,
+            DB_MASTERQUERY
+        );
 
-        // Move newflags.
-        if (count($message_ids)) {
-            phorum_db_newflag_update_forum($message_ids);
-        }
-
-        // Update subscriptions.
-        if (count($message_ids)) {
-            $ids_str = implode(', ',$message_ids);
-            phorum_db_interact(
-                DB_RETURN_RES,
-                "UPDATE {$PHORUM['subscribers_table']}
-                 SET    forum_id = $toforum
-                 WHERE  thread IN ($ids_str)",
-                NULL,
-                DB_MASTERQUERY
-            );
-        }
-
-        // Delete newflags.
-        if (count($delete_ids)) {
-            $ids_str = implode(', ',$delete_ids);
-            phorum_db_interact(
-                DB_RETURN_RES,
-                "DELETE FROM {$PHORUM['user_newflags_table']}
-                 WHERE  message_id IN($ids_str)",
-                NULL,
-                DB_MASTERQUERY
-            );
-        }
-
-        // Update search data.
-        if (count($search_ids)) {
-            $ids_str = implode(', ',$search_ids);
-            phorum_db_interact(
-                DB_RETURN_RES,
-                "UPDATE {$PHORUM['search_table']}
-                 SET    forum_id = $toforum
-                 WHERE  message_id in ($ids_str)",
-                NULL,
-                DB_MASTERQUERY
-            );
-        }
+        // Move the search data to the destination forum.
+        $ids_str = implode(', ',$message_ids);
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "UPDATE {$PHORUM['search_table']}
+             SET    forum_id = $toforum
+             WHERE  message_id in ($ids_str)",
+            NULL,
+            DB_MASTERQUERY
+        );
     }
 }
 // }}}
