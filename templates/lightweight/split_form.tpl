@@ -1,3 +1,5 @@
+<!-- BEGIN TEMPLATE split_form.tpl -->
+
 <div class="generic">
     <form method="POST" action="{URL->ACTION}">
         {POST_VARS}
@@ -24,5 +26,7 @@
         </p>
 
         <input type="submit" name="move" value="{LANG->SplitThread}" />
+        <input type="submit" name="cancel" value="{LANG->Cancel}" />
     </form>
 </div>
+<!-- END TEMPLATE split_form.tpl -->
