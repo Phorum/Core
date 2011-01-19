@@ -4,7 +4,7 @@
 
     {IF FORM->merge_none}
         <p>{LANG->MergeThreadInfo1}</p>
-        <p><strong>{FORM->merge_subject1}</strong></p>
+        <p>{LANG->Thread} 1: <strong>{FORM->merge_subject1}</strong></p>
         <p>{LANG->MergeThreadInfo2}</p>
     {/IF}
 
@@ -41,7 +41,8 @@
             <input type="hidden" name="thread" value="{FORM->thread_id}" />
             <input type="hidden" name="mod_step" value="{FORM->mod_step}" />
             {IF FORM->merge_none}
-              <input type="submit" name="cancel" value="{LANG->BacktoForum}" />
+              <input type="button" onclick="history.go(-1)"
+                     value="{LANG->BacktoForum}" />
             {/IF}
             <input type="submit" name="move" value="{LANG->MergeThreadCancel}" />
         </form>
