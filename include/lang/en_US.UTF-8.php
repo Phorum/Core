@@ -544,9 +544,9 @@
         "YourName"              =>      "Your Name",
         "YouWantToFollow"       =>      "You have indicated you want to follow the topic",
 
-        // These are separate as they are all related to the relative time formatting
-        // Examples: Today, Yesterday, 1 Day ago, 1 month ago, 1 year ago
-
+        // These are separate as they are all related to the relative time
+        // formatting. Examples: Today, Yesterday, 1 Day ago, 1 month ago,
+        // 1 year ago.
         "relative_ago"          =>      "ago",
         "relative_one_day"      =>      "1 day",
         "relative_days"         =>      "days",

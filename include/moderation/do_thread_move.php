@@ -12,7 +12,7 @@ $moveto        = (int) $_POST['moveto'];
 $enable_notify = !empty($_POST['create_notification']);
 $enable_hide   = !empty($_POST['enable_hide_after']);
 $hide_period   = !empty($_POST['hide_period']) && $enable_hide
-               ? (int) $_POST['hide_period'] : 0;
+               ? (int) $_POST['hide_period'] * 24 * 3600 : 0;
 
 // These template variables are setup for cases where we find
 // errors in the input.
@@ -59,11 +59,11 @@ phorum_db_move_thread($msgthd_id, $moveto);
 // visitors that the thread was moved.
 if ($enable_notify)
 {
-    $newmessage                      = $message;
-    $newmessage['body']              = ' -- moved topic -- ';
-    $newmessage['moved']             = 1;
-    $newmessage['moved_hide_period'] = $hide_period;
-    $newmessage['sort']              = PHORUM_SORT_DEFAULT;
+    $newmessage                = $message;
+    $newmessage['body']        = ' -- moved topic -- ';
+    $newmessage['moved']       = 1;
+    $newmessage['hide_period'] = $hide_period;
+    $newmessage['sort']        = PHORUM_SORT_DEFAULT;
     unset($newmessage['message_id']);
 
     phorum_db_post_message($newmessage);

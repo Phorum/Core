@@ -537,9 +537,10 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
     // The messagefields that we want to fetch from the database.
     $messagefields =
        'author, datestamp, email, message_id, forum_id, meta,
-        moderator_post, modifystamp, parent_id, msgid, sort, moved, status,
+        moderator_post, modifystamp, parent_id, msgid, sort, status,
         subject, thread, thread_count, user_id, viewcount, threadviewcount,
-        closed, ip, recent_message_id, recent_user_id, recent_author';
+        closed, ip, recent_message_id, recent_user_id, recent_author,
+        moved, hide_period';
 
     // Include the message bodies in the thread list if requested.
     if ($include_bodies) {
@@ -633,8 +634,13 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
 
         // Query the messages for the current group.
         $rows = phorum_db_interact(DB_RETURN_ASSOCS, $sql, 'message_id');
+        $now  = time();
         foreach ($rows as $id => $row)
         {
+            // Skip the message if the hide_period has passed.
+            if (!empty($row['hide_period']) &&
+                ($row['datestamp'] + $row['hide_period']) < $now) continue;
+
             // Unpack the thread message meta data.
             $row['meta'] = empty($row['meta'])
                          ? array()
@@ -1020,23 +1026,23 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     }
 
     $insertfields = array(
-        'forum_id'          => $message['forum_id'],
-        'datestamp'         => $NOW,
-        'thread'            => $message['thread'],
-        'parent_id'         => $message['parent_id'],
-        'author'            => "'" . $message['author'] . "'",
-        'subject'           => "'" . $message['subject'] . "'",
-        'email'             => "'" . $message['email'] . "'",
-        'ip'                => "'" . $message['ip'] . "'",
-        'user_id'           => $message['user_id'],
-        'moderator_post'    => $message['moderator_post'],
-        'status'            => $message['status'],
-        'sort'              => $message['sort'],
-        'msgid'             => "'" . $message['msgid'] . "'",
-        'body'              => "'" . $message['body'] . "'",
-        'closed'            => $message['closed'],
-        'moved'             => 0,
-        'moved_hide_period' => 0
+        'forum_id'       => $message['forum_id'],
+        'datestamp'      => $NOW,
+        'thread'         => $message['thread'],
+        'parent_id'      => $message['parent_id'],
+        'author'         => "'" . $message['author'] . "'",
+        'subject'        => "'" . $message['subject'] . "'",
+        'email'          => "'" . $message['email'] . "'",
+        'ip'             => "'" . $message['ip'] . "'",
+        'user_id'        => $message['user_id'],
+        'moderator_post' => $message['moderator_post'],
+        'status'         => $message['status'],
+        'sort'           => $message['sort'],
+        'msgid'          => "'" . $message['msgid'] . "'",
+        'body'           => "'" . $message['body'] . "'",
+        'closed'         => $message['closed'],
+        'moved'          => 0,
+        'hide_period'    => 0
     );
 
     // The meta field is optional.
@@ -1047,7 +1053,7 @@ function phorum_db_post_message(&$message, $convert=FALSE)
     // The moved field is optional.
     if (!empty($message['moved'])) {
         $insertfields['moved'] = 1;
-        $insertfields['moved_hide_period'] = (int)$message['moved_hide_period'];
+        $insertfields['hide_period'] = (int)$message['hide_period'];
     }
 
     // When handling a conversion, the message_id can be set.
@@ -7739,7 +7745,7 @@ function phorum_db_create_tables()
            recent_user_id           int unsigned   NOT NULL default '0',
            recent_author            varchar(255)   NOT NULL default '',
            moved                    tinyint(1)     NOT NULL default '0',
-           moved_hide_period        tinyint(4)     NOT NULL default '0',
+           hide_period              int unsigned   NOT NULL default '0',
 
            PRIMARY KEY (message_id),
            KEY special_threads (sort,forum_id),
