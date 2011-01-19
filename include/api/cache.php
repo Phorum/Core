@@ -85,6 +85,17 @@ if ($PHORUM['CACHECONFIG']['type'] == 'file' &&
 // Backward compatibility for scripts that use the old $PHORUM['cache'] var.
 $PHORUM['cache'] = $PHORUM['CACHECONFIG']['directory'];
 
+// For separating the cache data of multiple Phorum instances, a cache
+// separation key is used in the cache layers. The Phorum "private_key"
+// setting is used for that. During installation, this key is not yet
+// available. In that case, we provide an alternative cache separation key,
+// which will make the caching code work during installation.
+if (isset($PHORUM['cache_key'])) {
+    $PHORUM['CACHECONFIG']['separation_key'] = $PHORUM['cache_key'];
+} else {
+    $PHORUM['CACHECONFIG']['separation_key'] = md5(__FILE__);
+}
+
 // For command line scripts, we use the NULL caching layer in case file
 // caching is in use. The command line user is often different from the web
 // server user, causing permission problems on the cache.

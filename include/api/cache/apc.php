@@ -52,6 +52,7 @@
 function phorum_api_cache_get($type, $key, $version = NULL)
 {
     global $PHORUM;
+    $sepkey = $PHORUM['CACHECONFIG']['separation_key'];
 
     if (is_array($key))
     {
@@ -59,7 +60,7 @@ function phorum_api_cache_get($type, $key, $version = NULL)
 
         foreach ($key as $realkey)
         {
-            $realkey = md5($PHORUM['private_key'] . $realkey);
+            $realkey = md5($sepkey . $realkey);
             $getkey = $type . "_" . $realkey;
             $data   = apc_fetch($getkey);
 
@@ -76,7 +77,7 @@ function phorum_api_cache_get($type, $key, $version = NULL)
     }
     else
     {
-        $key = md5($PHORUM['private_key'] . $key);
+        $key = md5($sepkey . $key);
         $getkey = $type . "_" . $key;
         $data   = apc_fetch($getkey);
 
@@ -133,7 +134,8 @@ function phorum_api_cache_put(
 {
     global $PHORUM;
 
-    $key = md5($PHORUM['private_key'] . $key);
+    $sepkey = $PHORUM['CACHECONFIG']['separation_key'];
+    $key = md5($sepkey . $key);
     $ret = apc_store($type . "_" . $key, array($data, $version), $ttl);
     return $ret;
 }
@@ -156,7 +158,8 @@ function phorum_api_cache_put(
 function phorum_api_cache_remove($type, $key)
 {
     global $PHORUM;
-    $key = md5($PHORUM['private_key'] . $key);
+    $sepkey = $PHORUM['CACHECONFIG']['separation_key'];
+    $key = md5($sepkey . $key);
     return apc_delete($type . "_" . $key);
 }
 // }}}

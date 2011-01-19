@@ -322,8 +322,8 @@ function phorum_api_cache_mkpath($type = NULL, $key = NULL)
     $md5     = md5($key);
     $pathlen = PHORUM_FILE_CACHE_DEPTH * PHORUM_FILE_CACHE_DIRLEN;
 
-    $path    = $PHORUM['CACHECONFIG']['directory'] . '/' .
-               md5($PHORUM['private_key']);
+    $sepkey  = $PHORUM['CACHECONFIG']['separation_key'];
+    $path    = $PHORUM['CACHECONFIG']['directory'] . '/' . md5($sepkey);
 
     if ($type === NULL) return $path;
 
