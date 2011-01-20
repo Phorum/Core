@@ -176,6 +176,8 @@ function phorum_api_tree_build(
                 $node[$parent_id_fld] = $root_id;
             }
         }
+
+        unset($node);
     }
 
     // ----------------------------------------------------------------------
