@@ -1037,7 +1037,7 @@ Table of contents:
    ----------------------------------------------------------------------------
    after_edit
 
-   Where  : include/moderation_functions.php
+   Where  : include/posting/action_edit.php
    When   : Right after storing an edited message in the database.
    Input  : Array containing message data (read-only).
    Return : none

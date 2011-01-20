@@ -20,7 +20,6 @@
 define('phorum_page','moderation');
 require_once './common.php';
 
-require_once './include/moderation_functions.php';
 require_once PHORUM_PATH.'/include/api/thread.php';
 require_once PHORUM_PATH.'/include/api/mail/message_notify.php';
 
@@ -60,7 +59,7 @@ if (isset($_POST["mod_step"])) {
 // When no thread or message id is provided or if the user isn't a moderator,
 // then redirect the user back to the message list.
 if (empty($msgthd_id) || !$PHORUM["DATA"]["MODERATOR"]) {
-   phorum_redirect_back_from_moderation();
+   phorum_api_redirect(phorum_moderation_back_url());
 }
 
 // If the user is not fully logged in, send him to the login page.
@@ -73,12 +72,12 @@ if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
 
 // If we gave the user a confirmation form and he clicked "No", send him back.
 if (isset($_POST["confirmation"]) && empty($_POST["confirmation_yes"])) {
-    phorum_redirect_back_from_moderation();
+    phorum_api_redirect(phorum_moderation_back_url());
 }
 
 // The user cancelled the moderation action.
 if (isset($_POST['cancel'])) {
-    phorum_redirect_back_from_moderation();
+    phorum_api_redirect(phorum_moderation_back_url());
 }
 
 // Build all our common URL's.
@@ -194,8 +193,16 @@ switch ($mod_step)
         include PHORUM_PATH . '/include/moderation/do_thread_split.php';
         break;
 
+    case PHORUM_MAKE_STICKY: // make a thread sticky
+        include PHORUM_PATH . '/include/moderation/make_sticky.php';
+        break;
+
+    case PHORUM_MAKE_UNSTICKY: // make a thread unsticky
+        include PHORUM_PATH . '/include/moderation/make_unsticky.php';
+        break;
+
     default:
-        phorum_redirect_back_from_moderation();
+        phorum_api_redirect(phorum_moderation_back_url());
 }
 
 // Remove the affected messages from the cache if caching is enabled.
@@ -210,9 +217,129 @@ if ($PHORUM['cache_messages'])
 }
 
 if (!isset($PHORUM['DATA']['BACKMSG'])) {
-    $PHORUM['DATA']["BACKMSG"] = $PHORUM['DATA']["LANG"]["BackToList"];
+    $PHORUM['DATA']["BACKMSG"] = $PHORUM['DATA']["LANG"]["BacktoForum"];
 }
 
 phorum_api_output($template);
+
+// ----------------------------------------------------------------------
+// Functions
+// ----------------------------------------------------------------------
+
+/**
+ * Outputs a confirmation form.
+ *
+ * To maintain backwards compatibility with the templates,
+ * we generate a form in code and output it using stdblock.
+ *
+ * The function exits the script after displaying the form.
+ *
+ * @param   string    $message  Message to display to users
+ * @param   string    $action   The URI to post the form to
+ * @param   array     $args     The hidden form values to be used in the form
+ * @return  void
+ *
+ */
+function phorum_show_confirmation_form($message, $action, $args)
+{
+    global $PHORUM;
+
+    ob_start();
+
+    ?>
+    <div style="text-align: center;">
+        <strong><?php echo htmlspecialchars($message, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?></strong>
+        <br />
+        <br />
+        <form
+            action="<?php echo htmlspecialchars($action, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?>"
+            method="post">
+
+            <input type="hidden"
+                name="forum_id" value="<?php echo $PHORUM["forum_id"]; ?>" />
+            <input type="hidden" name="confirmation" value="1" />
+
+            <?php foreach ($args as $name => $value){ ?>
+                <input type="hidden"
+                    name="<?php echo htmlspecialchars($name, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?>"
+                    value="<?php echo htmlspecialchars($value, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?>" />
+            <?php } ?>
+
+            <?php echo $PHORUM["DATA"]["POST_VARS"]; ?>
+
+            <input type="submit"
+                name="confirmation_yes"
+                value="<?php echo $PHORUM["DATA"]["LANG"]["Yes"]; ?>" />
+
+            <input type="submit"
+                name="confirmation_no"
+                value="<?php echo $PHORUM["DATA"]["LANG"]["No"]; ?>" />
+
+        </form>
+        <br />
+    </div>
+    <?php
+
+    $PHORUM["DATA"]["BLOCK_CONTENT"] = ob_get_clean();
+    phorum_api_output("stdblock");
+    exit();
+}
+
+/**
+ * A utility function to determine a suitable URL to redirect back from
+ * the moderation code.
+ *
+ * @return string
+ */
+function phorum_moderation_back_url()
+{
+    global $PHORUM;
+
+    // When the parameter "prepost" is available in the request, then
+    // the moderation action was initiated from the moderation interface
+    // in the user control center.
+    if (isset($_POST['prepost']) ||
+        isset($_GET['prepost'])  ||
+        isset($PHORUM['args']['prepost']))
+    {
+        return phorum_api_url(
+            PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED
+        );
+    }
+
+    // Find the id of the thread or message on which the moderation
+    // action has been performed.
+    if (isset($_POST["thread"])) {
+        $msgthd_id = (int)$_POST["thread"];
+    } elseif(isset($PHORUM['args'][2])) {
+        $msgthd_id = (int)$PHORUM['args'][2];
+    } else {
+        $msgthd_id = 0;
+    }
+
+    // If no id was found, then redirect back to the list page for
+    // the active forum or the index page if no active forum is available.
+    if (empty($msgthd_id))
+    {
+        if (empty($PHORUM["forum_id"])) {
+            return phorum_api_url(PHORUM_INDEX_URL);
+        } else {
+            return phorum_api_url(PHORUM_LIST_URL);
+        }
+    }
+
+    // Check if the message still exists. It might be gone after a
+    // moderation action. When the message no longer exists, redirect
+    // the user back to the list page for the active forum.
+    $message = phorum_db_get_message($msgthd_id);
+    if (!$message) {
+        return phorum_api_url(PHORUM_LIST_URL);
+    }
+
+    // Redirect back to the message that we found.
+    return phorum_api_url(
+       PHORUM_READ_URL, $message['thread'], $message['message_id']
+    );
+}
 
 ?>

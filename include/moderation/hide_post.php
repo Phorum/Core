@@ -3,14 +3,14 @@
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
 $old_message = phorum_db_get_message($msgthd_id);
-$newpost=array("status"=>PHORUM_STATUS_HIDDEN);
+$newpost     = array("status" => PHORUM_STATUS_HIDDEN);
+$mids        = phorum_db_get_messagetree($msgthd_id, $old_message["forum_id"]);
 
-$mids = phorum_db_get_messagetree($msgthd_id, $old_message["forum_id"]);
-// make an array from the string
-$mids_arr=explode(",",$mids);
+// Make an array from the string.
+$mids_arr=  explode(",",$mids);
 
-// count the entries for later use
-$num_hidden=count($mids_arr);
+// Count the entries for later use.
+$num_hidden = count($mids_arr);
 foreach($mids_arr as $key => $mid) {
     // setting the new status
     phorum_db_update_message($mid, $newpost);
@@ -62,11 +62,15 @@ phorum_api_thread_update_metadata($old_message['thread']);
 // updating the forum-stats
 phorum_db_update_forum_stats(false, "-$num_hidden");
 
-$PHORUM['DATA']['OKMSG']="$num_hidden ".$PHORUM['DATA']['LANG']['MsgHiddenOk'];
-if(isset($PHORUM['args']["prepost"])) {
-    $PHORUM['DATA']["URL"]["REDIRECT"]=phorum_api_url(PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
+$PHORUM['DATA']['OKMSG'] =
+    "$num_hidden " .
+    $PHORUM['DATA']['LANG']['MsgHiddenOk'];
+
+if (isset($PHORUM['args']["prepost"])) {
+    $PHORUM['DATA']["URL"]["REDIRECT"] = phorum_api_url(
+        PHORUM_CONTROLCENTER_URL,"panel=".PHORUM_CC_UNAPPROVED);
 } else {
-    $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
+    $PHORUM['DATA']["URL"]["REDIRECT"] = $PHORUM["DATA"]["URL"]["LIST"];
 }
 
 ?>

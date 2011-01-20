@@ -2,9 +2,15 @@
 
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
-$PHORUM['DATA']['OKMSG']=$PHORUM["DATA"]['LANG']['ThreadClosedOk'];
-$PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
 phorum_db_close_thread($msgthd_id);
+
+$invalidate_message_cache[] = array(
+    "message_id" => $msgthd_id,
+    "forum_id"   => $PHORUM["forum_id"]
+);
+
+$PHORUM['DATA']['OKMSG'] = $PHORUM["DATA"]['LANG']['ThreadClosedOk'];
+$PHORUM['DATA']["URL"]["REDIRECT"] = phorum_moderation_back_url();
 
 /*
  * [hook]
@@ -44,10 +50,5 @@ phorum_db_close_thread($msgthd_id);
 if (isset($PHORUM["hooks"]["close_thread"])) {
     phorum_api_hook("close_thread", $msgthd_id);
 }
-
-$invalidate_message_cache[] = array(
-    "message_id" => $msgthd_id,
-    "forum_id"   => $PHORUM["forum_id"]
-);
 
 ?>

@@ -280,6 +280,8 @@ define("PHORUM_MERGE_THREAD", 10);
 define("PHORUM_DO_THREAD_MERGE", 11);
 define("PHORUM_SPLIT_THREAD", 12);
 define("PHORUM_DO_THREAD_SPLIT", 13);
+define("PHORUM_MAKE_STICKY", 14);
+define("PHORUM_MAKE_UNSTICKY", 15);
 
 // admin sanity checks
 define("PHORUM_SANITY_OK",   1);

@@ -251,6 +251,7 @@
         "LostPassSent"          =>      "A new password has been sent to the email address you provided.",
 
         "MakeSticky"            =>      "Make Sticky",
+        "MakeUnsticky"          =>      "Make Unsticky",
         "MarkForumRead"         =>      "Mark Forum Read",
         "MarkRead"              =>      "Mark All Messages Read",
         "MarkAllForumsRead"     =>      "Mark All Forums Read",
@@ -297,6 +298,8 @@
         "MsgMoveSelectForum"    =>      "Please select a forum first.",
         "MsgModEdited"          =>      "The changed message has been saved.",
         "MsgSplitOk"            =>      "The Topic has been successfully split into two topics.",
+        "MsgStickyOk"           =>      "The topic has been made sticky.",
+        "MsgUnstickyOk"         =>      "The topic has been make unsticky.",
         "Mutual"                =>      "Mutual",
         "MyProfile"             =>      "Control Center",
 

@@ -449,6 +449,16 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             array(PHORUM_REOPEN_THREAD, $thread, $thread),
             $moderation_url_template
         );
+        $URLS['sticky_url'] = str_replace(
+            array('%action_id%', '%message_id%', '%thread_id%'),
+            array(PHORUM_MAKE_STICKY, $thread, $thread),
+            $moderation_url_template
+        );
+        $URLS['unsticky_url'] = str_replace(
+            array('%action_id%', '%message_id%', '%thread_id%'),
+            array(PHORUM_MAKE_UNSTICKY, $thread, $thread),
+            $moderation_url_template
+        );
     }
 
     // Add information about new messages to the thread.
@@ -546,6 +556,12 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
             if ($build_move_url) {
                 $row["URL"]["MOVE"] = $URLS["move_url"];
+            }
+
+            if ($row['sort'] == PHORUM_SORT_DEFAULT) {
+                $row["URL"]["STICKY"] = $URLS["sticky_url"];
+            } else {
+                $row["URL"]["UNSTICKY"] = $URLS["unsticky_url"];
             }
 
             $row["URL"]["MERGE"]  = $URLS["merge_url"];
