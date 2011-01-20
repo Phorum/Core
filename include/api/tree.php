@@ -34,11 +34,6 @@
  * that each node must have a unique indentifier and a pointer to the
  * unique identifier of its parent node.
  *
- * The elements in the tree node array must be ordered based on the order in
- * which they were added to the tree structure. Most of the time the
- * unique identifier is some auto-incremental value. For this kind of array,
- * the elements can be sorted by their unique identifier.
- *
  * If a node is encountered for which the provided parent does not exist,
  * then the node is linked to its branch node instead of its parent.
  * If the branch node doesn't exist as well, then the node will be
@@ -106,122 +101,160 @@
  *     "indent_cnt" which indicates how much indention should be applied
  *     to the node to make it fit correctly in a graphical tree view.
  */
-function phorum_api_tree_build($nodes, $root_id = 0, $id_fld = 'id', $parent_id_fld = 'parent_id', $branch_id_fld = NULL, $reverse_from_indent_level = NULL, $indent_factor = 1, $cut_fld = NULL, $cut_min = 20, $cut_max = 60, $cut_indent_factor = 2)
+function phorum_api_tree_build(
+    $nodes, $root_id = 0, $id_fld = 'id', $parent_id_fld = 'parent_id',
+    $branch_id_fld = NULL,
+    $reverse_from_indent_level = NULL, $indent_factor = 1,
+    $cut_fld = NULL, $cut_min = 20, $cut_max = 60, $cut_indent_factor = 2)
 {
-    // Initialize the prepared nodes array. We add the root level
-    // to the array, so this function can be called without providing
-    // the actual root node in the $nodes array.
-    $pnodes = array(
-        $root_id => array( 'children' => array() )
-    );
+    // ----------------------------------------------------------------------
+    // First pass: setup a mapping for each node and its child nodes.
+    // This pass is done, so we can handle nodes that are not stored
+    // in the same order as they appear in the tree. In the second
+    // pass, we can use this prepared data to handle the tree sorting.
+    // ----------------------------------------------------------------------
 
-    // Add all nodes to the prepared nodes.
+    $structure = array();
+    $seen      = array();
     foreach ($nodes as $node)
     {
-        // If this node's parent is not available, then we have a stale
-        // node. In that case, we fix the tree consistency by moving
-        // the node up to the branch level or (if the branch node
-        // isn't configured or doesn't exist either) the root level.
-        if (!isset($pnodes[$node[$parent_id_fld]])) {
+      $id        = $node[$id_fld];
+      $parent_id = $node[$parent_id_fld];
+
+      if ($id === $parent_id) trigger_error(
+        "phorum_api_tree_build(): illegal tree data: node id $id is " .
+        "configured with its own id as its parent_id", E_USER_ERROR
+      );
+      if (isset($seen[$id])) trigger_error(
+        "phorum_api_tree_build(): illegal tree data: each node should " .
+        "have a unique id, but node id $id is encountered multiple times"
+      );
+      $seen[$id] = TRUE;
+
+      // Add data for the node.
+      if (!isset($structure[$id])) {
+        $structure[$id] = array(
+          'data'     => $node,
+          'children' => array()
+        );
+      } else {
+        $structure[$id]['data'] = $node;
+      }
+
+      // Update the data for the parent node or create new data
+      // if the parent node has not yet been encountered.
+      if (!isset($structure[$parent_id])) {
+        $structure[$parent_id] = array(
+          'data'     => NULL,
+          'children' => array($id => $id)
+        );
+      } else {
+        $structure[$parent_id]['children'][$id] = $id;
+      }
+    }
+
+    // ----------------------------------------------------------------------
+    // Second pass: take care of orphins.
+    //
+    // If a node's parent is not available, then we have a stale node (this
+    // should not happen in a perfect world.) In that case, we fix the tree
+    // consistency by moving the node up to the branch level or (if the
+    // branch node isn't configured or doesn't exist either) the root level.
+    // ----------------------------------------------------------------------
+
+    foreach ($structure as $id => &$item)
+    {
+        if (empty($item['data'])) continue;
+        $node = &$item['data'];
+
+        if (!isset($structure[$node[$parent_id_fld]]))
+        {
             if ($branch_id_fld !== NULL) {
-                $node[$parent_id_fld] = isset($pnodes[$node[$branch_id_fld]])
-                                  ? $node['thread'] : $root_id;
+                $node[$parent_id_fld] = isset($structure[$node[$branch_id_fld]])
+                                      ? $node[$branch_id_fld] : $root_id;
             } else {
                 $node[$parent_id_fld] = $root_id;
             }
         }
-
-        // Create the node for the current message.
-        $pnodes[$node[$id_fld]] = array(
-            'data'      => $node,
-            'children'  => array()
-        );
-
-        // Add the node to the parent node's child node list.
-        $pnodes[$node[$parent_id_fld]]['children'][$node[$id_fld]] =
-            $node[$id_fld];
     }
+
+    // ----------------------------------------------------------------------
+    // Third pass: sort the prepared data into a tree structure.
+    // ----------------------------------------------------------------------
 
     // If the root is virtual (not available as a real node in the
     // nodes array), then we don't want to include that one in the
     // stack level counting, so we move our stack level base.
-    $stack_lvl_base = isset($pnodes[$root_id]['data']) ? 0 : -1;
+    $stack_lvl_base = isset($structure[$root_id]['data']) ? 0 : -1;
 
-    // Do create some fake data now to prevent warnings in the code below.
-    if ($stack_lvl_base == -1 && $cut_fld !== NULL) {
-        $pnodes[$root_id]['data'] = array(
-            $cut_fld => ''
-        );
-    }
+    // Initialize variables for the sorting code.
+    $tree      = array(); // the final sorted tree result array
+    $stack     = array(); // a stack that is used when descending down the tree
+    $stack_lvl = 0;       // the current depth level
+    $cursor    = 0;       // the id of the node that is currenty being processed
+    $node      = NULL;    // the node that is currently being processed
 
-    // Build the result tree. We start at the root node.
-    $tree      = array();
-    $stack     = array();
-    $stack_lvl = 0;
-    $count     = count($pnodes);
-    $cursor    = $root_id;
-
+    // Build the result tree.
     for (;;)
     {
-        $node = $pnodes[$cursor];
+      // If the current cursor position has no children (left), then we need
+      // to climb (back) up the tree, until we find a node that has children
+      // left for processing or until the stack is empty.
+      if (empty($structure[$cursor]['children']))
+      {
+        unset($structure[$cursor]);
+
+        // As long as we didn't totally drain our stack ...
+        while ($stack_lvl > 0)
+        {
+          // ... move up one level in this stack.
+          unset($stack[$stack_lvl]);
+          list ($cursor, $node) = $stack[--$stack_lvl];
+
+          // If this node has children left, then break out
+          // so the following code will process them.
+          if (empty($structure[$cursor]['children'])) {
+            unset($structure[$cursor]);
+          } else {
+            break;
+          }
+        }
+
+        // Ready! We have processed all of the nodes.
+        if ($stack_lvl === 0 && empty($structure[$root_id])) {
+          break;
+        }
+      }
+      // If the current cursor position has children, then process these.
+      else
+      {
+        $children =& $structure[$cursor]['children'];
+
+        // Remember the current cursor + node in the stack.
+        $stack[$stack_lvl++] = array($cursor, $node);
+
+        // Fetch the next child node.
+        $cursor = array_shift($children);
+        $node   = $structure[$cursor]['data'];
+        unset($children[$cursor]);
 
         // Set the idention level for the node.
-        $node['data']['indent_cnt'] =
+        $node['indent_cnt'] =
             ($stack_lvl + $stack_lvl_base) * $indent_factor;
 
-        // Break up long words in the cut_field, so these won't
         // break the page layout.
         if ($cut_fld !== NULL) {
             $cut_len =
                 $cut_max - ($stack_lvl + $stack_lvl_base) * $cut_indent_factor;
             if ($cut_len < $cut_min) $cut_len = $cut_min;
-            $node['data'][$cut_fld] = wordwrap(
-                $node['data'][$cut_fld], $cut_len, ' ', TRUE
+            $node[$cut_fld] = wordwrap(
+                $node[$cut_fld], $cut_len, ' ', TRUE
             );
         }
 
         // Move the message data to the tree array.
-        $tree[$cursor] = $node['data'];
-
-        // One down, $count to go! Break out if all nodes are processed.
-        if (--$count == 0) break;
-
-        // If the current node has no children, then we need to climb
-        // back up the tree, until we find a node that has children left
-        // for processing or until the stack is empty.
-        if (empty($node['children']))
-        {
-            // As long as we didn't totally drain our stack ...
-            while ($stack_lvl > 0)
-            {
-                // ... move up one level in this stack.
-                $cursor = $stack[--$stack_lvl];
-
-                // If this node has children left, then break out
-                // so the following code will process them.
-                if (!empty($pnodes[$cursor]['children'])) {
-                    break;
-                }
-            }
-        }
-
-        // If the current node has children, then process these children.
-        // To remember where we are right now in the tree, we put
-        // the current node on the stack, pull a child from the
-        // child node list and move to that child node.
-        if (!empty($pnodes[$cursor]['children']))
-        {
-            $stack[$stack_lvl] = $cursor;
-
-            if ($reverse_from_indent_level !== NULL &&
-                $stack_lvl >= $reverse_from_indent_level) {
-                $cursor = array_pop($pnodes[$cursor]['children']);
-            } else {
-                $cursor = array_shift($pnodes[$cursor]['children']);
-            }
-
-            $stack_lvl ++;
-        }
+        $tree[$cursor] = $node;
+      }
     }
 
     // Remove the root node from the tree, if it was only seen as

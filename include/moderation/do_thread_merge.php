@@ -30,7 +30,7 @@ if (!empty($_POST['thread1']))
     }
 
     // Get all messages from the thread that we have to merge.
-    $merge_messages=phorum_db_get_messages($_POST['thread']);
+    $merge_messages = phorum_db_get_messages($_POST['thread']);
     unset($merge_messages['users']);
 
     // Create new messages in the target thread for

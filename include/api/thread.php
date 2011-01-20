@@ -78,7 +78,7 @@ function phorum_api_thread_sort($messages)
     global $PHORUM;
 
     // Quick shortcut if we have no rows at all.
-    if(count($messages) == 0) { return $messages; }
+    if (count($messages) == 0) return $messages;
 
     // Get template defined settings values.
     // "indentmultiplier" is checked for backward compatibility.
