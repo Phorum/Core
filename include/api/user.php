@@ -971,7 +971,7 @@ function phorum_api_user_get(
         if (is_array($cached_users))
         {
             foreach ($cached_users as $id => $user) {
-                $users[$id] = $user;
+                $users[$user['user_id']] = $user;
                 unset($user_ids[$id]);
             }
 
@@ -984,7 +984,8 @@ function phorum_api_user_get(
 
             // Store the results in the users array.
             foreach ($dynamic_data as $id => $data) {
-                $users[$id] = array_merge($users[$id],$data);
+                $users[$user['user_id']] =
+                  array_merge($users[$user['user_id']],$data);
             }
         }
     }
