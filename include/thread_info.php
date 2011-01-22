@@ -70,6 +70,10 @@ function phorum_update_thread_info($thread)
             if($message_data['datestamp'] > $last_post_time) {
                 $last_post_time          = $message_data['datestamp'];
                 $last_message_id_by_time = $message_id;
+            } elseif($message_data['datestamp'] == $last_post_time 
+                     && $message_id > $last_message_id_by_time) {
+                $last_post_time          = $message_data['datestamp'];
+                $last_message_id_by_time = $message_id;
             }
         }
         
