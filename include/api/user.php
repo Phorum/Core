@@ -512,6 +512,7 @@ function phorum_api_user_save($user, $flags = 0)
                 break;
         }
     }
+    
 
     // At this point, we should have a couple of mandatory fields available
     // in our data. Without these fields, the user record is not sane
@@ -654,7 +655,14 @@ function phorum_api_user_save($user, $flags = 0)
      *     </hookcode>
      */
     if (isset($PHORUM['hooks']['user_save'])) {
+    	// Add the custom profile field data to the user data.
+    	$dbuser['user_data'] = $user_customfield_data;
+    	
         $dbuser = phorum_api_hook('user_save', $dbuser);
+        
+        // retrieve the custom field data from the userdata again
+        $user_customfield_data = $dbuser['user_data'];
+        unset($dbuser['user_data']);
     }
 
     /**
