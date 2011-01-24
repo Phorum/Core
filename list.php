@@ -186,7 +186,7 @@ if($rows == null)
     $rows = array();
 
     // get the thread set started
-    $rows = phorum_db_get_thread_list($offset, $bodies_in_list);
+    $rows = $PHORUM['DB']->get_thread_list($offset, $bodies_in_list);
 
     // redirect if invalid page
     if(count($rows) < 1 && $offset > 0){

@@ -231,7 +231,7 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 
     // only continue if our hook was either not run or didn't return a stop request
     if($search_request_data['continue']) {
-        $arr = phorum_db_search($phorum_search, $phorum_author, $PHORUM["args"]["match_threads"], $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"]);
+        $arr = $PHORUM['DB']->search($phorum_search, $phorum_author, $PHORUM["args"]["match_threads"], $offset, $PHORUM["list_length"], $PHORUM["args"]["match_type"], $PHORUM["args"]["match_dates"], $PHORUM["args"]["match_forum"]);
         $raw_body = 0;
     } else {
         $arr['rows'] = $search_request_data['results'];

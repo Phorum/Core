@@ -30,7 +30,8 @@
 
 $phorum_check = "Database connection";
 
-function phorum_check_database($is_install = false) {
+function phorum_check_database($is_install = false)
+{
     global $PHORUM;
 
     // Check if we have a database configuration available.
@@ -56,7 +57,7 @@ function phorum_check_database($is_install = false) {
     );
 
     // Check if a connection can be made.
-    $connected = @phorum_db_check_connection();
+    $connected = @$PHORUM['DB']->check_connection();
     if (! $connected) return array(
         PHORUM_SANITY_CRIT,
         "Connecting to the database failed.",
@@ -64,8 +65,8 @@ function phorum_check_database($is_install = false) {
     );
 
     // Do a database layer specific check, if available.
-    if (function_exists("phorum_db_sanitychecks")) {
-        $res = phorum_db_sanitychecks();
+    if (method_exists($PHORUM['DB'], "sanitychecks")) {
+        $res = $PHORUM['DB']->sanitychecks();
         if ($res[0] != PHORUM_SANITY_OK) return $res;
     }
 

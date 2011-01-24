@@ -314,7 +314,7 @@ function phorum_api_modules_save()
     phorum_api_modules_generate_moduleinfo();
 
     // Store the settings in the database.
-    phorum_db_update_settings(array(
+    $PHORUM['DB']->update_settings(array(
         "hooks"       => $PHORUM["hooks"],
         "mods"        => $PHORUM["mods"],
         "moddblayers" => $PHORUM["moddblayers"]
@@ -579,7 +579,7 @@ function phorum_api_modules_check_updated_info($do_reset = FALSE)
 
     // Store the settings in the database if a reset is requested.
     if ($do_reset) {
-        phorum_db_update_settings(array(
+        $PHORUM['DB']->update_settings(array(
             "mod_info_timestamps" => $new
         ));
     }

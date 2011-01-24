@@ -332,7 +332,7 @@ function phorum_mod_event_logging_failed_login($data)
     // Check if a user can be found for the used username.
     // If we can find a user, then we log the user_id, so the filter by
     // user option in the log viewer will include failed user logins as well.
-    $user = phorum_db_user_search('username', $data['username']);
+    $user = $PHORUM['DB']->user_search('username', $data['username']);
     $user_id = $user ? $user['user_id'] : NULL;
 
     $location = ucfirst($data["location"]);
@@ -502,7 +502,7 @@ function phorum_mod_event_logging_after_edit($data)
     // Check if this is a user or moderator edit.
     // Retrieve the data from the database, since the user_id
     // is not in the $data array.
-    $dbmsg = phorum_db_get_message($data["message_id"]);
+    $dbmsg = $PHORUM['DB']->get_message($data["message_id"]);
     $is_mod_edit = !isset($dbmsg["user_id"]) ||
                    $dbmsg["user_id"] != $PHORUM["user"]["user_id"];
 
@@ -685,7 +685,7 @@ function phorum_mod_event_logging_move_thread($message_id)
         return $message_id;
     }
 
-    $dbmsg = phorum_db_get_message($message_id, "message_id", TRUE);
+    $dbmsg = $PHORUM['DB']->get_message($message_id, "message_id", TRUE);
     if ($dbmsg === NULL || !is_array($dbmsg)) return $message_id;
 
     // Update the log entries in which the message id was used.
@@ -724,7 +724,7 @@ function phorum_mod_event_logging_close_thread($message_id)
         return $message_id;
     }
 
-    $dbmsg = phorum_db_get_message($message_id, "message_id", TRUE);
+    $dbmsg = $PHORUM['DB']->get_message($message_id, "message_id", TRUE);
     if ($dbmsg === NULL || !is_array($dbmsg)) return $message_id;
 
     list ($source, $from_module) = event_logging_find_source(1);
@@ -756,7 +756,7 @@ function phorum_mod_event_logging_reopen_thread($message_id)
         return $message_id;
     }
 
-    $dbmsg = phorum_db_get_message($message_id, "message_id", TRUE);
+    $dbmsg = $PHORUM['DB']->get_message($message_id, "message_id", TRUE);
     if ($dbmsg === NULL || !is_array($dbmsg)) return $message_id;
 
     list ($source, $from_module) = event_logging_find_source(1);
@@ -788,7 +788,7 @@ function phorum_mod_event_logging_hide_thread($message_id)
         return $message_id;
     }
 
-    $dbmsg = phorum_db_get_message($message_id, "message_id", TRUE);
+    $dbmsg = $PHORUM['DB']->get_message($message_id, "message_id", TRUE);
     if ($dbmsg === NULL || !is_array($dbmsg)) return $message_id;
 
     list ($source, $from_module) = event_logging_find_source(1);

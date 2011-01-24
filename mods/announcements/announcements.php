@@ -57,7 +57,7 @@ function phorum_setup_announcements ()
     if ($ann_forum_id === NULL) return;
 
     // Retrieve the last number of posts from the announcement forum.
-    $messages = phorum_db_get_recent_messages(
+    $messages = $PHORUM['DB']->get_recent_messages(
         $PHORUM["mod_announcements"]["number_to_show"],
         0, $ann_forum_id, 0, true
     );
@@ -74,7 +74,7 @@ function phorum_setup_announcements ()
             $newinfo = phorum_api_cache_get('newflags',$newflagkey,$PHORUM['cache_version']);
         }
         if($newinfo == NULL) {
-            $newinfo = phorum_db_newflag_get_flags($ann_forum_id);
+            $newinfo = $PHORUM['DB']->newflag_get_flags($ann_forum_id);
             if ($PHORUM['cache_newflags']) {
                 phorum_api_cache_put('newflags',$newflagkey,$newinfo,86400,$PHORUM['cache_version']);
             }

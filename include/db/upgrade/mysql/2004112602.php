@@ -23,6 +23,6 @@ if(!isset($PHORUM['PROFILE_FIELDS']['num_fields'])) {
     $new_profile_fields['num_fields']=count($new_profile_fields);
     $PHORUM['PROFILE_FIELDS']=$new_profile_fields;
     // saving them
-    phorum_db_update_settings(array('PROFILE_FIELDS'=>$new_profile_fields));
+    $PHORUM['DB']->update_settings(array('PROFILE_FIELDS'=>$new_profile_fields));
 }
 ?>

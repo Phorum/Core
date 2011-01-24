@@ -66,7 +66,7 @@ if (count($_POST))
             'config_version' => 2 
         );
 
-        phorum_db_update_settings(array(
+        $PHORUM['DB']->update_settings(array(
             "mod_spamhurdles" => $PHORUM["mod_spamhurdles"]
         ));
 
@@ -85,7 +85,7 @@ else
         {
             $PHORUM['mod_spamhurdles']['captcha']['flite_location'] =
                 $flite_location;
-            phorum_db_update_settings(array(
+            $PHORUM['DB']->update_settings(array(
                 "mod_spamhurdles" => $PHORUM["mod_spamhurdles"]
             ));
             phorum_admin_okmsg(

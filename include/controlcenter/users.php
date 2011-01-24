@@ -26,7 +26,7 @@ if (!$PHORUM["DATA"]["USER_MODERATOR"]) {
     exit();
 }
 
-$users=phorum_db_user_get_unapproved();
+$users=$PHORUM['DB']->user_get_unapproved();
 
 if(!empty($_POST["user_ids"])){
 
@@ -71,7 +71,7 @@ if(empty($users)){
 } else {
 
     // get a fresh list to update any changes
-    $users=phorum_db_user_get_unapproved();
+    $users=$PHORUM['DB']->user_get_unapproved();
 
     // XSS prevention.
     foreach ($users as $id => $user) {

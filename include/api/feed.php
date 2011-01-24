@@ -146,7 +146,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
         $replies = 1;
 
         // Retrieve the thread starter message.
-        $thread = phorum_db_get_message($id);
+        $thread = $PHORUM['DB']->get_message($id);
         if (empty($thread)) trigger_error(
             "phorum_api_feed(): Thread for message_id \"$id\" not found.",
             E_USER_ERROR
@@ -197,7 +197,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
         // Retrieve the messages to show
         // ----------------------------------------------------------------
 
-        $messages = phorum_db_get_recent_messages(
+        $messages = $PHORUM['DB']->get_recent_messages(
             $count,      // get $count messages
             0,           // on the first page
             $forum_ids,  // from these forums

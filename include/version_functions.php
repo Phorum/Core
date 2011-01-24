@@ -405,7 +405,7 @@ function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
         }
 
         // Run the upgrade queries.
-        $err = phorum_db_run_queries($upgrade_queries);
+        $err = $PHORUM['DB']->run_queries($upgrade_queries);
         if($err !== NULL){
             $msg.= "<br/><span style=\"color:red\">" .
                    "<strong style=\"font-size:120%\">" .
@@ -425,7 +425,7 @@ function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
         // Update the upgrade version info.
         if ($update_internal_version) {
             $PHORUM[$versionvar] = $version;
-            phorum_db_update_settings(array($versionvar => $version));
+            $PHORUM['DB']->update_settings(array($versionvar => $version));
         }
 
         return $msg;

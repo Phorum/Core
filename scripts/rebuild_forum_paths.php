@@ -22,7 +22,7 @@ unset($forums[0]);
 
 foreach($forums as $fid => $forumpath)
 {
-    phorum_db_update_forum(array(
+    $PHORUM['DB']->update_forum(array(
         'forum_id'   => $fid,
         'forum_path' => $forumpath
     ));

@@ -12,7 +12,7 @@ $PHORUM['DATA']["URL"]["REDIRECT"] = $PHORUM["DATA"]["URL"]["LIST"];
 $new_subject = isset($_POST['new_subject']) ? $_POST['new_subject'] : NULL;
 $update_subjects = isset($_POST['update_subjects']);
 
-phorum_db_split_thread(
+$PHORUM['DB']->split_thread(
     $_POST['message'],
     $_POST['forum_id'],
     $new_subject,
@@ -22,7 +22,7 @@ phorum_db_split_thread(
 // update message count / stats
 phorum_api_thread_update_metadata($_POST['thread']);
 phorum_api_thread_update_metadata($_POST['message']);
-phorum_db_update_forum_stats(TRUE);
+$PHORUM['DB']->update_forum_stats(TRUE);
 
 /*
  * [hook]

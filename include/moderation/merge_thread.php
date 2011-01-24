@@ -37,7 +37,7 @@ if (
 
     $PHORUM['DATA']['FORM']['merge_none'] = TRUE;
 
-    $message = phorum_db_get_message($msgthd_id, 'message_id', TRUE);
+    $message = $PHORUM['DB']->get_message($msgthd_id, 'message_id', TRUE);
     $PHORUM['DATA']['FORM']['merge_subject1'] = htmlspecialchars(
         $message['subject'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
 }
@@ -46,11 +46,11 @@ else
 {
     $PHORUM['DATA']['FORM']['merge_t1'] = $merge_t1;
 
-    $message = phorum_db_get_message($merge_t1, 'message_id', true);
+    $message = $PHORUM['DB']->get_message($merge_t1, 'message_id', true);
     $PHORUM['DATA']['FORM']['merge_subject1'] = htmlspecialchars(
         $message['subject'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
 
-    $message = phorum_db_get_message($msgthd_id);
+    $message = $PHORUM['DB']->get_message($msgthd_id);
     $PHORUM['DATA']['FORM']['thread_subject'] = htmlspecialchars(
         $message['subject'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
 }

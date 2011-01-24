@@ -12,7 +12,7 @@ $check_tables = array(
    $PHORUM["pm_xref_table"]     => 1,
 );
 
-$rows = phorum_db_interact(
+$rows = $PHORUM['DB']->interact(
     DB_RETURN_ROWS,
     "SHOW TABLES",
     NULL, DB_MASTERQUERY

@@ -58,7 +58,7 @@ foreach($xml as $type => $data) {
             $done = 0;
             foreach($data->group as $group){
                 $group = (array)$group;
-                $new_groups[$group["@attributes"]["id"]] = phorum_db_add_group($group["name"]);
+                $new_groups[$group["@attributes"]["id"]] = $PHORUM['DB']->add_group($group["name"]);
                 $group_count++;
                 $done++;
                 progress($done, count($data->group));
@@ -353,7 +353,7 @@ foreach($xml as $type => $data) {
                         "closed" => 0,
                     );
 
-                    $message_id = phorum_db_post_message($new_message, true);
+                    $message_id = $PHORUM['DB']->post_message($new_message, true);
 
                     if(empty($thread)){
                         $thread = $message_id;
@@ -378,12 +378,12 @@ foreach($xml as $type => $data) {
             foreach($data->privatemessage as $pm){
                 $pm = makeArray($pm);
 
-                $pm_id = phorum_db_pm_send($pm["subject"], $pm["body"], $pm["to_user_id"], $pm["from_user_id"], false);
+                $pm_id = $PHORUM['DB']->pm_send($pm["subject"], $pm["body"], $pm["to_user_id"], $pm["from_user_id"], false);
 
                 if($pm_id){
 
                     // HAX!!
-                    phorum_db_interact(
+                    $PHORUM['DB']->interact(
                         DB_RETURN_RES,
                         "UPDATE {$PHORUM['pm_messages_table']}
                          SET    datestamp = $pm[timestamp]
@@ -409,7 +409,7 @@ echo "Updating Forum Stats...\n";
 $done = 0;
 foreach($map["forums"] as $fid){
     $PHORUM["forum_id"] = $fid;
-    phorum_db_update_forum_stats(true);
+    $PHORUM['DB']->update_forum_stats(true);
     $done++;
     progress($done, count($map["forums"]));
 }

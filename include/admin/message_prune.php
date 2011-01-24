@@ -205,7 +205,7 @@ $delete_count = 0;
 if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
 {
     $msgids = array_keys($_POST["deletemessage"]);
-    $msgs = phorum_db_get_message($msgids, "message_id", true);
+    $msgs = $PHORUM['DB']->get_message($msgids, "message_id", true);
     $deleted_messages = array();
 
     foreach ($msgs as $msg)
@@ -231,28 +231,30 @@ if (isset($_POST["deletemessage"]) && is_array($_POST["deletemessage"]))
         if (! $handled)
         {
             // Delete the message or thread.
-            $delids = phorum_db_delete_message($msg["message_id"], $delmode);
+            $delids = $PHORUM['DB']->delete_message(
+                $msg["message_id"], $delmode);
 
             // Cleanup the attachments for all deleted messages.
             foreach ($delids as $delid) {
-                $files = phorum_db_get_message_file_list($delid);
+                $files = $PHORUM['DB']->get_message_file_list($delid);
                 foreach($files as $file_id=>$data) {
                     phorum_api_file_delete($file_id);
                 }
             }
 
             // For deleted threads, check if we have move notifications
-            // to delete. We unset the forum id, so phorum_db_get_messages()
-            // will return messages with the same thread id in
-            // other forums as well (those are the move notifications).
+            // to delete. We unset the forum id, so
+            // $PHORUM['DB']->get_messages() will return messages with
+            // the same thread id in other forums as well (those are the
+            // move notifications).
             if ($delmode == PHORUM_DELETE_TREE) {
                 $forum_id = $PHORUM["forum_id"];
                 $PHORUM["forum_id"] = 0;
-                $moved = phorum_db_get_messages($msg["message_id"]);
+                $moved = $PHORUM['DB']->get_messages($msg["message_id"]);
                 $PHORUM["forum_id"] = $forum_id;
                 foreach ($moved as $id => $data) {
                     if (!empty($data["moved"])) {
-                        phorum_db_delete_message($id, PHORUM_DELETE_MESSAGE);
+                        $PHORUM['DB']->delete_message($id, PHORUM_DELETE_MESSAGE);
                     }
                 }
             }
@@ -353,7 +355,7 @@ if (isset($_POST["filterdesc"]))
 
     // Let the database layer turn the metaquery into a real query
     // and run it against the database.
-    $messages = phorum_db_metaquery_messagesearch($meta);
+    $messages = $PHORUM['DB']->metaquery_messagesearch($meta);
     if ($messages === NULL) {
         phorum_admin_error("Internal error: failed to run a message search");
     }

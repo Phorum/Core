@@ -132,7 +132,10 @@ function phorum_get_forum_info($forums_only=0,$vroot = -1)
 * $old_vroot = virtual root which should be overrideen with the new value
 *
 */
-function phorum_admin_set_vroot($folder,$vroot=-1,$old_vroot=0) {
+function phorum_admin_set_vroot($folder,$vroot=-1,$old_vroot=0)
+{
+    global $PHORUM;
+
     // which vroot
     if($vroot == -1) {
         $vroot=$folder;
@@ -162,7 +165,7 @@ function phorum_admin_set_vroot($folder,$vroot=-1,$old_vroot=0) {
     $set_ids[]=$folder;
 
     $new_forum_data=array('forum_id'=>$set_ids,'vroot'=>$vroot);
-    $returnval=phorum_db_update_forum($new_forum_data);
+    $returnval=$PHORUM['DB']->update_forum($new_forum_data);
 
     return $returnval;
 }

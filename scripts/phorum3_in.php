@@ -33,13 +33,14 @@ function phorum_convert_check_users($link) {
 }
 
 function phorum_convert_getForums($link) {
-	global $CONVERT;
+    global $CONVERT;
+    global $PHORUM;
 
     $sql="SELECT * FROM {$CONVERT['forumstable']} ORDER BY id ASC";
     $res=mysql_unbuffered_query($sql,$link);
     $forums=array();
 
-    if ($err = mysql_error($link)) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($link)) $PHORUM['DB']->mysql_error("$err: $sql");
 
 
     echo "Reading forums from phorum3-table {$CONVERT['forumstable']} ...{$CONVERT['lbr']}";
@@ -47,18 +48,19 @@ function phorum_convert_getForums($link) {
        $forums[$row['id']]=$row;
     }
 
-	return $forums;
+    return $forums;
 }
 
 
 function phorum_convert_getGroups($link) {
-	global $CONVERT;
+    global $CONVERT;
+    global $PHORUM;
 
     $sql="SELECT * FROM {$CONVERT['forumstable']}_groups ORDER BY id ASC";
     $res=mysql_unbuffered_query($sql,$link);
     $groups=array();
 
-    if ($err = mysql_error($link)) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($link)) $PHORUM['DB']->mysql_error("$err: $sql");
 
     while($row=mysql_fetch_array($res)) {
        $groups[$row['id']]=$row;
@@ -66,7 +68,7 @@ function phorum_convert_getGroups($link) {
 
     }
 
-	return $groups;
+    return $groups;
 }
 
 function phorum_convert_getForumGroups($forum_id) {
@@ -92,13 +94,13 @@ function phorum_convert_prepareForum($forumdata) {
          }
 
          $newforum = array(
-            		 'forum_id' => $forumdata['id'],
-            		 'name' => $forumdata['name'],
-            		 'active' => $forumdata['active'],
-            		 'description' => $forumdata['description'],
-            		 'template' => 'default',
-            		 'folder_flag' => $forumdata['folder'],
-            		 'parent_id' => $forumdata['parent'],
+                     'forum_id' => $forumdata['id'],
+                     'name' => $forumdata['name'],
+                     'active' => $forumdata['active'],
+                     'description' => $forumdata['description'],
+                     'template' => 'default',
+                     'folder_flag' => $forumdata['folder'],
+                     'parent_id' => $forumdata['parent'],
                      'pub_perms' => PHORUM_USER_ALLOW_READ,
                      'reg_perms' => PHORUM_USER_ALLOW_READ
                      );
@@ -165,13 +167,13 @@ function phorum_convert_prepareForum($forumdata) {
 
 
          $newforum = array(
-            		 'forum_id' => $forumdata['id'],
-            		 'name' => $forumdata['name'],
-            		 'active' => $forumdata['active'],
-            		 'description' => $forumdata['description'],
-            		 'template' => 'default',
-            		 'folder_flag' => $forumdata['folder'],
-            		 'parent_id' => $forumdata['parent'],
+                     'forum_id' => $forumdata['id'],
+                     'name' => $forumdata['name'],
+                     'active' => $forumdata['active'],
+                     'description' => $forumdata['description'],
+                     'template' => 'default',
+                     'folder_flag' => $forumdata['folder'],
+                     'parent_id' => $forumdata['parent'],
                      'list_length_flat' => $forumdata['display'],
                      'list_length_threaded' => $forumdata['display'],
                      'read_length' => 20,
@@ -207,11 +209,11 @@ function phorum_convert_getAttachments($table_name) {
 }
 
 function phorum_convert_selectMessages($forumdata,$link) {
-
+    global $PHORUM;
     $sql="SELECT a.*,b.body,UNIX_TIMESTAMP(a.datestamp) as unixtime  FROM ".$forumdata['table_name']." as a, ".$forumdata['table_name']."_bodies as b WHERE b.id = a.id ORDER BY a.id ASC";
     $res=mysql_unbuffered_query($sql, $link);
 
-    if ($err = mysql_error($link)) phorum_db_mysql_error("$err: $sql");
+    if ($err = mysql_error($link)) $PHORUM['DB']->mysql_error("$err: $sql");
 
     return $res;
 }
@@ -250,8 +252,8 @@ function phorum_convert_getNextMessage($res,$table_name) {
 
       //find [%sig%] and cut it
       if (preg_match ("/\[%sig%\]/", $mdata['body'])) {
-      	$mdata['body'] = preg_replace ( "/\[%sig%\]/", "", $mdata['body']);
-      	$add_signature = true;
+        $mdata['body'] = preg_replace ( "/\[%sig%\]/", "", $mdata['body']);
+        $add_signature = true;
       } else {
         $add_signature = false;
       }

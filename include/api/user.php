@@ -726,14 +726,14 @@ function phorum_api_user_save($user, $flags = 0)
 
     // Add or update the user in the database.
     if ($existing) {
-        phorum_db_user_save($dbuser);
+        $PHORUM['DB']->user_save($dbuser);
     } else {
-        $dbuser['user_id'] = phorum_db_user_add($dbuser);
+        $dbuser['user_id'] = $PHORUM['DB']->user_add($dbuser);
     }
     // save his custom field data
     if (is_array($user_customfield_data) && count($user_customfield_data) &&
         !empty($dbuser['user_id'])) {
-        phorum_db_save_custom_fields(
+        $PHORUM['DB']->save_custom_fields(
             $dbuser['user_id'],
             PHORUM_CUSTOM_FIELD_USER,
             $user_customfield_data
@@ -744,7 +744,7 @@ function phorum_api_user_save($user, $flags = 0)
     // updates throughout the Phorum database to make references to this
     // user to show up correctly.
     if ($existing && $existing['display_name'] != $dbuser['display_name']) {
-       phorum_db_user_display_name_updates($dbuser);
+       $PHORUM['DB']->user_display_name_updates($dbuser);
     }
 
     // If user caching is enabled, we invalidate the cache for this user.
@@ -795,7 +795,7 @@ function phorum_api_user_save_raw($user)
     }
 
     // Store the data in the database.
-    phorum_db_user_save($user);
+    $PHORUM['DB']->user_save($user);
 
     // Invalidate the cache for the user, unless we are only updating
     // user activity tracking fields.
@@ -861,7 +861,7 @@ function phorum_api_user_save_settings($settings)
     }
 
     // Save the settings in the database.
-    phorum_db_user_save(array(
+    $PHORUM['DB']->user_save(array(
         'user_id'       => $user_id,
         'settings_data' => $PHORUM['user']['settings_data']
     ));
@@ -985,7 +985,7 @@ function phorum_api_user_get(
 
             // We need to retrieve the data for some dynamic fields
             // from the database.
-            $dynamic_data = phorum_db_user_get_fields(
+            $dynamic_data = $PHORUM['DB']->user_get_fields(
                 array_keys($cached_users),
                 array('date_last_active','last_active_forum','posts')
             );
@@ -1002,7 +1002,7 @@ function phorum_api_user_get(
     // retrieved from the cache.
     if (count($user_ids))
     {
-        $db_users = phorum_db_user_get($user_ids, $detailed, $use_write_server);
+        $db_users = $PHORUM['DB']->user_get($user_ids, $detailed, $use_write_server);
 
         // Retrieve and apply the custom fields for users.
         if (!empty($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_USER])) {
@@ -1289,7 +1289,8 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
  */
 function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $sort = NULL, $offset = 0, $length = 0)
 {
-    return phorum_db_user_search($field, $value, $operator, $return_array, $type, $sort, $offset, $length);
+    global $PHORUM;
+    return $PHORUM['DB']->user_search($field, $value, $operator, $return_array, $type, $sort, $offset, $length);
 }
 // }}}
 
@@ -1337,7 +1338,8 @@ function phorum_api_user_search($field, $value, $operator = '=', $return_array =
  */
 function phorum_api_user_search_custom_profile_field($field_id, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $offset = 0, $length = 0)
 {
-    return phorum_db_search_custom_profile_field(PHORUM_CUSTOM_FIELD_USER,$field_id, $value, $operator, $return_array, $type, $offset, $length);
+    global $PHORUM;
+    return $PHORUM['DB']->search_custom_profile_field(PHORUM_CUSTOM_FIELD_USER,$field_id, $value, $operator, $return_array, $type, $offset, $length);
 }
 // }}}
 
@@ -1365,7 +1367,7 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
     global $PHORUM;
 
     // Retrieve a list of users from the database.
-    $list = phorum_db_user_get_list($type);
+    $list = $PHORUM['DB']->user_get_list($type);
 
     /**
      * [hook]
@@ -1408,7 +1410,7 @@ function phorum_api_user_list($type = PHORUM_GET_ALL)
      *
      *         // Retrieve a list of buddies for the active user.
      *         // If there are no buddies, then no work is needed.
-     *         $buddies = phorum_db_pm_buddy_list();
+     *         $buddies = $PHORUM['DB']->pm_buddy_list();
      *         if (empty($buddies)) return $users;
      *
      *         // Flag buddies in the user list.
@@ -1447,7 +1449,7 @@ function phorum_api_user_increment_posts($user_id = NULL)
     }
     settype($user_id, "int");
 
-    phorum_db_user_increment_posts($user_id);
+    $PHORUM['DB']->user_increment_posts($user_id);
 }
 // }}}
 
@@ -1508,7 +1510,7 @@ function phorum_api_user_delete($user_id)
     }
 
     // Remove the user and user related data from the database.
-    phorum_db_user_delete($user_id);
+    $PHORUM['DB']->user_delete($user_id);
 
     // Delete the personal user files for this user.
     require_once PHORUM_PATH.'/include/api/file.php';
@@ -1667,13 +1669,14 @@ function phorum_api_user_authenticate($type, $username, $password)
     if ($user_id === NULL)
     {
         // Check the password.
-        $user_id = phorum_db_user_check_login($username, md5($password));
+        $user_id = $PHORUM['DB']->user_check_login($username, md5($password));
 
         // Password check failed? Then try the temporary password (used for
         // the password reminder feature).
         $temporary_matched = FALSE;
         if ($user_id == 0) {
-            $user_id = phorum_db_user_check_login($username, md5($password), TRUE);
+            $user_id = $PHORUM['DB']->user_check_login(
+                $username, md5($password), TRUE);
             if ($user_id != 0) {
                 $temporary_matched = TRUE;
             }
@@ -2835,7 +2838,7 @@ function phorum_api_user_save_groups($user_id, $groups)
     if (isset($GLOBALS['PHORUM']['hooks']['user_save_groups'])) {
         list($user_id,$dbgroups) = phorum_api_hook('user_save_groups', array($user_id,$dbgroups));
     }
-    return phorum_db_user_save_groups($user_id, $dbgroups);
+    return $PHORUM['DB']->user_save_groups($user_id, $dbgroups);
 }
 // }}}
 
@@ -2905,7 +2908,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
     // Retrieve a forum access list or access-rights-in-any-forum.
     } elseif ($forum_id == PHORUM_ACCESS_LIST ||
               $forum_id == PHORUM_ACCESS_ANY) {
-        $forums = phorum_db_get_forums(0, NULL, $PHORUM['vroot']);
+        $forums = $PHORUM['DB']->get_forums(0, NULL, $PHORUM['vroot']);
         foreach ($forums as $id => $data) $forum_access[$id] = FALSE;
     // A single forum id.
     } else {
@@ -2943,7 +2946,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
         // Fetch data for the forums, unless we already have that
         // data available.
         if ($forums === NULL) {
-            $forums = phorum_db_get_forums(array_keys($forum_access));
+            $forums = $PHORUM['DB']->get_forums(array_keys($forum_access));
         }
 
         // Check the access rights for each forum.
@@ -3055,12 +3058,12 @@ function phorum_api_user_check_group_access($permission, $group_id, $user = 0)
 
     // Retrieve all the groups for the current user. Admins get all groups.
     if (!empty($user['user_id']) && !empty($user['admin'])) {
-        $groups = phorum_db_get_groups(0, TRUE);
+        $groups = $PHORUM['DB']->get_groups(0, TRUE);
     } else {
-        $usergroups = phorum_db_user_get_groups($user['user_id']);
+        $usergroups = $PHORUM['DB']->user_get_groups($user['user_id']);
         $groups = empty($usergroups)
                 ? array()
-                : phorum_db_get_groups(array_keys($usergroups), TRUE);
+                : $PHORUM['DB']->get_groups(array_keys($usergroups), TRUE);
     }
 
     // Prepare the array of group_ids to check.
@@ -3165,7 +3168,7 @@ function phorum_api_user_list_moderators($forum_id = 0, $exclude_admin = FALSE, 
 
     if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
 
-    return phorum_db_user_get_moderators($forum_id, $exclude_admin, $for_mail);
+    return $PHORUM['DB']->user_get_moderators($forum_id, $exclude_admin, $for_mail);
 }
 // }}}
 
@@ -3198,13 +3201,15 @@ function phorum_api_user_list_moderators($forum_id = 0, $exclude_admin = FALSE, 
  */
 function phorum_api_user_subscribe($user_id, $thread, $forum_id, $type)
 {
+    global $PHORUM;
+
     // Check if the user is allowed to read the forum.
     if (! phorum_api_user_check_access(PHORUM_USER_ALLOW_READ, $forum_id)) {
         return;
     }
 
     // Setup the subscription.
-    phorum_db_user_subscribe($user_id, $thread, $forum_id, $type);
+    $PHORUM['DB']->user_subscribe($user_id, $thread, $forum_id, $type);
 }
 // }}}
 
@@ -3224,8 +3229,10 @@ function phorum_api_user_subscribe($user_id, $thread, $forum_id, $type)
  */
 function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
 {
+    global $PHORUM;
+
     // Remove the subscription.
-    phorum_db_user_unsubscribe($user_id, $thread, $forum_id);
+    $PHORUM['DB']->user_unsubscribe($user_id, $thread, $forum_id);
 }
 // }}}
 
@@ -3252,7 +3259,9 @@ function phorum_api_user_unsubscribe($user_id, $thread, $forum_id = 0)
  */
 function phorum_api_user_get_subscription($user_id, $forum_id, $thread)
 {
-    return phorum_db_user_get_subscription($user_id, $forum_id, $thread);
+    global $PHORUM;
+
+    return $PHORUM['DB']->user_get_subscription($user_id, $forum_id, $thread);
 }
 // }}}
 
@@ -3281,7 +3290,8 @@ function phorum_api_user_get_subscription($user_id, $forum_id, $thread)
  */
 function phorum_api_user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
 {
-    return phorum_db_user_list_subscriptions($user_id, $days, $forum_ids);
+    global $PHORUM;
+    return $PHORUM['DB']->user_list_subscriptions($user_id, $days, $forum_ids);
 }
 // }}}
 
@@ -3315,7 +3325,9 @@ function phorum_api_user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
 
 function phorum_api_user_list_subscribers($forum_id, $thread, $type, $ignore_active_user = TRUE)
 {
-    return phorum_db_user_list_subscribers($forum_id, $thread, $type, $ignore_active_user);
+    global $PHORUM;
+    return $PHORUM['DB']->user_list_subscribers(
+        $forum_id, $thread, $type, $ignore_active_user);
 }
 // }}}
 

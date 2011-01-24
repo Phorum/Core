@@ -13,7 +13,7 @@ if (!empty($_POST['thread1']))
     $PHORUM['reverse_threading'] = 0;
 
     // Get the target thread.
-    $target = phorum_db_get_message($_POST['thread1'], 'message_id', true);
+    $target = $PHORUM['DB']->get_message($_POST['thread1'], 'message_id', true);
     if (!$target)
     {
         trigger_error(
@@ -30,7 +30,7 @@ if (!empty($_POST['thread1']))
     }
 
     // Get all messages from the thread that we have to merge.
-    $merge_messages = phorum_db_get_messages($_POST['thread']);
+    $merge_messages = $PHORUM['DB']->get_messages($_POST['thread']);
     unset($merge_messages['users']);
 
     // Create new messages in the target thread for
@@ -57,12 +57,12 @@ if (!empty($_POST['thread1']))
 
         if ($new_subject) $msg['subject'] = $new_subject;
 
-        phorum_db_post_message($msg, TRUE);
+        $PHORUM['DB']->post_message($msg, TRUE);
 
         // Link attached files to the new message id.
-        $linked_files = phorum_db_get_message_file_list($oldid);
+        $linked_files = $PHORUM['DB']->get_message_file_list($oldid);
         foreach ($linked_files as $linked_file) {
-            phorum_db_file_link(
+            $PHORUM['DB']->file_link(
                 $linked_file['file_id'], $msg['message_id'],
                 PHORUM_LINK_MESSAGE
             );
@@ -73,17 +73,17 @@ if (!empty($_POST['thread1']))
     }
 
     // deleting messages which are now doubled
-    phorum_db_delete_message($_POST['thread'], PHORUM_DELETE_TREE);
+    $PHORUM['DB']->delete_message($_POST['thread'], PHORUM_DELETE_TREE);
 
     // Update message count / stats.
-    phorum_db_update_forum_stats(true);
+    $PHORUM['DB']->update_forum_stats(true);
 
     // Change forum_id for the following calls to update the right forum.
     $PHORUM['forum_id'] = $target['forum_id'];
 
     // update message count / stats
     phorum_api_thread_update_metadata($target['thread']);
-    phorum_db_update_forum_stats(true);
+    $PHORUM['DB']->update_forum_stats(true);
 
     /*
      * [hook]

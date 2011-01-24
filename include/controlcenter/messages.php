@@ -75,7 +75,7 @@ if ($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids']))
     foreach($deleteids as $did => $did_var) {
         $deleteids[$did] = (int)$did_var;
     }
-    $delete_messages = phorum_db_get_message(array_keys($deleteids),'message_id',true);
+    $delete_messages = $PHORUM['DB']->get_message(array_keys($deleteids),'message_id',true);
     foreach($deleteids as $msgthd_id => $doit) {
 
         // A hook to allow modules to implement extra or different
@@ -91,10 +91,10 @@ if ($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids']))
             if (!$delete_handled) {
 
                 // Delete the message from the database.
-                phorum_db_delete_message($msgthd_id, PHORUM_DELETE_MESSAGE);
+                $PHORUM['DB']->delete_message($msgthd_id, PHORUM_DELETE_MESSAGE);
 
                 // Delete the message attachments from the database.
-                $files=phorum_db_get_message_file_list($msgthd_id);
+                $files=$PHORUM['DB']->get_message_file_list($msgthd_id);
                 foreach($files as $file_id=>$data) {
                     if (phorum_api_file_check_delete_access($file_id)) {
                         phorum_api_file_delete($file_id);
@@ -125,7 +125,7 @@ foreach($mod_forums as $forum => $rest) {
     // Get the threads
     $rows = array();
     // get the thread set started
-    $rows = phorum_db_get_unapproved_list($forum,$showwaiting,$moddays);
+    $rows = $PHORUM['DB']->get_unapproved_list($forum,$showwaiting,$moddays);
 
     // loop through and read all the data in.
     foreach($rows as $key => $row) {

@@ -82,7 +82,10 @@ $PHORUM = array
         // Initialize data for the ErrorHandling API.
         'errno' => NULL,
         'error' => NULL
-    )
+    ),
+
+    // The database layer object.
+    'DB' => NULL
 );
 
 // Load the files that are used by most scripts.
@@ -249,19 +252,31 @@ if (empty($GLOBALS['PHORUM_ALT_DBCONFIG']) ||
     $PHORUM['DBCONFIG'] = $GLOBALS['PHORUM_ALT_DBCONFIG'];
 }
 
+// could be unset in Phorum < 5.2.7
+if (!isset($PHORUM['DBCONFIG']['socket'])) $PHORUM['DBCONFIG']['socket'] = NULL;
+if (!isset($PHORUM['DBCONFIG']['port']))   $PHORUM['DBCONFIG']['port']   = NULL;
+
 // Backward compatbility: the "mysqli" layer was merged with the "mysql"
 // layer, but people might still be using "mysqli" as their configured
-// database type.
+// database type. When "mysqli" must be used, it can be configured using
+// the "mysql_extension" setting in the database configuration file.
 if ($PHORUM['DBCONFIG']['type'] == 'mysqli') {
     $PHORUM['DBCONFIG']['type'] = 'mysql';
 }
 
-// Load the database layer.
+// Load the database layer. Class and filename are derived
+// from the format "Phorum<Type>DB".
 $PHORUM['DBCONFIG']['type'] = basename($PHORUM['DBCONFIG']['type']);
-require_once PHORUM_PATH.'/include/db/'.$PHORUM['DBCONFIG']['type'].'.php';
+$db_class = 'Phorum' . ucfirst($PHORUM['DBCONFIG']['type']) . 'DB';
+require_once PHORUM_PATH.'/include/db/functional_layer.php';
+require_once PHORUM_PATH.'/include/db/PhorumDB.php';
+require_once PHORUM_PATH."/include/db/{$db_class}.php";
+
+// Initialize the database layer object.
+$PHORUM['DB'] = new $db_class;
 
 // Try to setup a connection to the database.
-if (!phorum_db_check_connection())
+if (!$PHORUM['DB']->check_connection())
 {
     if(isset($PHORUM['DBCONFIG']['down_page'])){
         phorum_api_redirect($PHORUM['DBCONFIG']['down_page']);
@@ -323,7 +338,7 @@ function phorum_shutdown()
     }
 
     // Shutdown the database connection.
-    phorum_db_close_connection();
+    $PHORUM['DB']->close_connection();
 
     if ($working_dir !== FALSE) {
         chdir($working_dir);
@@ -342,7 +357,7 @@ register_shutdown_function('phorum_shutdown');
 phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, NULL);
 
 // Load the Phorum settings from the database.
-phorum_db_load_settings();
+$PHORUM['DB']->load_settings();
 
 // Allow the activated cache layer to check if it is working correctly.
 if (function_exists('phorum_api_cache_check'))
@@ -404,7 +419,9 @@ if (isset($PHORUM['internal_version']) &&
     empty($PHORUM['private_key'])) {
     require_once PHORUM_PATH.'/include/api/generate.php'; 
     $PHORUM['private_key'] = phorum_api_generate_key();
-    phorum_db_update_settings(array('private_key' => $PHORUM['private_key']));
+    $PHORUM['DB']->update_settings(array(
+        'private_key' => $PHORUM['private_key']
+    ));
 }
 
 
@@ -494,7 +511,7 @@ class Phorum
     }
 
     /**
-     * The Phorum contructor.
+     * The Phorum constructor.
      *
      * Creates a node in the Phorum API routing tree.
      *

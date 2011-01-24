@@ -128,7 +128,9 @@ $invalidate_message_cache = array();
  *
  *         // Update the last timestamp for the moderation step
  *         $PHORUM["mod_foo"]["moderation_step_timestamps"][$mod_step] = time();
- *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+ *         $PHORUM['DB']->update_settings(array(
+ *             "mod_foo" => $PHORUM["mod_foo"]
+ *         ));
  *
  *         return $mod_step;
  *     }
@@ -331,7 +333,7 @@ function phorum_moderation_back_url()
     // Check if the message still exists. It might be gone after a
     // moderation action. When the message no longer exists, redirect
     // the user back to the list page for the active forum.
-    $message = phorum_db_get_message($msgthd_id);
+    $message = $PHORUM['DB']->get_message($msgthd_id);
     if (!$message) {
         return phorum_api_url(PHORUM_LIST_URL);
     }

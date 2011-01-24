@@ -94,7 +94,7 @@ function phorum_api_ban_list($type = NULL)
         if ($banlists === NULL)
         {
             // Retrieve them from the database.
-            $banlists = phorum_db_get_banlists();
+            $banlists = $PHORUM['DB']->get_banlists();
 
             // Nothing in the db either? Then use an empty array.
             if (empty($banlists)) {

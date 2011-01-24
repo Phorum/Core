@@ -96,7 +96,7 @@ $PHORUM["DATA"]["PROFILE"]["posts"] = number_format($PHORUM["DATA"]["PROFILE"]["
 
 $PHORUM["DATA"]["PROFILE"]["URL"]["PM"] = phorum_api_url(PHORUM_PM_URL, "page=send", "to_id=".urlencode($user["user_id"]));
 $PHORUM["DATA"]["PROFILE"]["URL"]["ADD_BUDDY"] = phorum_api_url(PHORUM_PM_URL, "page=buddies", "action=addbuddy", "addbuddy_id=".urlencode($user["user_id"]));
-$PHORUM["DATA"]["PROFILE"]["is_buddy"] = phorum_db_pm_is_buddy($user["user_id"]);
+$PHORUM["DATA"]["PROFILE"]["is_buddy"] = $PHORUM['DB']->pm_is_buddy($user["user_id"]);
 // unset($PHORUM["DATA"]["PROFILE"]["signature"]);
 
 $PHORUM["DATA"]["PROFILE"]["URL"]["SEARCH"] = phorum_api_url(PHORUM_SEARCH_URL, "author=".urlencode($PHORUM["DATA"]["PROFILE"]["user_id"]), "match_type=USER_ID", "match_dates=0", "match_threads=0");

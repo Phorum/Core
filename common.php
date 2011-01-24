@@ -197,7 +197,7 @@ if (!defined( "PHORUM_ADMIN" ))
     // handling vroots
     if (!empty($PHORUM['vroot']))
     {
-        $vroot_folders = phorum_db_get_forums($PHORUM['vroot']);
+        $vroot_folders = $PHORUM['DB']->get_forums($PHORUM['vroot']);
 
         $PHORUM["title"] = $vroot_folders[$PHORUM['vroot']]['name'];
         $PHORUM["DATA"]["TITLE"] = $PHORUM["title"];
@@ -238,7 +238,7 @@ if (!defined( "PHORUM_ADMIN" ))
         if (!empty($PHORUM["enable_new_pm_count"]) &&
             !empty($PHORUM["enable_pm"])) {
             $PHORUM['user']['new_private_messages'] =
-                phorum_db_pm_checknew($PHORUM['user']['user_id']);
+                $PHORUM['DB']->pm_checknew($PHORUM['user']['user_id']);
         }
     }
 
@@ -484,16 +484,16 @@ if (!defined( "PHORUM_ADMIN" ))
                 PHORUM_USER_ALLOW_MODERATE_MESSAGES, PHORUM_ACCESS_LIST
             );
             if (count($forummodlist) > 0 ) {
-                $PHORUM["user"]["NOTICE"]["MESSAGES"] = (phorum_db_get_unapproved_list($forummodlist, TRUE, 0, TRUE) > 0);
+                $PHORUM["user"]["NOTICE"]["MESSAGES"] = ($PHORUM['DB']->get_unapproved_list($forummodlist, TRUE, 0, TRUE) > 0);
                 $PHORUM["DATA"]["URL"]["NOTICE"]["MESSAGES"] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_UNAPPROVED);
             }
             if (phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS)) {
-                $PHORUM["user"]["NOTICE"]["USERS"] = (count(phorum_db_user_get_unapproved()) > 0);
+                $PHORUM["user"]["NOTICE"]["USERS"] = (count($PHORUM['DB']->user_get_unapproved()) > 0);
                 $PHORUM["DATA"]["URL"]["NOTICE"]["USERS"] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_USERS);
             }
             $groups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_MODERATOR, PHORUM_ACCESS_LIST);
             if (count($groups) > 0) {
-                $PHORUM["user"]["NOTICE"]["GROUPS"] = count(phorum_db_get_group_members(array_keys($groups), PHORUM_USER_GROUP_UNAPPROVED));
+                $PHORUM["user"]["NOTICE"]["GROUPS"] = count($PHORUM['DB']->get_group_members(array_keys($groups), PHORUM_USER_GROUP_UNAPPROVED));
                 $PHORUM["DATA"]["URL"]["NOTICE"]["GROUPS"] = phorum_api_url(PHORUM_CONTROLCENTER_URL, "panel=" . PHORUM_CC_GROUP_MODERATION);
             }
         }

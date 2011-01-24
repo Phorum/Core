@@ -22,14 +22,14 @@ if (! ini_get('safe_mode')) {
     ini_set("memory_limit","64M");
 }
 
-$count_total = phorum_db_user_count();
-$res = phorum_db_user_get_all();
+$count_total = $PHORUM['DB']->user_count();
+$res = $PHORUM['DB']->user_get_all();
 
 print "\nRebuilding display name information ...\n";
 
 $size = strlen($count_total);
 $count = 0;
-while ($user = phorum_db_fetch_row($res, DB_RETURN_ASSOC))
+while ($user = $PHORUM['DB']->fetch_row($res, DB_RETURN_ASSOC))
 {
     // We save an empty user, to make sure that the display name in the
     // database is up-to-date. This will already run needed updates in
@@ -39,7 +39,7 @@ while ($user = phorum_db_fetch_row($res, DB_RETURN_ASSOC))
     // ... but still we run the name updates here, so inconsistencies 
     // are flattened out.
     $user = phorum_api_user_get($user["user_id"]);
-    phorum_db_user_display_name_updates(array(
+    $PHORUM['DB']->user_display_name_updates(array(
         "user_id"      => $user["user_id"],
         "display_name" => $user["display_name"]
     ));

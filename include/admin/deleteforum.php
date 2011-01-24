@@ -40,7 +40,7 @@ if ($_GET["confirm"]=="Yes")
         }
         // done with vroots
 
-        phorum_db_drop_folder($cur_folder_id);
+        $PHORUM['DB']->drop_folder($cur_folder_id);
         $msg="The folder was deleted.  All forums and folders in this folder have been moved to this folder's parent.";
     } else {
        /*
@@ -75,8 +75,8 @@ if ($_GET["confirm"]=="Yes")
         *     </hookcode>
         */
         phorum_api_hook("admin_forum_delete", $_GET["forum_id"]);
-    	
-        phorum_db_drop_forum($_GET["forum_id"]);
+
+        $PHORUM['DB']->drop_forum($_GET["forum_id"]);
         $msg="The forum was deleted.  All messages in that forum were deleted.";
     }
 
@@ -95,7 +95,7 @@ if ($_GET["confirm"]=="Yes")
     }
     $frm_url = phorum_admin_build_url('base');
     $msg.="<form action=\"$frm_url\" method=\"get\"><input type=\"hidden\" name=\"phorum_admin_token\" value=\"{$PHORUM['admin_token']}\"><input type=\"hidden\" name=\"module\" value=\"$module\" /><input type=\"hidden\" name=\"forum_id\" value=\"{$forum['forum_id']}\" /><input type=\"hidden\" name=\"folder_flag\" value=\"$forum[folder_flag]\" /><input type=\"submit\" name=\"confirm\" value=\"Yes\" />&nbsp;<input type=\"submit\" name=\"confirm\" value=\"No\" /></form>";
-    
+
 }
 
 ?>

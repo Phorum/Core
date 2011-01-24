@@ -2,7 +2,7 @@
 if(!defined("PHORUM_ADMIN")) return;
 
 // converting the custom-fields
-$rows = phorum_db_interact(
+$rows = $PHORUM['DB']->interact(
     DB_RETURN_ASSOCS,
     "SELECT user_id, user_data
      FROM   {$PHORUM['user_table']}",
@@ -70,12 +70,12 @@ foreach ($rows as $row)
     // Prepare the user table fields.
     $values = array();
     foreach ($userdata as $key => $value) {
-        $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
+        $value = $PHORUM['DB']->interact(DB_RETURN_QUOTED, $value);
         $values[] = "$key = '$value'";
     }
     $user_id = $userdata['user_id'];
     unset($userdata['user_id']);
-    phorum_db_interact(
+    $PHORUM['DB']->interact(
         DB_RETURN_RES,
         "UPDATE {$PHORUM['user_table']}
          SET    ".implode(', ', $values)."

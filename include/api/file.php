@@ -120,7 +120,9 @@ $GLOBALS["PHORUM"]["phorum_api_file_mimetypes"] = array
  */
 function phorum_api_file_get_mimetype($filename)
 {
-    $types = $GLOBALS["PHORUM"]["phorum_api_file_mimetypes"];
+    global $PHORUM;
+
+    $types = $PHORUM["phorum_api_file_mimetypes"];
 
     $extension = "";
     $dotpos = strrpos($filename, ".");
@@ -170,8 +172,8 @@ function phorum_api_file_check_write_access($file)
     global $PHORUM;
 
     // Reset error storage.
-    $GLOBALS["PHORUM"]["API"]["errno"] = NULL;
-    $GLOBALS["PHORUM"]["API"]["error"] = NULL;
+    $PHORUM["API"]["errno"] = NULL;
+    $PHORUM["API"]["error"] = NULL;
 
     if (!isset($file["link"])) trigger_error(
         "phorum_api_file_check_write_access(): \$file parameter needs a " .
@@ -209,7 +211,7 @@ function phorum_api_file_check_write_access($file)
 
         // Check if the user won't exceed the file quota when storing the file.
         if(isset($file["filesize"]) && $PHORUM["file_space_quota"] > 0) {
-            $sz = phorum_db_get_user_filesize_total($PHORUM["user"]["user_id"]);
+            $sz = $PHORUM['DB']->get_user_filesize_total($PHORUM["user"]["user_id"]);
             $sz += $file["filesize"];
             if ($sz > $PHORUM["file_space_quota"]*1024) {
                 return phorum_api_error(
@@ -358,7 +360,7 @@ function phorum_api_file_check_write_access($file)
  */
 function phorum_api_file_store($file)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Check if we really got an array argument for $file.
     if (!is_array($file)) trigger_error(
@@ -481,7 +483,7 @@ function phorum_api_file_store($file)
       // the hook below, so alternative storage systems know directly
       // for what file_id they will have to store data, without having
       // to store the full data in the database already.
-      $file_id = phorum_db_file_save(array(
+      $file_id = $PHORUM['DB']->file_save(array(
           "filename"     => $file["filename"],
           "filesize"     => 0,
           "file_data"    => "",
@@ -516,7 +518,7 @@ function phorum_api_file_store($file)
         {
             // Cleanup the skeleton file from the database.
             if ($created_skeleton_file) {
-                phorum_db_file_delete($file["file_id"]);
+                $PHORUM['DB']->file_delete($file["file_id"]);
                 $file["file_id"] = NULL;
             }
 
@@ -545,7 +547,7 @@ function phorum_api_file_store($file)
 
     // Update the (skeleton) file record to match the real file data.
     // This acts like a commit action for the file storage.
-    phorum_db_file_save ($file);
+    $PHORUM['DB']->file_save ($file);
 
     return $file;
 }
@@ -601,8 +603,8 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     settype($file_id, "int");
 
     // Reset error storage.
-    $GLOBALS["PHORUM"]["API"]["errno"] = NULL;
-    $GLOBALS["PHORUM"]["API"]["error"] = NULL;
+    $PHORUM["API"]["errno"] = NULL;
+    $PHORUM["API"]["error"] = NULL;
 
     // Check if the active user has read access for the active forum_id.
     if (!($flags & PHORUM_FLAG_IGNORE_PERMS) && !phorum_check_read_common()) {
@@ -614,7 +616,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
 
     // Retrieve the descriptive file data for the file from the database.
     // Return an error if the file does not exist.
-    $file = phorum_db_file_get($file_id, FALSE);
+    $file = $PHORUM['DB']->file_get($file_id, FALSE);
     if (empty($file)) return phorum_api_error(
         PHORUM_ERRNO_NOTFOUND,
         "The requested file (id $file_id) was not found."
@@ -645,7 +647,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
         // Retrieve the message. If retrieving the message is not possible
         // or if the forum_id of the message is different from the requested
         // forum_id, then return an error.
-        $message = phorum_db_get_message($file["message_id"],"message_id",TRUE);
+        $message = $PHORUM['DB']->get_message($file["message_id"],"message_id",TRUE);
         if (empty($message)) return phorum_api_error(
             PHORUM_ERRNO_INTEGRITY,
             "An integrity problem was detected in the database: " .
@@ -751,11 +753,11 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
  */
 function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Reset error storage.
-    $GLOBALS["PHORUM"]["API"]["errno"] = NULL;
-    $GLOBALS["PHORUM"]["API"]["error"] = NULL;
+    $PHORUM["API"]["errno"] = NULL;
+    $PHORUM["API"]["error"] = NULL;
 
     // If $file is not an array, we are handling a numerical file_id.
     // In that case, first retrieve the file data through the access check
@@ -826,7 +828,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     // file from the Phorum database.
     if ($file["file_data"] === NULL)
     {
-        $dbfile = phorum_db_file_get($file["file_id"], TRUE);
+        $dbfile = $PHORUM['DB']->file_get($file["file_id"], TRUE);
         if (empty($dbfile)) return phorum_api_error(
             PHORUM_ERRNO_NOTFOUND,
             "Phorum file (id {$file["file_id"]}) could not be " .
@@ -1039,7 +1041,7 @@ function phorum_api_file_check_delete_access($file_id)
     if ($file["link"] == PHORUM_LINK_MESSAGE)
     {
         // Retrieve the message to which the file is linked.
-        $message = phorum_db_get_message($file["message_id"]);
+        $message = $PHORUM['DB']->get_message($file["message_id"]);
 
         // If the message cannot be found, we do not care if the linked
         // file is deleted. It's clearly an orphin file.
@@ -1076,7 +1078,7 @@ function phorum_api_file_check_delete_access($file_id)
  */
 function phorum_api_file_delete($file)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Find the file_id parameter to use.
     if (is_array($file)) {
@@ -1099,7 +1101,7 @@ function phorum_api_file_delete($file)
         phorum_api_hook("file_delete", $file_id);
 
     // Delete the file from the Phorum database.
-    phorum_db_file_delete($file_id);
+    $PHORUM['DB']->file_delete($file_id);
 }
 // }}}
 
@@ -1128,7 +1130,8 @@ function phorum_api_file_delete($file)
  */
 function phorum_api_file_list($link_type = NULL, $user_id = NULL, $message_id = NULL)
 {
-    return phorum_db_get_file_list($link_type, $user_id, $message_id);
+    global $PHORUM;
+    return $PHORUM['DB']->get_file_list($link_type, $user_id, $message_id);
 }
 // }}}
 
@@ -1154,7 +1157,8 @@ function phorum_api_file_list($link_type = NULL, $user_id = NULL, $message_id = 
  */
 function phorum_api_file_purge_stale($do_purge)
 {
-    $stale_files = phorum_db_list_stale_files();
+    global $PHORUM;
+    $stale_files = $PHORUM['DB']->list_stale_files();
 
     /**
      * [hook]
@@ -1194,7 +1198,7 @@ function phorum_api_file_purge_stale($do_purge)
      *     argument, possibly extended with extra files that are
      *     considered to be stale.
      */
-    if (isset($GLOBALS['PHORUM']['hooks']['file_purge_stale']))
+    if (isset($PHORUM['hooks']['file_purge_stale']))
         $stale_files = phorum_api_hook('file_purge_stale', $stale_files);
 
     // Delete the files if requested.

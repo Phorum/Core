@@ -38,7 +38,7 @@ $message=array();
 // get the message
 if (isset($PHORUM["args"][1]) && is_numeric($PHORUM["args"][1])) {
     $message_id = $PHORUM["args"][1];
-    $message = phorum_db_get_message($message_id);
+    $message = $PHORUM['DB']->get_message($message_id);
 }
 
 if (is_array($message) && count($message))

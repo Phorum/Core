@@ -454,7 +454,9 @@ if (count($_POST)) {
                  *         // register
                  *         $PHORUM["mod_foo"]["user_registrations"][$userdata["user_id"]] = $_SERVER["REMOTE_ADDR"];
                  *
-                 *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+                 *         $PHORUM['DB']->update_settings(array(
+                 *             "mod_foo" => $PHORUM["mod_foo"]
+                 *         ));
                  *
                  *         return $data;
                  *     }

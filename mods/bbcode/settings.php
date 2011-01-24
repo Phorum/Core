@@ -63,7 +63,7 @@ if (count($_POST))
     }
 
     // Store the new settings array.
-    phorum_db_update_settings(array(
+    $PHORUM['DB']->update_settings(array(
         'mod_bbcode' => $PHORUM['mod_bbcode']
     ));
 

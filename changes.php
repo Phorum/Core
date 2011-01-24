@@ -42,7 +42,7 @@ if (isset($PHORUM["args"][1]) && is_numeric($PHORUM["args"][1])) {
     phorum_api_redirect(PHORUM_INDEX_URL, $PHORUM['forum_id']);
 }
 
-$message = phorum_db_get_message($message_id);
+$message = $PHORUM['DB']->get_message($message_id);
 
 if (empty($message)) {
     phorum_api_redirect(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
@@ -50,7 +50,7 @@ if (empty($message)) {
 
 $PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
-$edit_tracks = phorum_db_get_message_edits($message_id);
+$edit_tracks = $PHORUM['DB']->get_message_edits($message_id);
 
 if(count($edit_tracks)==0 ||
    $PHORUM["track_edits"] == PHORUM_EDIT_TRACK_OFF ||

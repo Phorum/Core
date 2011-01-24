@@ -140,7 +140,7 @@ function phorum_api_thread_update_metadata($thread_id)
     global $PHORUM;
 
     // Retrieve all messages for the thread from the database.
-    $messages = phorum_db_get_messages($thread_id, 0, 1, 1, FALSE);
+    $messages = $PHORUM['DB']->get_messages($thread_id, 0, 1, 1, FALSE);
 
     // We do not need the returned user info.
     unset($messages['users']);
@@ -246,7 +246,7 @@ function phorum_api_thread_update_metadata($thread_id)
         phorum_api_cache_remove('message', $thread['forum_id'].'-'.$thread_id);
     }
 
-    phorum_db_update_message($thread_id, $save);
+    $PHORUM['DB']->update_message($thread_id, $save);
 }
 // }}}
 
@@ -277,7 +277,7 @@ function phorum_api_thread_set_sort($thread_id, $sort = PHORUM_SORT_DEFAULT)
     );
 
     // Retrieve the messages for the provided thread id.
-    $messages = phorum_db_get_messages($thread_id, 0, TRUE, TRUE, FALSE);
+    $messages = $PHORUM['DB']->get_messages($thread_id, 0, TRUE, TRUE, FALSE);
     unset($messages['users']);
 
     // Update all messages with the new sort value.
@@ -288,7 +288,7 @@ function phorum_api_thread_set_sort($thread_id, $sort = PHORUM_SORT_DEFAULT)
         {
             $forum_id = $message['forum_id'];
 
-            phorum_db_update_message($id, array('sort' => $sort));
+            $PHORUM['DB']->update_message($id, array('sort' => $sort));
 
             if ($PHORUM['cache_messages'])
             {
@@ -303,7 +303,7 @@ function phorum_api_thread_set_sort($thread_id, $sort = PHORUM_SORT_DEFAULT)
     {
         $tmp = $PHORUM['forum_id'];
         $PHORUM['forum_id'] = $forum_id;
-        phorum_db_update_forum_stats(true);
+        $PHORUM['DB']->update_forum_stats(true);
         $PHORUM['forum_id'] = $tmp;
     }
 }

@@ -133,7 +133,7 @@ if ( count( $_POST ) )
         unset( $_POST["phorum_admin_token"] );
         
 
-        if ( phorum_db_update_settings( $_POST ) ) {
+        if ( $PHORUM['DB']->update_settings( $_POST ) ) {
             $redir = phorum_admin_build_url(array('module=settings','message=success'));
             if ($need_display_name_updates) {
                 $redir = phorum_admin_build_url(array('module=update_display_names'));
@@ -149,7 +149,7 @@ if ( count( $_POST ) )
 if ( $error ) {
     phorum_admin_error( $error );
 } elseif( isset($_GET['message']) && $_GET['message'] == 'success' ) {
-	$okmsg = "Settings updated";
+    $okmsg = "Settings updated";
     phorum_admin_okmsg ( $okmsg);
 }
 // create the time zone drop down array

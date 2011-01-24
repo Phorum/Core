@@ -22,16 +22,16 @@ if(!defined("PHORUM_ADMIN")) return;
 
 // load the default Phorum language
 if(isset($PHORUM["default_forum_options"]["language"])){
-	$lang = basename($PHORUM["default_forum_options"]["language"]);
-	if (!file_exists("./include/lang/${lang}.php")) {
-		$lang = PHORUM_DEFAULT_LANGUAGE;
-	}
-	require_once( "./include/lang/{$lang}.php" );
+    $lang = basename($PHORUM["default_forum_options"]["language"]);
+    if (!file_exists("./include/lang/${lang}.php")) {
+        $lang = PHORUM_DEFAULT_LANGUAGE;
+    }
+    require_once( "./include/lang/{$lang}.php" );
 }
 
 // HTTP Content-Type header with the charset from the default language
 if (isset($PHORUM["DATA"]['CHARSET'])) {
-	header("Content-Type: text/html; " .
+    header("Content-Type: text/html; " .
            "charset=".htmlspecialchars($PHORUM["DATA"]['CHARSET']));
 }
 
@@ -75,7 +75,7 @@ $admin_css_path = preg_replace('!^//!', '/', $admin_css_path);
  *     </hookcode>
  */
 if (isset($PHORUM['hooks']['admin_css_file'])) {
-	$admin_css_path = phorum_api_hook('admin_css_file', $admin_css_path);
+    $admin_css_path = phorum_api_hook('admin_css_file', $admin_css_path);
 }
 
 ?>
@@ -189,7 +189,7 @@ Phorum Status:
 <option value="normal" <?php if($PHORUM["status"]=="normal") echo "selected"; ?>>Normal</option>
 <option value="read-only"<?php if($PHORUM["status"]=="read-only") echo "selected"; ?>>Read Only</option>
 <option value="admin-only"<?php if($PHORUM["status"]=="admin-only") echo "selected"; ?>>Admin Only</option>
-<option value="disabled"<?php if($PHORUM["status"]=="disabled" || !phorum_db_check_connection()) echo "selected"; ?>>Disabled</option>
+<option value="disabled"<?php if($PHORUM["status"]=="disabled" || !$PHORUM['DB']->check_connection()) echo "selected"; ?>>Disabled</option>
 </select>
 </form>
 <?php } ?>

@@ -26,7 +26,7 @@ if (isset($_POST["joingroup"]) && $_POST["joingroup"] > 0)
     $usergroups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST);
 
     // Get all available groups.
-    $group = phorum_db_get_groups($_POST["joingroup"]);
+    $group = $PHORUM['DB']->get_groups($_POST["joingroup"]);
 
     // The user can't already be a member of the group,
     // and the group must allow join requests.
@@ -96,7 +96,7 @@ function phorum_joinable_groups()
 {
     global $PHORUM;
     $joinablegroups = array();
-    $groups = phorum_db_get_groups();
+    $groups = $PHORUM['DB']->get_groups();
     $memberof = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST);
     foreach ($groups as $group){
         if (!isset($memberof[$group["group_id"]])){

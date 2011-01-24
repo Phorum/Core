@@ -143,7 +143,7 @@ if (isset($PHORUM["hooks"]["before_post"])) {
 $message_copy = $message;
 
 // Store the message in the database.
-$success = phorum_db_post_message($message);
+$success = $PHORUM['DB']->post_message($message);
 
 if ($success)
 {
@@ -152,7 +152,7 @@ if ($success)
     // of attachments.
     foreach ($message_copy["attachments"] as $info) {
         if ($info["keep"]) {
-            phorum_db_file_link(
+            $PHORUM['DB']->file_link(
                 $info["file_id"],
                 $message["message_id"],
                 PHORUM_LINK_MESSAGE
@@ -168,7 +168,7 @@ if ($success)
     // format (otherwise it's a bit messed up in the
     // post-function). Do merge back data which is not
     // stored in the database, but which we might need later on.
-    $message = phorum_db_get_message($message["message_id"],'message_id',false,true);
+    $message = $PHORUM['DB']->get_message($message["message_id"],'message_id',false,true);
     foreach ($message_copy as $key => $val) {
         if (! isset($message[$key])) {
             $message[$key] = $val;
@@ -265,7 +265,7 @@ if ($success)
     if ($PHORUM["DATA"]["LOGGEDIN"])
     {
         // Mark own message read.
-        phorum_db_newflag_add_read(array(array(
+        $PHORUM['DB']->newflag_add_read(array(array(
             'id'       => $message['message_id'],
             'forum_id' => $message['forum_id'],
         )));
@@ -278,7 +278,7 @@ if ($success)
     if ($message["status"] > 0)
     {
         // Update forum statistics.
-        phorum_db_update_forum_stats(false, 1, $message["datestamp"]);
+        $PHORUM['DB']->update_forum_stats(false, 1, $message["datestamp"]);
 
         // Mail subscribed users.
         phorum_api_mail_message_notify($message);

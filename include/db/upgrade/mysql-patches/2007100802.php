@@ -8,7 +8,7 @@ if (! ini_get('safe_mode')) {
 }
 
 // Find all threads.
-$res = phorum_db_interact(
+$res = $PHORUM['DB']->interact(
     DB_RETURN_RES,
     "SELECT message_id, forum_id
      FROM   {$PHORUM["message_table"]}
@@ -17,7 +17,7 @@ $res = phorum_db_interact(
 );
 
 // Update the thread info for each thread.
-while ($row = phorum_db_fetch_row($res, DB_RETURN_ROW)) {
+while ($row = $PHORUM['DB']->fetch_row($res, DB_RETURN_ROW)) {
     $GLOBALS["PHORUM"]["forum_id"] = $row[1];
     phorum_api_thread_update_metadata($row[0]);
 }

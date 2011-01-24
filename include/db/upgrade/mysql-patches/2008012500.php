@@ -23,7 +23,7 @@ if (!isset($PHORUM['track_edits'])) {
 }
 
 if (!empty($update_settings)) {
-    phorum_db_update_settings($update_settings);
+    $PHORUM['DB']->update_settings($update_settings);
 }
 
 ?>

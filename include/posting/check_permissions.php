@@ -105,7 +105,7 @@ if ($finish && ($mode == 'edit' || $mode == 'reply'))
     }
     
     if($origmessage == null) {
-        $origmessage = phorum_db_get_message($message[$id]);
+        $origmessage = $PHORUM['DB']->get_message($message[$id]);
         if($PHORUM['cache_messages']) {
             phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$message[$id],$origmessage);
         }
@@ -137,7 +137,7 @@ if ($mode == "reply" || $mode == "edit") {
         $top_parent = phorum_api_cache_get('message',$PHORUM["forum_id"]."-".$message["thread"]);
     } 
     if($top_parent == null) {
-        $top_parent = phorum_db_get_message($message["thread"]);
+        $top_parent = $PHORUM['DB']->get_message($message["thread"]);
         if($PHORUM['cache_messages']) {
             phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$message["thread"],$top_parent);
         }
@@ -149,16 +149,16 @@ if ($mode == "reply")
 {
     // Find the direct parent for this message.
     if ($message["thread"] != $message["parent_id"]) {
-	    $parent = null;
-	    if($PHORUM['cache_messages']) {
-	        $parent = phorum_api_cache_get('message',$PHORUM["forum_id"]."-".$message["parent_id"]);
-	    }  
-	    if($parent == null) {       
-            $parent = phorum_db_get_message($message["parent_id"]);
+        $parent = null;
+        if($PHORUM['cache_messages']) {
+            $parent = phorum_api_cache_get('message',$PHORUM["forum_id"]."-".$message["parent_id"]);
+        }  
+        if($parent == null) {       
+            $parent = $PHORUM['DB']->get_message($message["parent_id"]);
             if($PHORUM['cache_messages']) {
                 phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$message["parent_id"],$parent);
             }
-	    }
+        }
     } else {
         $parent = $top_parent;
     }
@@ -189,9 +189,9 @@ if ($mode == "reply")
     
     // closed topic, show a message
     if($top_parent["closed"]) {
-    	$PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
-    	$PHORUM["posting_template"] = "message";
-    	return;
+        $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
+        $PHORUM["posting_template"] = "message";
+        return;
     }
 
 }

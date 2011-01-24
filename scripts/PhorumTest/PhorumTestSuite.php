@@ -54,7 +54,8 @@ class PhorumTest extends PHPUnit_Framework_TestCase
 {
 
         function testPhorumConnect() {
-            $ret = phorum_db_check_connection();
+            global $PHORUM;
+            $ret = $PHORUM['DB']->check_connection();
             $this->assertTrue($ret);
         }
 
@@ -64,7 +65,7 @@ class PhorumTest extends PHPUnit_Framework_TestCase
 
         function testPhorumSettingsLoad() {
             global $PHORUM;
-            phorum_db_load_settings();
+            $PHORUM['DB']->load_settings();
 
             $PHORUM['cache_users'] = 1;
             $PHORUM['cache_messages'] = 0;
@@ -87,11 +88,11 @@ class PhorumTest extends PHPUnit_Framework_TestCase
             'description'=>'PhorumTest forum'
             );
 
-            $forum_id = phorum_db_add_forum($forum);
+            $forum_id = $PHORUM['DB']->add_forum($forum);
             $this->assertGreaterThan(0,$forum_id,"Forum added call returned");
 
             // retrieving this forum again
-            $gotforum = phorum_db_get_forums($forum_id);
+            $gotforum = $PHORUM['DB']->get_forums($forum_id);
 
             $this->assertGreaterThan(0,count($gotforum),"Got something back");
             $this->assertTrue(isset($gotforum[$forum_id]),"Forum really added");
@@ -117,11 +118,11 @@ class PhorumTest extends PHPUnit_Framework_TestCase
             'description'=>'PhorumTest forum - Test2'
             );
 
-            $res = phorum_db_update_forum($forum_update);
+            $res = $PHORUM['DB']->update_forum($forum_update);
             $this->assertTrue($res, "Updating Forum");
 
             // retrieving this forum again
-            $gotforum = phorum_db_get_forums($forum_id);
+            $gotforum = $PHORUM['DB']->get_forums($forum_id);
 
             $this->assertGreaterThan(0,count($gotforum),"Got the updated Forum");
 
@@ -138,11 +139,11 @@ class PhorumTest extends PHPUnit_Framework_TestCase
             $this->assertTrue($checkforum,'Comparing updated Forum');
 
             // deleting a forum
-            $res=phorum_db_drop_forum($forum_id);
+            $res=$PHORUM['DB']->drop_forum($forum_id);
             $this->assertNull($res, "Deleting Forum");
 
             // retrieving this forum again
-            $gotforum = phorum_db_get_forums($forum_id);
+            $gotforum = $PHORUM['DB']->get_forums($forum_id);
 
             $this->assertEquals(0,count($gotforum),"Trying to get the deleted Forum");
 

@@ -121,7 +121,7 @@ if (!empty($group_id))
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ChangesSaved"];
     }
 
-    $group = phorum_db_get_groups($group_id);
+    $group = $PHORUM['DB']->get_groups($group_id);
     $PHORUM["DATA"]["GROUP"]["id"] = $group_id;
     $PHORUM["DATA"]["GROUP"]["name"] = $group[$group_id]["name"];
     $PHORUM["DATA"]["USERS"] = array();
@@ -154,7 +154,7 @@ if (!empty($group_id))
     $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => PHORUM_USER_GROUP_UNAPPROVED, "name" => $PHORUM["DATA"]["LANG"]["Unapproved"]);
     $PHORUM["DATA"]["STATUS_OPTIONS"][] = array("value" => PHORUM_USER_GROUP_SUSPENDED, "name" => $PHORUM["DATA"]["LANG"]["Suspended"]);
 
-    $groupmembers = phorum_db_get_group_members($group_id);
+    $groupmembers = $PHORUM['DB']->get_group_members($group_id);
     $usersingroup = array_keys($groupmembers);
     $users = phorum_api_user_get($usersingroup);
     $memberlist = array();
@@ -217,8 +217,8 @@ else{
     asort($groups);
     foreach ($groups as $groupid => $groupname){
         // get the group members who are unapproved, so we can count them
-        $members = phorum_db_get_group_members($groupid, PHORUM_USER_GROUP_UNAPPROVED);
-        $full_members = phorum_db_get_group_members($groupid);
+        $members = $PHORUM['DB']->get_group_members($groupid, PHORUM_USER_GROUP_UNAPPROVED);
+        $full_members = $PHORUM['DB']->get_group_members($groupid);
         
         $PHORUM["DATA"]["GROUPS"][] = array(
             "id" => $groupid,

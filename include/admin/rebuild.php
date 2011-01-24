@@ -42,7 +42,7 @@ if ( count( $_POST ) ) {
         {
             $PHORUM['forum_id'] = $fid;
 
-            phorum_db_update_forum_stats(true);
+            $PHORUM['DB']->update_forum_stats(true);
 
             $forums_updated++;
         }
@@ -79,7 +79,7 @@ if ( count( $_POST ) ) {
                 while($offset < $fdata['thread_count']) {
 
                     $curpage = ($offset/100);
-                    $threads = phorum_db_get_thread_list($curpage);
+                    $threads = $PHORUM['DB']->get_thread_list($curpage);
 
                     $num_threads = count($threads);
 
@@ -115,16 +115,16 @@ if ( count( $_POST ) ) {
 
     if(isset($_POST['rebuild_searchdata']) && !empty($_POST['rebuild_searchdata'])) {
 
-    	if(empty($PHORUM['DBCONFIG']['empty_search_table'])) {
-	        $ret = phorum_db_rebuild_search_data();
-	
-	
-	        $okmsg .= "Searchdata successfully rebuilt.<br />";
-    	} else {
-    		
-    		$okmsg .="<strong>Flag &quot;empty_search_table&quot; set in db configuration. Search table is not going to be rebuild with that.</strong>";
-    		
-    	}
+        if(empty($PHORUM['DBCONFIG']['empty_search_table'])) {
+            $ret = $PHORUM['DB']->rebuild_search_data();
+
+
+            $okmsg .= "Searchdata successfully rebuilt.<br />";
+        } else {
+
+            $okmsg .="<strong>Flag &quot;empty_search_table&quot; set in db configuration. Search table is not going to be rebuild with that.</strong>";
+
+        }
 
     }
 
@@ -135,7 +135,7 @@ if ( count( $_POST ) ) {
 
         foreach($forums as $fid => $forumpath)
         {
-            phorum_db_update_forum(array(
+            $PHORUM['DB']->update_forum(array(
                 'forum_id'   => $fid,
                 'forum_path' => $forumpath
             ));
@@ -146,7 +146,7 @@ if ( count( $_POST ) ) {
 
     if(isset($_POST['rebuild_userposts']) && !empty($_POST['rebuild_userposts'])) {
 
-        $ret = phorum_db_rebuild_user_posts();
+        $ret = $PHORUM['DB']->rebuild_user_posts();
 
 
         $okmsg .= "Postcounts for users updated.<br />";

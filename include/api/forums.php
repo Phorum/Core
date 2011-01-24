@@ -298,7 +298,7 @@ function phorum_api_forums_get(
     }
 
     // Retrieve the forums/folders from the database.
-    $forums = phorum_db_get_forums(
+    $forums = $PHORUM['DB']->get_forums(
         $forum_ids, $parent_id, $vroot, $inherit_id,
         $flags & PHORUM_FLAG_INHERIT_MASTERS,
         $return_type,
@@ -417,6 +417,8 @@ function phorum_api_forums_get(
  */
 function phorum_api_forums_save($data, $flags = 0)
 {
+    global $PHORUM;
+
     // $data must be an array.
     if (!is_array($data)) {
         trigger_error(
@@ -431,8 +433,8 @@ function phorum_api_forums_save($data, $flags = 0)
     // Initialize data for saving default forum settings.
     if ($flags & PHORUM_FLAG_DEFAULTS)
     {
-        $existing = empty($GLOBALS['PHORUM']['default_forum_options'])
-                  ? NULL : $GLOBALS['PHORUM']['default_forum_options'];
+        $existing = empty($PHORUM['default_forum_options'])
+                  ? NULL : $PHORUM['default_forum_options'];
 
         // Force a few settings to static values to have the data
         // processed correctly by the code below.
@@ -515,8 +517,8 @@ function phorum_api_forums_save($data, $flags = 0)
 
     // Find the fields specification to use for this record.
     $fields = $dbdata['folder_flag']
-            ? $GLOBALS['PHORUM']['API']['folder_fields']
-            : $GLOBALS['PHORUM']['API']['forum_fields'];
+            ? $PHORUM['API']['folder_fields']
+            : $PHORUM['API']['forum_fields'];
 
     // A copy of the $fields array to keep track of missing fields.
     $missing = $fields;
@@ -619,7 +621,7 @@ function phorum_api_forums_save($data, $flags = 0)
 
         // Inherit from the default settings.
         if ($dbdata['inherit_id'] == 0) {
-            $defaults = $GLOBALS['PHORUM']['default_forum_options'];
+            $defaults = $PHORUM['default_forum_options'];
         }
         // Inherit from a specific forum.
         else
@@ -723,13 +725,13 @@ function phorum_api_forums_save($data, $flags = 0)
     if ($flags & PHORUM_FLAG_DEFAULTS)
     {
         // Create or update the settings record.
-        phorum_db_update_settings(array(
+        $PHORUM['DB']->update_settings(array(
             'default_forum_options' => $dbdata
         ));
 
         // Update the global default forum options variable, so it
         // matches the updated settings.
-        $GLOBALS['PHORUM']['default_forum_options'] = $dbdata;
+        $PHORUM['default_forum_options'] = $dbdata;
 
         // Update all forums that inherit the default settings.
         $childs = phorum_api_forums_by_inheritance(0);
@@ -746,9 +748,9 @@ function phorum_api_forums_save($data, $flags = 0)
 
     // Store the forum or folder in the database.
     if ($existing) {
-        phorum_db_update_forum($dbdata);
+        $PHORUM['DB']->update_forum($dbdata);
     } else {
-        $dbdata['forum_id'] = phorum_db_add_forum($dbdata);
+        $dbdata['forum_id'] = $PHORUM['DB']->add_forum($dbdata);
     }
 
     // Handle changes that influence the forum tree paths.
@@ -893,7 +895,7 @@ function phorum_api_forums_update_path($forum, $recurse = TRUE)
     // Rebuild the forum_path for this forum.
     $path = phorum_api_forums_build_path($forum['forum_id']);
     $forum['forum_path'] = $path;
-    phorum_db_update_forum(array(
+    $PHORUM['DB']->update_forum(array(
         'vroot'      => $forum['vroot'],
         'forum_id'   => $forum['forum_id'],
         'forum_path' => $forum['forum_path']
@@ -955,6 +957,8 @@ function phorum_api_forums_update_path($forum, $recurse = TRUE)
  */
 function phorum_api_forums_build_path($forum_id = NULL)
 {
+    global $PHORUM;
+
     $paths = array();
 
     // The forum_id = 0 root node is not in the database.
@@ -962,7 +966,7 @@ function phorum_api_forums_build_path($forum_id = NULL)
     $root = array(
         'vroot'    => 0,
         'forum_id' => 0,
-        'name'     => $GLOBALS['PHORUM']['title']
+        'name'     => $PHORUM['title']
     );
 
     // If we are going to update the paths for all nodes, then we pull
@@ -970,13 +974,13 @@ function phorum_api_forums_build_path($forum_id = NULL)
     // need the path for a single node, then the node and all its parent
     // nodes are retrieved using single calls to the database.
     if ($forum_id === NULL) {
-        $nodes = phorum_db_get_forums(NULL,NULL,NULL,NULL,false,0,true);
+        $nodes = $PHORUM['DB']->get_forums(NULL,NULL,NULL,NULL,false,0,true);
         $nodes[0] = $root;
     } else {
         if ($forum_id == 0) {
             $nodes = array(0 => $root);
         } else {
-            $nodes = phorum_db_get_forums($forum_id,NULL,NULL,NULL,false,0,true);
+            $nodes = $PHORUM['DB']->get_forums($forum_id,NULL,NULL,NULL,false,0,true);
         }
     }
 
@@ -1000,7 +1004,8 @@ function phorum_api_forums_build_path($forum_id = NULL)
             if ($node['parent_id'] == 0) {
                 $node = $root;
             } elseif ($forum_id !== NULL) {
-                $tmp = phorum_db_get_forums($node['parent_id'],NULL,NULL,NULL,false,0,true);
+                $tmp = $PHORUM['DB']->get_forums(
+                    $node['parent_id'],NULL,NULL,NULL,false,0,true);
                 $node = $tmp[$node['parent_id']];
             } else {
                 $node = $nodes[$node['parent_id']];
@@ -1047,6 +1052,8 @@ function phorum_api_forums_build_path($forum_id = NULL)
  */
 function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value = NULL)
 {
+    global $PHORUM;
+
     settype($folder_id, 'int');
     settype($forum_id, 'int');
     if ($value !== NULL) settype($value, 'int');
@@ -1115,7 +1122,7 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
     // all the display order values are set to 0 until you move one.
     foreach ($new_order as $display_order => $forum_id) {
         if ($forums[$forum_id]['display_order'] != $display_order) {
-            phorum_db_update_forum(array(
+            $PHORUM['DB']->update_forum(array(
                 'forum_id'      => $forum_id,
                 'display_order' => $display_order
             ));

@@ -46,7 +46,7 @@ if ($user_id == 0 && isset($PHORUM["user"]["user_id"])) {
 
 $hasnew = $user_id == 0
         ? 0
-        : phorum_db_pm_checknew($user_id) ? 1 : 0;
+        : $PHORUM['DB']->pm_checknew($user_id) ? 1 : 0;
 
 phorum_ajax_return($hasnew);
 ?>

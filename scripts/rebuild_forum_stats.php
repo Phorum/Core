@@ -33,7 +33,7 @@ $count = 0;
 foreach ($forums as $fid => $fdata)
 {
     $PHORUM['forum_id'] = $fid;
-    phorum_db_update_forum_stats(true);
+    $PHORUM['DB']->update_forum_stats(true);
 
     $count ++;
 

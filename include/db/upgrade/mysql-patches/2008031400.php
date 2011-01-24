@@ -5,7 +5,7 @@
 if (!defined('PHORUM_ADMIN')) return;
 
 if (!isset($PHORUM['display_name_source'])) {
-    phorum_db_update_settings(array('display_name_source' => 'username'));
+    $PHORUM['DB']->update_settings(array('display_name_source' => 'username'));
 }
 
 ?>

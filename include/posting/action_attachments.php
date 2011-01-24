@@ -80,7 +80,9 @@ if ($do_detach)
              *         // message, remove the message from the log
              *         if (empty($PHORUM["mod_foo"]["messages_with_attachments"][$data[0]["message_id"]]))
              *             unset($PHORUM["mod_foo"]["messages_with_attachments"][$data[0]["message_id"]]);
-             *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+             *         $PHORUM['DB']->update_settings(array(
+             *             "mod_foo" => $PHORUM["mod_foo"]
+             *         ));
              *
              *         return $data;
              *     }
@@ -288,7 +290,9 @@ elseif ($do_attach && ! empty($_FILES))
              *         // Log the messages with attachments, including the 
              *         // attachment names.
              *         $PHORUM["mod_foo"]["messages_with_attachments"][$data[0]["message_id"]][$data[1]["file_id"]] = $data[1]["name"];
-             *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+             *         $PHORUM['DB']->update_settings(array(
+             *             "mod_foo" => $PHORUM["mod_foo"]
+             *         ));
              *
              *         return $data;
              *     }

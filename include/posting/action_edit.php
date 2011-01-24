@@ -53,11 +53,11 @@ if ( $message["parent_id"]==0 ) {
         }
         $dbmessage["sort"] = $sort;
     }
-    
+
     // has the sorting order been changed?
     if($dbmessage['sort'] !== $origmessage['sort']) {
         // too much to calculate here to avoid the full refresh
-        phorum_db_update_forum_stats(true);
+        $PHORUM['DB']->update_forum_stats(true);
     }    
 
 } else {
@@ -99,7 +99,7 @@ if(!empty($diff_body) || !empty($diff_subject))
             "message_id"   => $dbmessage['message_id'],
         );
 
-        phorum_db_add_message_edit($edit_data);
+        $PHORUM['DB']->add_message_edit($edit_data);
     }
 }
 
@@ -122,7 +122,7 @@ foreach ($message["attachments"] as $info)
             "size"    => $info["size"],
         );
 
-        phorum_db_file_link(
+        $PHORUM['DB']->file_link(
             $info["file_id"],
             $message["message_id"],
             PHORUM_LINK_MESSAGE
@@ -178,7 +178,7 @@ if (isset($PHORUM["hooks"]["before_edit"])) {
     $dbmessage = phorum_api_hook("before_edit", $dbmessage,$origmessage);
 }
 
-phorum_db_update_message($message["message_id"], $dbmessage);
+$PHORUM['DB']->update_message($message["message_id"], $dbmessage);
 
 /*
  * [hook]
@@ -216,7 +216,7 @@ phorum_db_update_message($message["message_id"], $dbmessage);
  *                 $dbmessage["subject"],
  *                 $PHORUM["DATA"]["LANG"]["mod_foo"]["MessageEditedBody"]
  *                 );
- *             phorum_db_pm_send(
+ *             $PHORUM['DB']->pm_send(
  *                 $PHORUM["DATA"]["LANG"]["mod_foo"]["MessageEditedSubject"],
  *                 $pm_message,
  *                 $dbmessage["user_id"]
@@ -245,13 +245,13 @@ if($PHORUM['cache_messages'])
 if (! $message["parent_id"] &&
     $origmessage["sort"] != $dbmessage["sort"])
 {
-    $messages = phorum_db_get_messages($message["thread"], 0);
+    $messages = $PHORUM['DB']->get_messages($message["thread"], 0);
     unset($messages["users"]);
     foreach($messages as $message_id => $msg){
         if($msg["sort"]!=$dbmessage["sort"] ||
            $msg["forum_id"] != $dbmessage["forum_id"]) {
             $msg["sort"]=$dbmessage["sort"];
-            phorum_db_update_message($message_id, $msg);
+            $PHORUM['DB']->update_message($message_id, $msg);
             if($PHORUM['cache_messages']) {
                 phorum_api_cache_remove('message',$PHORUM["forum_id"]."-".$message_id);
             }
@@ -263,9 +263,9 @@ if (! $message["parent_id"] &&
 if (! $message["parent_id"] &&
     $origmessage["closed"] != $dbmessage["closed"]) {
     if ($dbmessage["closed"]) {
-        phorum_db_close_thread($message["thread"]);
+        $PHORUM['DB']->close_thread($message["thread"]);
     } else {
-        phorum_db_reopen_thread($message["thread"]);
+        $PHORUM['DB']->reopen_thread($message["thread"]);
     }
 }
 

@@ -16,7 +16,7 @@ if(count($_POST))
     // Force the displaycount to be an integer value.
     settype($PHORUM["mod_example_settings"]["displaycount"], "int");
 
-    if(! phorum_db_update_settings(array("mod_example_settings"=>$PHORUM["mod_example_settings"]))) {
+    if(! $PHORUM['DB']->update_settings(array("mod_example_settings"=>$PHORUM["mod_example_settings"]))) {
         $error="Database error while updating settings.";
     } else {
         echo "Settings Updated<br />";

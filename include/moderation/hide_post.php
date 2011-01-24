@@ -2,9 +2,10 @@
 
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
-$old_message = phorum_db_get_message($msgthd_id);
+$old_message = $PHORUM['DB']->get_message($msgthd_id);
 $newpost     = array("status" => PHORUM_STATUS_HIDDEN);
-$mids        = phorum_db_get_messagetree($msgthd_id, $old_message["forum_id"]);
+$mids        = $PHORUM['DB']->get_messagetree(
+                   $msgthd_id, $old_message["forum_id"]);
 
 // Make an array from the string.
 $mids_arr=  explode(",",$mids);
@@ -13,7 +14,7 @@ $mids_arr=  explode(",",$mids);
 $num_hidden = count($mids_arr);
 foreach($mids_arr as $key => $mid) {
     // setting the new status
-    phorum_db_update_message($mid, $newpost);
+    $PHORUM['DB']->update_message($mid, $newpost);
 
 }
 
@@ -46,7 +47,9 @@ foreach($mids_arr as $key => $mid) {
  *
  *         // Log the hidden thread id
  *         $PHORUM["mod_foo"]["hidden_threads"][] = $msgthd_id;
- *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+ *         $PHORUM['DB']->update_settings(array(
+ *             "mod_foo" => $PHORUM["mod_foo"]
+ *         ));
  *
  *         return $msgthd_id;
  *     }
@@ -60,7 +63,7 @@ if (isset($PHORUM["hooks"]["hide_thread"])) {
 phorum_api_thread_update_metadata($old_message['thread']);
 
 // updating the forum-stats
-phorum_db_update_forum_stats(false, "-$num_hidden");
+$PHORUM['DB']->update_forum_stats(false, "-$num_hidden");
 
 $PHORUM['DATA']['OKMSG'] =
     "$num_hidden " .

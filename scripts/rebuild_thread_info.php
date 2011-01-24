@@ -29,7 +29,7 @@ print "\nRebuilding thread info meta data ...\n";
 
 
 
-$count_total = phorum_db_interact(
+$count_total = $PHORUM['DB']->interact(
     DB_RETURN_VALUE,
     "SELECT count(*)
      FROM   {$PHORUM["message_table"]}
@@ -37,7 +37,7 @@ $count_total = phorum_db_interact(
             message_id = thread"
 );
 
-$res = phorum_db_interact(
+$res = $PHORUM['DB']->interact(
     DB_RETURN_RES,
     "SELECT message_id, forum_id
      FROM   {$PHORUM["message_table"]}
@@ -47,7 +47,7 @@ $res = phorum_db_interact(
 
 $size = strlen($count_total);
 $count = 0;
-while ($row = phorum_db_fetch_row($res, DB_RETURN_ROW)) {
+while ($row = $PHORUM['DB']->fetch_row($res, DB_RETURN_ROW)) {
     $PHORUM['forum_id'] = $row[1];
     phorum_api_thread_update_metadata($row[0]);
 

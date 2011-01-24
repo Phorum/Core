@@ -12,7 +12,7 @@ if (empty($PHORUM["use_new_folder_style"])) {
 }
 
 // Add the new setting to the database.
-phorum_db_update_settings(array('index_style' => $index_style));
+$PHORUM['DB']->update_settings(array('index_style' => $index_style));
 
 // Delete the old setting from the database.
 $upgrade_queries[] =

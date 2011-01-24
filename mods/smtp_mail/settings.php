@@ -35,7 +35,7 @@ if(count($_POST)){
                                  );
 
     if (empty($error)) {
-        phorum_db_update_settings(array(
+        $PHORUM['DB']->update_settings(array(
             "smtp_mail" => $PHORUM["smtp_mail"]
         ));
         phorum_admin_okmsg("Settings updated");

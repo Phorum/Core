@@ -51,7 +51,7 @@ function spamhurdles_db_init()
                   "queries from file " . htmlspecialchars($sqlfile);
             return false;
         }
-        $err = phorum_db_run_queries($sqlqueries);
+        $err = $PHORUM['DB']->run_queries($sqlqueries);
         if ($err) {
             print "<b>Unexpected situation on installing " .
                   "the Spam Hurdles module</b>: running the " .
@@ -61,7 +61,7 @@ function spamhurdles_db_init()
         }
 
         // Save our settings.
-        if (!phorum_db_update_settings($settings)) {
+        if (!$PHORUM['DB']->update_settings($settings)) {
             print "<b>Unexpected situation on installing " .
                   "the Spam Hurdles module</b>: updating the " .
                   "mod_spamhurdles_installed setting failed";
@@ -77,11 +77,11 @@ function spamhurdles_db_get($key)
 {
     global $PHORUM;
 
-    $record = phorum_db_interact(
+    $record = $PHORUM['DB']->interact(
         DB_RETURN_ROW,
         "SELECT data,expire_time
          FROM   {$PHORUM['spamhurdles_table']}
-         WHERE id = '" . phorum_db_interact(DB_RETURN_QUOTED, $key) . "'"
+         WHERE id = '" . $PHORUM['DB']->interact(DB_RETURN_QUOTED, $key) . "'"
     );
 
     // If a record was found, then return the data in case the record
@@ -104,13 +104,13 @@ function spamhurdles_db_put($key, $data, $ttl)
     global $PHORUM;
 
     // Try to insert a new spamhurdles record.
-    $res = phorum_db_interact(
+    $res = $PHORUM['DB']->interact(
         DB_RETURN_RES,
         "INSERT INTO {$PHORUM['spamhurdles_table']}
                 (id, data, create_time, expire_time)
          VALUES (" .
-            "'".phorum_db_interact(DB_RETURN_QUOTED, $key)."', " .
-            "'".phorum_db_interact(DB_RETURN_QUOTED, serialize($data))."', " .
+            "'".$PHORUM['DB']->interact(DB_RETURN_QUOTED, $key)."', " .
+            "'".$PHORUM['DB']->interact(DB_RETURN_QUOTED, serialize($data))."', " .
             time() . ", " .
             (time() + $ttl) .
          ")",
@@ -122,14 +122,14 @@ function spamhurdles_db_put($key, $data, $ttl)
     // means that we already have the spamhurdles record in the database.
     // So instead of inserting a record, we need to update one here.
     if (!$res) {
-        $qdata = phorum_db_interact(DB_RETURN_QUOTED, serialize($data));
-        phorum_db_interact(
+        $qdata = $PHORUM['DB']->interact(DB_RETURN_QUOTED, serialize($data));
+        $PHORUM['DB']->interact(
             DB_RETURN_RES,
             "UPDATE {$PHORUM['spamhurdles_table']}
              SET    data        = '$qdata',
                     create_time = ".time().",
                     expire_time = ".(time() + $ttl)."
-             WHERE  id = '".phorum_db_interact(DB_RETURN_QUOTED, $key)."'",
+             WHERE  id = '".$PHORUM['DB']->interact(DB_RETURN_QUOTED, $key)."'",
             NULL,
             DB_MASTERQUERY
         );
@@ -141,10 +141,10 @@ function spamhurdles_db_remove($key)
 {
     global $PHORUM;
 
-    phorum_db_interact(
+    $PHORUM['DB']->interact(
         DB_RETURN_RES,
         "DELETE FROM {$PHORUM['spamhurdles_table']}
-         WHERE  id='".phorum_db_interact(DB_RETURN_QUOTED, $key)."'",
+         WHERE  id='".$PHORUM['DB']->interact(DB_RETURN_QUOTED, $key)."'",
         NULL, DB_MASTERQUERY
     );
 }
@@ -154,7 +154,7 @@ function spamhurdles_db_remove_expired()
 {
     global $PHORUM;
 
-    phorum_db_interact(
+    $PHORUM['DB']->interact(
         DB_RETURN_RES, 
         "DELETE FROM {$PHORUM['spamhurdles_table']}
          WHERE  expire_time < " . time(),

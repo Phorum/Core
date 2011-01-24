@@ -137,7 +137,7 @@ if (!isset($PHORUM['mod_spamhurdles']['config_version']) ||
     unset($PHORUM['mod_spamhurdles']['anyhurdle']);
 
     // Save the upgraded configuration.
-    phorum_db_update_settings(array(
+    $PHORUM['DB']->update_settings(array(
         'mod_spamhurdles' => $PHORUM['mod_spamhurdles']
     ));
 }

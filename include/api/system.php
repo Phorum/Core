@@ -56,7 +56,7 @@ function phorum_api_system_get_max_upload()
     // is determined by the maximum packet size that the database can handle.
     // We asume that there's a 40% overhead in the packet, so that 60% of
     // the packet can be used for sending an uploaded file to the database.
-    $db_limit = phorum_db_maxpacketsize();
+    $db_limit = $PHORUM['DB']->maxpacketsize();
     if ($db_limit != NULL) {
         $db_limit = $db_limit * 0.6;
     }

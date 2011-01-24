@@ -49,7 +49,7 @@ $template=array(
 $vroots[] = 0;
 
 // get all current forums
-$forums = phorum_db_get_forums();
+$forums = $PHORUM['DB']->get_forums();
 
 // find the vroots
 foreach($forums as $forum){
@@ -65,18 +65,18 @@ foreach($vroots as $vroot){
     $template["parent_id"] = $vroot;
 
     // add the new announcement forum for this vroot
-    $forum_id = phorum_db_add_forum($template);
+    $forum_id = $PHORUM['DB']->add_forum($template);
 
     // activate the forum in the announcements module
     $PHORUM["mod_announcements"]["vroot"][$vroot] = $forum_id;
 
     // update messages to the new forum_id
     $sql = "update {$PHORUM['message_table']} set forum_id=$forum_id, sort=2 where forum_id=$vroot";
-    phorum_db_interact(DB_RETURN_RES, $sql);
+    $PHORUM['DB']->interact(DB_RETURN_RES, $sql);
 
     // update the new forums stats
     $PHORUM["forum_id"] = $forum_id;
-    phorum_db_update_forum_stats(true);
+    $PHORUM['DB']->update_forum_stats(true);
 
 }
 
@@ -97,7 +97,7 @@ if(!in_array("phorum_show_announcements", $PHORUM["hooks"]["after_header"]["func
 $PHORUM["mods"]["announcements"] = 1;
 
 // update module in phorum settings
-phorum_db_update_settings(
+$PHORUM['DB']->update_settings(
     array(
         "mods" => $PHORUM["mods"],
         "hooks" => $PHORUM["hooks"],

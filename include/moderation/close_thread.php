@@ -2,7 +2,7 @@
 
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
-phorum_db_close_thread($msgthd_id);
+$PHORUM['DB']->close_thread($msgthd_id);
 
 $invalidate_message_cache[] = array(
     "message_id" => $msgthd_id,
@@ -41,7 +41,9 @@ $PHORUM['DATA']["URL"]["REDIRECT"] = phorum_moderation_back_url();
  *
  *         // Log the closed thread id
  *         $PHORUM["mod_foo"]["closed_threads"][] = $msgthd_id;
- *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+ *         $PHORUM['DB']->update_settings(array(
+ *             "mod_foo" => $PHORUM["mod_foo"]
+ *         ));
  *
  *         return $msgthd_id;
  *     }

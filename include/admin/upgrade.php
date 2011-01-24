@@ -19,7 +19,7 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
-if (!phorum_db_check_connection()) {
+if (!$PHORUM['DB']->check_connection()) {
     print "A database connection could not be established. " .
           "Please edit include/config/database.php.";
     return;
@@ -119,7 +119,7 @@ if ($step == 0 && !isset($_POST["sanity_checks_done"]))
     ?>
     <form method="post" action="<?php print $_SERVER["PHP_SELF"] ?>">
     <input type="hidden" name="module" value="upgrade" />
-	<input type="hidden" name="is_module_upgrade" value="<?php print $is_module_upgrade;?>" />    
+    <input type="hidden" name="is_module_upgrade" value="<?php print $is_module_upgrade;?>" />    
     <?php
     if ($got_crit) {
         ?>

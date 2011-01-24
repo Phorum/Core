@@ -23,7 +23,7 @@ define("PHORUM_INSTALL", 1);
 require_once PHORUM_PATH.'/include/api/user.php';
 require_once PHORUM_PATH.'/include/api/thread.php';
 
-if (!phorum_db_check_connection()){
+if (!$PHORUM['DB']->check_connection()){
     phorum_admin_error(
         "A database connection could not be established.<br/>" .
         "Please check the database configuration in include/config/database.php."
@@ -233,8 +233,8 @@ if(count($_POST)){
                     $http_path="http://".$_SERVER['SERVER_NAME'];
                     $http_path.=$_SERVER['PHP_SELF'];
                 }
-                phorum_db_update_settings(array("http_path"=>dirname($http_path)));
-                phorum_db_update_settings(array("system_email_from_address"=>$_POST["admin_email"]));
+                $PHORUM['DB']->update_settings(array("http_path"=>dirname($http_path)));
+                $PHORUM['DB']->update_settings(array("system_email_from_address"=>$_POST["admin_email"]));
 
                 $step = "modules";
 
@@ -295,7 +295,7 @@ switch ($step){
     case "create_tables":
         // ok, fresh install
 
-        $err=phorum_db_create_tables();
+        $err=$PHORUM['DB']->create_tables();
 
         if($err){
             $message="Could not create tables, database said:<blockquote>$err</blockquote>";
@@ -451,7 +451,7 @@ switch ($step){
                 $settings['file_fileinfo_ext']=0;
             }
             
-            phorum_db_update_settings($settings);
+            $PHORUM['DB']->update_settings($settings);
 
             // posting forum and test-message
 
@@ -481,7 +481,7 @@ switch ($step){
             "forum_path" => 'a:2:{i:0;s:8:"Phorum 5";i:1;s:13:"Announcements";}'
             );
 
-            phorum_db_add_forum($forum);
+            $PHORUM['DB']->add_forum($forum);
 
             // create a test forum
             $forum=array(
@@ -491,7 +491,7 @@ switch ($step){
             "template"=>            $default_forum_options['template'],
             "folder_flag"=>0,
             "parent_id"=>0,
-  			"list_length_flat"=>    $default_forum_options['list_length_flat'],
+            "list_length_flat"=>    $default_forum_options['list_length_flat'],
             "list_length_threaded"=>$default_forum_options['list_length_threaded'],
             "read_length"=>         $default_forum_options['read_length'],
             "moderation"=>          $default_forum_options['moderation'],
@@ -509,7 +509,7 @@ switch ($step){
             "forum_path" => 'a:2:{i:0;s:8:"Phorum 5";i:2;s:10:"Test Forum";}'
             );
 
-            $PHORUM['forum_id']=phorum_db_add_forum($forum);
+            $PHORUM['forum_id']=$PHORUM['DB']->add_forum($forum);
             $PHORUM['vroot']=0;
 
             // create a test post
@@ -530,11 +530,11 @@ switch ($step){
             "body" => "This is a test message. You can delete it after installation using the moderation tools. These tools will be visible in this screen if you log in as the administrator user that you created during install.\n\nPhorum 5 Team"
             );
 
-            phorum_db_post_message($test_message);
+            $PHORUM['DB']->post_message($test_message);
 
             phorum_api_thread_update_metadata($test_message["thread"]);
 
-            phorum_db_update_forum_stats(true);
+            $PHORUM['DB']->update_forum_stats(true);
 
         }
 
@@ -568,8 +568,8 @@ switch ($step){
 
     case "done":
 
-    	$cont_url = phorum_admin_build_url('');
-        phorum_db_update_settings( array("installed"=>1) );
+        $cont_url = phorum_admin_build_url('');
+        $PHORUM['DB']->update_settings( array("installed"=>1) );
         echo "The setup is complete.  You can now go to <a href=\"$cont_url\">the admin</a> and start making Phorum all your own.<br /><br /><strong>Here are some things you will want to look at:</strong><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=settings\">The General Settings page</a><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=mods\">Pre-installed modules</a><br /><br /><a href=\"docs/faq.txt\">The FAQ</a><br /><br /><a href=\"docs/performance.txt\">How to get peak performance from Phorum</a><br /><br /><strong>For developers:</strong><br /><br /><a href=\"docs/creating_mods.txt\">Module Creation</a><br /><br /><a href=\"docs/permissions.txt\">How Phorum permisssions work</a><br /><br /><a href=\"docs/CODING-STANDARDS\">The Phorum Team's codings standards</a>";
 
         break;

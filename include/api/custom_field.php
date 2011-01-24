@@ -263,7 +263,7 @@ function phorum_api_custom_field_configure($field)
 
     // Update the custom fields information in the settings.
     $PHORUM['PROFILE_FIELDS'][$field['type']][$field['id']] = $field;
-    phorum_db_update_settings(array(
+    $PHORUM['DB']->update_settings(array(
         'PROFILE_FIELDS' => $PHORUM['PROFILE_FIELDS']
     ));
 
@@ -354,6 +354,8 @@ function phorum_api_custom_field_byname($name, $type)
  */
 function phorum_api_custom_field_delete($id, $type, $hard_delete = FALSE)
 {
+    global $PHORUM;
+
     settype($id, "int");
     settype($hard_delete, "bool");
 
@@ -380,7 +382,7 @@ function phorum_api_custom_field_delete($id, $type, $hard_delete = FALSE)
             $GLOBALS["PHORUM"]["PROFILE_FIELDS"][$type][$id]["deleted"] = TRUE;
         }
 
-        phorum_db_update_settings(array(
+        $PHORUM['DB']->update_settings(array(
             'PROFILE_FIELDS' => $GLOBALS["PHORUM"]['PROFILE_FIELDS']
         ));
     }
@@ -409,6 +411,8 @@ function phorum_api_custom_field_delete($id, $type, $hard_delete = FALSE)
  */
 function phorum_api_custom_field_restore($id, $type)
 {
+    global $PHORUM;
+
     settype($id, "int");
 
     if ($type === NULL) trigger_error(
@@ -431,7 +435,7 @@ function phorum_api_custom_field_restore($id, $type)
         if (isset($f['deleted']) && $f['deleted']) $f['deleted'] = 0;
         $GLOBALS["PHORUM"]["PROFILE_FIELDS"][$type][$id] = $f;
 
-        phorum_db_update_settings(array(
+        $PHORUM['DB']->update_settings(array(
             'PROFILE_FIELDS' => $GLOBALS["PHORUM"]['PROFILE_FIELDS']
         ));
     }
@@ -518,7 +522,7 @@ function phorum_api_custom_field_checkconfig()
         }
 
     // Save the custom field settings to the database.
-    phorum_db_update_settings(array(
+    $PHORUM['DB']->update_settings(array(
         'PROFILE_FIELDS' => $PHORUM['PROFILE_FIELDS']
     ));
 }
@@ -566,7 +570,7 @@ function phorum_api_custom_field_apply($type = NULL, $data_array, $raw_data = FA
         return $data_array;
     }
 
-    $custom_fields = phorum_db_get_custom_fields(
+    $custom_fields = $PHORUM['DB']->get_custom_fields(
         $type,
         array_keys($data_array),
         $raw_data

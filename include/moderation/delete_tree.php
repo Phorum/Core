@@ -29,7 +29,7 @@ if (count($_GET) && empty($_POST["thread"]))
     );
 }
 
-$message = phorum_db_get_message($msgthd_id);
+$message = $PHORUM['DB']->get_message($msgthd_id);
 
 $nummsgs = 0;
 
@@ -42,29 +42,29 @@ if (isset($PHORUM["hooks"]["before_delete"]))
 if(!$delete_handled) {
 
     // Delete the message and all its replies.
-    $msg_ids = phorum_db_delete_message($msgthd_id, PHORUM_DELETE_TREE);
+    $msg_ids = $PHORUM['DB']->delete_message($msgthd_id, PHORUM_DELETE_TREE);
 
     // Cleanup the attachments for all deleted messages.
     require_once PHORUM_PATH . '/include/api/file.php';
     foreach($msg_ids as $id){
-        $files=phorum_db_get_message_file_list($id);
+        $files=$PHORUM['DB']->get_message_file_list($id);
         foreach($files as $file_id=>$data){
             phorum_api_file_delete($file_id);
         }
     }
 
     // Check if we have moved threads to delete.
-    // We unset the forum id, so phorum_db_get_messages()
+    // We unset the forum id, so $PHORUM['DB']->get_messages()
     // will return messages with the same thread id in
     // other forums as well (those are the move notifications).
     $forum_id = $PHORUM["forum_id"];
     $PHORUM["forum_id"] = 0;
-    $moved = phorum_db_get_messages($msgthd_id);
+    $moved = $PHORUM['DB']->get_messages($msgthd_id);
 
     foreach ($moved as $id => $data) {
         if (!empty($data["moved"])) {
             $PHORUM["forum_id"] = $data['forum_id'];
-            phorum_db_delete_message($id, PHORUM_DELETE_MESSAGE);
+            $PHORUM['DB']->delete_message($id, PHORUM_DELETE_MESSAGE);
         }
     }
     $PHORUM["forum_id"] = $forum_id;

@@ -29,7 +29,7 @@ if (! ini_get('safe_mode')) {
 }
 
 print "\nCounting the posts for all users ...\n";
-$postcounts = phorum_db_interact(
+$postcounts = $PHORUM['DB']->interact(
     DB_RETURN_ROWS,
     "SELECT user_id, count(*)
      FROM   {$PHORUM["message_table"]}

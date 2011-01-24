@@ -67,7 +67,9 @@ if(empty($PHORUM["args"][1])) {
     } else {
       $PHORUM["DATA"]["PRINTVIEW"]=0;
     }
-} else{
+}
+else
+{
     if(!is_numeric($PHORUM["args"][2])) {
         $dest_url="";
         $newervar=(int)$PHORUM["args"][1];
@@ -76,11 +78,11 @@ if(empty($PHORUM["args"][1])) {
         switch($PHORUM["args"][2])
         {
             case "newer":
-                $thread = phorum_db_get_neighbour_thread($newervar, "newer");
+                $thread = $PHORUM['DB']->get_neighbour_thread($newervar, "newer");
                 break;
 
             case "older":
-                $thread = phorum_db_get_neighbour_thread($newervar, "older");
+                $thread = $PHORUM['DB']->get_neighbour_thread($newervar, "older");
                 break;
 
             case "markthreadread":
@@ -109,7 +111,7 @@ if(empty($PHORUM["args"][1])) {
 
                 if ($new_message) {
                     if ($PHORUM['threaded_read'] == 0) { // get new page
-                        $new_page=ceil(phorum_db_get_message_index($thread,$new_message)/$PHORUM['read_length']);
+                        $new_page=ceil($PHORUM['DB']->get_message_index($thread,$new_message)/$PHORUM['read_length']);
                         $dest_url=phorum_api_url(PHORUM_READ_URL,$thread,$new_message,"page=$new_page");
                     } else { // for threaded
                         $dest_url=phorum_api_url(PHORUM_READ_URL,$thread,$new_message);
@@ -147,7 +149,7 @@ if(!$PHORUM["threaded_read"]) {
         is_numeric($PHORUM["args"]["page"]) && $PHORUM["args"]["page"] > 0) {
         $page=(int)$PHORUM["args"]["page"];
     } elseif($message_id != $thread) {
-        $page=ceil(phorum_db_get_message_index($thread,$message_id)/$PHORUM['read_length']);
+        $page=ceil($PHORUM['DB']->get_message_index($thread,$message_id)/$PHORUM['read_length']);
     }
     if (empty($page)) {
         $page=1;
@@ -176,7 +178,7 @@ if($PHORUM['cache_messages'] &&
 
     if ($message_index == null) {
         // nothing in the cache, get it from the database and store it in the cache
-        $data[$thread] = phorum_db_get_message($thread,"message_id");
+        $data[$thread] = $PHORUM['DB']->get_message($thread,"message_id");
 
         // Check if we really have requested the thread.
         // If not, then we redirect back to the message list.
@@ -267,7 +269,7 @@ if($PHORUM['cache_messages'] &&
 
         if($msg_not_in_cache) {
 
-            $db_messages = phorum_db_get_message($db_messages,'message_id');
+            $db_messages = $PHORUM['DB']->get_message($db_messages,'message_id');
             // store the found messages in the cache
 
             foreach($db_messages as $mid => $message) {
@@ -291,11 +293,11 @@ if($PHORUM['cache_messages'] &&
 
 } else {
     // Get the thread
-    $data = phorum_db_get_messages($thread,$page);
+    $data = $PHORUM['DB']->get_messages($thread,$page);
 }
 
 if($page>1 && !isset($data[$thread])){
-    $first_message = phorum_db_get_message($thread);
+    $first_message = $PHORUM['DB']->get_message($thread);
     $data["users"][]=$first_message["user_id"];
     $data[$first_message["message_id"]] = $first_message;
 }
@@ -418,7 +420,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         }
     }
 
-    // fetch_user_ids filled from phorum_db_get_messages
+    // fetch_user_ids filled from $PHORUM['DB']->get_messages
     if(isset($fetch_user_ids) && count($fetch_user_ids)){
         $user_info=phorum_api_user_get($fetch_user_ids);
     }
@@ -782,7 +784,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
             $inc_thread_id = $thread;
         }
 
-        phorum_db_increment_viewcount($message_id, $inc_thread_id);
+        $PHORUM['DB']->increment_viewcount($message_id, $inc_thread_id);
     }
 
     // format messages
@@ -902,8 +904,9 @@ else
 // find out if the given thread has been moved to another forum
 function phorum_check_moved_message($thread)
 {
+    global $PHORUM;
     $forum_id=$GLOBALS['PHORUM']['forum_id'];
-    $message=phorum_db_get_message($thread,'message_id',true);
+    $message=$PHORUM['DB']->get_message($thread,'message_id',true);
 
     if(!empty($message) && $message['forum_id'] != $forum_id) {
         $ret=$message['forum_id'];

@@ -4,17 +4,17 @@ if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
 $PHORUM['DATA']['OKMSG']="1 ".$PHORUM["DATA"]['LANG']['MsgApprovedOk'];
 
-$old_message = phorum_db_get_message($msgthd_id);
+$old_message = $PHORUM['DB']->get_message($msgthd_id);
 $newpost=array("status"=>PHORUM_STATUS_APPROVED);
 
 // setting the new status
-phorum_db_update_message($msgthd_id, $newpost);
+$PHORUM['DB']->update_message($msgthd_id, $newpost);
 
 // updating the thread-info
 phorum_api_thread_update_metadata($old_message['thread']);
 
 // updating the forum-stats
-phorum_db_update_forum_stats(false, 1, $old_message["datestamp"]);
+$PHORUM['DB']->update_forum_stats(false, 1, $old_message["datestamp"]);
 
 /*
  * [hook]
@@ -56,7 +56,7 @@ phorum_db_update_forum_stats(false, 1, $old_message["datestamp"]);
  *             $data[0]["subject"],
  *             $PHORUM["DATA"]["LANG"]["mod_foo"]["MessageApprovedBody"]
  *             );
- *         phorum_db_pm_send(
+ *         $PHORUM['DB']->pm_send(
  *             $PHORUM["DATA"]["LANG"]["mod_foo"]["MessageApprovedSubject"],
  *             $pm_message,
  *             $data[0]["user_id"]

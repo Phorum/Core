@@ -76,7 +76,7 @@ elseif (!empty($_POST["delete"]))
 // Display the files for the current user.
 // ----------------------------------------------------------------------
 
-$files = phorum_db_get_user_file_list($PHORUM["user"]["user_id"]);
+$files = $PHORUM['DB']->get_user_file_list($PHORUM["user"]["user_id"]);
 
 $total_size=0;
 

@@ -96,7 +96,7 @@ $threads_only = phorum_ajax_getarg('threads_only', 'boolean', 0);
 $format       = phorum_ajax_getarg('format',       'string',  'html');
 
 // Retrieve the recent messages.
-$recent = phorum_db_get_recent_messages(
+$recent = $PHORUM['DB']->get_recent_messages(
     $count, 0, $forum_id, $thread_id, $threads_only
 );
 
@@ -123,7 +123,7 @@ if (isset($PHORUM["hooks"]["list"])) {
 $allowed_forums = phorum_api_user_check_access(
   PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_LIST
 );
-$forums = phorum_db_get_forums($allowed_forums);
+$forums = $PHORUM['DB']->get_forums($allowed_forums);
 foreach ($forums as $id => $forum) {
   $forums[$id]['url'] = phorum_get_url(PHORUM_LIST_URL, $forum['forum_id']);
 }

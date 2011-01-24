@@ -124,7 +124,7 @@ if (!count($user_ids))
     die ("No users found that can be used for posting.\n");
 
 // Retrieve forums to post in.
-$forums = phorum_db_get_forums(0, NULL, 0);
+$forums = $PHORUM['DB']->get_forums(0, NULL, 0);
 $forum_ids = array();
 foreach ($forums as $id => $forum) {
     if ($forum["folder_flag"]) continue;
@@ -175,8 +175,8 @@ if ($tcount)
                 "sort"      => PHORUM_SORT_DEFAULT,
                 "closed"    => 0,
             );
-             
-            phorum_db_post_message($msg);
+
+            $PHORUM['DB']->post_message($msg);
 
             $thread = $msg["thread"];
             $treemsgs[] = $msg["message_id"];
@@ -193,7 +193,7 @@ if ($tcount)
 
     foreach ($forum_ids as $id) {
         $PHORUM["forum_id"] = $id;
-        phorum_db_update_forum_stats(true);
+        $PHORUM['DB']->update_forum_stats(true);
     }
 }
 
@@ -201,14 +201,14 @@ if ($ncount)
 {
     print "\nSetting $ncount newflags for " . count($users) . " users:\n\n";
 
-    $recent = phorum_db_get_recent_messages($ncount);
+    $recent = $PHORUM['DB']->get_recent_messages($ncount);
 
     $markread = array();
     foreach ($recent as $id => $msg)
     {
         if($id == 'users') {
-    		continue;
-    	}
+        continue;
+      }
         $markread[] = array(
             "id"    => $id,
             "forum" => $msg["forum_id"]

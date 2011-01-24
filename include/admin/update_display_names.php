@@ -63,11 +63,11 @@ else
         $batch = empty($_REQUEST["batch"]) ? 0 : $_REQUEST["batch"];
 
         // Retrieve users for this batch.
-        $res = phorum_db_user_get_all($batch * $batchsize, $batchsize);
+        $res = $PHORUM['DB']->user_get_all($batch * $batchsize, $batchsize);
 
         // Handle batch.
         $updated = 0;
-        while ($user = phorum_db_fetch_row($res, DB_RETURN_ASSOC))
+        while ($user = $PHORUM['DB']->fetch_row($res, DB_RETURN_ASSOC))
         {
             $updated ++;
 
@@ -79,7 +79,7 @@ else
             // ... but still we run the name updates here, so inconsitencies
             // are flattened out.
             $user = phorum_api_user_get($user["user_id"]);
-            phorum_db_user_display_name_updates(array(
+            $PHORUM['DB']->user_display_name_updates(array(
                 "user_id"      => $user["user_id"],
                 "display_name" => $user["display_name"]
             ));
@@ -99,7 +99,7 @@ else
     // Retrieve user count.
     $user_count = isset($_REQUEST['user_count']) 
                 ? (int) $_REQUEST['user_count']
-                : phorum_db_user_count();
+                : $PHORUM['DB']->user_count();
 
     $perc = floor((($batch+1) * $batchsize) / $user_count * 100);
     if ($perc > 100) $perc = 100; ?>

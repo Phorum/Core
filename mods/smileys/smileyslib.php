@@ -150,6 +150,8 @@ function phorum_mod_smileys_available()
  */
 function phorum_mod_smileys_store($modinfo)
 {
+    global $PHORUM;
+
     // Get the current list of available smiley images.
     $available_smileys = phorum_mod_smileys_available();
 
@@ -221,7 +223,7 @@ function phorum_mod_smileys_store($modinfo)
                              $modinfo["replacements"]["body"] != NULL;
 
     // Store the module settings in the database.
-    if (! phorum_db_update_settings(array("mod_smileys" => $modinfo))) {
+    if (! $PHORUM['DB']->update_settings(array("mod_smileys" => $modinfo))) {
         return array(NULL, "Saving the smiley settings to the database failed.");
     } else {
         return array($modinfo, "The smiley settings were successfully saved.");

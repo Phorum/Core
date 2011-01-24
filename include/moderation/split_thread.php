@@ -14,7 +14,7 @@ $PHORUM['DATA']['BREADCRUMBS'][] = array(
 
 $PHORUM['DATA']['URL']["ACTION"] = phorum_api_url(PHORUM_MODERATION_ACTION_URL);
 
-$message = phorum_db_get_message($msgthd_id);
+$message = $PHORUM['DB']->get_message($msgthd_id);
 
 $new_subject = preg_replace('/^Re:\s*/', '', $message['subject']);
 

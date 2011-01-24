@@ -26,7 +26,7 @@ $forums = phorum_api_forums_get();
 
 // Find out which forums already have a moderator group available.
 $forum_has_moderator = array();
-$groups=phorum_db_get_groups();
+$groups=$PHORUM['DB']->get_groups();
 foreach ($groups as $id => $group) {
     foreach ($group['permissions'] as $forum_id => $permission) {
         if ($permission & PHORUM_USER_ALLOW_MODERATE_MESSAGES) {
@@ -50,10 +50,10 @@ foreach ($forums as $forum_id => $fdata)
     array_shift($path);
     $name = implode('::',$path);
 
-    $group_id = phorum_db_add_group("Moderate $name");
+    $group_id = $PHORUM['DB']->add_group("Moderate $name");
     if (!$group_id) die("Error adding group \"$name\".\n");
 
-    phorum_db_update_group(array(
+    $PHORUM['DB']->update_group(array(
         'group_id' => $group_id,
         'open'     => 0,
         'permissions' => array(

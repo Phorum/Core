@@ -45,7 +45,7 @@ if(empty($thread)) {
     exit();
 }
 
-$message=phorum_db_get_message($thread);
+$message=$PHORUM['DB']->get_message($thread);
 
 # We stepped away from using "remove" as the URL parameter to stop
 # following a certain thread, because it got blacklisted by several

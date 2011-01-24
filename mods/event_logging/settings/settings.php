@@ -17,7 +17,7 @@ if (count($_POST))
         $settings["do_log_$type"] = isset($_POST["do_log_$type"])?1:0;
     }
 
-    phorum_db_update_settings(array("mod_event_logging" => $settings));
+    $PHORUM['DB']->update_settings(array("mod_event_logging" => $settings));
     phorum_admin_okmsg("The settings were successfully saved.");
 }
 

@@ -39,7 +39,7 @@ if (count($_POST) && $_POST["string"]!="")
 {
     if ($_POST["curr"]!="NEW")
     {
-        $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],$_POST['comments'],$_POST['curr']);
+        $ret=$PHORUM['DB']->mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],$_POST['comments'],$_POST['curr']);
         if(isset($PHORUM['cache_banlists']) && $PHORUM['cache_banlists'])
         {
             // we need to increase the version in that case to
@@ -48,14 +48,14 @@ if (count($_POST) && $_POST["string"]!="")
             // work with vroots
             if($_POST['forum_id'] == 0) {
                 $PHORUM['banlist_version'] = $PHORUM['banlist_version'] + 1;
-                phorum_db_update_settings(array('banlist_version'=>$PHORUM['banlist_version']));
+                $PHORUM['DB']->update_settings(array('banlist_version'=>$PHORUM['banlist_version']));
             } else {
                 // remove the one for that forum
                 phorum_api_cache_remove('banlist',$_POST['forum_id']);
             }
         }
     } else {
-        $ret=phorum_db_mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],$_POST['comments'],0);
+        $ret=$PHORUM['DB']->mod_banlists($_POST['type'],$_POST['pcre'],$_POST['string'],$_POST['forum_id'],$_POST['comments'],0);
     }
 
     if(!$ret){
@@ -66,7 +66,7 @@ if (count($_POST) && $_POST["string"]!="")
 }
 
 if(isset($_POST["curr"]) && isset($_POST["delete"]) && $_POST["confirm"]=="Yes"){
-    phorum_db_del_banitem((int)$_POST['curr']);
+    $PHORUM['DB']->del_banitem((int)$_POST['curr']);
     phorum_admin_okmsg("Ban Item Deleted");
 }
 
@@ -75,7 +75,7 @@ if(isset($_GET["curr"])){
 }
 
 if($curr!="NEW"){
-    extract(phorum_db_get_banitem($curr));
+    extract($PHORUM['DB']->get_banitem($curr));
     $title="Edit Ban Item";
     $submit="Update";
 } else {
@@ -204,7 +204,7 @@ if($_GET["curr"] && $_GET["delete"]){
 
     if($curr=="NEW"){
 
-        $PHORUM['banlists']=phorum_db_get_banlists(true);
+        $PHORUM['banlists']=$PHORUM['DB']->get_banlists(true);
         unset($PHORUM['banlists'][PHORUM_BAD_WORDS]);
 
         echo "<hr class=\"PhorumAdminHR\" />";
@@ -225,9 +225,8 @@ if($_GET["curr"] && $_GET["delete"]){
             foreach($PHORUM["banlists"] as $type => $content){
                 $t_last_string = '';
                 foreach($content as $key => $item){
-                	$edit_url = phorum_admin_build_url(array('module=banlist','edit=1',"curr=$key"));
+                    $edit_url = phorum_admin_build_url(array('module=banlist','edit=1',"curr=$key"));
                     $delete_url = phorum_admin_build_url(array('module=banlist','delete=1',"curr=$key"));
-                	
                     $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
                     echo "<tr>\n";
                     echo "    <td class=\"".$ta_class."\"".($item["string"] == $t_last_string ? " style=\"color:red;\"" : "").">".htmlspecialchars($item['string'])."</td>\n";

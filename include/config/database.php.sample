@@ -132,7 +132,7 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
 
 * mysql_php_extension (MySQL-only option):
 
-  The MySQL database layer has multiple extesions for supporting
+  The MySQL database layer has multiple extensions for supporting
   various MySQL connection types. Options are:
   NULL     : Automatically detect the extension to use.
   "mysql"  : Use the PHP mysql extension (php.ini needs a line like
@@ -142,7 +142,7 @@ DETAILED CONFIGURATION FIELD DESCRIPTION
   "mysqli_replication" : Use the PHP mysqli extension and enable
              master/slave functionality (see below with "slaves")
 
-* slaves (for the mysql_php_extension option "mysqli_replication-only"):
+* slaves (only for the mysql_php_extension option "mysqli_replication"):
 
   This array can hold a number of slave-servers to use in master/slave mode.
   All write queries will go to the default server above, which is the master-

@@ -29,7 +29,7 @@ if (count($_GET) && empty($_POST["thread"]))
     );
 }
 
-$message = phorum_db_get_message($msgthd_id);
+$message = $PHORUM['DB']->get_message($msgthd_id);
 
 /*
  * [hook]
@@ -82,7 +82,9 @@ $message = phorum_db_get_message($msgthd_id);
  *         // Store the message data in the module's settings for
  *         // future use.
  *         $PHORUM["mod_foo"]["deleted_messages"][$msgthd_id] = $message;
- *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+ *         $PHORUM['DB']->update_settings(array(
+ *             "mod_foo" => $PHORUM["mod_foo"]
+ *         ));
  *
  *         return $data;
  *     }
@@ -96,11 +98,11 @@ if (isset($PHORUM["hooks"]["before_delete"]))
 if (!$delete_handled) {
 
     // Delete the message from the database.
-    phorum_db_delete_message($msgthd_id, PHORUM_DELETE_MESSAGE);
+    $PHORUM['DB']->delete_message($msgthd_id, PHORUM_DELETE_MESSAGE);
 
     // Delete the message attachments from the database.
     require_once PHORUM_PATH . '/include/api/file.php';
-    $files=phorum_db_get_message_file_list($msgthd_id);
+    $files=$PHORUM['DB']->get_message_file_list($msgthd_id);
     foreach($files as $file_id=>$data) {
         phorum_api_file_delete($file_id);
     }
@@ -138,7 +140,9 @@ if (!$delete_handled) {
  *         foreach ($msgthd_ids as $msgthd_id) {
  *             $PHORUM["mod_foo"]["deleted_messages"][] = $msgthd_id;
  *         }
- *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+ *         $PHORUM['DB']->update_settings(array(
+ *             "mod_foo" => $PHORUM["mod_foo"]
+ *         ));
  *
  *         return $msgthd_ids;
  *     }

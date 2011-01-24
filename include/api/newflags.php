@@ -113,7 +113,7 @@ function phorum_api_newflags_by_forum($forum)
     // If a forum_id was provided as the argument, then load the forum info.
     if (!is_array($forum)) {
         settype($forum, 'int');
-        $forums = phorum_db_get_forums($forum);
+        $forums = $PHORUM['DB']->get_forums($forum);
         if (empty($forums)) trigger_error(
             'phorum_api_newflags_by_forum(): unknown forum_id ' . $forum
         );
@@ -155,7 +155,7 @@ function phorum_api_newflags_by_forum($forum)
     if ($PHORUM['user']['newflags'][$forum_id] === NULL)
     {
         $PHORUM['user']['newflags'][$forum_id] =
-            phorum_db_newflag_get_flags($forum_id);
+            $PHORUM['DB']->newflag_get_flags($forum_id);
 
         if ($PHORUM['cache_newflags']) {
             phorum_api_cache_put(
@@ -233,7 +233,7 @@ function phorum_api_newflags_apply_to_forums($forums, $mode = PHORUM_NEWFLAGS_CO
     // Count new threads and messages for each forum.
     if ($mode == PHORUM_NEWFLAGS_COUNT)
     {
-        $new_info = phorum_db_newflag_count($forum_ids);
+        $new_info = $PHORUM['DB']->newflag_count($forum_ids);
         foreach ($forum_ids as $forum_id)
         {
             $forum = $forums[$forum_id];
@@ -259,7 +259,7 @@ function phorum_api_newflags_apply_to_forums($forums, $mode = PHORUM_NEWFLAGS_CO
     // Only check if there are any new messages for each forum.
     elseif ($mode == PHORUM_NEWFLAGS_CHECK)
     {
-        $new_info = phorum_db_newflag_check($forum_ids);
+        $new_info = $PHORUM['DB']->newflag_check($forum_ids);
 
         foreach ($forum_ids as $forum_id)
         {
@@ -324,7 +324,7 @@ function phorum_api_newflags_apply_to_messages($messages, $message_type = PHORUM
     if (!$PHORUM['user']['user_id']) return $messages;
 
     // Fetch info about the available forums.
-    $forums = phorum_db_get_forums(NULL, NULL, $PHORUM['vroot']);
+    $forums = $PHORUM['DB']->get_forums(NULL, NULL, $PHORUM['vroot']);
 
     foreach ($messages as $id => $message)
     {
@@ -398,8 +398,10 @@ function phorum_api_newflags_apply_to_messages($messages, $message_type = PHORUM
  */
 function phorum_api_newflags_firstunread($thread_id)
 {
+    global $PHORUM;
+
     // Lookup the thread's information.
-    $thread = phorum_db_get_message($thread_id);
+    $thread = $PHORUM['DB']->get_message($thread_id);
     if (!$thread) return 0;
 
     // Retrieve the newflags for the forum.
@@ -472,7 +474,7 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
             {
                 $forum_id = $forum['forum_id'];
                 $PHORUM['forum_id'] = $forum_id;
-                phorum_db_newflag_allread($forum_id);
+                $PHORUM['DB']->newflag_allread($forum_id);
                 $processed_forum_ids[$forum_id] = $forum_id;
             }
         }
@@ -483,7 +485,7 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
         foreach ($markread_ids as $forum_id)
         {
             $PHORUM['forum_id'] = $forum_id;
-            phorum_db_newflag_allread($forum_id);
+            $PHORUM['DB']->newflag_allread($forum_id);
             $processed_forum_ids[$forum_id] = $forum_id;
         }
     }
@@ -491,7 +493,8 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
     elseif ($mode == PHORUM_MARKREAD_THREADS)
     {
         // Retrieve the data for the threads to mark read.
-        $threads = phorum_db_get_message($markread_ids, 'message_id', TRUE);
+        $threads = $PHORUM['DB']->get_message(
+            $markread_ids, 'message_id', TRUE);
 
         // Process the threads.
         $markread = array();
@@ -531,14 +534,14 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
         }
 
         // Mark the messages in the thread(s) as read.
-        phorum_db_newflag_add_read($markread);
+        $PHORUM['DB']->newflag_add_read($markread);
     }
 
     // Handle marking messages read.
     elseif ($mode == PHORUM_MARKREAD_MESSAGES)
     {
         // Retrieve the data for the messages to mark read.
-        $messages = phorum_db_get_message($markread_ids);
+        $messages = $PHORUM['DB']->get_message($markread_ids);
 
         // Process the messages.
         $markread = array();
@@ -554,7 +557,7 @@ function phorum_api_newflags_markread($markread_ids, $mode = PHORUM_MARKREAD_MES
         }
 
         // Mark the messages read in the database.
-        phorum_db_newflag_add_read($markread);
+        $PHORUM['DB']->newflag_add_read($markread);
     }
 
     // Invalidate cached forum newflags data.

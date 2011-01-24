@@ -453,7 +453,7 @@ if (!$hook_info['handled'] && isset($_POST['username']))
          *             $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["login_failure_count"] = 1;
          *             $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] = $curr_time;
          *         }
-         *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+         *         $PHORUM['DB']->update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
          *
          *         return $data;
          *     }

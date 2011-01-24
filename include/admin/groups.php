@@ -30,7 +30,7 @@ if (count($_POST))
     {
         $count=0;
         foreach($_POST['deleteIds'] as $id => $deluid) {
-            phorum_db_delete_group($deluid);
+            $PHORUM['DB']->delete_group($deluid);
             $count++;
         }
         echo "$count Group(s) deleted.<br />";
@@ -42,7 +42,7 @@ if (count($_POST))
             $group_id=0;
             $_POST["group_name"]=trim($_POST["group_name"]);
             if(!empty($_POST["group_name"])){
-                $group_id=phorum_db_add_group($_POST["group_name"]);
+                $group_id=$PHORUM['DB']->add_group($_POST["group_name"]);
             }
             if(!$group_id){
                 echo "Error adding group<br />";
@@ -54,7 +54,7 @@ if (count($_POST))
         case "edit":
             $group = array("group_id" => $_POST["group_id"], "name" => $_POST["name"], "open" => $_POST["open"]);
 
-            if(phorum_db_update_group($group)){
+            if($PHORUM['DB']->update_group($group)){
                 echo "Group Saved";
             } else {
                 echo "Error Saving Group Name";
@@ -103,10 +103,10 @@ if (count($_POST))
             unset($group["new_forum"]);
             unset($group["new_permissions"]);
 
-            if(phorum_db_update_group($group)){
+            if($PHORUM['DB']->update_group($group)){
                 // clearing user-cache if needed
                 if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
-                  $group_members=phorum_db_get_group_members($_POST["group_id"]);
+                  $group_members=$PHORUM['DB']->get_group_members($_POST["group_id"]);
 
                   if(count($group_members)) {
                     foreach($group_members as $user_id => $user_status) {
@@ -129,7 +129,7 @@ if($error){
 }
 
 require_once './include/admin/PhorumInputForm.php';
-$groups=phorum_db_get_groups(0, TRUE);
+$groups=$PHORUM['DB']->get_groups(0, TRUE);
 
 /**
  * @todo Add PHORUM_FLAG_FORUMS when the phorum_get_forum_info() call
@@ -256,7 +256,7 @@ if(empty($_REQUEST["edit"])){
     echo "</tr>\n";
 
     foreach($groups as $group){
-    	$edit_url = phorum_admin_build_url(array('module=groups','edit=1','group_id='.$group['group_id']));
+      $edit_url = phorum_admin_build_url(array('module=groups','edit=1','group_id='.$group['group_id']));
         echo "<tr>\n";
         echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$edit_url\">".htmlspecialchars($group['name'])."</a></td>\n";
         echo "    <td class=\"PhorumAdminTableRow\">Delete? <input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$group['group_id']}\"></td>\n";

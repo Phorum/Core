@@ -28,7 +28,7 @@ if (empty($moveto)) {
 }
 
 // Retrieve the thread to move.
-$message = phorum_db_get_message($msgthd_id);
+$message = $PHORUM['DB']->get_message($msgthd_id);
 if (!$message || $message['parent_id']) trigger_error(
     "Moderate move: the message to move ($msgthd_id) is not a " .
     "thread starter message", E_USER_ERROR
@@ -39,21 +39,21 @@ if (!$message || $message['parent_id']) trigger_error(
 // message any longer as the thread has reappeared on its original location
 $temp_forum_id = $PHORUM['forum_id'];
 $PHORUM['forum_id'] = $moveto;
-$check_messages = phorum_db_get_messages($msgthd_id);
+$check_messages = $PHORUM['DB']->get_messages($msgthd_id);
 unset($check_messages['users']);
 
 // ok, we found exactly one message of this thread in the target forum
 if (is_array($check_messages) && count($check_messages) == 1) {
     // ... going to delete it
     $tmp_message = array_shift($check_messages);
-    phorum_db_delete_message($tmp_message['message_id']);
+    $PHORUM['DB']->delete_message($tmp_message['message_id']);
 }
 
 // Restore the original forum_id.
 $PHORUM['forum_id'] = $temp_forum_id;
 
 // Handle moving the thread to the target forum.
-phorum_db_move_thread($msgthd_id, $moveto);
+$PHORUM['DB']->move_thread($msgthd_id, $moveto);
 
 // Create a new message in place of the old one to notify
 // visitors that the thread was moved.
@@ -66,7 +66,7 @@ if ($enable_notify)
     $newmessage['sort']        = PHORUM_SORT_DEFAULT;
     unset($newmessage['message_id']);
 
-    phorum_db_post_message($newmessage);
+    $PHORUM['DB']->post_message($newmessage);
 }
 
 // Setup the success message for the move action.
@@ -103,7 +103,9 @@ $PHORUM['DATA']['URL']['REDIRECT'] = $PHORUM['DATA']['URL']['LIST'];
  *
  *         // Log the moved thread id
  *         $PHORUM["mod_foo"]["moved_threads"][] = $msgthd_id;
- *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
+ *         $PHORUM['DB']->update_settings(array(
+ *             "mod_foo" => $PHORUM["mod_foo"]
+ *         ));
  *
  *         return $msgthd_id;
  *     }

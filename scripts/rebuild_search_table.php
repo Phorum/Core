@@ -13,7 +13,6 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
     return;
 }
 
-define("phorum_page", "rebuild_search_table");
 define("PHORUM_ADMIN", 1);
 
 require_once(dirname(__FILE__).'/../include/api.php');
@@ -28,7 +27,7 @@ if (! ini_get('safe_mode')) {
 
 echo "\nRebuilding search-table ...\n";
 
-phorum_db_rebuild_search_data();
+$PHORUM['DB']->rebuild_search_data();
 
 echo "If no errors were logged above,\n" .
      "then the search table was successfully rebuilt.\n\n";

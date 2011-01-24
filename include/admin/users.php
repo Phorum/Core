@@ -329,7 +329,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
         
         $forum_permissions_forums_list = array();
 
-        $forum_permissions_forums = phorum_db_get_forums();
+        $forum_permissions_forums = $PHORUM['DB']->get_forums();
 
         $forum_permissions_forumpaths = phorum_get_forum_info(1);
         foreach($forum_permissions_forumpaths as $forum_id => $forumname) {
@@ -429,7 +429,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
                 . $frm->select_tag("profile_field_search_loc", $field_search_loc_array, $_REQUEST["profile_field_search_loc"])
                 . "&nbsp;in&nbsp;" . $profile_field_select);
         }
-        $db_groups = phorum_db_get_groups(0,true);
+        $db_groups = $PHORUM['DB']->get_groups(0,true);
         if (count($db_groups)) {
             $multiple = (count($db_groups) > 1) ? "multiple=\"multiple\" size=\"2\"" : "";
             $group_select = "<select name=\"member_of_group[]\" $multiple>\n";
@@ -623,7 +623,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
     }
     if (!empty($_REQUEST["member_of_group"])) {
         $groups = explode(",",$_REQUEST["member_of_group"]);
-        $db_group_members = phorum_db_get_group_members($groups);
+        $db_group_members = $PHORUM['DB']->get_group_members($groups);
         $group_members = array();
         foreach ($db_group_members as $user_id => $group_status) {
             $group_members[] = $user_id;
@@ -645,8 +645,8 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
             $or_forum_permissions .= "(perm.permission>=$forum_permission AND
                       (perm.permission & $forum_permission>0))";
         }
-        phorum_db_sanitize_mixed($_REQUEST["forum_permissions_forums"],"string");
-        $db_forum_permissions_users = phorum_db_interact(
+        $PHORUM['DB']->sanitize_mixed($_REQUEST["forum_permissions_forums"],"string");
+        $db_forum_permissions_users = $PHORUM['DB']->interact(
             DB_RETURN_ROWS,
             "SELECT DISTINCT user.user_id AS user_id
              FROM   {$PHORUM['user_table']} AS user
@@ -1021,7 +1021,7 @@ if (isset($_REQUEST["user_id"]))
             $row=$frm->addbreak("Edit Groups");
         }
 
-        $groups= phorum_db_get_groups(0, TRUE);
+        $groups= $PHORUM['DB']->get_groups(0, TRUE);
         $usergroups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST, $_REQUEST["user_id"]);
 
         $arr=array("Add A Group...");
@@ -1042,7 +1042,7 @@ if (isset($_REQUEST["user_id"]))
                     PHORUM_USER_GROUP_MODERATOR => "Group Moderator");
             foreach($usergroups as $group_id => $group){
                 $group_perm = $group['user_status'];
-                $group_info = phorum_db_get_groups($group_id);
+                $group_info = $PHORUM['DB']->get_groups($group_id);
                 $frm->hidden("groups[$group_id]", "$group_id");
                 $frm->addrow($group_info[$group_id]["name"], $frm->select_tag("group_perm[$group_id]", $group_options, $group_perm, $extra_opts));
             }

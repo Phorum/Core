@@ -273,7 +273,7 @@ function bbcode_api_initparser($force = FALSE)
             'taginfo'   => $taginfo,
             'parsetree' => $parsetree
         );
-        phorum_db_update_settings(array(
+        $PHORUM['DB']->update_settings(array(
             'mod_bbcode_parser' => $PHORUM['mod_bbcode_parser']
         ));
     }

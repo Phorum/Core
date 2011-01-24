@@ -2,7 +2,7 @@
 
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
-$message = phorum_db_get_message($msgthd_id);
+$message = $PHORUM['DB']->get_message($msgthd_id);
 
 $PHORUM['DATA']['HEADING'] =
     $PHORUM['DATA']['LANG']['Moderate'] . ': ' .

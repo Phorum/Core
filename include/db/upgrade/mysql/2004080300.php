@@ -4,7 +4,7 @@ if(!defined("PHORUM_ADMIN")) return;
 // wow doing it all by hand this time :(
 
 // adding the new field
-phorum_db_interact(
+$PHORUM['DB']->interact(
     DB_RETURN_RES,
     "ALTER TABLE {$PHORUM['user_newflags_table']}
      ADD   message_id INT UNSIGNED NOT NULL DEFAULT '0'",
@@ -12,7 +12,7 @@ phorum_db_interact(
 );
 
 // removing old primary-key
-phorum_db_interact(
+$PHORUM['DB']->interact(
     DB_RETURN_RES,
     "ALTER TABLE {$PHORUM['user_newflags_table']}
      DROP PRIMARY KEY",
@@ -20,7 +20,7 @@ phorum_db_interact(
 );
 
 // adding new primary-key
-phorum_db_interact(
+$PHORUM['DB']->interact(
     DB_RETURN_RES,
     "ALTER TABLE {$PHORUM['user_newflags_table']}
      ADD PRIMARY KEY (user_id , forum_id , message_id)",
@@ -28,7 +28,7 @@ phorum_db_interact(
 );
 
 // converting the newflags
-$rows = phorum_db_interact(
+$rows = $PHORUM['DB']->interact(
     DB_RETURN_ASSOCS,
     "SELECT *
      FROM {$PHORUM['user_newflags_table']}
@@ -47,13 +47,13 @@ foreach ($rows as $row)
             $newdata[]=array("id"=>$mid1,"forum"=>$forum);
         }
     }
-    phorum_db_newflag_add_read($newdata);
+    $PHORUM['DB']->newflag_add_read($newdata);
     unset($data);
     unset($newdata);
 }
 $GLOBALS['PHORUM']['user']['user_id']=$olduser;
 
-phorum_db_interact(
+$PHORUM['DB']->interact(
     DB_RETURN_RES,
     "DELETE FROM {$PHORUM['user_newflags_table']}
      WHERE message_id=0",
@@ -61,7 +61,7 @@ phorum_db_interact(
 );
 
 // remove old column
-phorum_db_interact(
+$PHORUM['DB']->interact(
     DB_RETURN_RES,
     "ALTER TABLE {$PHORUM['user_newflags_table']}
      DROP newflags",

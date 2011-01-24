@@ -31,18 +31,18 @@ $forum_list[0]="GLOBAL";
 if(isset($PHORUM["bad_words"]) && count($PHORUM['bad_words'])) {
     echo "upgrading badwords<br />";
     foreach($PHORUM['bad_words'] as $key => $data) {
-        phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$data ,0 ,0);
+        $PHORUM['DB']->mod_banlists(PHORUM_BAD_WORDS ,0 ,$data ,0 ,0);
         unset($PHORUM["bad_words"][$key]);
     }
-    phorum_db_update_settings(array("bad_words"=>$PHORUM["bad_words"]));
+    $PHORUM['DB']->update_settings(array("bad_words"=>$PHORUM["bad_words"]));
 }
 
 if(count($_POST) && $_POST["string"]!=""){
 
     if($_POST["curr"]!="NEW"){
-        $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'], $_POST['comments'] ,$_POST['curr']);
+        $ret=$PHORUM['DB']->mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'], $_POST['comments'] ,$_POST['curr']);
     } else {
-        $ret=phorum_db_mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'], $_POST['comments'] ,0);
+        $ret=$PHORUM['DB']->mod_banlists(PHORUM_BAD_WORDS ,0 ,$_POST["string"] ,$_POST['forum_id'], $_POST['comments'] ,0);
     }
 
     if(!$ret){
@@ -57,7 +57,7 @@ if(count($_POST) && $_POST["string"]!=""){
 }
 
 if(isset($_POST["curr"]) && isset($_POST["delete"]) && $_POST["confirm"]=="Yes"){
-    phorum_db_del_banitem((int)$_POST['curr']);
+    $PHORUM['DB']->del_banitem((int)$_POST['curr']);
     phorum_admin_okmsg("Bad Word Deleted");
 }
 
@@ -66,7 +66,7 @@ if(isset($_GET["curr"])){
 }
 
 if($curr!="NEW"){
-    extract(phorum_db_get_banitem($curr));
+    extract($PHORUM['DB']->get_banitem($curr));
     $title="Edit Bad Word Item";
     $submit="Update";
 } else {
@@ -105,7 +105,7 @@ if($_GET["curr"] && $_GET["delete"]){
 
 
     // load bad-words-list
-    $banlists=phorum_db_get_banlists();
+    $banlists=$PHORUM['DB']->get_banlists();
     $bad_words=$banlists[PHORUM_BAD_WORDS];
 
     require_once './include/admin/PhorumInputForm.php';
@@ -149,7 +149,7 @@ if($_GET["curr"] && $_GET["delete"]){
              These comments will only be shown on this page and are meant as
              a means for the administrator to do some bookkeeping."
              );
-             
+
     $frm->show();
 
     echo "<hr class=\"PhorumAdminHR\" />";
@@ -164,10 +164,10 @@ if($_GET["curr"] && $_GET["delete"]){
         echo "</tr>\n";
 
         foreach($bad_words as $key => $item){
-        	
-        	$edit_url = phorum_admin_build_url(array('module=badwords','edit=1',"curr=$key"));
+
+            $edit_url = phorum_admin_build_url(array('module=badwords','edit=1',"curr=$key"));
             $delete_url = phorum_admin_build_url(array('module=badwords','delete=1',"curr=$key"));
-        	
+
             $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
             echo "<tr>\n";
             echo "    <td class=\"".$ta_class."\">".htmlspecialchars($item["string"])."</td>\n";

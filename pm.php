@@ -162,7 +162,7 @@ $error = '';
 $okmsg = '';
 
 // init folder list
-$pm_folders = phorum_db_pm_getfolders(NULL, true);
+$pm_folders = $PHORUM['DB']->pm_getfolders(NULL, true);
 
 // Translate button clicks from the read page to appropriate actions.
 if (isset($_POST['close_message'])) {
@@ -228,7 +228,7 @@ if (!empty($action))
                     if (phorum_pm_folder_exists($foldername)) {
                         $error = $PHORUM["DATA"]["LANG"]["PMFolderExistsError"];
                     } else {
-                        phorum_db_pm_create_folder($foldername);
+                        $PHORUM['DB']->pm_create_folder($foldername);
                         $redirect_message = "PMFolderCreateSuccess";
                         $redirect = true;
                     }
@@ -246,7 +246,7 @@ if (!empty($action))
                     if (phorum_pm_folder_exists($to)) {
                         $error = $PHORUM["DATA"]["LANG"]["PMFolderExistsError"];
                     } else {
-                        phorum_db_pm_rename_folder($from, $to);
+                        $PHORUM['DB']->pm_rename_folder($from, $to);
                         $redirect_message = "PMFolderRenameSuccess";
                         $redirect = true;
                     }
@@ -258,7 +258,7 @@ if (!empty($action))
             {
                 $folder_id = $_POST["delete_folder_target"];
                 if (!empty($folder_id)) {
-                    phorum_db_pm_delete_folder($folder_id);
+                    $PHORUM['DB']->pm_delete_folder($folder_id);
                     
                     /**
                      * [hook]
@@ -314,9 +314,9 @@ if (!empty($action))
             // Delete all checked messages.
             if (isset($_POST["delete"]) && isset($_POST["checked"])) {
                 foreach($_POST["checked"] as $pm_id) {
-                    if (phorum_db_pm_get($pm_id, $folder_id)) {
+                    if ($PHORUM['DB']->pm_get($pm_id, $folder_id)) {
 
-                        phorum_db_pm_delete($pm_id, $folder_id);
+                        $PHORUM['DB']->pm_delete($pm_id, $folder_id);
 
                         /**
                          * [hook]
@@ -369,8 +369,8 @@ if (!empty($action))
                 $to = $_POST['target_folder'];
                 if (! empty($to)) {
                     foreach($_POST["checked"] as $pm_id) {
-                        if (phorum_db_pm_get($pm_id, $folder_id)) {
-                            phorum_db_pm_move($pm_id, $folder_id, $to);
+                        if ($PHORUM['DB']->pm_get($pm_id, $folder_id)) {
+                            $PHORUM['DB']->pm_move($pm_id, $folder_id, $to);
                         }
                     }
                 }
@@ -498,7 +498,7 @@ if (!empty($action))
                             foreach ($checkusers as $user)
                             {
                                 if ($user['admin']) continue; // No limits for admins
-                                $current_count = phorum_db_pm_messagecount(PHORUM_PM_ALLFOLDERS, $user["user_id"]);
+                                $current_count = $PHORUM['DB']->pm_messagecount(PHORUM_PM_ALLFOLDERS, $user["user_id"]);
 
                                 $max_allowed_message_count = $PHORUM['max_pm_messagecount'];
 
@@ -610,7 +610,7 @@ if (!empty($action))
                         // Send the private message if no errors occurred.
                         if (empty($error)) {
 
-                            $pm_message_id = phorum_db_pm_send($pm_message["subject"], $pm_message["message"], array_keys($pm_message['recipients']), NULL, $pm_message["keep"]);
+                            $pm_message_id = $PHORUM['DB']->pm_send($pm_message["subject"], $pm_message["message"], array_keys($pm_message['recipients']), NULL, $pm_message["keep"]);
 
                             $pm_message['pm_message_id'] = $pm_message_id;
                             $pm_message['from_username'] = $PHORUM['user']['display_name'];
@@ -664,7 +664,7 @@ if (!empty($action))
             // Delete all checked buddies.
             if (isset($_POST["delete"]) && isset($_POST["checked"])) {
                 foreach($_POST["checked"] as $buddy_user_id) {
-                    phorum_db_pm_buddy_delete($buddy_user_id);
+                    $PHORUM['DB']->pm_buddy_delete($buddy_user_id);
                     if (isset($PHORUM["hooks"]["buddy_delete"]))
                         phorum_api_hook("buddy_delete", $buddy_user_id);
                 }
@@ -689,7 +689,7 @@ if (!empty($action))
 
             $buddy_user_id = $PHORUM["args"]["addbuddy_id"];
             if (!empty($buddy_user_id)) {
-                if (phorum_db_pm_buddy_add($buddy_user_id)) {
+                if ($PHORUM['DB']->pm_buddy_add($buddy_user_id)) {
                     $okmsg = $PHORUM["DATA"]["LANG"]["BuddyAddSuccess"];
                     if (isset($PHORUM["hooks"]["buddy_add"]))
                         phorum_api_hook("buddy_add", $buddy_user_id);
@@ -772,7 +772,7 @@ switch ($page) {
     case "buddies":
 
         // Retrieve a list of users that are buddies for the current user.
-        $buddy_list = phorum_db_pm_buddy_list(NULL, true);
+        $buddy_list = $PHORUM['DB']->pm_buddy_list(NULL, true);
         if (count($buddy_list)) {
             $buddy_users = phorum_api_user_get(array_keys($buddy_list));
         } else {
@@ -886,7 +886,7 @@ switch ($page) {
         }
         else
         {
-            $list = phorum_db_pm_list($folder_id);
+            $list = $PHORUM['DB']->pm_list($folder_id);
 
             // Prepare data for the templates (formatting and XSS prevention).
             $list = phorum_pm_format($list);
@@ -950,11 +950,11 @@ switch ($page) {
     // Read a single private message.
     case "read":
 
-        if (($message=phorum_db_pm_get($pm_id, $folder_id))) {
+        if (($message=$PHORUM['DB']->pm_get($pm_id, $folder_id))) {
 
             // Mark the message read.
             if (! $message['read_flag']) {
-                phorum_db_pm_setflag($message["pm_message_id"], PHORUM_PM_READ_FLAG, true);
+                $PHORUM['DB']->pm_setflag($message["pm_message_id"], PHORUM_PM_READ_FLAG, true);
 
                 // Invalidate user cache, to update message counts.
                 phorum_api_cache_remove('user',$user_id);
@@ -1015,7 +1015,7 @@ switch ($page) {
             $PHORUM["DATA"]["PMLOCATION"] = $PHORUM["DATA"]["LANG"]["PMRead"];
 
             // re-init folder list to account for change in read flags
-            $pm_folders = phorum_db_pm_getfolders(NULL, true);
+            $pm_folders = $PHORUM['DB']->pm_getfolders(NULL, true);
 
             // Set folder id to the right folder for this message.
             $folder_id = $message["pm_folder_id"];
@@ -1072,7 +1072,7 @@ switch ($page) {
             // Setup data for replying to a private message.
             } elseif (isset($pm_id)) {
 
-                $message = phorum_db_pm_get($pm_id);
+                $message = $PHORUM['DB']->pm_get($pm_id);
                 $msg["subject"] = $message["subject"];
                 $msg["message"] = $message["message"];
                 $msg["recipients"][$message["user_id"]] = array(
@@ -1098,7 +1098,7 @@ switch ($page) {
             // Setup data for replying privately to a forum post.
             } elseif (isset($PHORUM["args"]["message_id"])) {
 
-                $message = phorum_db_get_message($PHORUM["args"]["message_id"], "message_id", true);
+                $message = $PHORUM['DB']->get_message($PHORUM["args"]["message_id"], "message_id", true);
 
                 if (phorum_api_user_check_access(PHORUM_USER_ALLOW_READ) && ($PHORUM["forum_id"]==$message["forum_id"] || $message["forum_id"] == 0)) {
 
@@ -1286,7 +1286,7 @@ if (! $PHORUM['user']['admin'] && isset($PHORUM['max_pm_messagecount']) && $PHOR
     $PHORUM['DATA']['MAX_PM_MESSAGECOUNT'] = $PHORUM['max_pm_messagecount'];
     if ($PHORUM['max_pm_messagecount'])
     {
-        $current_count = phorum_db_pm_messagecount(PHORUM_PM_ALLFOLDERS);
+        $current_count = $PHORUM['DB']->pm_messagecount(PHORUM_PM_ALLFOLDERS);
         $PHORUM['DATA']['PM_MESSAGECOUNT'] = $current_count['total'];
         $space_left = $PHORUM['max_pm_messagecount'] - $current_count['total'];
         if ($space_left < 0) $space_left = 0;
