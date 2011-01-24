@@ -51,6 +51,8 @@
 // Bail out if we're not loaded from the Phorum code.
 if (!defined('PHORUM')) return;
 
+// Make sure that PHORUM_PATH is defined (in case the db layer is
+// included separately from the Phorum core code.)
 defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
 
 // ----------------------------------------------------------------------
@@ -252,6 +254,8 @@ define('LIST_UPDATED_THREADS',   2);
 
 abstract class PhorumDB
 {
+    // {{{ Properties
+
     /**
      * Fields from the messags table that must be treated as strings
      * (even if they contain numbers only.)
@@ -280,6 +284,8 @@ abstract class PhorumDB
         'sessid_lt', 'sessid_st', 'email', 'email_temp', 'signature',
         'user_language', 'user_template', 'settings_data'
     );
+
+    // }}}
 
     // {{{ Method: check_connection()
     /**
@@ -1766,7 +1772,9 @@ abstract class PhorumDB
      *     - "rows" contains the messages that are visible, based on the page
      *       $offset and page $length. The messages are indexed by message_id.
      */
-    public function search($search, $author, $return_threads, $offset, $length, $match_type, $days, $match_forum)
+    public function search(
+        $search, $author, $return_threads, $offset, $length,
+        $match_type, $days, $match_forum)
     {
         $PHORUM = $GLOBALS['PHORUM'];
 
@@ -1831,9 +1839,9 @@ abstract class PhorumDB
         // results. These tables are stored in $tables during processing.
         $tables = array();
 
-        // ----------------------------------------------------------------------
+        // -------------------------------------------------------------------
         // Handle search for user_id only.
-        // ----------------------------------------------------------------------
+        // -------------------------------------------------------------------
 
         if ($search == '' && $author != '' && $match_type == 'USER_ID')
         {
@@ -1865,9 +1873,9 @@ abstract class PhorumDB
             return $return;
         }
 
-        // ----------------------------------------------------------------------
+        // -------------------------------------------------------------------
         // Handle search for message and subject.
-        // ----------------------------------------------------------------------
+        // -------------------------------------------------------------------
 
         if ($search != '')
         {
@@ -1902,10 +1910,12 @@ abstract class PhorumDB
                 }
 
                 // Finally, pull out the rest words in the string.
-                $norm_terms = preg_split("/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY);
+                $norm_terms = preg_split(
+                    "/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY);
 
                 // Merge all search terms together.
-                $tokens =  array_merge($quoted_terms, $paren_terms, $norm_terms);
+                $tokens =  array_merge(
+                    $quoted_terms, $paren_terms, $norm_terms);
             }
 
             // Handle full text message / subject search.
@@ -1960,11 +1970,13 @@ abstract class PhorumDB
                     $condition = ($match_type == "ALL") ? "AND" : "OR";
 
                     foreach($tokens as $tid => $token) {
-                         $tokens[$tid] = $this->interact(DB_RETURN_QUOTED, $token);
+                        $tokens[$tid] =
+                            $this->interact(DB_RETURN_QUOTED, $token);
                     }
 
-                    $match_str = "search_text LIKE " .
-                                 "('%".implode("%' $condition '%", $tokens)."%')";
+                    $match_str =
+                        "search_text LIKE " .
+                        "('%".implode("%' $condition '%", $tokens)."%')";
                 }
 
                 $table_name = $PHORUM['search_table']."_like_".md5(microtime());
@@ -1983,9 +1995,9 @@ abstract class PhorumDB
             }
         }
 
-        // ----------------------------------------------------------------------
+        // -------------------------------------------------------------------
         // Handle search for author.
-        // ----------------------------------------------------------------------
+        // -------------------------------------------------------------------
 
         if ($author != '')
         {
@@ -2013,9 +2025,9 @@ abstract class PhorumDB
             $tables[] = $table_name;
         }
 
-        // ----------------------------------------------------------------------
+        // -------------------------------------------------------------------
         // Gather the results.
-        // ----------------------------------------------------------------------
+        // -------------------------------------------------------------------
 
         if (count($tables))
         {
@@ -2050,7 +2062,8 @@ abstract class PhorumDB
             // that only contains the threads for the results.
             if ($return_threads)
             {
-                $threads_table = $PHORUM['search_table']."_final_threads_".md5(microtime());
+                $threads_table = $PHORUM['search_table'] .
+                                 "_final_threads_" . md5(microtime());
                 $this->interact(
                     DB_RETURN_RES,
                     "CREATE TEMPORARY TABLE $threads_table (
@@ -7644,6 +7657,10 @@ abstract class PhorumDB
     }
     // }}}
 
+    // ----------------------------------------------------------------------
+    // Methods that are likely to be overridden in a derived class
+    // ----------------------------------------------------------------------
+
     // {{{ Method: create_tables()
     /**
      * Create the tables that are needed in the database. This function will
@@ -7986,148 +8003,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: maxpacketsize()
-    /**
-     * This function is used by the sanity checking system in the admin
-     * interface to determine how much data can be transferred in one query.
-     * This is used to detect problems with uploads that are larger than the
-     * database server can handle. The function returns the size in bytes.
-     * For database implementations which do not have this kind of limit,
-     * NULL can be returned.
-     *
-     * @return integer
-     *     The maximum packet size in bytes.
-     */
-    public function maxpacketsize()
-    {
-        $maxsize = $this->interact(
-            DB_RETURN_VALUE,
-            'SELECT @@global.max_allowed_packet',
-            NULL,
-            DB_MASTERQUERY
-        );
-
-        return $maxsize;
-    }
-    // }}}
-
-    // {{{ Method: sanitychecks()
-    /**
-     * This function is used by the sanity checking system to let the
-     * database layer do sanity checks of its own. This function can
-     * be used by every database layer to implement specific checks.
-     *
-     * The return value for this function should be exactly the same
-     * as the return value expected for regular sanity checking
-     * function (see include/admin/sanity_checks.php for information).
-     *
-     * There's no need to load the sanity_check.php file for the needed
-     * constants, because this function should only be called from the
-     * sanity checking system.
-     *
-     * @return array
-     *     A return value as expected by Phorum's sanity checking system.
-     */
-    public function sanitychecks()
-    {
-        global $PHORUM;
-
-        // For Phorum 5.2+, we need the "charset" option to be set
-        // in the include/config/database.php.
-        if (!isset($PHORUM['DBCONFIG']['charset'])) return array(
-            PHORUM_SANITY_CRIT,
-            "Database configuration parameter \"charset\" missing.",
-            "The option \"charset\" is missing in your database configuration.
-             This might indicate that you are using an
-             include/config/database.php from an older Phorum version, which does
-             not yet contain this option. Please, copy
-             include/config/database.php.sample to
-             include/config/database.php and edit this new database.php. Read
-             Phorum's install.txt for installation instructions."
-        );
-
-        // Retrieve the MySQL server version.
-        $version = $this->interact(
-            DB_RETURN_VALUE,
-            'SELECT @@global.version',
-            NULL,
-            DB_MASTERQUERY
-        );
-        if (!$version) return array(
-            PHORUM_SANITY_WARN,
-            "The database layer could not retrieve the version of the
-             running MySQL server",
-            "This probably means that you are running a really old MySQL
-             server, which does not support \"SELECT @@global.version\"
-             as a SQL command. If you are not running a MySQL server
-             with version 4.0.18 or higher, then please upgrade your
-             MySQL server. Else, contact the Phorum developers to see
-             where this warning is coming from"
-        );
-
-        // See if we recognize the version numbering.
-        if (!preg_match('/^(\d+)\.(\d+)\.(\d+)/', $version, $ver)) return array(
-            PHORUM_SANITY_WARN,
-            "The database layer was unable to recognize the MySQL server's
-             version number \"" . htmlspecialchars($version) . "\". Therefore,
-             checking if the right version of MySQL is used is not possible.",
-            "Contact the Phorum developers and report this specific
-             version number, so the checking scripts can be updated."
-        );
-
-        // MySQL before version 4.
-        if ($ver[1] < 5) return array(
-            PHORUM_SANITY_CRIT,
-            "The MySQL database server that is used is too old. The
-             running version is \"" . htmlspecialchars($version) . "\",
-             while MySQL version 5.0.x or higher is required.",
-            "Upgrade your MySQL server to a newer version. If your
-             website is hosted with a service provider, please contact
-             the service provider to upgrade your MySQL database."
-        );
-
-        // THE FOLLOWING TWO CHECKS ARE NO LONGER NEEDED WITH THE ABOVE CHECK
-        // MAKING MYSQL5 A REQUIREMENT
-
-        // MySQL before version 4.0.18, with full text search enabled.
-        /*
-        if (isset($PHORUM['DBCONFIG']['mysql_use_ft']) &&
-            $PHORUM['DBCONFIG']['mysql_use_ft'] &&
-            $ver[1] == 4 && $ver[2] == 0 && $ver[3] < 18) return array(
-            PHORUM_SANITY_WARN,
-            "The MySQL database server that is used does not
-             support all Phorum features. The running version is
-             \"" . htmlspecialchars($version) . "\", while MySQL version
-             4.0.18 or higher is recommended.",
-            "Upgrade your MySQL server to a newer version. If your
-             website is hosted with a service provider, please contact
-             the service provider to upgrade your MySQL database."
-        );
-
-        // MySQL before version 5.0
-        if ($ver[1] < 5) return array(
-            PHORUM_SANITY_WARN,
-            "The MySQL database server that is used does not
-             support all Phorum features. The running version is
-             \"" . htmlspecialchars($version) . "\", while MySQL version
-             5.0 or higher is recommended. MySQL has discontinued active development
-             for all versions below 5.0. The Phorum teams uses 5.0 for all
-             development. Phorum has been known to work with MySQL 4.1 and some
-             later 4.0 versions. However, there is no testing with these versions.
-             It is recommended that all users upgrade to 5.0 as soon as possible
-             to get the most out of MySQL and Phorum.",
-            "Upgrade your MySQL server to a newer version. If your
-             website is hosted with a service provider, please contact
-             the service provider to upgrade your MySQL database."
-        );
-        */
-
-        // All checks are okay.
-        return array (PHORUM_SANITY_OK, NULL);
-    }
-    // }}}
-
-    // {{{ Method: sanitychecks()
+    // {{{ Method: interact()
     /**
      * This function is the central function for handling database
      * interaction. The function can be used for setting up a database
@@ -8218,6 +8094,49 @@ abstract class PhorumDB
             __METHOD__ . ': the database layer does not implement fetch_row()',
             E_USER_ERROR
         );
+    }
+    // }}}
+
+    // {{{ Method: maxpacketsize()
+    /**
+     * This function is used by the sanity checking system in the admin
+     * interface to determine how much data can be transferred in one query.
+     * This is used to detect problems with uploads that are larger than the
+     * database server can handle. The function returns the size in bytes.
+     * For database implementations which do not have this kind of limit,
+     * NULL can be returned.
+     *
+     * @return NULL|integer
+     *     The maximum packet size in bytes or NULL if there is no limit.
+     */
+    public function maxpacketsize()
+    {
+        return NULL;
+    }
+    // }}}
+
+    // {{{ Method: sanitychecks()
+    /**
+     * This function is used by the sanity checking system to let the
+     * database layer do sanity checks of its own. This function can
+     * be used by every database layer to implement specific checks.
+     *
+     * The return value for this function should be exactly the same
+     * as the return value expected for regular sanity checking
+     * function (see include/admin/sanity_checks.php for information).
+     *
+     * There's no need to load the sanity_check.php file for the needed
+     * constants, because this function should only be called from the
+     * sanity checking system.
+     *
+     * @return array
+     *     A return value as expected by Phorum's sanity checking system.
+     */
+    public function sanitychecks()
+    {
+        // No checks in the default implementation, so we can
+        // return an OK status.
+        return array (PHORUM_SANITY_OK, NULL);
     }
     // }}}
 }
