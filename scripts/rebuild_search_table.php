@@ -13,7 +13,6 @@ if (isset($_SERVER["REMOTE_ADDR"])) {
     return;
 }
 
-define("phorum_page", "rebuild_search_table");
 define("PHORUM_ADMIN", 1);
 
 chdir(dirname(__FILE__) . "/..");
