@@ -94,25 +94,6 @@ $PHORUM['pm_buddies_table']           = $prefix . '_pm_buddies';
 $PHORUM['message_tracking_table']     = $prefix . '_messages_edittrack';
 
 /**
- * Message fields which are always strings, even if they contain numbers only.
- * Used in post-message and update-message, otherwise strange things happen.
- */
-$PHORUM['string_fields_message'] = array('author', 'subject', 'body', 'email');
-
-/**
- * Forum fields which are always strings, even if they contain numbers only.
- */
-$PHORUM['string_fields_forum'] = array('name', 'description', 'template');
-
- /**
- * User fields which are always strings, even if they contain numbers only.
- */
-$PHORUM['string_fields_user'] = array('username', 'real_name', 'display_name',
-   'password', 'password_temp', 'sessid_lt', 'sessid_st', 'email', 'email_temp',
-   'signature', 'user_language', 'user_template', 'settings_data'
-);
-
-/**
  * Function call parameter $return for {@link PhorumDBLayer::interact()}.
  * Makes the function return a database connection handle.
  */
@@ -271,6 +252,35 @@ define('LIST_UPDATED_THREADS',   2);
 
 abstract class PhorumDB
 {
+    /**
+     * Fields from the messags table that must be treated as strings
+     * (even if they contain numbers only.)
+     * @var array
+     */
+    protected $_string_fields_message = array(
+        'author', 'subject', 'body', 'email'
+    );
+
+    /**
+     * Fields from the forums table that must be treated as strings
+     * (even if they contain numbers only.)
+     * @var array
+     */
+    protected $_string_fields_forum = array(
+        'name', 'description', 'template'
+    );
+
+    /**
+     * Fields from the users table that must be treated as strings
+     * (even if they contain numbers only.)
+     * @var array
+     */
+    protected $_string_fields_user = array(
+        'username', 'real_name', 'display_name', 'password', 'password_temp',
+        'sessid_lt', 'sessid_st', 'email', 'email_temp', 'signature',
+        'user_language', 'user_template', 'settings_data'
+    );
+
     // {{{ Method: check_connection()
     /**
      * Checks if a database connection can be made.
@@ -976,7 +986,7 @@ abstract class PhorumDB
 
         foreach ($message as $key => $value) {
             if (is_numeric($value) &&
-                !in_array($key,$PHORUM['string_fields_message'])) {
+                !in_array($key, $this->_string_fields_message)) {
                 $message[$key] = (int)$value;
             } elseif (is_array($value)) {
                 $value = serialize($value);
@@ -1159,7 +1169,7 @@ abstract class PhorumDB
                 if ($custom === null)
                 {
                     if (is_numeric($value) &&
-                        !in_array($field, $PHORUM['string_fields_message'])) {
+                        !in_array($field, $this->_string_fields_message)) {
                         $fields[] = "$field = $value";
                     } elseif (is_array($value)) {
                         $value = $this->interact(
@@ -2559,7 +2569,7 @@ abstract class PhorumDB
 
                 if($custom === NULL) {
                     if (is_numeric($value) &&
-                        !in_array($key,$PHORUM['string_fields_forum'])) {
+                        !in_array($key, $this->_string_fields_forum)) {
                         $value = (int)$value;
                         $insertfields[$key] = $value;
                     } elseif ($value === NULL) {
@@ -2649,7 +2659,7 @@ abstract class PhorumDB
                         $value = $this->interact(DB_RETURN_QUOTED, $value);
                         $fields[] = "$key = '$value'";
                     } elseif (is_numeric($value) &&
-                        !in_array($key,$PHORUM['string_fields_forum'])) {
+                        !in_array($key, $this->_string_fields_forum)) {
                         $value = (int)$value;
                         $fields[] = "$key = $value";
                     } elseif ($value === NULL) {
@@ -4051,7 +4061,7 @@ abstract class PhorumDB
                 }
                 $value = $this->interact(DB_RETURN_QUOTED, $value);
 
-                if( in_array($key, $PHORUM['string_fields_user'] ) ) {
+                if (in_array($key, $this->_string_fields_user)) {
                     $values[] = "$key = '$value'";
                 } else {
                     $values[] = "$key = $value";
