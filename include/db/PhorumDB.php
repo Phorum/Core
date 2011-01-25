@@ -61,40 +61,6 @@ defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
 
 // {{{ Constant and variable definitions
 
-// The table prefix, which allows for storing multiple Phorum data sets
-// in one single database.
-$prefix = $PHORUM['DBCONFIG']['table_prefix'];
-
-/**
- * These are the table names that are used by this database system.
- *
- * It might be a more clean implementation to have these in the
- * PhorumDB class as properties, but we keep them here for backward
- * compatibility in the functional layer. If the functional db layer
- * is deprecated at some point in the future, then these variables can
- * be moved into the PhorumDB class.
- */
-$PHORUM['message_table']              = $prefix . '_messages';
-$PHORUM['user_newflags_table']        = $prefix . '_user_newflags';
-$PHORUM['user_newflags_min_id_table'] = $prefix . '_user_min_id';
-$PHORUM['subscribers_table']          = $prefix . '_subscribers';
-$PHORUM['files_table']                = $prefix . '_files';
-$PHORUM['search_table']               = $prefix . '_search';
-$PHORUM['settings_table']             = $prefix . '_settings';
-$PHORUM['forums_table']               = $prefix . '_forums';
-$PHORUM['user_table']                 = $prefix . '_users';
-$PHORUM['user_permissions_table']     = $prefix . '_user_permissions';
-$PHORUM['groups_table']               = $prefix . '_groups';
-$PHORUM['forum_group_xref_table']     = $prefix . '_forum_group_xref';
-$PHORUM['user_group_xref_table']      = $prefix . '_user_group_xref';
-$PHORUM['custom_fields_table']        = $prefix . '_custom_fields';
-$PHORUM['banlist_table']              = $prefix . '_banlists';
-$PHORUM['pm_messages_table']          = $prefix . '_pm_messages';
-$PHORUM['pm_folders_table']           = $prefix . '_pm_folders';
-$PHORUM['pm_xref_table']              = $prefix . '_pm_xref';
-$PHORUM['pm_buddies_table']           = $prefix . '_pm_buddies';
-$PHORUM['message_tracking_table']     = $prefix . '_messages_edittrack';
-
 /**
  * Function call parameter $return for {@link PhorumDBLayer::interact()}.
  * Makes the function return a database connection handle.
@@ -257,6 +223,13 @@ abstract class PhorumDB
     // {{{ Properties
 
     /**
+     * The prefix to use for the table names.
+     * This one is filled from the db layer configuration at construction time.
+     * @var string
+     */
+    public $prefix;
+
+    /**
      * Fields from the messags table that must be treated as strings
      * (even if they contain numbers only.)
      * @var array
@@ -285,6 +258,46 @@ abstract class PhorumDB
         'user_language', 'user_template', 'settings_data'
     );
 
+    // }}}
+
+    // {{{ Method: __construct()
+    /**
+     * The constructor sets up the table names for the database layer
+     * as properties in the object.
+     */
+    public function __construct()
+    {
+        global $PHORUM;
+
+        // Determine the table prefix to use. If no prefix is set in the
+        // configuration, then "phorum" is used by default.
+        $this->prefix = $prefix =
+            isset($PHORUM['DBCONFIG']['table_prefix'])
+            ? $PHORUM['DBCONFIG']['table_prefix']
+            : 'phorum';
+
+        // Setup the table names.
+        $this->message_table              = $prefix . '_messages';
+        $this->user_newflags_table        = $prefix . '_user_newflags';
+        $this->user_newflags_min_id_table = $prefix . '_user_min_id';
+        $this->subscribers_table          = $prefix . '_subscribers';
+        $this->files_table                = $prefix . '_files';
+        $this->search_table               = $prefix . '_search';
+        $this->settings_table             = $prefix . '_settings';
+        $this->forums_table               = $prefix . '_forums';
+        $this->user_table                 = $prefix . '_users';
+        $this->user_permissions_table     = $prefix . '_user_permissions';
+        $this->groups_table               = $prefix . '_groups';
+        $this->forum_group_xref_table     = $prefix . '_forum_group_xref';
+        $this->user_group_xref_table      = $prefix . '_user_group_xref';
+        $this->custom_fields_table        = $prefix . '_custom_fields';
+        $this->banlist_table              = $prefix . '_banlists';
+        $this->pm_messages_table          = $prefix . '_pm_messages';
+        $this->pm_folders_table           = $prefix . '_pm_folders';
+        $this->pm_xref_table              = $prefix . '_pm_xref';
+        $this->pm_buddies_table           = $prefix . '_pm_buddies';
+        $this->message_tracking_table     = $prefix . '_messages_edittrack';
+    }
     // }}}
 
     // {{{ Method: check_connection()
@@ -335,7 +348,7 @@ abstract class PhorumDB
         $settings = $this->interact(
             DB_RETURN_ROWS,
             "SELECT name, data, type
-             FROM {$PHORUM['settings_table']}",
+             FROM {$this->settings_table}",
             NULL,
             DB_MISSINGTABLEOK
         );
@@ -386,7 +399,7 @@ abstract class PhorumDB
                 // Try to insert a new settings record.
                 $res = $this->interact(
                     DB_RETURN_RES,
-                    "INSERT INTO {$PHORUM['settings_table']}
+                    "INSERT INTO {$this->settings_table}
                             (data, type, name)
                      VALUES ('$value', '$type', '$field')",
                     NULL,
@@ -400,7 +413,7 @@ abstract class PhorumDB
                 if (!$res) {
                   $this->interact(
                       DB_RETURN_RES,
-                      "UPDATE {$PHORUM['settings_table']}
+                      "UPDATE {$this->settings_table}
                        SET    data = '$value',
                               type = '$type'
                        WHERE  name = '$field'",
@@ -581,7 +594,7 @@ abstract class PhorumDB
                 case 'stickies':
 
                     $sql = "SELECT $messagefields
-                            FROM   {$PHORUM['message_table']}
+                            FROM   {$this->message_table}
                             WHERE  status=".PHORUM_STATUS_APPROVED." AND
                                    parent_id=0 AND
                                    sort=".PHORUM_SORT_STICKY." AND
@@ -600,7 +613,7 @@ abstract class PhorumDB
                     $start = $page * $limit;
 
                     $sql = "SELECT $messagefields
-                            FROM   {$PHORUM['message_table']}
+                            FROM   {$this->message_table}
                             USE    INDEX ($index)
                             WHERE  $sortfield > 0 AND
                                    forum_id = {$PHORUM['forum_id']} AND
@@ -621,7 +634,7 @@ abstract class PhorumDB
                     $sortorder = "sort, $sortfield DESC, message_id";
 
                     $sql = "SELECT $messagefields
-                            FROM   {$PHORUM['message_table']}
+                            FROM   {$this->message_table}
                             WHERE  status = ".PHORUM_STATUS_APPROVED." AND
                                    thread in (" . implode(",",$replymsgids) .")
                             ORDER  BY $sortorder";
@@ -803,7 +816,7 @@ abstract class PhorumDB
 
         // Build the SQL query.
         $sql = "SELECT  *
-                FROM    {$PHORUM['message_table']}
+                FROM    {$this->message_table}
                 WHERE   status=".PHORUM_STATUS_APPROVED;
 
         if (count($allowed_forums) == 1) {
@@ -889,7 +902,7 @@ abstract class PhorumDB
 
         // Select a message count or full message records?
         $sql = 'SELECT ' . ($countonly ? 'count(*) ' : '* ') .
-               'FROM ' . $PHORUM['message_table'] . ' WHERE ';
+               'FROM ' . $this->message_table . ' WHERE ';
 
         if (is_array($forum_id)) {
             $sql .= 'forum_id IN (' . implode(', ', $forum_id) . ') AND ';
@@ -1014,7 +1027,7 @@ abstract class PhorumDB
             // Check for duplicate messages in the last hour.
             $check_timestamp = $NOW - 3600;
             $sql = "SELECT message_id
-                    FROM   {$PHORUM['message_table']}
+                    FROM   {$message_table}
                     WHERE  forum_id  = {$message['forum_id']} AND
                            author    ='{$message['author']}' AND
                            subject   ='{$message['subject']}' AND
@@ -1083,7 +1096,7 @@ abstract class PhorumDB
         // Insert the message and get the new message_id.
         $message_id = $this->interact(
             DB_RETURN_NEWID,
-            "INSERT INTO {$PHORUM['message_table']}
+            "INSERT INTO {$message_table}
                     (".implode(', ', array_keys($insertfields)).")
              VALUES (".implode(', ', $insertfields).")",
             NULL,
@@ -1098,7 +1111,7 @@ abstract class PhorumDB
         {
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['message_table']}
+                "UPDATE {$message_table}
                  SET    thread     = $message_id
                  WHERE  message_id = $message_id",
                 NULL,
@@ -1108,13 +1121,13 @@ abstract class PhorumDB
             $message['thread'] = $message_id;
         }
 
-        if(count($customfields)) {
+        if (count($customfields)) {
             $this->save_custom_fields(
                 $message_id,PHORUM_CUSTOM_FIELD_MESSAGE,$customfields);
         }
 
-        if(empty($PHORUM['DBCONFIG']['empty_search_table'])){
-
+        if (empty($PHORUM['DBCONFIG']['empty_search_table']))
+        {
             // Full text searching updates.
             $search_text = $message['author']  .' | '.
                            $message['subject'] .' | '.
@@ -1122,7 +1135,7 @@ abstract class PhorumDB
 
             $this->interact(
                 DB_RETURN_RES,
-                "INSERT DELAYED INTO {$PHORUM['search_table']}
+                "INSERT DELAYED INTO {$this->search_table}
                         (message_id, forum_id,
                          search_text)
                  VALUES ({$message['message_id']}, {$message['forum_id']},
@@ -1196,7 +1209,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['message_table']}
+            "UPDATE {$this->message_table}
              SET " . implode(', ', $fields) . "
              WHERE message_id = $message_id",
             NULL,
@@ -1220,7 +1233,7 @@ abstract class PhorumDB
 
             $this->interact(
                 DB_RETURN_RES,
-                "REPLACE DELAYED INTO {$PHORUM['search_table']}
+                "REPLACE DELAYED INTO {$this->search_table}
                  SET     message_id  = {$message_id},
                          forum_id    = {$message['forum_id']},
                          search_text = '$search_text'",
@@ -1255,7 +1268,7 @@ abstract class PhorumDB
         $msg = $this->interact(
             DB_RETURN_ASSOC,
             "SELECT forum_id, message_id, thread, parent_id
-             FROM   {$PHORUM['message_table']}
+             FROM   {$this->message_table}
              WHERE  message_id = $message_id"
         );
 
@@ -1282,7 +1295,7 @@ abstract class PhorumDB
         // race condition here, but this already makes things quite reliable.
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['message_table']}
+            "UPDATE {$this->message_table}
              SET    status=".PHORUM_STATUS_HOLD."
              WHERE  $where",
             NULL,
@@ -1298,7 +1311,7 @@ abstract class PhorumDB
             // (with the forum_id a lookup key will be used).
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['message_table']}
+                "UPDATE {$this->message_table}
                  SET    parent_id = {$msg['parent_id']}
                  WHERE  forum_id  = {$msg['forum_id']} AND
                         parent_id = {$msg['message_id']}",
@@ -1310,7 +1323,7 @@ abstract class PhorumDB
         // Delete the messages.
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['message_table']}
+            "DELETE FROM {$this->message_table}
              WHERE $where",
             NULL,
             DB_MASTERQUERY
@@ -1319,7 +1332,7 @@ abstract class PhorumDB
         // Delete the read flags.
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['user_newflags_table']}
+            "DELETE FROM {$this->user_newflags_table}
              WHERE $where",
             NULL,
             DB_MASTERQUERY
@@ -1328,7 +1341,7 @@ abstract class PhorumDB
         // Delete the edit tracking.
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['message_tracking_table']}
+            "DELETE FROM {$this->message_tracking_table}
              WHERE $where",
             NULL,
             DB_MASTERQUERY
@@ -1337,7 +1350,7 @@ abstract class PhorumDB
         // Full text searching updates.
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['search_table']}
+            "DELETE FROM {$this->search_table}
              WHERE $where",
             NULL,
             DB_MASTERQUERY
@@ -1359,7 +1372,7 @@ abstract class PhorumDB
         // We need to delete the subscriptions for the thread too.
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['subscribers_table']}
+            "DELETE FROM {$this->subscribers_table}
              WHERE forum_id > 0 AND thread = $thread",
             NULL,
             DB_MASTERQUERY
@@ -1397,7 +1410,7 @@ abstract class PhorumDB
         $child_ids = $this->interact(
             DB_RETURN_ROWS,
             "SELECT message_id
-             FROM {$PHORUM['message_table']}
+             FROM {$this->message_table}
              WHERE forum_id  = $forum_id AND
                    parent_id = $message_id"
         );
@@ -1482,7 +1495,7 @@ abstract class PhorumDB
         $messages = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT *
-             FROM   {$PHORUM['message_table']}
+             FROM   {$this->message_table}
              WHERE  $forum_id_check $checkvar
              $limit",
             NULL,
@@ -1584,7 +1597,7 @@ abstract class PhorumDB
         }
 
         $sql = "SELECT *
-                FROM   {$PHORUM['message_table']}
+                FROM   {$this->message_table}
                 WHERE  $forum_id_check
                        thread = $thread
                        $approvedval
@@ -1626,7 +1639,7 @@ abstract class PhorumDB
             $starter = $this->interact(
                 DB_RETURN_ASSOC,
                 "SELECT *
-                 FROM   {$PHORUM['message_table']}
+                 FROM   {$this->message_table}
                  WHERE  $forum_id_check
                         message_id = $thread
                         $approvedval",
@@ -1715,7 +1728,7 @@ abstract class PhorumDB
         $index = $this->interact(
             DB_RETURN_VALUE,
             "SELECT count(*)
-             FROM   {$PHORUM['message_table']}
+             FROM   {$this->message_table}
              WHERE  $forum_id_check
                     thread = $thread
                     $approvedval AND
@@ -1854,7 +1867,7 @@ abstract class PhorumDB
                       moved=0";
             if ($return_threads) $where .= " AND parent_id = 0";
             $sql = "SELECT SQL_CALC_FOUND_ROWS *
-                    FROM   {$PHORUM['message_table']}
+                    FROM   {$this->message_table}
                     USE    KEY(user_messages)
                     WHERE  $where $forum_where
                     ORDER  BY datestamp DESC
@@ -1947,7 +1960,7 @@ abstract class PhorumDB
                     $match_str = $this->interact(DB_RETURN_QUOTED, $match_str);
                 }
 
-                $table_name = $PHORUM['search_table']."_ft_".md5(microtime());
+                $table_name = $this->search_table . "_ft_" . md5(microtime());
 
                 $this->interact(
                     DB_RETURN_RES,
@@ -1955,7 +1968,7 @@ abstract class PhorumDB
                          KEY (message_id)
                      ) ENGINE=HEAP
                        SELECT message_id
-                       FROM   {$PHORUM['search_table']}
+                       FROM   {$this->search_table}
                        WHERE  MATCH (search_text)
                               AGAINST ('$match_str' IN BOOLEAN MODE)"
                 );
@@ -1979,7 +1992,7 @@ abstract class PhorumDB
                         "('%".implode("%' $condition '%", $tokens)."%')";
                 }
 
-                $table_name = $PHORUM['search_table']."_like_".md5(microtime());
+                $table_name = $this->search_table . "_like_" . md5(microtime());
 
                 $this->interact(
                     DB_RETURN_RES,
@@ -1987,7 +2000,7 @@ abstract class PhorumDB
                          KEY (message_id)
                      ) ENGINE=HEAP
                        SELECT message_id
-                       FROM   {$PHORUM['search_table']}
+                       FROM   {$this->search_table}
                        WHERE  $match_str"
                 );
 
@@ -2001,7 +2014,7 @@ abstract class PhorumDB
 
         if ($author != '')
         {
-            $table_name = $PHORUM['search_table']."_author_".md5(microtime());
+            $table_name = $this->search_table . "_author_" . md5(microtime());
 
             // Search either by user_id or by username.
             if ($match_type == "USER_ID") {
@@ -2039,7 +2052,7 @@ abstract class PhorumDB
             // in a new temporary table for retrieving the results.
             else
             {
-                $table = $PHORUM['search_table']."_final_".md5(microtime());
+                $table = $this->search_table . "_final_" . md5(microtime());
 
                 $joined_tables = "";
                 $main_table = array_shift($tables);
@@ -2062,7 +2075,7 @@ abstract class PhorumDB
             // that only contains the threads for the results.
             if ($return_threads)
             {
-                $threads_table = $PHORUM['search_table'] .
+                $threads_table = $this->search_table .
                                  "_final_threads_" . md5(microtime());
                 $this->interact(
                     DB_RETURN_RES,
@@ -2070,7 +2083,7 @@ abstract class PhorumDB
                        KEY (message_id)
                      ) ENGINE=HEAP
                        SELECT distinct thread AS message_id
-                       FROM   {$PHORUM['message_table']}
+                       FROM   {$this->message_table}
                               INNER JOIN $table
                               USING (message_id)"
                 );
@@ -2082,7 +2095,7 @@ abstract class PhorumDB
             $rows = $this->interact(
                 DB_RETURN_ASSOCS,
                 "SELECT SQL_CALC_FOUND_ROWS *
-                 FROM   {$PHORUM['message_table']}
+                 FROM   {$this->message_table}
                         INNER JOIN $table USING (message_id)
                  WHERE  status=".PHORUM_STATUS_APPROVED."
                         $forum_where
@@ -2156,7 +2169,7 @@ abstract class PhorumDB
         $thread = $this->interact(
             DB_RETURN_VALUE,
             "SELECT thread
-             FROM   {$PHORUM['message_table']}
+             FROM   {$this->message_table}
              WHERE  forum_id = {$PHORUM['forum_id']} AND
                     parent_id = 0
                     $approvedval AND
@@ -2263,7 +2276,7 @@ abstract class PhorumDB
         $forums = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT *
-             FROM   {$PHORUM['forums_table']}
+             FROM   {$this->forums_table}
              WHERE  $where
              ORDER  BY display_order ASC, name",
            'forum_id'
@@ -2324,7 +2337,7 @@ abstract class PhorumDB
             $message_count = $this->interact(
                 DB_RETURN_VALUE,
                 "SELECT count(*)
-                 FROM   {$PHORUM['message_table']}
+                 FROM   {$this->message_table}
                  WHERE  forum_id = {$PHORUM['forum_id']} AND
                         status   = ".PHORUM_STATUS_APPROVED
             );
@@ -2336,7 +2349,7 @@ abstract class PhorumDB
             $last_post_time = $this->interact(
                 DB_RETURN_VALUE,
                 "SELECT max(modifystamp)
-                 FROM   {$PHORUM['message_table']}
+                 FROM   {$this->message_table}
                  WHERE  status   = ".PHORUM_STATUS_APPROVED." AND
                         forum_id = {$PHORUM['forum_id']}"
             );
@@ -2348,7 +2361,7 @@ abstract class PhorumDB
             $last_post_time = $this->interact(
                 DB_RETURN_VALUE,
                 "SELECT last_post_time
-                 FROM   {$PHORUM['forums_table']}
+                 FROM   {$this->forums_table}
                  WHERE  forum_id = {$PHORUM['forum_id']}"
             );
             if ($timestamp > $last_post_time) {
@@ -2360,7 +2373,7 @@ abstract class PhorumDB
             $thread_count = $this->interact(
                 DB_RETURN_VALUE,
                 "SELECT count(*)
-                 FROM   {$PHORUM['message_table']}
+                 FROM   {$this->message_table}
                  WHERE  forum_id  = {$PHORUM['forum_id']} AND
                         parent_id = 0 AND
                         status    = ".PHORUM_STATUS_APPROVED
@@ -2373,7 +2386,7 @@ abstract class PhorumDB
             $sticky_count = $this->interact(
                 DB_RETURN_VALUE,
                 "SELECT count(*)
-                 FROM   {$PHORUM['message_table']}
+                 FROM   {$this->message_table}
                  WHERE  forum_id  = {$PHORUM['forum_id']} AND
                         sort      = ".PHORUM_SORT_STICKY." AND
                         parent_id = 0 AND
@@ -2385,7 +2398,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['forums_table']}
+            "UPDATE {$this->forums_table}
              SET    cache_version  = cache_version + 1,
                     thread_count   = $thread_count,
                     message_count  = $message_count,
@@ -2441,7 +2454,7 @@ abstract class PhorumDB
             // Simple, isn't it?
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['message_table']}
+                "UPDATE {$this->message_table}
                  SET    forum_id = $toforum
                  WHERE  thread   = $thread_id",
                 NULL,
@@ -2468,7 +2481,7 @@ abstract class PhorumDB
             // Move the subscriptions to the destination forum.
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['subscribers_table']}
+                "UPDATE {$this->subscribers_table}
                  SET    forum_id = $toforum
                  WHERE  thread IN ($ids_str)",
                 NULL,
@@ -2479,7 +2492,7 @@ abstract class PhorumDB
             $ids_str = implode(', ',$message_ids);
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['search_table']}
+                "UPDATE {$this->search_table}
                  SET    forum_id = $toforum
                  WHERE  message_id in ($ids_str)",
                 NULL,
@@ -2505,7 +2518,7 @@ abstract class PhorumDB
         if ($thread_id > 0) {
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['message_table']}
+                "UPDATE {$this->message_table}
                  SET    closed = 1
                  WHERE  thread = $thread_id",
                 NULL,
@@ -2531,7 +2544,7 @@ abstract class PhorumDB
         if ($thread_id > 0) {
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['message_table']}
+                "UPDATE {$this->message_table}
                  SET    closed = 0
                  WHERE  thread = $thread_id",
                 NULL,
@@ -2599,7 +2612,7 @@ abstract class PhorumDB
 
         $forum_id = $this->interact(
             DB_RETURN_NEWID,
-            "INSERT INTO {$PHORUM['forums_table']}
+            "INSERT INTO {$this->forums_table}
                     (".implode(', ', array_keys($insertfields)).")
              VALUES (".implode(', ', $insertfields).")",
             NULL,
@@ -2691,7 +2704,7 @@ abstract class PhorumDB
         if (count($fields)) {
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['forums_table']}
+                "UPDATE {$this->forums_table}
                  SET "  .implode(', ', $fields) . "
                  WHERE  $forumwhere",
                 NULL,
@@ -2725,14 +2738,14 @@ abstract class PhorumDB
 
         // These are the tables that hold forum related data.
         $tables = array (
-            $PHORUM['message_table'],
-            $PHORUM['user_permissions_table'],
-            $PHORUM['user_newflags_table'],
-            $PHORUM['subscribers_table'],
-            $PHORUM['forum_group_xref_table'],
-            $PHORUM['forums_table'],
-            $PHORUM['banlist_table'],
-            $PHORUM['search_table']
+            $this->message_table,
+            $this->user_permissions_table,
+            $this->user_newflags_table,
+            $this->subscribers_table,
+            $this->forum_group_xref_table,
+            $this->forums_table,
+            $this->banlist_table,
+            $this->search_table
         );
 
         // Delete the data for the $forum_id from all those tables.
@@ -2757,12 +2770,12 @@ abstract class PhorumDB
         $files = $this->interact(
             DB_RETURN_ROWS,
             "SELECT file_id
-             FROM   {$PHORUM['files_table']}
-                    LEFT JOIN {$PHORUM['message_table']}
+             FROM   {$this->files_table}
+                    LEFT JOIN {$this->message_table}
                     USING (message_id)
-             WHERE  {$PHORUM['files_table']}.message_id > 0 AND
+             WHERE  {$this->files_table}.message_id > 0 AND
                     link = '" . PHORUM_LINK_MESSAGE . "' AND
-                    {$PHORUM['message_table']}.message_id is NULL",
+                    {$this->message_table}.message_id is NULL",
             0 // keyfield 0 is the file_id
         );
 
@@ -2770,7 +2783,7 @@ abstract class PhorumDB
         if (!empty($files)) {
             $this->interact(
                 DB_RETURN_RES,
-                "DELETE FROM {$PHORUM['files_table']}
+                "DELETE FROM {$this->files_table}
                  WHERE  file_id IN (".implode(",", array_keys($files)).")",
                 NULL,
                 DB_MASTERQUERY
@@ -2786,8 +2799,8 @@ abstract class PhorumDB
         $customfields = $this->interact(
             DB_RETURN_ROWS,
             "SELECT DISTINCT(a.relation_id)
-             FROM   {$PHORUM['custom_fields_table']} as a
-                    LEFT JOIN {$PHORUM['message_table']} as b
+             FROM   {$this->custom_fields_table} as a
+                    LEFT JOIN {$this->message_table} as b
                     ON b.message_id = a.relation_id
              WHERE  a.relation_id > 0 AND
                     a.field_type = '" . PHORUM_CUSTOM_FIELD_MESSAGE . "' AND
@@ -2822,7 +2835,7 @@ abstract class PhorumDB
         $new_parent_id = $this->interact(
             DB_RETURN_VALUE,
             "SELECT parent_id
-             FROM   {$PHORUM['forums_table']}
+             FROM   {$this->forums_table}
              WHERE  forum_id = $forum_id AND
                     folder_flag = 1"
         );
@@ -2834,7 +2847,7 @@ abstract class PhorumDB
         // Start with reattaching the folder's children to the new parent.
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['forums_table']}
+            "UPDATE {$this->forums_table}
              SET    parent_id = $new_parent_id
              WHERE  parent_id = $forum_id",
             NULL,
@@ -2844,7 +2857,7 @@ abstract class PhorumDB
         // Now, drop the folder.
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['forums_table']}
+            "DELETE FROM {$this->forums_table}
              WHERE  forum_id = $forum_id",
             NULL,
             DB_MASTERQUERY
@@ -2893,7 +2906,7 @@ abstract class PhorumDB
         // Insert the tracking-entry and get the new tracking_id.
         $tracking_id = $this->interact(
             DB_RETURN_NEWID,
-            "INSERT INTO {$PHORUM['message_tracking_table']}
+            "INSERT INTO {$this->message_tracking_table}
                     (".implode(', ', array_keys($insertfields)).")
              VALUES (".implode(', ', $insertfields).")",
             NULL,
@@ -2930,7 +2943,7 @@ abstract class PhorumDB
                     diff_body,
                     diff_subject,
                     track_id
-             FROM   {$PHORUM['message_tracking_table']}
+             FROM   {$this->message_tracking_table}
              WHERE  message_id = $message_id
              ORDER  BY track_id ASC",
             'track_id'
@@ -2991,7 +3004,7 @@ abstract class PhorumDB
         $groups = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT *
-             FROM {$PHORUM['groups_table']}
+             FROM {$this->groups_table}
              $group_where",
             'group_id'
         );
@@ -3000,7 +3013,7 @@ abstract class PhorumDB
         $perms = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT *
-             FROM {$PHORUM['forum_group_xref_table']}
+             FROM {$this->forum_group_xref_table}
              $group_where"
         );
 
@@ -3083,8 +3096,8 @@ abstract class PhorumDB
             DB_RETURN_ROWS,
             "SELECT xref.user_id AS user_id,
                     xref.status  AS status
-             FROM   {$PHORUM['user_table']} AS users,
-                    {$PHORUM['user_group_xref_table']} AS xref
+             FROM   {$this->user_table} AS users,
+                    {$this->user_group_xref_table} AS xref
              WHERE  users.user_id = xref.user_id
                     $group_where
                     $status_where
@@ -3128,7 +3141,7 @@ abstract class PhorumDB
 
         $group_id = $this->interact(
             DB_RETURN_NEWID,
-            "INSERT INTO {$PHORUM['groups_table']}
+            "INSERT INTO {$this->groups_table}
                     ($fields)
              VALUES ($values)",
              NULL,
@@ -3197,7 +3210,7 @@ abstract class PhorumDB
         if (count($fields)) {
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['groups_table']}
+                "UPDATE {$this->groups_table}
                  SET ". implode(', ', $fields) . "
                  WHERE  $group_where",
                 NULL,
@@ -3211,7 +3224,7 @@ abstract class PhorumDB
             // First, all existing forum permissions for the group are deleted.
             $this->interact(
                 DB_RETURN_RES,
-                "DELETE FROM {$PHORUM['forum_group_xref_table']}
+                "DELETE FROM {$this->forum_group_xref_table}
                  WHERE  $group_where",
                 NULL,
                 DB_MASTERQUERY
@@ -3225,7 +3238,7 @@ abstract class PhorumDB
 
                 $this->interact(
                     DB_RETURN_RES,
-                    "INSERT INTO {$PHORUM['forum_group_xref_table']}
+                    "INSERT INTO {$this->forum_group_xref_table}
                             (group_id, permission, forum_id)
                      VALUES ({$group['group_id']}, $permission, $forum_id)",
                     NULL,
@@ -3253,9 +3266,9 @@ abstract class PhorumDB
 
         // These are the tables that hold group related data.
         $tables = array (
-            $PHORUM['groups_table'],
-            $PHORUM['user_group_xref_table'],
-            $PHORUM['forum_group_xref_table']
+            $this->groups_table,
+            $this->user_group_xref_table,
+            $this->forum_group_xref_table
         );
 
         // Delete the data for the $group_id from all those tables.
@@ -3314,8 +3327,8 @@ abstract class PhorumDB
             DB_RETURN_ROWS,
             "SELECT DISTINCT user.user_id AS user_id,
                     user.email AS email
-             FROM   {$PHORUM['user_table']} AS user
-                    LEFT JOIN {$PHORUM['user_permissions_table']} AS perm
+             FROM   {$this->user_table} AS user
+                    LEFT JOIN {$this->user_permissions_table} AS perm
                     ON perm.user_id = user.user_id
              WHERE  ((perm.permission>=".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND
                       (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES.">0)
@@ -3332,10 +3345,10 @@ abstract class PhorumDB
             DB_RETURN_ROWS,
             "SELECT DISTINCT user.user_id AS user_id,
                     user.email AS email
-             FROM   {$PHORUM['user_table']} AS user,
-                    {$PHORUM['groups_table']} AS groups,
-                    {$PHORUM['user_group_xref_table']} AS usergroup,
-                    {$PHORUM['forum_group_xref_table']} AS forumgroup
+             FROM   {$this->user_table} AS user,
+                    {$this->groups_table} AS groups,
+                    {$this->user_group_xref_table} AS usergroup,
+                    {$this->forum_group_xref_table} AS forumgroup
              WHERE  user.user_id       = usergroup.user_id AND
                     usergroup.group_id = groups.group_id AND
                     groups.group_id    = forumgroup.group_id AND
@@ -3367,7 +3380,7 @@ abstract class PhorumDB
         return $this->interact(
             DB_RETURN_VALUE,
             "SELECT count(*)
-             FROM   {$PHORUM['user_table']}"
+             FROM   {$this->user_table}"
         );
     }
     // }}}
@@ -3404,7 +3417,7 @@ abstract class PhorumDB
         return $this->interact(
             DB_RETURN_RES,
             "SELECT *
-             FROM   {$PHORUM['user_table']}
+             FROM   {$this->user_table}
             $limit"
         );
     }
@@ -3460,7 +3473,7 @@ abstract class PhorumDB
         $users = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT *
-             FROM   {$PHORUM['user_table']}
+             FROM   {$this->user_table}
              WHERE  user_id $user_ids",
             'user_id',
             $flags
@@ -3485,7 +3498,7 @@ abstract class PhorumDB
                 "SELECT user_id,
                         forum_id,
                         permission
-                 FROM   {$PHORUM['user_permissions_table']}
+                 FROM   {$this->user_permissions_table}
                  WHERE  user_id $user_ids",
                 NULL,
                 $flags
@@ -3502,11 +3515,11 @@ abstract class PhorumDB
             $group_permissions = $this->interact(
                 DB_RETURN_ROWS,
                 "SELECT user_id,
-                        {$PHORUM['user_group_xref_table']}.group_id AS group_id,
+                        {$this->user_group_xref_table}.group_id AS group_id,
                         forum_id,
                         permission
-                 FROM   {$PHORUM['user_group_xref_table']}
-                        LEFT JOIN {$PHORUM['forum_group_xref_table']}
+                 FROM   {$this->user_group_xref_table}
+                        LEFT JOIN {$this->forum_group_xref_table}
                         USING (group_id)
                  WHERE  user_id $user_ids AND
                         status >= ".PHORUM_USER_GROUP_APPROVED,
@@ -3599,7 +3612,7 @@ abstract class PhorumDB
         $custom_fields = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT *
-             FROM   {$PHORUM['custom_fields_table']}
+             FROM   {$this->custom_fields_table}
              WHERE  relation_id $relation_ids AND
                     field_type = $type",
             NULL,
@@ -3684,7 +3697,7 @@ abstract class PhorumDB
         $users = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT user_id, ".implode(', ', $fields)."
-             FROM   {$PHORUM['user_table']}
+             FROM   {$this->user_table}
              WHERE  $user_where",
             'user_id'
         );
@@ -3725,7 +3738,7 @@ abstract class PhorumDB
             "SELECT user_id,
                     username,
                     display_name
-             FROM   {$PHORUM['user_table']}
+             FROM   {$this->user_table}
                     $where
              ORDER  BY username ASC",
             'user_id'
@@ -3766,7 +3779,7 @@ abstract class PhorumDB
         $user_id = $this->interact(
             DB_RETURN_VALUE,
             "SELECT user_id
-             FROM   {$PHORUM['user_table']}
+             FROM   {$this->user_table}
              WHERE  username    = '$username' AND
                     $pass_field = '$password'"
         );
@@ -3927,7 +3940,7 @@ abstract class PhorumDB
         $user_ids = $this->interact(
             DB_RETURN_ROWS,
             "SELECT user_id
-             FROM   {$PHORUM['user_table']}
+             FROM   {$this->user_table}
              $where $order $limit",
             0 // keyfield 0 is the user_id
         );
@@ -3984,7 +3997,7 @@ abstract class PhorumDB
         // Insert a bare bone user in the database.
         $user_id = $this->interact(
             DB_RETURN_NEWID,
-            "INSERT INTO {$PHORUM['user_table']}
+            "INSERT INTO {$this->user_table}
                     ($fields)
              VALUES ($values)",
             NULL,
@@ -4084,7 +4097,7 @@ abstract class PhorumDB
             // Update the fields in the database.
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['user_table']}
+                "UPDATE {$this->user_table}
                  SET    ".implode(', ', $values)."
                  WHERE  user_id = $user_id",
                 NULL,
@@ -4098,7 +4111,7 @@ abstract class PhorumDB
             // Delete all the existing forum permissions.
             $this->interact(
                 DB_RETURN_RES,
-                "DELETE FROM {$PHORUM['user_permissions_table']}
+                "DELETE FROM {$this->user_permissions_table}
                  WHERE  user_id = $user_id",
                 NULL,
                 DB_MASTERQUERY
@@ -4108,7 +4121,7 @@ abstract class PhorumDB
             foreach ($forum_perms as $forum_id => $permission) {
                 $this->interact(
                     DB_RETURN_RES,
-                    "INSERT INTO {$PHORUM['user_permissions_table']}
+                    "INSERT INTO {$this->user_permissions_table}
                             (user_id, forum_id, permission)
                      VALUES ($user_id, $forum_id, $permission)",
                     NULL,
@@ -4154,7 +4167,7 @@ abstract class PhorumDB
                     // Try to insert a new record.
                     $res = $this->interact(
                         DB_RETURN_RES,
-                        "INSERT INTO {$PHORUM['custom_fields_table']}
+                        "INSERT INTO {$this->custom_fields_table}
                                 (relation_id, field_type, type, data)
                          VALUES ($relation_id, $field_type , $key, '$val')",
                         NULL,
@@ -4166,7 +4179,7 @@ abstract class PhorumDB
                     if (!$res) {
                       $this->interact(
                           DB_RETURN_RES,
-                          "UPDATE {$PHORUM['custom_fields_table']}
+                          "UPDATE {$this->custom_fields_table}
                            SET    data = '$val'
                            WHERE  relation_id = $relation_id AND
                                   field_type = $field_type AND
@@ -4215,7 +4228,7 @@ abstract class PhorumDB
         // Update forum message authors.
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['message_table']}
+            "UPDATE {$this->message_table}
              SET    author = '$author'
              WHERE  user_id = $user_id",
             NULL,
@@ -4225,7 +4238,7 @@ abstract class PhorumDB
         // Update recent forum reply authors.
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['message_table']}
+            "UPDATE {$this->message_table}
              SET    recent_author = '$author'
              WHERE  recent_user_id = $user_id",
             NULL,
@@ -4235,7 +4248,7 @@ abstract class PhorumDB
         // Update PM author data.
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['pm_messages_table']}
+            "UPDATE {$this->pm_messages_table}
              SET    author = '$author'
              WHERE  user_id = $user_id",
             NULL,
@@ -4246,8 +4259,8 @@ abstract class PhorumDB
         $res = $this->interact(
             DB_RETURN_RES,
             "SELECT m.pm_message_id AS pm_message_id, meta
-             FROM   {$PHORUM['pm_messages_table']} AS m,
-                    {$PHORUM['pm_xref_table']} AS x
+             FROM   {$this->pm_messages_table} AS m,
+                    {$this->pm_xref_table} AS x
              WHERE  m.pm_message_id = x.pm_message_id AND
                     x.user_id = $user_id AND
                     special_folder != 'outbox'",
@@ -4260,7 +4273,7 @@ abstract class PhorumDB
             $meta = $this->interact(DB_RETURN_QUOTED, serialize($meta));
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['pm_messages_table']}
+                "UPDATE {$this->pm_messages_table}
                  SET    meta='$meta'
                  WHERE  pm_message_id = {$row['pm_message_id']}",
                 NULL,
@@ -4295,7 +4308,7 @@ abstract class PhorumDB
         // Delete all existing group memberships.
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['user_group_xref_table']}
+            "DELETE FROM {$this->user_group_xref_table}
              WHERE  user_id = $user_id",
             NULL,
             DB_MASTERQUERY
@@ -4307,7 +4320,7 @@ abstract class PhorumDB
             $group_status = (int)$group_status;
             $this->interact(
                 DB_RETURN_RES,
-                "INSERT INTO {$PHORUM['user_group_xref_table']}
+                "INSERT INTO {$this->user_group_xref_table}
                         (user_id, group_id, status)
                  VALUES ($user_id, $group_id, $group_status)",
                 NULL,
@@ -4361,7 +4374,7 @@ abstract class PhorumDB
         // Try to insert a new record.
         $res = $this->interact(
             DB_RETURN_RES,
-            "INSERT INTO {$PHORUM['subscribers_table']}
+            "INSERT INTO {$this->subscribers_table}
                     (user_id, forum_id, thread, sub_type)
              VALUES ($user_id, $forum_id, $thread, $type)",
             NULL,
@@ -4373,7 +4386,7 @@ abstract class PhorumDB
         if (!$res) {
           $this->interact(
           DB_RETURN_RES,
-              "UPDATE {$PHORUM['subscribers_table']}
+              "UPDATE {$this->subscribers_table}
                SET    sub_type = $type
                WHERE  user_id  = $user_id AND
                       forum_id = $forum_id AND
@@ -4416,7 +4429,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['subscribers_table']}
+            "DELETE FROM {$this->subscribers_table}
              WHERE  user_id = $user_id AND
                     thread  = $thread
                     $forum_where",
@@ -4442,7 +4455,7 @@ abstract class PhorumDB
         if (!empty($user_id)) {
             $res = $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$GLOBALS['PHORUM']['user_table']}
+                "UPDATE {$this->user_table}
                  SET    posts = posts + 1
                  WHERE  user_id = $user_id",
                 NULL,
@@ -4475,7 +4488,7 @@ abstract class PhorumDB
             DB_RETURN_ROWS,
             "SELECT group_id,
                     status
-             FROM   {$PHORUM['user_group_xref_table']}
+             FROM   {$this->user_group_xref_table}
              WHERE  user_id = $user_id
              ORDER  BY status DESC",
             0 // keyfield 0 is the group_id
@@ -4509,7 +4522,7 @@ abstract class PhorumDB
             "SELECT user_id,
                     username,
                     email
-             FROM   {$PHORUM['user_table']}
+             FROM   {$this->user_table}
              WHERE  active in (".PHORUM_USER_PENDING_BOTH.",
                                ".PHORUM_USER_PENDING_MOD.")
              ORDER  BY username",
@@ -4547,7 +4560,7 @@ abstract class PhorumDB
         $pmxrefs = $this->interact(
             DB_RETURN_ROWS,
             "SELECT pm_message_id
-             FROM   {$PHORUM['pm_xref_table']}
+             FROM   {$this->pm_xref_table}
              WHERE  user_id = $user_id",
             NULL,
             DB_MASTERQUERY
@@ -4555,15 +4568,15 @@ abstract class PhorumDB
 
         // These are tables that hold user related data.
         $tables = array (
-            $PHORUM['user_table'],
-            $PHORUM['user_permissions_table'],
-            $PHORUM['user_newflags_min_id_table'],
-            $PHORUM['user_newflags_table'],
-            $PHORUM['subscribers_table'],
-            $PHORUM['user_group_xref_table'],
-            $PHORUM['pm_buddies_table'],
-            $PHORUM['pm_folders_table'],
-            $PHORUM['pm_xref_table'],
+            $this->user_table,
+            $this->user_permissions_table,
+            $this->user_newflags_min_id_table,
+            $this->user_newflags_table,
+            $this->subscribers_table,
+            $this->user_group_xref_table,
+            $this->pm_buddies_table,
+            $this->pm_folders_table,
+            $this->pm_xref_table
         );
 
         // Delete the data for the $user_id from all those tables.
@@ -4601,7 +4614,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['message_table']}
+            "UPDATE {$this->message_table}
              SET    user_id = 0,
                     email   = '',
                     author  = $author
@@ -4612,7 +4625,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['message_table']}
+            "UPDATE {$this->message_table}
              SET    recent_user_id = 0,
                     recent_author  = $author
              WHERE  recent_user_id = $user_id",
@@ -4637,7 +4650,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM ".$PHORUM['custom_fields_table']."
+            "DELETE FROM {$this->custom_fields_table}
              WHERE  $rel_where AND
                     field_type =".$type,
             NULL,
@@ -4695,7 +4708,7 @@ abstract class PhorumDB
                     filename,
                     filesize,
                     add_datetime
-             FROM   {$PHORUM['files_table']}
+             FROM   {$this->files_table}
              $where
              ORDER  BY file_id",
             'file_id'
@@ -4769,7 +4782,7 @@ abstract class PhorumDB
         $files = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT $fields
-             FROM   {$PHORUM['files_table']}
+             FROM   {$this->files_table}
              WHERE  file_id = $file_id"
         );
 
@@ -4866,7 +4879,7 @@ abstract class PhorumDB
         if ($file_id === NULL) {
             $file_id = $this->interact(
                 DB_RETURN_NEWID,
-                "INSERT INTO {$PHORUM['files_table']}
+                "INSERT INTO {$this->files_table}
                         (user_id, message_id, link,
                          filename, filesize, file_data, add_datetime)
                  VALUES ($user_id, $message_id, '$link',
@@ -4879,7 +4892,7 @@ abstract class PhorumDB
         else {
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['files_table']}
+                "UPDATE {$this->files_table}
                  SET    user_id      = $user_id,
                         message_id   = $message_id,
                         link         = '$link',
@@ -4916,7 +4929,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['files_table']}
+            "DELETE FROM {$this->files_table}
              WHERE  file_id = $file_id",
             NULL,
             DB_MASTERQUERY
@@ -4958,7 +4971,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['files_table']}
+            "UPDATE {$this->files_table}
              SET    message_id = $message_id,
                     link       = '$link'
              WHERE  file_id    = $file_id",
@@ -4989,7 +5002,7 @@ abstract class PhorumDB
         $size = $this->interact(
             DB_RETURN_VALUE,
             "SELECT SUM(filesize)
-             FROM   {$PHORUM['files_table']}
+             FROM   {$this->files_table}
              WHERE  user_id    = $user_id AND
                     message_id = 0 AND
                     link       = '".PHORUM_LINK_USER."'"
@@ -5030,7 +5043,7 @@ abstract class PhorumDB
                     filesize,
                     add_datetime,
                     'Attachments, left behind by unposted messages' AS reason
-             FROM   {$PHORUM['files_table']}
+             FROM   {$this->files_table}
              WHERE  link = '".PHORUM_LINK_EDITOR."'
                     AND
                     add_datetime < ". (time()-PHORUM_MAX_EDIT_TIME),
@@ -5063,7 +5076,7 @@ abstract class PhorumDB
         $max_id = $this->interact(
             DB_RETURN_VALUE,
             "SELECT max(message_id)
-             FROM   {$PHORUM['message_table']}
+             FROM   {$this->message_table}
              WHERE  forum_id = $forum_id"
         );
 
@@ -5105,7 +5118,7 @@ abstract class PhorumDB
         $newflags = $this->interact(
             DB_RETURN_ROWS,
             "SELECT message_id
-             FROM   {$PHORUM['user_newflags_table']}
+             FROM   {$this->user_newflags_table}
              WHERE  user_id  = {$PHORUM['user']['user_id']} AND
                     forum_id = $forum_id
              ORDER  BY message_id ASC",
@@ -5116,7 +5129,7 @@ abstract class PhorumDB
         $min_id = $this->interact(
             DB_RETURN_VALUE,
             "SELECT min_id
-             FROM   {$PHORUM['user_newflags_min_id_table']}
+             FROM   {$this->user_newflags_min_id_table}
              WHERE  user_id  = {$PHORUM['user']['user_id']} AND
                     forum_id = $forum_id"
         );
@@ -5155,13 +5168,13 @@ abstract class PhorumDB
         $this->sanitize_mixed($forum_ids, 'int');
 
         $sql = "select forum_id, min_id as message_id
-                from {$PHORUM['user_newflags_min_id_table']}
+                from {$this->user_newflags_min_id_table}
                 where user_id=".$PHORUM["user"]["user_id"];
 
         $list = $this->interact(DB_RETURN_ASSOCS, $sql, "forum_id");
 
         $sql = "select forum_id, count(*) as count
-                from {$PHORUM['user_newflags_table']}
+                from {$this->user_newflags_table}
                 where user_id=".$PHORUM["user"]["user_id"]."
                 group by forum_id";
 
@@ -5178,7 +5191,7 @@ abstract class PhorumDB
             } else {
 
                 // check for new messages
-                $sql = "select count(*) as count from {$PHORUM['message_table']}
+                $sql = "select count(*) as count from {$this->message_table}
                         where forum_id=".$forum_id." and
                         message_id>=".$list[$forum_id]["message_id"]." and
                         status=".PHORUM_STATUS_APPROVED." and
@@ -5219,7 +5232,7 @@ abstract class PhorumDB
         $min_ids = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT forum_id, min_id AS message_id
-             FROM   {$PHORUM['user_newflags_min_id_table']}
+             FROM   {$this->user_newflags_min_id_table}
              WHERE  user_id = $user_id",
             'forum_id'
         );
@@ -5227,12 +5240,12 @@ abstract class PhorumDB
         // Get the total number of messages the user has read in each forum.
         $message_counts = $this->interact(
             DB_RETURN_ASSOCS,
-            "SELECT {$PHORUM['user_newflags_table']}.forum_id,
+            "SELECT {$this->user_newflags_table}.forum_id,
                     count(*) AS count
-             FROM   {$PHORUM['user_newflags_table']}
-                    INNER JOIN {$PHORUM['message_table']}
+             FROM   {$this->user_newflags_table}
+                    INNER JOIN {$this->message_table}
                     USING (message_id, forum_id)
-             WHERE  {$PHORUM['user_newflags_table']}.user_id = $user_id AND
+             WHERE  {$this->user_newflags_table}.user_id = $user_id AND
                     status = ".PHORUM_STATUS_APPROVED."
              GROUP  BY forum_id",
             'forum_id'
@@ -5241,12 +5254,12 @@ abstract class PhorumDB
         // Get the number of threads the user has read in each forum.
         $thread_counts = $this->interact(
             DB_RETURN_ASSOCS,
-            "SELECT {$PHORUM['user_newflags_table']}.forum_id,
+            "SELECT {$this->user_newflags_table}.forum_id,
                     count(*) AS count
-             FROM   {$PHORUM['user_newflags_table']}
-                    INNER JOIN {$PHORUM['message_table']}
+             FROM   {$this->user_newflags_table}
+                    INNER JOIN {$this->message_table}
                     USING (message_id, forum_id)
-             WHERE  {$PHORUM['user_newflags_table']}.user_id = $user_id AND
+             WHERE  {$this->user_newflags_table}.user_id = $user_id AND
                     parent_id = 0 AND
                     status = ".PHORUM_STATUS_APPROVED."
              GROUP  BY forum_id",
@@ -5270,7 +5283,7 @@ abstract class PhorumDB
                 $count = $this->interact(
                     DB_RETURN_VALUE,
                     "SELECT count(*) AS count
-                     FROM   {$PHORUM['message_table']}
+                     FROM   {$this->message_table}
                      WHERE  forum_id = $forum_id AND
                             message_id > {$min_ids[$forum_id]['message_id']} AND
                             status = ".PHORUM_STATUS_APPROVED." AND
@@ -5288,7 +5301,7 @@ abstract class PhorumDB
                 $count = $this->interact(
                     DB_RETURN_VALUE,
                     "SELECT count(*) AS count
-                     FROM   {$PHORUM['message_table']}
+                     FROM   {$this->message_table}
                      WHERE  forum_id = $forum_id AND
                             message_id > {$min_ids[$forum_id]["message_id"]} AND
                             parent_id = 0 AND
@@ -5332,7 +5345,7 @@ abstract class PhorumDB
         $min_message_id = $this->interact(
             DB_RETURN_VALUE,
             "SELECT  min_id
-             FROM    {$PHORUM['user_newflags_min_id_table']}
+             FROM    {$this->user_newflags_min_id_table}
              WHERE   user_id  = {$PHORUM['user']['user_id']} AND
                      forum_id = {$forum_id}"
         );
@@ -5346,8 +5359,8 @@ abstract class PhorumDB
         $new_threads = $this->interact(
             DB_RETURN_VALUE,
             "SELECT count(*)
-             FROM {$PHORUM['message_table']} AS m
-                  LEFT JOIN {$PHORUM['user_newflags_table']} AS n ON
+             FROM {$this->message_table} AS m
+                  LEFT JOIN {$this->user_newflags_table} AS n ON
                    m.message_id = n.message_id AND
                    n.user_id    = {$PHORUM['user']['user_id']}
              WHERE m.forum_id   = {$forum_id} AND
@@ -5362,8 +5375,8 @@ abstract class PhorumDB
         $new_messages = $this->interact(
             DB_RETURN_VALUE,
             "SELECT count(*)
-             FROM   {$PHORUM['message_table']} AS m
-                    LEFT JOIN {$PHORUM['user_newflags_table']} AS n ON
+             FROM   {$this->message_table} AS m
+                    LEFT JOIN {$this->user_newflags_table} AS n ON
                     m.message_id = n.message_id AND
                     m.forum_id   = n.forum_id AND
                     n.user_id    = {$PHORUM['user']['user_id']}
@@ -5397,7 +5410,7 @@ abstract class PhorumDB
             // We ignore duplicate record errors here.
             $res = $this->interact(
                 DB_RETURN_RES,
-                "INSERT INTO {$PHORUM['user_newflags_min_id_table']}
+                "INSERT INTO {$this->user_newflags_min_id_table}
                         (user_id, forum_id, min_id)
                  VALUES ($user_id, {$min_id['forum_id']}, {$min_id['min_id']})",
                 NULL,
@@ -5407,7 +5420,7 @@ abstract class PhorumDB
                 // No res returned, therefore that key probably exists already.
                 $this->interact(
                     DB_RETURN_RES,
-                    "UPDATE {$PHORUM['user_newflags_min_id_table']}
+                    "UPDATE {$this->user_newflags_min_id_table}
                      SET    min_id = {$min_id['min_id']}
                      WHERE  user_id  = $user_id AND
                             forum_id = {$min_id['forum_id']}",
@@ -5472,7 +5485,7 @@ abstract class PhorumDB
             // Try to insert the values (in a single query for speed.)
             $res = $this->interact(
                 DB_RETURN_RES,
-                "INSERT INTO {$PHORUM['user_newflags_table']}
+                "INSERT INTO {$this->user_newflags_table}
                         (user_id, forum_id, message_id)
                  VALUES " . implode(",", $inserts),
                 NULL,
@@ -5489,7 +5502,7 @@ abstract class PhorumDB
                 {
                     $res = $this->interact(
                         DB_RETURN_RES,
-                        "INSERT INTO {$PHORUM['user_newflags_table']}
+                        "INSERT INTO {$this->user_newflags_table}
                                 (user_id, forum_id, message_id)
                          VALUES $values",
                          NULL,
@@ -5523,7 +5536,7 @@ abstract class PhorumDB
         $count = $this->interact(
             DB_RETURN_VALUE,
             "SELECT count(*)
-             FROM   {$PHORUM['user_newflags_table']}
+             FROM   {$this->user_newflags_table}
              WHERE  user_id  = {$PHORUM['user']['user_id']} AND
                     forum_id = {$forum_id}"
         );
@@ -5556,7 +5569,7 @@ abstract class PhorumDB
         // Delete the provided amount of newflags.
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['user_newflags_table']}
+            "DELETE FROM {$this->user_newflags_table}
              WHERE  user_id  = {$PHORUM['user']['user_id']} AND
                     forum_id = {$forum_id}
              $limit",
@@ -5569,7 +5582,7 @@ abstract class PhorumDB
             $min_id = $this->interact(
                 DB_RETURN_VALUE,
                 "SELECT min(message_id)
-                 FROM   {$PHORUM['user_newflags_table']}
+                 FROM   {$this->user_newflags_table}
                  WHERE  forum_id = $forum_id AND user_id={$PHORUM['user']['user_id']}"
             );
 
@@ -5599,8 +5612,8 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE IGNORE {$GLOBALS['PHORUM']['user_newflags_table']} AS flags,
-                           {$GLOBALS['PHORUM']['message_table']} AS msg
+            "UPDATE IGNORE {$this->user_newflags_table} AS flags,
+                           {$this->message_table} AS msg
              SET    flags.forum_id   = msg.forum_id
              WHERE  flags.message_id = msg.message_id AND
                     flags.message_id IN ($ids_str)",
@@ -5660,8 +5673,8 @@ abstract class PhorumDB
             DB_RETURN_ROWS,
             "SELECT DISTINCT(u.email) AS email,
                     user_language
-             FROM   {$PHORUM['subscribers_table']} AS s,
-                    {$PHORUM['user_table']} AS u
+             FROM   {$this->subscribers_table} AS s,
+                    {$this->user_table} AS u
              WHERE  s.forum_id = $forum_id AND
                     (s.thread = $thread or s.thread = 0) AND
                     s.sub_type = $type AND
@@ -5739,8 +5752,8 @@ abstract class PhorumDB
                     m.recent_author  AS recent_author,
                     m.recent_user_id AS recent_user_id,
                     m.meta           AS meta
-             FROM   {$PHORUM['subscribers_table']} AS s,
-                    {$PHORUM['message_table']} AS m
+             FROM   {$this->subscribers_table} AS s,
+                    {$this->message_table} AS m
              WHERE  s.user_id    = $user_id AND
                     m.message_id = s.thread AND
                     (s.sub_type  = ".PHORUM_SUBSCRIPTION_MESSAGE." OR
@@ -5801,7 +5814,7 @@ abstract class PhorumDB
         $type = $this->interact(
             DB_RETURN_VALUE,
             "SELECT sub_type
-             FROM   {$PHORUM['subscribers_table']}
+             FROM   {$this->subscribers_table}
              WHERE  forum_id = $forum_id AND
                     thread   = $thread AND
                     user_id  = $user_id"
@@ -5851,7 +5864,7 @@ abstract class PhorumDB
         $bans = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT *
-             FROM {$PHORUM['banlist_table']}
+             FROM {$this->banlist_table}
              $forum_where
              $order"
         );
@@ -5891,7 +5904,7 @@ abstract class PhorumDB
         $bans = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT *
-             FROM   {$PHORUM['banlist_table']}
+             FROM   {$this->banlist_table}
              WHERE  id = $banid"
         );
 
@@ -5926,7 +5939,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['banlist_table']}
+            "DELETE FROM {$this->banlist_table}
              WHERE  id = $banid",
             NULL,
             DB_MASTERQUERY
@@ -5988,7 +6001,7 @@ abstract class PhorumDB
         if ($banid > 0) {
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['banlist_table']}
+                "UPDATE {$this->banlist_table}
                  SET    forum_id = $forum_id,
                         type     = $type,
                         pcre     = $pcre,
@@ -6003,7 +6016,7 @@ abstract class PhorumDB
         else {
             $this->interact(
                 DB_RETURN_RES,
-                "INSERT INTO {$PHORUM['banlist_table']}
+                "INSERT INTO {$this->banlist_table}
                         (forum_id, type, pcre, string, comments)
                  VALUES ($forum_id, $type, $pcre, '$string', '$comments')",
                 NULL,
@@ -6061,8 +6074,8 @@ abstract class PhorumDB
                     meta,            pm_xref_id,
                     pm_folder_id,    special_folder,
                     read_flag,       reply_flag
-             FROM   {$PHORUM['pm_messages_table']} AS m,
-                    {$PHORUM['pm_xref_table']} AS x
+             FROM   {$this->pm_messages_table} AS m,
+                    {$this->pm_xref_table} AS x
              WHERE  x.user_id = $user_id AND
                     $folder_where AND
                     x.pm_message_id = m.pm_message_id
@@ -6135,8 +6148,8 @@ abstract class PhorumDB
                     x.pm_message_id  AS pm_message_id,
                     x.read_flag      AS read_flag,
                     x.reply_flag     AS reply_flag
-             FROM {$PHORUM['pm_messages_table']} AS m,
-                  {$PHORUM['pm_xref_table']} AS x
+             FROM {$this->pm_messages_table} AS m,
+                  {$this->pm_xref_table} AS x
              WHERE $folder_where
                    x.pm_message_id = $pm_id AND
                    x.user_id       = $user_id AND
@@ -6182,7 +6195,7 @@ abstract class PhorumDB
 
         $pm_folder_id = $this->interact(
             DB_RETURN_NEWID,
-            "INSERT INTO {$PHORUM['pm_folders_table']}
+            "INSERT INTO {$this->pm_folders_table}
                     (user_id, foldername)
              VALUES ($user_id, '$foldername')",
             NULL,
@@ -6218,7 +6231,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['pm_folders_table']}
+            "UPDATE {$this->pm_folders_table}
              SET    foldername = '$newname'
              WHERE  pm_folder_id = $folder_id AND
                     user_id = $user_id",
@@ -6257,7 +6270,7 @@ abstract class PhorumDB
         // Delete the folder itself.
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['pm_folders_table']}
+            "DELETE FROM {$this->pm_folders_table}
              WHERE pm_folder_id = $folder_id AND
                    user_id      = $user_id",
             NULL,
@@ -6308,7 +6321,7 @@ abstract class PhorumDB
             DB_RETURN_ASSOCS,
             "SELECT pm_folder_id AS id,
                     foldername   AS name
-             FROM   {$PHORUM['pm_folders_table']}
+             FROM   {$this->pm_folders_table}
              WHERE  user_id = $user_id
              ORDER  BY foldername",
             'id'
@@ -6341,7 +6354,7 @@ abstract class PhorumDB
                         special_folder,
                         count(*) AS total,
                         (count(*) - sum(read_flag)) AS new
-                 FROM   {$PHORUM['pm_xref_table']}
+                 FROM   {$this->pm_xref_table}
                  WHERE  user_id = $user_id
                  GROUP  BY pm_folder_id, special_folder"
             );
@@ -6407,7 +6420,7 @@ abstract class PhorumDB
             DB_RETURN_ASSOCS,
             "SELECT count(*) AS total,
                     (count(*) - sum(read_flag)) AS new
-             FROM   {$PHORUM['pm_xref_table']}
+             FROM   {$this->pm_xref_table}
              WHERE  $folder_where user_id = $user_id"
          );
 
@@ -6443,7 +6456,7 @@ abstract class PhorumDB
         $new = $this->interact(
             DB_RETURN_VALUE,
             "SELECT user_id
-             FROM   {$PHORUM['pm_xref_table']}
+             FROM   {$this->pm_xref_table}
              WHERE  user_id   = $user_id AND
                     read_flag = 0 LIMIT 1"
         );
@@ -6536,7 +6549,7 @@ abstract class PhorumDB
         // Create the message.
         $pm_id = $this->interact(
             DB_RETURN_NEWID,
-            "INSERT INTO {$PHORUM['pm_messages_table']}
+            "INSERT INTO {$this->pm_messages_table}
                     (user_id, author, subject,
                      message, datestamp, meta)
              VALUES ($from, '$fromuser', '$subject',
@@ -6550,7 +6563,7 @@ abstract class PhorumDB
         {
             $this->interact(
                 DB_RETURN_RES,
-                "INSERT INTO {$PHORUM['pm_xref_table']}
+                "INSERT INTO {$this->pm_xref_table}
                         (user_id, pm_folder_id,
                          special_folder, pm_message_id,
                          read_flag, reply_flag)
@@ -6605,7 +6618,7 @@ abstract class PhorumDB
         // Update the flag in the database.
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['pm_xref_table']}
+            "UPDATE {$this->pm_xref_table}
              SET    $flag = $value
              WHERE  pm_message_id = $pm_id AND
                     user_id       = $user_id",
@@ -6655,7 +6668,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['pm_xref_table']}
+            "DELETE FROM {$this->pm_xref_table}
              WHERE user_id       = $user_id AND
                    pm_message_id = $pm_id AND
                    $folder_where",
@@ -6718,7 +6731,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['pm_xref_table']}
+            "UPDATE {$this->pm_xref_table}
              SET    pm_folder_id   = $pm_folder_id,
                     special_folder = $special_folder
              WHERE  user_id        = $user_id AND
@@ -6751,7 +6764,7 @@ abstract class PhorumDB
         $pm = $this->interact(
             DB_RETURN_ASSOC,
             "SELECT meta
-             FROM   {$PHORUM['pm_messages_table']}
+             FROM   {$this->pm_messages_table}
              WHERE  pm_message_id = $pm_id",
             NULL,
             DB_MASTERQUERY
@@ -6764,7 +6777,7 @@ abstract class PhorumDB
         $xrefs = $this->interact(
             DB_RETURN_ROWS,
             "SELECT user_id, read_flag
-             FROM   {$PHORUM['pm_xref_table']}
+             FROM   {$this->pm_xref_table}
              WHERE  pm_message_id = $pm_id",
             NULL,
             DB_MASTERQUERY
@@ -6774,7 +6787,7 @@ abstract class PhorumDB
         if (count($xrefs) == 0) {
             $this->interact(
                 DB_RETURN_RES,
-                "DELETE FROM {$PHORUM['pm_messages_table']}
+                "DELETE FROM {$this->pm_messages_table}
                  WHERE  pm_message_id = $pm_id",
                 NULL,
                 DB_MASTERQUERY
@@ -6799,7 +6812,7 @@ abstract class PhorumDB
         $meta = $this->interact(DB_RETURN_QUOTED, serialize($meta));
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['pm_messages_table']}
+            "UPDATE {$this->pm_messages_table}
              SET    meta = '$meta'
              WHERE  pm_message_id = $pm_id",
             NULL,
@@ -6835,7 +6848,7 @@ abstract class PhorumDB
         $pm_buddy_id = $this->interact(
             DB_RETURN_VALUE,
             "SELECT pm_buddy_id
-             FROM   {$PHORUM['pm_buddies_table']}
+             FROM   {$this->pm_buddies_table}
              WHERE  user_id       = $user_id AND
                     buddy_user_id = $buddy_user_id"
         );
@@ -6880,7 +6893,7 @@ abstract class PhorumDB
         if ($pm_buddy_id === NULL) {
             $pm_buddy_id = $this->interact(
                 DB_RETURN_NEWID,
-                "INSERT INTO {$PHORUM['pm_buddies_table']}
+                "INSERT INTO {$this->pm_buddies_table}
                         (user_id, buddy_user_id)
                  VALUES ($user_id, $buddy_user_id)",
                 NULL,
@@ -6914,7 +6927,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "DELETE FROM {$PHORUM['pm_buddies_table']}
+            "DELETE FROM {$this->pm_buddies_table}
              WHERE buddy_user_id = $buddy_user_id AND
                    user_id       = $user_id",
             NULL,
@@ -6953,7 +6966,7 @@ abstract class PhorumDB
         $buddies = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT buddy_user_id AS user_id
-             FROM {$PHORUM['pm_buddies_table']}
+             FROM {$this->pm_buddies_table}
              WHERE user_id = $user_id",
             'user_id'
         );
@@ -6970,8 +6983,8 @@ abstract class PhorumDB
         $mutuals = $this->interact(
             DB_RETURN_ROWS,
             "SELECT DISTINCT a.buddy_user_id AS buddy_user_id
-             FROM {$PHORUM['pm_buddies_table']} AS a,
-                  {$PHORUM['pm_buddies_table']} AS b
+             FROM {$this->pm_buddies_table} AS a,
+                  {$this->pm_buddies_table} AS b
              WHERE a.user_id       = $user_id AND
                    b.user_id       = a.buddy_user_id AND
                    b.buddy_user_id = $user_id"
@@ -7035,7 +7048,7 @@ abstract class PhorumDB
             // Link the messages below the split message to the split off thread.
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$GLOBALS['PHORUM']['message_table']}
+                "UPDATE {$this->message_table}
                  SET    thread  = $message_id,
                         subject = $reply_subject 
                  WHERE  message_id IN ($tree)",
@@ -7046,7 +7059,7 @@ abstract class PhorumDB
             // Turn the split message into a thread starter message.
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$GLOBALS['PHORUM']['message_table']}
+                "UPDATE {$this->message_table}
                  SET    thread     = $message_id,
                         parent_id  = 0,
                         subject    = $thread_subject
@@ -7105,7 +7118,7 @@ abstract class PhorumDB
             } else {
                 $this->interact(
                     DB_RETURN_RES,
-                    "UPDATE {$GLOBALS['PHORUM']['message_table']}
+                    "UPDATE {$this->message_table}
                      SET    threadviewcount = threadviewcount + 1
                      WHERE  message_id = $thread_id",
                     NULL,
@@ -7116,7 +7129,7 @@ abstract class PhorumDB
 
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$GLOBALS['PHORUM']['message_table']}
+            "UPDATE {$this->message_table}
              SET    viewcount = viewcount + 1
                     $tvc
              WHERE  message_id = $message_id",
@@ -7137,7 +7150,7 @@ abstract class PhorumDB
         // Delete all records from the search table.
         $this->interact(
             DB_RETURN_RES,
-            "TRUNCATE TABLE {$PHORUM['search_table']}",
+            "TRUNCATE TABLE {$this->search_table}",
             NULL,
             DB_GLOBALQUERY | DB_MASTERQUERY
         );
@@ -7145,12 +7158,12 @@ abstract class PhorumDB
         // Rebuild all search data from scratch.
         $this->interact(
             DB_RETURN_RES,
-            "INSERT INTO {$PHORUM['search_table']}
+            "INSERT INTO {$this->search_table}
                     (message_id, search_text, forum_id)
              SELECT message_id,
                     concat(author, ' | ', subject, ' | ', body),
                     forum_id
-             FROM   {$PHORUM['message_table']}",
+             FROM   {$this->message_table}",
             NULL,
             DB_GLOBALQUERY | DB_MASTERQUERY
         );
@@ -7168,7 +7181,7 @@ abstract class PhorumDB
         // Reset the post count for all users.
         $this->interact(
             DB_RETURN_RES,
-            "UPDATE {$PHORUM['user_table']}
+            "UPDATE {$this->user_table}
              SET posts = 0",
             NULL,
             DB_GLOBALQUERY | DB_MASTERQUERY
@@ -7178,7 +7191,7 @@ abstract class PhorumDB
         $postcounts = $this->interact(
             DB_RETURN_ROWS,
             "SELECT user_id, count(*)
-             FROM   {$PHORUM['message_table']}
+             FROM   {$this->message_table}
              GROUP  BY user_id",
             NULL,
             DB_GLOBALQUERY | DB_MASTERQUERY
@@ -7188,7 +7201,7 @@ abstract class PhorumDB
         foreach ($postcounts as $postcount) {
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$PHORUM['user_table']}
+                "UPDATE {$this->user_table}
                  SET    posts   = {$postcount[1]}
                  WHERE  user_id = {$postcount[0]}",
                 NULL,
@@ -7372,12 +7385,12 @@ abstract class PhorumDB
         if ($type == 'OR' || count($clauses) == 1)
         {
             $sql = "SELECT DISTINCT(relation_id)
-                    FROM   {$PHORUM['custom_fields_table']}
+                    FROM   {$this->custom_fields_table}
                     $where
                     $limit";
         } else {
             $sql = "SELECT relation_id
-                    FROM   {$PHORUM['custom_fields_table']}
+                    FROM   {$this->custom_fields_table}
                     $where
                     GROUP  BY relation_id
                     HAVING count(*) = " . count($clauses) . " " .
@@ -7643,9 +7656,9 @@ abstract class PhorumDB
                     thread.closed       AS thread_closed,
                     thread.modifystamp  AS thread_modifystamp,
                     thread.thread_count AS thread_count
-             FROM   {$PHORUM['message_table']} AS thread,
-                    {$PHORUM['message_table']} AS message
-                        LEFT JOIN {$PHORUM['user_table']} AS user
+             FROM   {$this->message_table} AS thread,
+                    {$this->message_table} AS message
+                        LEFT JOIN {$this->user_table} AS user
                         ON message.user_id = user.user_id
              WHERE  message.thread  = thread.message_id AND
                     ($where)
@@ -7682,7 +7695,7 @@ abstract class PhorumDB
 
         $create_table_queries = array(
 
-          "CREATE TABLE {$PHORUM['forums_table']} (
+          "CREATE TABLE {$this->forums_table} (
                forum_id                 int unsigned   NOT NULL auto_increment,
                name                     varchar(50)    NOT NULL default '',
                active                   tinyint(1)     NOT NULL default '0',
@@ -7727,7 +7740,7 @@ abstract class PhorumDB
                KEY folder_index (parent_id, vroot, active, folder_flag)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['message_table']} (
+          "CREATE TABLE {$this->message_table} (
                message_id               int unsigned   NOT NULL auto_increment,
                forum_id                 int unsigned   NOT NULL default '0',
                thread                   int unsigned   NOT NULL default '0',
@@ -7772,7 +7785,7 @@ abstract class PhorumDB
                KEY forum_message_count(forum_id,status,moved,message_id)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['settings_table']} (
+          "CREATE TABLE {$this->settings_table} (
                name                     varchar(255)   NOT NULL default '',
                type                     enum('V','S')  NOT NULL default 'V',
                data                     text           NOT NULL,
@@ -7780,7 +7793,7 @@ abstract class PhorumDB
                PRIMARY KEY (name)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['subscribers_table']} (
+          "CREATE TABLE {$this->subscribers_table} (
                user_id                  int unsigned   NOT NULL default '0',
                forum_id                 int unsigned   NOT NULL default '0',
                sub_type                 tinyint(4)     NOT NULL default '0',
@@ -7790,7 +7803,7 @@ abstract class PhorumDB
                KEY forum_id (forum_id,thread,sub_type)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['user_permissions_table']} (
+          "CREATE TABLE {$this->user_permissions_table} (
                user_id                  int unsigned   NOT NULL default '0',
                forum_id                 int unsigned   NOT NULL default '0',
                permission               int unsigned   NOT NULL default '0',
@@ -7802,7 +7815,7 @@ abstract class PhorumDB
           // When creating extra fields, then mind to update the file
           // include/api/custom_field.php script too (it contains a
           // list of reserved names for custom profile fields).
-          "CREATE TABLE {$PHORUM['user_table']} (
+          "CREATE TABLE {$this->user_table} (
                user_id                  int unsigned   NOT NULL auto_increment,
                username                 varchar(50)    NOT NULL default '',
                real_name                varchar(255)   NOT NULL default '',
@@ -7846,7 +7859,7 @@ abstract class PhorumDB
                KEY email_temp (email_temp)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['user_newflags_table']} (
+          "CREATE TABLE {$this->user_newflags_table} (
                user_id                  int unsigned   NOT NULL default '0',
                forum_id                 int unsigned   NOT NULL default '0',
                message_id               int unsigned   NOT NULL default '0',
@@ -7855,7 +7868,7 @@ abstract class PhorumDB
                KEY move (message_id, forum_id)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['groups_table']} (
+          "CREATE TABLE {$this->groups_table} (
                group_id                 int unsigned   NOT NULL auto_increment,
                name                     varchar(255)   NOT NULL default '',
                open                     tinyint(1)     NOT NULL default '0',
@@ -7863,7 +7876,7 @@ abstract class PhorumDB
                PRIMARY KEY  (group_id)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['forum_group_xref_table']} (
+          "CREATE TABLE {$this->forum_group_xref_table} (
                forum_id                 int unsigned   NOT NULL default '0',
                group_id                 int unsigned   NOT NULL default '0',
                permission               int unsigned   NOT NULL default '0',
@@ -7872,7 +7885,7 @@ abstract class PhorumDB
                KEY group_id (group_id)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['user_group_xref_table']} (
+          "CREATE TABLE {$this->user_group_xref_table} (
                user_id                  int unsigned   NOT NULL default '0',
                group_id                 int unsigned   NOT NULL default '0',
                status                   tinyint(4)     NOT NULL default '1',
@@ -7880,7 +7893,7 @@ abstract class PhorumDB
                PRIMARY KEY  (user_id,group_id)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['files_table']} (
+          "CREATE TABLE {$this->files_table} (
                file_id                  int unsigned   NOT NULL auto_increment,
                user_id                  int unsigned   NOT NULL default '0',
                filename                 varchar(255)   NOT NULL default '',
@@ -7896,7 +7909,7 @@ abstract class PhorumDB
                KEY user_id_link (user_id,link)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['banlist_table']} (
+          "CREATE TABLE {$this->banlist_table} (
                id                       int unsigned   NOT NULL auto_increment,
                forum_id                 int unsigned   NOT NULL default '0',
                type                     tinyint(4)     NOT NULL default '0',
@@ -7908,7 +7921,7 @@ abstract class PhorumDB
                KEY forum_id (forum_id)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['search_table']} (
+          "CREATE TABLE {$this->search_table} (
                message_id               int unsigned   NOT NULL default '0',
                forum_id                 int unsigned   NOT NULL default '0',
                search_text              mediumtext     NOT NULL,
@@ -7918,7 +7931,7 @@ abstract class PhorumDB
                FULLTEXT KEY search_text (search_text)
            ) ENGINE=MyISAM $charset",
 
-          "CREATE TABLE {$PHORUM['custom_fields_table']} (
+          "CREATE TABLE {$this->custom_fields_table} (
                relation_id              int unsigned   NOT NULL default '0',
                field_type               tinyint(1)     NOT NULL default '1',
                type                     int unsigned   NOT NULL default '0',
@@ -7927,7 +7940,7 @@ abstract class PhorumDB
                PRIMARY KEY (relation_id, field_type, type)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['pm_messages_table']} (
+          "CREATE TABLE {$this->pm_messages_table} (
                pm_message_id            int unsigned   NOT NULL auto_increment,
                user_id                  int unsigned   NOT NULL default '0',
                author                   varchar(255)   NOT NULL default '',
@@ -7940,7 +7953,7 @@ abstract class PhorumDB
                KEY user_id (user_id)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['pm_folders_table']} (
+          "CREATE TABLE {$this->pm_folders_table} (
                pm_folder_id             int unsigned   NOT NULL auto_increment,
                user_id                  int unsigned   NOT NULL default '0',
                foldername               varchar(20)    NOT NULL default '',
@@ -7948,7 +7961,7 @@ abstract class PhorumDB
                PRIMARY KEY (pm_folder_id)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['pm_xref_table']} (
+          "CREATE TABLE {$this->pm_xref_table} (
                pm_xref_id               int unsigned   NOT NULL auto_increment,
                user_id                  int unsigned   NOT NULL default '0',
                pm_folder_id             int unsigned   NOT NULL default '0',
@@ -7962,7 +7975,7 @@ abstract class PhorumDB
                KEY read_flag (read_flag)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['pm_buddies_table']} (
+          "CREATE TABLE {$this->pm_buddies_table} (
                pm_buddy_id              int unsigned   NOT NULL auto_increment,
                user_id                  int unsigned   NOT NULL default '0',
                buddy_user_id            int unsigned   NOT NULL default '0',
@@ -7972,7 +7985,7 @@ abstract class PhorumDB
                KEY buddy_user_id (buddy_user_id)
            ) $charset",
 
-          "CREATE TABLE {$PHORUM['message_tracking_table']} (
+          "CREATE TABLE {$this->message_tracking_table} (
                track_id                 int unsigned   NOT NULL auto_increment,
                message_id               int unsigned   NOT NULL default '0',
                user_id                  int unsigned   NOT NULL default '0',
@@ -7984,7 +7997,7 @@ abstract class PhorumDB
                KEY message_id (message_id)
            ) $charset",
 
-           "CREATE TABLE {$PHORUM['user_newflags_min_id_table']} (
+           "CREATE TABLE {$this->user_newflags_min_id_table} (
                user_id               INT UNSIGNED NOT NULL ,
                forum_id              INT UNSIGNED NOT NULL ,
                min_id                INT UNSIGNED NOT NULL ,

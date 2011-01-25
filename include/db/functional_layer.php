@@ -35,6 +35,41 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
+// ----------------------------------------------------------------------
+// Table name variables
+//
+// These are the table names that are used by the database system.
+// The PhorumDB layer uses class properties for the table names.
+// We keep these here for backward compatibility with the functional layer.
+// ----------------------------------------------------------------------
+
+$prefix = $PHORUM['DB']->prefix;
+
+$PHORUM['message_table']              = $prefix . '_messages';
+$PHORUM['user_newflags_table']        = $prefix . '_user_newflags';
+$PHORUM['user_newflags_min_id_table'] = $prefix . '_user_min_id';
+$PHORUM['subscribers_table']          = $prefix . '_subscribers';
+$PHORUM['files_table']                = $prefix . '_files';
+$PHORUM['search_table']               = $prefix . '_search';
+$PHORUM['settings_table']             = $prefix . '_settings';
+$PHORUM['forums_table']               = $prefix . '_forums';
+$PHORUM['user_table']                 = $prefix . '_users';
+$PHORUM['user_permissions_table']     = $prefix . '_user_permissions';
+$PHORUM['groups_table']               = $prefix . '_groups';
+$PHORUM['forum_group_xref_table']     = $prefix . '_forum_group_xref';
+$PHORUM['user_group_xref_table']      = $prefix . '_user_group_xref';
+$PHORUM['custom_fields_table']        = $prefix . '_custom_fields';
+$PHORUM['banlist_table']              = $prefix . '_banlists';
+$PHORUM['pm_messages_table']          = $prefix . '_pm_messages';
+$PHORUM['pm_folders_table']           = $prefix . '_pm_folders';
+$PHORUM['pm_xref_table']              = $prefix . '_pm_xref';
+$PHORUM['pm_buddies_table']           = $prefix . '_pm_buddies';
+$PHORUM['message_tracking_table']     = $prefix . '_messages_edittrack';
+
+// ----------------------------------------------------------------------
+// Functions
+// ----------------------------------------------------------------------
+
 function phorum_db_mysql_connect() {
     return call_user_func_array(
         array($GLOBALS['PHORUM']['DB'], 'mysql_connect'),
