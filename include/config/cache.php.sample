@@ -19,9 +19,7 @@ $PHORUM['CACHECONFIG']=array(
     'server'        => '127.0.0.1',
     'port'          => '11211',
     'user'          => '',
-    'password'      => '',
-    'cache_settings'=> 0,    
-
+    'password'      => ''
 );
 
 /*
