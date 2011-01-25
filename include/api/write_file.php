@@ -28,6 +28,7 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
+// {{{ Function: phorum_api_write_file()
 /**
  * This function can be used to safely write a file to disk.
  *
@@ -109,5 +110,6 @@ function phorum_api_write_file($file, $data)
 
     return TRUE;
 }
+// }}}
 
 ?>

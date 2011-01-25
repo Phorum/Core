@@ -154,4 +154,5 @@ function phorum_api_feed_atom($messages, $forums, $url, $title, $description, $r
 
     return array($buffer, 'application/xml');
 }
+
 ?>

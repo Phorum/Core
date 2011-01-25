@@ -29,8 +29,6 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-global $PHORUM;
-
 // The location of the configuration file.
 $cacheconfig = PHORUM_PATH.'/include/config/cache.php';
 

@@ -121,4 +121,5 @@ function phorum_api_feed_js($messages, $forums, $url, $title, $description, $rep
 
     return array($buffer, 'text/javascript');
 }
+
 ?>

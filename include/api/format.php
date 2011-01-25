@@ -250,5 +250,4 @@ function phorum_api_format_html_encode($string)
 }
 // }}}
 
-
 ?>

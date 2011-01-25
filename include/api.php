@@ -88,21 +88,8 @@ $PHORUM = array
     'DB' => NULL
 );
 
-// Load the files that are used by most scripts.
+// Load the Phorum constants.
 require_once dirname(__FILE__).'/api/constants.php';
-require_once PHORUM_PATH.'/include/api/deprecated.php';
-require_once PHORUM_PATH.'/include/api/error.php';
-require_once PHORUM_PATH.'/include/api/hook.php';
-require_once PHORUM_PATH.'/include/api/url.php';
-require_once PHORUM_PATH.'/include/api/request.php';
-require_once PHORUM_PATH.'/include/api/redirect.php';
-require_once PHORUM_PATH.'/include/api/user.php';
-require_once PHORUM_PATH.'/include/api/forums.php';
-require_once PHORUM_PATH.'/include/api/format.php';
-require_once PHORUM_PATH.'/include/api/format/users.php';
-require_once PHORUM_PATH.'/include/api/template.php';
-require_once PHORUM_PATH.'/include/api/output.php';
-require_once PHORUM_PATH.'/include/api/buffer.php';
 
 // Scripts should define the "phorum_page" constant, but we'll help out script
 // authors that forget to do so here, to prevent PHP warnings later on.
@@ -268,7 +255,6 @@ if ($PHORUM['DBCONFIG']['type'] == 'mysqli') {
 // from the format "Phorum<Type>DB".
 $PHORUM['DBCONFIG']['type'] = basename($PHORUM['DBCONFIG']['type']);
 $db_class = 'Phorum' . ucfirst($PHORUM['DBCONFIG']['type']) . 'DB';
-require_once PHORUM_PATH.'/include/db/functional_layer.php';
 require_once PHORUM_PATH.'/include/db/PhorumDB.php';
 require_once PHORUM_PATH."/include/db/{$db_class}.php";
 
@@ -285,6 +271,27 @@ if (!$PHORUM['DB']->check_connection())
         exit();
     }
 }
+
+// Load the functional database layer, for backward compatibility.
+require_once PHORUM_PATH.'/include/db/functional_layer.php';
+
+// ----------------------------------------------------------------------
+// Load code that is used by most scripts.
+// ----------------------------------------------------------------------
+
+require_once PHORUM_PATH . '/include/api/deprecated.php';
+require_once PHORUM_PATH . '/include/api/error.php';
+require_once PHORUM_PATH . '/include/api/hook.php';
+require_once PHORUM_PATH . '/include/api/url.php';
+require_once PHORUM_PATH . '/include/api/request.php';
+require_once PHORUM_PATH . '/include/api/redirect.php';
+require_once PHORUM_PATH . '/include/api/user.php';
+require_once PHORUM_PATH . '/include/api/forums.php';
+require_once PHORUM_PATH . '/include/api/format.php';
+require_once PHORUM_PATH . '/include/api/format/users.php';
+require_once PHORUM_PATH . '/include/api/template.php';
+require_once PHORUM_PATH . '/include/api/output.php';
+require_once PHORUM_PATH . '/include/api/buffer.php';
 
 // ----------------------------------------------------------------------
 // Register the Phorum shutdown function

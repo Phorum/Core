@@ -26,6 +26,7 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
+// {{{ Function: phorum_api_feed_html()
 /**
  * This function implements the HTML output adapter for the Feed API.
  *
@@ -105,5 +106,6 @@ function phorum_api_feed_html($messages, $forums, $url, $title, $description, $r
 
     return array($buffer, 'text/html');
 }
+// }}}
 
 ?>

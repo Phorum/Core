@@ -79,5 +79,4 @@ function phorum_api_read_file($file)
 }
 // }}}
 
-
 ?>

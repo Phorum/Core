@@ -52,8 +52,8 @@ function phorum_api_template_list($include_hidden = FALSE)
     $dh = opendir($PHORUM['template_path']);
     while ($entry = readdir($dh))
     {
-    	if ($entry[0] !== '.' && 
-    	    file_exists($PHORUM['template_path'].'/'.$entry.'/info.php')) {
+        if ($entry[0] !== '.' && 
+            file_exists($PHORUM['template_path'].'/'.$entry.'/info.php')) {
 
             $template_hide = FALSE;
             $version = '(version unknown)';

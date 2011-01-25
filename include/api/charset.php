@@ -176,5 +176,4 @@ function phorum_api_charset_convert_from_utf8($var)
 }
 //}}}
 
-
 ?>

@@ -26,6 +26,7 @@
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
+// {{{ Function: phorum_api_feed_rss()
 /**
  * This function implements the RSS output adapter for the Feed API.
  *
@@ -142,4 +143,6 @@ function phorum_api_feed_rss($messages, $forums, $url, $title, $description, $re
 
     return array($buffer, 'application/xml');
 }
+// }}}
+
 ?>

@@ -61,4 +61,5 @@ function phorum_api_sign_check($data, $signature)
     return md5($data . $GLOBALS["PHORUM"]["private_key"]) == $signature;
 }
 // }}}
+
 ?>
