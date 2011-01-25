@@ -215,6 +215,349 @@ class PhorumMysqlDB extends PhorumDB
         return array (PHORUM_SANITY_OK, NULL);
     }
     // }}}
+
+    // {{{ Method: create_tables()
+    /**
+     * Create the tables that are needed in the database. This function will
+     * only be called at install time. After installation, changes in the
+     * database schema will be handled by the database upgrade system.
+     *
+     * @return mixed
+     *     NULL on success or an error message on failure.
+     */
+    public function create_tables()
+    {
+        global $PHORUM;
+
+        $lang = PHORUM_DEFAULT_LANGUAGE;
+
+        $charset = empty($PHORUM['DBCONFIG']['charset'])
+                 ? ''
+                 : "DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}";
+
+        $create_table_queries = array(
+
+          "CREATE TABLE {$this->forums_table} (
+               forum_id                 int unsigned   NOT NULL auto_increment,
+               name                     varchar(50)    NOT NULL default '',
+               active                   tinyint(1)     NOT NULL default '0',
+               description              text           NOT NULL,
+               template                 varchar(50)    NOT NULL default '',
+               folder_flag              tinyint(1)     NOT NULL default '0',
+               parent_id                int unsigned   NOT NULL default '0',
+               list_length_flat         int unsigned   NOT NULL default '0',
+               list_length_threaded     int unsigned   NOT NULL default '0',
+               moderation               int unsigned   NOT NULL default '0',
+               threaded_list            tinyint(1)     NOT NULL default '0',
+               threaded_read            tinyint(1)     NOT NULL default '0',
+               float_to_top             tinyint(1)     NOT NULL default '0',
+               check_duplicate          tinyint(1)     NOT NULL default '0',
+               allow_attachment_types   varchar(100)   NOT NULL default '',
+               max_attachment_size      int unsigned   NOT NULL default '0',
+               max_totalattachment_size int unsigned   NOT NULL default '0',
+               max_attachments          int unsigned   NOT NULL default '0',
+               pub_perms                int unsigned   NOT NULL default '0',
+               reg_perms                int unsigned   NOT NULL default '0',
+               display_ip_address       tinyint(1)     NOT NULL default '1',
+               allow_email_notify       tinyint(1)     NOT NULL default '1',
+               language                 varchar(100)   NOT NULL default '$lang',
+               email_moderators         tinyint(1)     NOT NULL default '0',
+               message_count            int unsigned   NOT NULL default '0',
+               sticky_count             int unsigned   NOT NULL default '0',
+               thread_count             int unsigned   NOT NULL default '0',
+               last_post_time           int unsigned   NOT NULL default '0',
+               display_order            int unsigned   NOT NULL default '0',
+               read_length              int unsigned   NOT NULL default '0',
+               vroot                    int unsigned   NOT NULL default '0',
+               forum_path               text           NOT NULL,
+               count_views              tinyint(1)     NOT NULL default '0',
+               count_views_per_thread   tinyint(1)     NOT NULL default '0',
+               display_fixed            tinyint(1)     NOT NULL default '0',
+               reverse_threading        tinyint(1)     NOT NULL default '0',
+               inherit_id               int unsigned       NULL default NULL,
+               cache_version            int unsigned   NOT NULL default '0',
+
+               PRIMARY KEY (forum_id),
+               KEY name (name),
+               KEY folder_index (parent_id, vroot, active, folder_flag)
+           ) $charset",
+
+          "CREATE TABLE {$this->message_table} (
+               message_id               int unsigned   NOT NULL auto_increment,
+               forum_id                 int unsigned   NOT NULL default '0',
+               thread                   int unsigned   NOT NULL default '0',
+               parent_id                int unsigned   NOT NULL default '0',
+               user_id                  int unsigned   NOT NULL default '0',
+               author                   varchar(255)   NOT NULL default '',
+               subject                  varchar(255)   NOT NULL default '',
+               body                     text           NOT NULL,
+               email                    varchar(100)   NOT NULL default '',
+               ip                       varchar(255)   NOT NULL default '',
+               status                   tinyint(4)     NOT NULL default '2',
+               msgid                    varchar(100)   NOT NULL default '',
+               modifystamp              int unsigned   NOT NULL default '0',
+               thread_count             int unsigned   NOT NULL default '0',
+               moderator_post           tinyint(1)     NOT NULL default '0',
+               sort                     tinyint(4)     NOT NULL default '2',
+               datestamp                int unsigned   NOT NULL default '0',
+               meta                     mediumtext         NULL,
+               viewcount                int unsigned   NOT NULL default '0',
+               threadviewcount          int unsigned   NOT NULL default '0',
+               closed                   tinyint(1)     NOT NULL default '0',
+               recent_message_id        int unsigned   NOT NULL default '0',
+               recent_user_id           int unsigned   NOT NULL default '0',
+               recent_author            varchar(255)   NOT NULL default '',
+               moved                    tinyint(1)     NOT NULL default '0',
+               hide_period              int unsigned   NOT NULL default '0',
+
+               PRIMARY KEY (message_id),
+               KEY special_threads (sort,forum_id),
+               KEY last_post_time (forum_id,status,modifystamp),
+               KEY dup_check (forum_id,author(50),subject,datestamp),
+               KEY recent_user_id (recent_user_id),
+               KEY user_messages (user_id,message_id),
+               KEY updated_threads (status,parent_id,modifystamp),
+               KEY list_page_flat (forum_id,status,parent_id,datestamp),
+               KEY thread_date (thread,datestamp),
+               KEY list_page_float (forum_id,status,parent_id,modifystamp),
+               KEY forum_recent_messages (forum_id,status,datestamp),
+               KEY recent_threads (status,parent_id,datestamp),
+               KEY recent_messages (status,datestamp),
+               KEY forum_thread_count(forum_id,parent_id,status,moved,message_id),
+               KEY forum_message_count(forum_id,status,moved,message_id)
+           ) $charset",
+
+          "CREATE TABLE {$this->settings_table} (
+               name                     varchar(255)   NOT NULL default '',
+               type                     enum('V','S')  NOT NULL default 'V',
+               data                     text           NOT NULL,
+
+               PRIMARY KEY (name)
+           ) $charset",
+
+          "CREATE TABLE {$this->subscribers_table} (
+               user_id                  int unsigned   NOT NULL default '0',
+               forum_id                 int unsigned   NOT NULL default '0',
+               sub_type                 tinyint(4)     NOT NULL default '0',
+               thread                   int unsigned   NOT NULL default '0',
+
+               PRIMARY KEY (user_id,forum_id,thread),
+               KEY forum_id (forum_id,thread,sub_type)
+           ) $charset",
+
+          "CREATE TABLE {$this->user_permissions_table} (
+               user_id                  int unsigned   NOT NULL default '0',
+               forum_id                 int unsigned   NOT NULL default '0',
+               permission               int unsigned   NOT NULL default '0',
+
+               PRIMARY KEY  (user_id,forum_id),
+               KEY forum_id (forum_id,permission)
+           ) $charset",
+
+          // When creating extra fields, then mind to update the file
+          // include/api/custom_field.php script too (it contains a
+          // list of reserved names for custom profile fields).
+          "CREATE TABLE {$this->user_table} (
+               user_id                  int unsigned   NOT NULL auto_increment,
+               username                 varchar(50)    NOT NULL default '',
+               real_name                varchar(255)   NOT NULL default '',
+               display_name             varchar(255)   NOT NULL default '',
+               password                 varchar(50)    NOT NULL default '',
+               password_temp            varchar(50)    NOT NULL default '',
+               sessid_lt                varchar(50)    NOT NULL default '',
+               sessid_st                varchar(50)    NOT NULL default '',
+               sessid_st_timeout        int unsigned   NOT NULL default '0',
+               email                    varchar(100)   NOT NULL default '',
+               email_temp               varchar(110)   NOT NULL default '',
+               hide_email               tinyint(1)     NOT NULL default '1',
+               active                   tinyint(1)     NOT NULL default '0',
+               signature                text           NOT NULL,
+               threaded_list            tinyint(1)     NOT NULL default '0',
+               posts                    int(10)        NOT NULL default '0',
+               admin                    tinyint(1)     NOT NULL default '0',
+               threaded_read            tinyint(1)     NOT NULL default '0',
+               date_added               int unsigned   NOT NULL default '0',
+               date_last_active         int unsigned   NOT NULL default '0',
+               last_active_forum        int unsigned   NOT NULL default '0',
+               hide_activity            tinyint(1)     NOT NULL default '0',
+               show_signature           tinyint(1)     NOT NULL default '0',
+               email_notify             tinyint(1)     NOT NULL default '0',
+               pm_email_notify          tinyint(1)     NOT NULL default '1',
+               tz_offset                float(4,2)     NOT NULL default '-99.00',
+               is_dst                   tinyint(1)     NOT NULL default '0',
+               user_language            varchar(100)   NOT NULL default '',
+               user_template            varchar(100)   NOT NULL default '',
+               moderation_email         tinyint(1)     NOT NULL default '1',
+               settings_data            mediumtext     NOT NULL,
+
+               PRIMARY KEY (user_id),
+               UNIQUE KEY username (username),
+               KEY active (active),
+               KEY userpass (username,password),
+               KEY sessid_st (sessid_st),
+               KEY sessid_lt (sessid_lt),
+               KEY activity (date_last_active,hide_activity,last_active_forum),
+               KEY date_added (date_added),
+               KEY email_temp (email_temp)
+           ) $charset",
+
+          "CREATE TABLE {$this->user_newflags_table} (
+               user_id                  int unsigned   NOT NULL default '0',
+               forum_id                 int unsigned   NOT NULL default '0',
+               message_id               int unsigned   NOT NULL default '0',
+
+               PRIMARY KEY  (user_id,forum_id,message_id),
+               KEY move (message_id, forum_id)
+           ) $charset",
+
+          "CREATE TABLE {$this->groups_table} (
+               group_id                 int unsigned   NOT NULL auto_increment,
+               name                     varchar(255)   NOT NULL default '',
+               open                     tinyint(1)     NOT NULL default '0',
+
+               PRIMARY KEY  (group_id)
+           ) $charset",
+
+          "CREATE TABLE {$this->forum_group_xref_table} (
+               forum_id                 int unsigned   NOT NULL default '0',
+               group_id                 int unsigned   NOT NULL default '0',
+               permission               int unsigned   NOT NULL default '0',
+
+               PRIMARY KEY  (forum_id,group_id),
+               KEY group_id (group_id)
+           ) $charset",
+
+          "CREATE TABLE {$this->user_group_xref_table} (
+               user_id                  int unsigned   NOT NULL default '0',
+               group_id                 int unsigned   NOT NULL default '0',
+               status                   tinyint(4)     NOT NULL default '1',
+
+               PRIMARY KEY  (user_id,group_id)
+           ) $charset",
+
+          "CREATE TABLE {$this->files_table} (
+               file_id                  int unsigned   NOT NULL auto_increment,
+               user_id                  int unsigned   NOT NULL default '0',
+               filename                 varchar(255)   NOT NULL default '',
+               filesize                 int unsigned   NOT NULL default '0',
+               file_data                mediumtext     NOT NULL,
+               add_datetime             int unsigned   NOT NULL default '0',
+               message_id               int unsigned   NOT NULL default '0',
+               link                     varchar(10)    NOT NULL default '',
+
+               PRIMARY KEY (file_id),
+               KEY add_datetime (add_datetime),
+               KEY message_id_link (message_id,link),
+               KEY user_id_link (user_id,link)
+           ) $charset",
+
+          "CREATE TABLE {$this->banlist_table} (
+               id                       int unsigned   NOT NULL auto_increment,
+               forum_id                 int unsigned   NOT NULL default '0',
+               type                     tinyint(4)     NOT NULL default '0',
+               pcre                     tinyint(1)     NOT NULL default '0',
+               string                   varchar(255)   NOT NULL default '',
+               comments                 text           NOT NULL,
+
+               PRIMARY KEY (id),
+               KEY forum_id (forum_id)
+           ) $charset",
+
+          "CREATE TABLE {$this->search_table} (
+               message_id               int unsigned   NOT NULL default '0',
+               forum_id                 int unsigned   NOT NULL default '0',
+               search_text              mediumtext     NOT NULL,
+
+               PRIMARY KEY (message_id),
+               KEY forum_id (forum_id),
+               FULLTEXT KEY search_text (search_text)
+           ) ENGINE=MyISAM $charset",
+
+          "CREATE TABLE {$this->custom_fields_table} (
+               relation_id              int unsigned   NOT NULL default '0',
+               field_type               tinyint(1)     NOT NULL default '1',
+               type                     int unsigned   NOT NULL default '0',
+               data                     text           NOT NULL,
+
+               PRIMARY KEY (relation_id, field_type, type)
+           ) $charset",
+
+          "CREATE TABLE {$this->pm_messages_table} (
+               pm_message_id            int unsigned   NOT NULL auto_increment,
+               user_id                  int unsigned   NOT NULL default '0',
+               author                   varchar(255)   NOT NULL default '',
+               subject                  varchar(100)   NOT NULL default '',
+               message                  text           NOT NULL,
+               datestamp                int unsigned   NOT NULL default '0',
+               meta                     mediumtext     NOT NULL,
+
+               PRIMARY KEY (pm_message_id),
+               KEY user_id (user_id)
+           ) $charset",
+
+          "CREATE TABLE {$this->pm_folders_table} (
+               pm_folder_id             int unsigned   NOT NULL auto_increment,
+               user_id                  int unsigned   NOT NULL default '0',
+               foldername               varchar(20)    NOT NULL default '',
+
+               PRIMARY KEY (pm_folder_id)
+           ) $charset",
+
+          "CREATE TABLE {$this->pm_xref_table} (
+               pm_xref_id               int unsigned   NOT NULL auto_increment,
+               user_id                  int unsigned   NOT NULL default '0',
+               pm_folder_id             int unsigned   NOT NULL default '0',
+               special_folder           varchar(10)        NULL default NULL,
+               pm_message_id            int unsigned   NOT NULL default '0',
+               read_flag                tinyint(1)     NOT NULL default '0',
+               reply_flag               tinyint(1)     NOT NULL default '0',
+
+               PRIMARY KEY (pm_xref_id),
+               KEY xref (user_id,pm_folder_id,pm_message_id),
+               KEY read_flag (read_flag)
+           ) $charset",
+
+          "CREATE TABLE {$this->pm_buddies_table} (
+               pm_buddy_id              int unsigned   NOT NULL auto_increment,
+               user_id                  int unsigned   NOT NULL default '0',
+               buddy_user_id            int unsigned   NOT NULL default '0',
+
+               PRIMARY KEY pm_buddy_id (pm_buddy_id),
+               UNIQUE KEY userids (user_id, buddy_user_id),
+               KEY buddy_user_id (buddy_user_id)
+           ) $charset",
+
+          "CREATE TABLE {$this->message_tracking_table} (
+               track_id                 int unsigned   NOT NULL auto_increment,
+               message_id               int unsigned   NOT NULL default '0',
+               user_id                  int unsigned   NOT NULL default '0',
+               time                     int unsigned   NOT NULL default '0',
+               diff_body                text               NULL,
+               diff_subject             text               NULL,
+
+               PRIMARY KEY track_id (track_id),
+               KEY message_id (message_id)
+           ) $charset",
+
+           "CREATE TABLE {$this->user_newflags_min_id_table} (
+               user_id               INT UNSIGNED NOT NULL,
+               forum_id              INT UNSIGNED NOT NULL,
+               min_id                INT UNSIGNED NOT NULL,
+               PRIMARY KEY ( user_id , forum_id )
+            ) $charset",
+        );
+
+        foreach ($create_table_queries as $sql) {
+            $error = $this->interact(
+                DB_RETURN_ERROR, $sql, NULL, DB_MASTERQUERY);
+            if ($error !== NULL) {
+                return $error;
+            }
+        }
+
+        return NULL;
+    }
+    // }}}
 }
 
 ?>
