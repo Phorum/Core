@@ -99,11 +99,11 @@ defined('phorum_page') or define('phorum_page', 'unknown');
 // PHP extension compatibility 
 // ----------------------------------------------------------------------
 
-// For some functionality, we are depending on PHP extensions, that
-// are not necessarily availably on any given PHP installation. To
-// work around this, we have implemented compatibility modules that
-// can be installed to provide the missing functionality in pure
-// PHP code. This will make the execution a little bit slower on
+// For some functionality, we are depending on PHP extensions and
+// functions, that are not necessarily availably on any given PHP
+// installation. To work around this, we have implemented compatibility
+// modules that can be installed to provide the missing functionality in
+// pure PHP code. This will make the execution a little bit slower on
 // systems that do not have the required extension installed, but
 // it will at least make it possible to run Phorum.
 //
@@ -114,7 +114,8 @@ $compat_modules = array(
     'mb_substr'   => 'mbstring',
     'json_encode' => 'json',
     'json_decode' => 'json',
-    'iconv'       => 'iconv'
+    'iconv'       => 'iconv',
+    'stripos'     => 'stripos'  
 );
 
 $missing_compat = array();
