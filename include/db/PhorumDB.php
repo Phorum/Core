@@ -260,19 +260,21 @@ abstract class PhorumDB
 
     /**
      * Whether or not the database system supports "USE INDEX" in a SELECT
-     * query. This makes it possible to modify some queries, without
-     * having to override the related db layer methods.
      * @var boolean
      */
     protected $_can_USE_INDEX = FALSE;
 
     /**
      * Whether or not the database system supports "INSERT DELAYED".
-     * This makes it possible to modify some queries, without having to
-     * override the related db layer methods.
      * @var boolean
      */
     protected $_can_INSERT_DELAYED = FALSE;
+
+    /**
+     * Whether or not the database system supports "UPDATE IGNORE".
+     * @var boolean
+     */
+    protected $_can_UPDATE_IGNORE = FALSE;
 
     /**
      * The method to use for string concatenation. Options are:
@@ -5595,6 +5597,25 @@ abstract class PhorumDB
         $this->sanitize_mixed($message_ids, 'int');
         $ids_str = implode(', ', $message_ids);
 
+        // Route 1: UPDATE IGNORE is available.
+        // If the database system supports "UPDATE IGNORE", then we
+        // take a simple route here and ignore possible inconsistent data.
+        if ($this->_can_UPDATE_IGNORE)
+        {
+            return phorum_db_interact(
+                DB_RETURN_RES,
+                "UPDATE IGNORE
+                        {$GLOBALS['PHORUM']['user_newflags_table']} AS flags,
+                        {$GLOBALS['PHORUM']['message_table']} AS msg
+                 SET    flags.forum_id   = msg.forum_id
+                 WHERE  flags.message_id = msg.message_id AND
+                        flags.message_id IN ($ids_str)",
+                NULL,
+                DB_MASTERQUERY
+            );
+        }
+
+        // Route 2: UPDATE IGNORE is not available.
         // Some cunning queries are needed for making moving the newflags
         // failsafe. A race condition that can happen otherwise, is that a
         // message is already updated to its new forum_id, but that the
