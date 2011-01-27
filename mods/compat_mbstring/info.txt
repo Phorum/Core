@@ -1,8 +1,8 @@
-title: Compatibility: stripos extension
-desc: This module implements a fallback for PHP's stripos() function, in case the "stripos" PHP function is not available (most probably because the PHP version in use is not the required version 5 or higher).
+title: Compatibility: mbstring extension
+desc: This module implements a fallback for PHP's mb_substr() function, in case the "mbstring" PHP extension is not enabled.
 category: compatibility
 version: 1.0.0
 author: Phorum Dev Team
 url: http://www.phorum.org/
 
-compat:stripos|stripos
+compat:mbstring|mb_substr

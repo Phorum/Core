@@ -3,7 +3,7 @@ Version : 1.0.0
 Author  : Phorum Dev Team
 
 This module implements a fallback for PHP's stripos() function,
-in case the stripos() function is not available.
+in case that function is not available.
 
 Install:
 --------
