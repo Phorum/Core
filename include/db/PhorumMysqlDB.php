@@ -586,6 +586,387 @@ class PhorumMysqlDB extends PhorumDB
         return NULL;
     }
     // }}}
+
+    // {{{ Method: search()
+    /**
+     * Search the database using the provided search criteria and return
+     * an array containing the total count of matches and the visible
+     * messages based on the page $offset and $length.
+     *
+     * @param string $search
+     *     The query to search on in messages and subjects.
+     *
+     * @param mixed $author
+     *     The query to search on in the message authors or a numerical user_id
+     *     if searching for all messages for a certain user_id.
+     *
+     * @param boolean $return_threads
+     *     Whether to return the results as threads (TRUE) or messages (FALSE).
+     *     When searching for a user ($match_type = USER_ID), then only the
+     *     thread starter messages that were posted by the user are returned.
+     *
+     * @param integer $offset
+     *     The result page offset starting with 0.
+     *
+     * @param integer $length
+     *     The result page length (nr. of results per page).
+     *
+     * @param string $match_type
+     *     The type of search. This can be one of:
+     *     - ALL:     search on all of the words (uses $search)
+     *     - ANY:     search on any of the words (uses $search)
+     *     - PHRASE:  search for an exact phrase (uses $search)
+     *     - USER_ID: search for an author id (uses $author)
+     *
+     * @param integer $days
+     *     The number of days to go back in the database for searching
+     *     (last [x] days) or zero to search within all dates.
+     *
+     * @param string $match_forum
+     *     The forum restriction. This can be either the string "ALL" to search
+     *     in any of the readable forums or a comma separated list of forum_ids.
+     *
+     * @return array
+     *     An array containing two fields:
+     *     - "count" contains the total number of matching messages.
+     *     - "rows" contains the messages that are visible, based on the page
+     *       $offset and page $length. The messages are indexed by message_id.
+     */
+    public function search(
+        $search, $author, $return_threads, $offset, $length,
+        $match_type, $days, $match_forum)
+    {
+        global $PHORUM;
+
+        $fulltext_mode = isset($PHORUM['DBCONFIG']['mysql_use_ft']) &&
+                         $PHORUM['DBCONFIG']['mysql_use_ft'];
+
+        $search = trim($search);
+        $author = trim($author);
+        settype($return_threads, 'bool');
+        settype($offset, 'int');
+        settype($length, 'int');
+        settype($days, 'int');
+
+        // For spreading search results over multiple pages.
+        $start = $offset * $length;
+
+        // Initialize the return data.
+        $return = array('count' => 0, 'rows' => array());
+
+        // Return immediately if the search queries are empty.
+        if ($search == '' && $author == '') return $return;
+
+        // Check what forums the active Phorum user can read.
+        $allowed_forums = phorum_api_user_check_access(
+            PHORUM_USER_ALLOW_READ, PHORUM_ACCESS_LIST
+        );
+
+        // If the user is not allowed to search any forum or the current
+        // active forum, then return the emtpy search results array.
+        if (empty($allowed_forums) ||
+            ($PHORUM['forum_id']>0 &&
+             !in_array($PHORUM['forum_id'], $allowed_forums))) return $return;
+
+        // Prepare forum_id restriction.
+        $match_forum_arr = explode(",", $match_forum);
+        $search_forums = array();
+        foreach ($match_forum_arr as $forum_id) {
+            if ($forum_id == "ALL") {
+                $search_forums = $allowed_forums;
+                break;
+            }
+            if (isset($allowed_forums[$forum_id])) {
+                $search_forums[] = $forum_id;
+            }
+        }
+        if (count($search_forums)){
+            $forum_where = "AND forum_id in (".implode(",", $search_forums).")";
+        } else {
+            // Hack attempt or error. Return empty search results.
+            return $return;
+        }
+
+        // Prepare day limit restriction.
+        if ($days > 0) {
+            $ts = time() - 86400*$days;
+            $datestamp_where = "AND datestamp >= $ts";
+        } else {
+            $datestamp_where = '';
+        }
+
+        // We make use of temporary tables for storing intermediate search
+        // results. These tables are stored in $tables during processing.
+        $tables = array();
+
+        // -------------------------------------------------------------------
+        // Handle search for user_id only.
+        // -------------------------------------------------------------------
+
+        if ($search == '' && $author != '' && $match_type == 'USER_ID')
+        {
+            $user_id = (int) $author;
+            if (empty($user_id)) return $return;
+
+            // Search for messages.
+            $where = "user_id = $user_id AND
+                      status=".PHORUM_STATUS_APPROVED." AND
+                      moved=0";
+            if ($return_threads) $where .= " AND parent_id = 0";
+            $sql = "SELECT SQL_CALC_FOUND_ROWS *
+                    FROM   {$this->message_table} " .
+                    ($this->_can_USE_INDEX ? "USE INDEX (user_messages)" : "") .
+                   "WHERE  $where $forum_where
+                    ORDER  BY datestamp DESC
+                    LIMIT  $length
+                    OFFSET $start";
+            $rows = $this->interact(DB_RETURN_ASSOCS, $sql,"message_id");
+
+            // Retrieve the number of found messages.
+            $count = $this->interact(
+                DB_RETURN_VALUE,
+                "SELECT found_rows()"
+            );
+
+            // Fill the return data.
+            $return = array("count" => $count, "rows"  => $rows);
+
+            return $return;
+        }
+
+        // -------------------------------------------------------------------
+        // Handle search for message and subject.
+        // -------------------------------------------------------------------
+
+        if ($search != '')
+        {
+            $match_str = '';
+            $tokens = array();
+
+            if ($match_type == "PHRASE")
+            {
+                $search = str_replace('"', '', $search);
+                $match_str = '"'.$this->interact(DB_RETURN_QUOTED, $search).'"';
+            }
+            else
+            {
+                // Surround with spaces so matching is easier.
+                $search = " $search ";
+
+                // Pull out all grouped terms, e.g. (nano mini).
+                $paren_terms = array();
+                if (strstr($search, '(')) {
+                    preg_match_all('/ ([+\-~]*\(.+?\)) /', $search, $m);
+                    $search = preg_replace('/ [+\-~]*\(.+?\) /', ' ', $search);
+                    $paren_terms = $m[1];
+                }
+
+                // Pull out all the double quoted strings,
+                // e.g. '"iMac DV" or -"iMac DV".
+                $quoted_terms = array();
+                if (strstr( $search, '"')) {
+                    preg_match_all('/ ([+\-~]*".+?") /', $search, $m);
+                    $search = preg_replace('/ [+\-~]*".+?" /', ' ', $search);
+                    $quoted_terms = $m[1];
+                }
+
+                // Finally, pull out the rest words in the string.
+                $norm_terms = preg_split(
+                    "/\s+/", $search, 0, PREG_SPLIT_NO_EMPTY);
+
+                // Merge all search terms together.
+                $tokens =  array_merge(
+                    $quoted_terms, $paren_terms, $norm_terms);
+            }
+
+            // Handle full text message / subject search.
+            if ($fulltext_mode)
+            {
+                // Create a match string based on the parsed query tokens.
+                if (count($tokens))
+                {
+                    $match_str = '';
+
+                    foreach ($tokens as $term)
+                    {
+                        if (!strstr("+-~", substr($term, 0, 1)))
+                        {
+                            if (strstr($term, ".") &&
+                                !preg_match('!^".+"$!', $term) &&
+                                substr($term, -1) != "*") {
+                                $term = "\"$term\"";
+                            }
+                            if ($match_type == "ALL") {
+                                $term = "+".$term;
+                            }
+                        }
+
+                        $match_str .= "$term ";
+                    }
+
+                    $match_str = trim($match_str);
+                    $match_str = $this->interact(DB_RETURN_QUOTED, $match_str);
+                }
+
+                $table_name = $this->search_table . "_ft_" . md5(microtime());
+
+                $this->interact(
+                    DB_RETURN_RES,
+                    "CREATE TEMPORARY TABLE $table_name (
+                         KEY (message_id)
+                     ) ENGINE=HEAP
+                       SELECT message_id
+                       FROM   {$this->search_table}
+                       WHERE  MATCH (search_text)
+                              AGAINST ('$match_str' IN BOOLEAN MODE)"
+                );
+
+                $tables[] = $table_name;
+            }
+            // Handle standard message / subject search.
+            else
+            {
+                if (count($tokens))
+                {
+                    $condition = ($match_type == "ALL") ? "AND" : "OR";
+
+                    foreach($tokens as $tid => $token) {
+                        $tokens[$tid] =
+                            $this->interact(DB_RETURN_QUOTED, $token);
+                    }
+
+                    $match_str =
+                        "search_text LIKE " .
+                        "('%".implode("%' $condition '%", $tokens)."%')";
+                }
+
+                $table_name = $this->search_table . "_like_" . md5(microtime());
+
+                $this->interact(
+                    DB_RETURN_RES,
+                    "CREATE TEMPORARY TABLE $table_name (
+                         KEY (message_id)
+                     ) ENGINE=HEAP
+                       SELECT message_id
+                       FROM   {$this->search_table}
+                       WHERE  $match_str"
+                );
+
+                $tables[] = $table_name;
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // Handle search for author.
+        // -------------------------------------------------------------------
+
+        if ($author != '')
+        {
+            $table_name = $this->search_table . "_author_" . md5(microtime());
+
+            // Search either by user_id or by username.
+            if ($match_type == "USER_ID") {
+                $author = (int) $author;
+                $author_where = "user_id = $author";
+            } else {
+                $author = $this->interact(DB_RETURN_QUOTED, $author);
+                $author_where = "author = '$author'";
+            }
+
+            $this->interact(
+                DB_RETURN_RES,
+                "CREATE TEMPORARY TABLE $table_name (
+                   KEY (message_id)
+                 ) ENGINE=HEAP
+                   SELECT message_id
+                   FROM   {$this->message_table}
+                   WHERE  $author_where"
+            );
+
+            $tables[] = $table_name;
+        }
+
+        // -------------------------------------------------------------------
+        // Gather the results.
+        // -------------------------------------------------------------------
+
+        if (count($tables))
+        {
+            // If we only have one temporary table, we can use it directly.
+            if (count($tables) == 1) {
+                $table = array_shift($tables);
+            }
+            // In case we have multiple temporary tables, we join them together
+            // in a new temporary table for retrieving the results.
+            else
+            {
+                $table = $this->search_table . "_final_" . md5(microtime());
+
+                $joined_tables = "";
+                $main_table = array_shift($tables);
+                foreach ($tables as $tbl) {
+                    $joined_tables.= "INNER JOIN $tbl USING (message_id)";
+                }
+
+                $this->interact(
+                    DB_RETURN_RES,
+                    "CREATE TEMPORARY TABLE $table (
+                       KEY (message_id)
+                     ) ENGINE=HEAP
+                       SELECT m.message_id
+                       FROM   $main_table m $joined_tables"
+                );
+            }
+
+            // When only threads need to be returned, then join the results
+            // that we have so far with the message table into a result set
+            // that only contains the threads for the results.
+            if ($return_threads)
+            {
+                $threads_table = $this->search_table .
+                                 "_final_threads_" . md5(microtime());
+                $this->interact(
+                    DB_RETURN_RES,
+                    "CREATE TEMPORARY TABLE $threads_table (
+                       KEY (message_id)
+                     ) ENGINE=HEAP
+                       SELECT distinct thread AS message_id
+                       FROM   {$this->message_table}
+                              INNER JOIN $table
+                              USING (message_id)"
+                );
+
+                $table = $threads_table;
+            }
+
+            // Retrieve the found messages.
+            $rows = $this->interact(
+                DB_RETURN_ASSOCS,
+                "SELECT SQL_CALC_FOUND_ROWS *
+                 FROM   {$this->message_table}
+                        INNER JOIN $table USING (message_id)
+                 WHERE  status=".PHORUM_STATUS_APPROVED."
+                        $forum_where
+                        $datestamp_where
+                 ORDER  BY datestamp DESC
+                 LIMIT  $length
+                 OFFSET $start",
+                 "message_id"
+            );
+
+            // Retrieve the number of found messages.
+            $count = $this->interact(
+                DB_RETURN_VALUE,
+                "SELECT found_rows()"
+            );
+
+            // Fill the return data.
+            $return = array("count" => $count, "rows"  => $rows);
+        }
+
+        return $return;
+    }
+    // }}}
 }
 
 ?>

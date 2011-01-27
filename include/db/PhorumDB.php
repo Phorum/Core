@@ -275,9 +275,9 @@ abstract class PhorumDB
     protected $_can_INSERT_DELAYED = FALSE;
 
     /**
-     * The method to use for string concatenation.
-     * Either "pipes" (PostgreSQL style) or "concat" (MySQL style, using
-     * the concat() function).
+     * The method to use for string concatenation. Options are:
+     * - "pipes"  : PostgreSQL style
+     * - "concat" : MySQL style, using the concat() function
      * @var string
      */
     protected $_concat_method = 'pipes';
@@ -1744,6 +1744,15 @@ abstract class PhorumDB
     // }}}
 
     // {{{ Method: search()
+    //
+    // Note: This is a basic implementation of the search method for Phorum.
+    // We tried to create a method that works for a wide range of
+    // database systems.
+    //
+    // When the database system is capable of more sophisticated
+    // search mechanisms (e.g. by applying full text search indexing),
+    // this method can be overridden in derived database layers.
+    //
     /**
      * Search the database using the provided search criteria and return
      * an array containing the total count of matches and the visible
@@ -1793,9 +1802,6 @@ abstract class PhorumDB
         $match_type, $days, $match_forum)
     {
         global $PHORUM;
-
-        $fulltext_mode = isset($PHORUM['DBCONFIG']['mysql_use_ft']) &&
-                         $PHORUM['DBCONFIG']['mysql_use_ft'];
 
         $search = trim($search);
         $author = trim($author);
@@ -1869,19 +1875,27 @@ abstract class PhorumDB
                       status=".PHORUM_STATUS_APPROVED." AND
                       moved=0";
             if ($return_threads) $where .= " AND parent_id = 0";
-            $sql = "SELECT SQL_CALC_FOUND_ROWS *
-                    FROM   {$this->message_table} " .
-                    ($this->_can_USE_INDEX ? "USE INDEX (user_messages)" : "") .
-                   "WHERE  $where $forum_where
-                    ORDER  BY datestamp DESC
-                    LIMIT  $length
-                    OFFSET $start";
-            $rows = $this->interact(DB_RETURN_ASSOCS, $sql,"message_id");
+
+            $from_and_where =
+                "FROM   {$this->message_table} " .
+                ($this->_can_USE_INDEX ? "USE INDEX (user_messages)" : "") .
+                "WHERE  $where $forum_where";
+
+            // Retrieve the message rows.
+            $rows = $this->interact(
+                DB_RETURN_ASSOCS,
+                "SELECT *
+                        $from_and_where
+                 ORDER  BY datestamp DESC
+                 LIMIT  $length
+                 OFFSET $start",
+                "message_id"
+            );
 
             // Retrieve the number of found messages.
             $count = $this->interact(
                 DB_RETURN_VALUE,
-                "SELECT found_rows()"
+                "SELECT count(*) $from_and_where"
             );
 
             // Fill the return data.
@@ -1935,81 +1949,35 @@ abstract class PhorumDB
                     $quoted_terms, $paren_terms, $norm_terms);
             }
 
-            // Handle full text message / subject search.
-            if ($fulltext_mode)
+            if (count($tokens))
             {
-                // Create a match string based on the parsed query tokens.
-                if (count($tokens))
-                {
-                    $match_str = '';
+                $condition = ($match_type == "ALL") ? "AND" : "OR";
 
-                    foreach ($tokens as $term)
-                    {
-                        if (!strstr("+-~", substr($term, 0, 1)))
-                        {
-                            if (strstr($term, ".") &&
-                                !preg_match('!^".+"$!', $term) &&
-                                substr($term, -1) != "*") {
-                                $term = "\"$term\"";
-                            }
-                            if ($match_type == "ALL") {
-                                $term = "+".$term;
-                            }
-                        }
-
-                        $match_str .= "$term ";
-                    }
-
-                    $match_str = trim($match_str);
-                    $match_str = $this->interact(DB_RETURN_QUOTED, $match_str);
+                foreach($tokens as $tid => $token) {
+                    $tokens[$tid] =
+                        $this->interact(DB_RETURN_QUOTED, $token);
                 }
 
-                $table_name = $this->search_table . "_ft_" . md5(microtime());
-
-                $this->interact(
-                    DB_RETURN_RES,
-                    "CREATE TEMPORARY TABLE $table_name (
-                         KEY (message_id)
-                     ) ENGINE=HEAP
-                       SELECT message_id
-                       FROM   {$this->search_table}
-                       WHERE  MATCH (search_text)
-                              AGAINST ('$match_str' IN BOOLEAN MODE)"
-                );
-
-                $tables[] = $table_name;
+                $match_str =
+                    "search_text LIKE " .
+                    "('%".implode("%' $condition '%", $tokens)."%')";
             }
-            // Handle standard message / subject search.
-            else
-            {
-                if (count($tokens))
-                {
-                    $condition = ($match_type == "ALL") ? "AND" : "OR";
 
-                    foreach($tokens as $tid => $token) {
-                        $tokens[$tid] =
-                            $this->interact(DB_RETURN_QUOTED, $token);
-                    }
+            $table_name = $this->search_table . "_like_" . md5(microtime());
 
-                    $match_str =
-                        "search_text LIKE " .
-                        "('%".implode("%' $condition '%", $tokens)."%')";
-                }
+            $this->interact(
+                DB_RETURN_RES,
+                "CREATE TEMPORARY TABLE $table_name AS
+                   SELECT message_id
+                   FROM   {$this->search_table}
+                   WHERE  $match_str"
+            );
+            $this->interact(
+                DB_RETURN_RES,
+                "CREATE INDEX {$table_name}_idx ON $table_name (message_id)"
+            );
 
-                $table_name = $this->search_table . "_like_" . md5(microtime());
-
-                $this->interact(
-                    DB_RETURN_RES,
-                    "CREATE TEMPORARY TABLE $table_name (
-                         KEY (message_id)
-                     ) ENGINE=HEAP
-                       SELECT message_id
-                       FROM   {$this->search_table}
-                       WHERE  $match_str"
-                );
-
-                $tables[] = $table_name;
-            }
+            $tables[] = $table_name;
         }
 
         // -------------------------------------------------------------------
@@ -2031,12 +1999,14 @@ abstract class PhorumDB
 
             $this->interact(
                 DB_RETURN_RES,
-                "CREATE TEMPORARY TABLE $table_name (
-                   KEY (message_id)
-                 ) ENGINE=HEAP
+                "CREATE TEMPORARY TABLE $table_name AS
                    SELECT message_id
                    FROM   {$this->message_table}
                    WHERE  $author_where"
+            );
+            $this->interact(
+                DB_RETURN_RES,
+                "CREATE INDEX {$table_name}_idx ON $table_name (message_id)"
             );
 
             $tables[] = $table_name;
@@ -2066,11 +2036,13 @@ abstract class PhorumDB
 
                 $this->interact(
                     DB_RETURN_RES,
-                    "CREATE TEMPORARY TABLE $table (
-                       KEY (message_id)
-                     ) ENGINE=HEAP
+                    "CREATE TEMPORARY TABLE $table AS
                        SELECT m.message_id
                        FROM   $main_table m $joined_tables"
+                );
+                $this->interact(
+                    DB_RETURN_RES,
+                    "CREATE INDEX {$table}_idx ON $table (message_id)"
                 );
             }
 
@@ -2083,27 +2055,32 @@ abstract class PhorumDB
                                  "_final_threads_" . md5(microtime());
                 $this->interact(
                     DB_RETURN_RES,
-                    "CREATE TEMPORARY TABLE $threads_table (
-                       KEY (message_id)
-                     ) ENGINE=HEAP
+                    "CREATE TEMPORARY TABLE $threads_table AS
                        SELECT distinct thread AS message_id
                        FROM   {$this->message_table}
                               INNER JOIN $table
                               USING (message_id)"
                 );
+                $this->interact(
+                    DB_RETURN_RES,
+                    "CREATE INDEX {$threads_table}_idx
+                     ON $threads_table (message_id)"
+                );
 
                 $table = $threads_table;
             }
 
-            // Retrieve the found messages.
-            $rows = $this->interact(
-                DB_RETURN_ASSOCS,
-                "SELECT SQL_CALC_FOUND_ROWS *
-                 FROM   {$this->message_table}
+            $from_and_where = 
+                "FROM   {$this->message_table}
                         INNER JOIN $table USING (message_id)
                  WHERE  status=".PHORUM_STATUS_APPROVED."
                         $forum_where
-                        $datestamp_where
+                        $datestamp_where";
+
+            // Retrieve the found messages.
+            $rows = $this->interact(
+                DB_RETURN_ASSOCS,
+                "SELECT * $from_and_where
                  ORDER  BY datestamp DESC
                  LIMIT  $length
                  OFFSET $start",
@@ -2113,7 +2090,7 @@ abstract class PhorumDB
             // Retrieve the number of found messages.
             $count = $this->interact(
                 DB_RETURN_VALUE,
-                "SELECT found_rows()"
+                "SELECT count(*) $from_and_where"
             );
 
             // Fill the return data.
