@@ -27,6 +27,8 @@
  */
 class PhorumMysqlDB extends PhorumDB
 {
+    // {{{ Properties
+
     /**
      * Whether or not the database system supports "USE INDEX" in a SELECT
      * query. This makes it possible to modify some queries, without
@@ -42,6 +44,16 @@ class PhorumMysqlDB extends PhorumDB
      * @var boolean
      */
     protected $_can_INSERT_DELAYED = TRUE;
+
+    /**
+     * The method to use for string concatenation.
+     * Either "pipes" (PostgreSQL style) or "concat" (MySQL style, using
+     * the concat() function).
+     * @var string
+     */
+    protected $_concat_method = 'pipes';
+
+    // }}}
 
     // {{{ Method:: __construct()
     /**

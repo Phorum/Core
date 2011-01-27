@@ -274,6 +274,14 @@ abstract class PhorumDB
      */
     protected $_can_INSERT_DELAYED = FALSE;
 
+    /**
+     * The method to use for string concatenation.
+     * Either "pipes" (PostgreSQL style) or "concat" (MySQL style, using
+     * the concat() function).
+     * @var string
+     */
+    protected $_concat_method = 'pipes';
+
     // }}}
 
     // ----------------------------------------------------------------------
@@ -1728,8 +1736,7 @@ abstract class PhorumDB
              WHERE  $forum_id_check
                     thread = $thread
                     $approvedval AND
-                    message_id <= $message_id
-             ORDER  BY datestamp"
+                    message_id <= $message_id"
         );
 
         return $index;
@@ -7152,13 +7159,14 @@ abstract class PhorumDB
         );
 
         // Rebuild all search data from scratch.
+        $search_text = $this->_concat_method == 'concat'
+                     ? "concat(author, ' | ', subject, ' | ', body)"
+                     : "author || ' | ' || subject || ' | ' || body";
         $this->interact(
             DB_RETURN_RES,
             "INSERT INTO {$this->search_table}
                     (message_id, search_text, forum_id)
-             SELECT message_id,
-                    concat(author, ' | ', subject, ' | ', body),
-                    forum_id
+             SELECT message_id, $search_text, forum_id
              FROM   {$this->message_table}",
             NULL,
             DB_GLOBALQUERY | DB_MASTERQUERY
