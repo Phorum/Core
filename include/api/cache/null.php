@@ -17,14 +17,19 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-/*
- * NULL caching-layer.
+/**
+ * This script implements the NULL caching backend for Phorum.
  *
  * This is a dummy caching layer that does not handle any caching at all.
  * It is automatically used by include/api.php in case a command line script
  * is run in combination with file caching. Because of file permission
  * issues (due to the fact that most webservers run under a different userid
  * than the owner of the website), it's best to not use file caching.
+ *
+ * @package    PhorumAPI
+ * @subpackage Cache
+ * @copyright  2011, Phorum Development Team
+ * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
 // {{{ Function: phorum_api_cache_get()

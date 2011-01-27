@@ -31,11 +31,11 @@ if (!defined('PHORUM')) return;
 class PhorumMysqlDB_mysqli_replication extends PhorumDB
 {
     /**
-     * This function is the central function for handling database
-     * interaction. The function can be used for setting up a database
+     * This method is the central method for handling database
+     * interaction. The method can be used for setting up a database
      * connection, for running a SQL query and for returning query rows.
-     * Which of these actions the function will handle and what the function
-     * return data will be, is determined by the $return function parameter.
+     * Which of these actions the method will handle and what the method
+     * return data will be, is determined by the $return method parameter.
      *
      * @param $return   - What to return. Options are the following constants:
      *                    DB_RETURN_CONN      a db connection handle
@@ -67,7 +67,7 @@ class PhorumMysqlDB_mysqli_replication extends PhorumDB
      *                    at all, so you have to make sure that you provide
      *                    a valid $keyfield here!
      *
-     * @param $flags    - Special flags for modifying the function's behavior.
+     * @param $flags    - Special flags for modifying the method's behavior.
      *                    These flags can be OR'ed if multiple flags are needed.
      *                    DB_NOCONNECTOK     Failure to connect is not fatal
      *                                       but lets the call return FALSE
@@ -203,7 +203,7 @@ class PhorumMysqlDB_mysqli_replication extends PhorumDB
 
         }
 
-        // Return a quoted parameter.
+        // RETURN: quoted parameter.
         if ($return === DB_RETURN_QUOTED) {
             return mysqli_real_escape_string($conn, $sql);
         }
@@ -331,7 +331,7 @@ class PhorumMysqlDB_mysqli_replication extends PhorumDB
                     {
                         $err = mysqli_error($conn);
 
-                        // RETURN: error message or NULL
+                        // RETURN: error message.
                         if ($return === DB_RETURN_ERROR) return $err;
 
                         // Trigger an error.
@@ -348,7 +348,7 @@ class PhorumMysqlDB_mysqli_replication extends PhorumDB
             }
         }
 
-        // RETURN: error message or NULL
+        // RETURN: NULL (no error).
         if ($return === DB_RETURN_ERROR) {
             return NULL;
         }
@@ -453,25 +453,56 @@ class PhorumMysqlDB_mysqli_replication extends PhorumDB
     }
 
     /**
-     * Return a single row from a query result. This function can be used
-     * if a lot of rows have to be processed one by one, in which case the
-     * DB_RETURN_ROWS and DB_RETURN_ASSOCS return types for the
-     * {@link PhorumDBLayer::interact()} function might consume lots of memory.
+     * This method is the central method for handling database
+     * interaction. The method can be used for setting up a database
+     * connection, for running a SQL query and for returning query rows.
+     * Which of these actions the method will handle and what the method
+     * return data will be, is determined by the $return method parameter.
      *
-     * @param resource $res
-     *     The result set resource handle. This is the return value of the
-     *     function {@link PhorumDBLayer::interact()}, when running a query
-     *     with the DB_RETURN_RES return type.
+     * @param $return   - What to return. Options are the following constants:
+     *                    DB_RETURN_CONN      a db connection handle
+     *                    DB_RETURN_QUOTED    a quoted parameter
+     *                    DB_RETURN_RES       result resource handle
+     *                    DB_RETURN_ROW       single row as array
+     *                    DB_RETURN_ROWS      all rows as arrays
+     *                    DB_RETURN_ASSOC     single row as associative array
+     *                    DB_RETURN_ASSOCS    all rows as associative arrays
+     *                    DB_RETURN_VALUE     single row, single column
+     *                    DB_RETURN_ROWCOUNT  number of selected rows
+     *                    DB_RETURN_NEWID     new row id for insert query
+     *                    DB_RETURN_ERROR     an error message if the query
+     *                                        failed or NULL if there was
+     *                                        no error
+     *                    DB_CLOSE_CONN       close the connection, no
+     *                                        return data
      *
-     * @param integer $type
-     *     A flag, which indicates what type of row has to be returned.
-     *     One of {@link DB_RETURN_ASSOC} or {@link DB_RETURN_ROW}, which
-     *     will let this function return respectively an associative array
-     *     (field name -> value) or an array (field index -> value).
+     * @param $sql      - The SQL query to run or the parameter to quote if
+     *                    DB_RETURN_QUOTED is used.
      *
-     * @return mixed
-     *     This function returns either an array containing a single row
-     *     or NULL if there are no more rows to retrieve.
+     * @param $keyfield - When returning an array of rows, the indexes are
+     *                    numerical by default (0, 1, 2, etc.). However, if
+     *                    the $keyfield parameter is set, then from each
+     *                    row the $keyfield index is taken as the key for the
+     *                    return array. This way, you can create a direct
+     *                    mapping between some id field and its row in the
+     *                    return data. Mind that there is no error checking
+     *                    at all, so you have to make sure that you provide
+     *                    a valid $keyfield here!
+     *
+     * @param $flags    - Special flags for modifying the method's behavior.
+     *                    These flags can be OR'ed if multiple flags are needed.
+     *                    DB_NOCONNECTOK     Failure to connect is not fatal
+     *                                       but lets the call return FALSE
+     *                                       (useful in combination with
+     *                                       DB_RETURN_CONN).
+     *                    DB_MISSINGTABLEOK  Missing table errors not fatal.
+     *                    DB_DUPFIELDNAMEOK  Duplicate field errors not fatal.
+     *                    DB_DUPKEYNAMEOK    Duplicate key name errors
+     *                                       not fatal.
+     *                    DB_DUPKEYOK        Duplicate key errors not fatal.
+     *
+     * @return $res     - The result of the query, based on the $return
+     *                    parameter.
      */
     public function fetch_row($res, $type)
     {

@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * This script implements the Phorum memcached-based caching-layer.
+ * This script implements the Memcached caching backend for Phorum.
  *
  * To use this layer, both a memcached server and the "memcache"
  * PHP pecl module are required.
@@ -26,7 +26,13 @@
  * For Memcached, see http://www.danga.com/memcached/
  *
  * For the pecl module, see http://pecl.php.net/package/memcache/
+ *
+ * @package    PhorumAPI
+ * @subpackage CacheMemcached
+ * @copyright  2011, Phorum Development Team
+ * @license    Phorum License, http://www.phorum.org/license.txt
  */
+
 if (!defined("PHORUM")) return;
 
 // {{{ Function: phorum_api_cache_get()

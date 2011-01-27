@@ -30,11 +30,11 @@ if (!defined('PHORUM')) return;
 class PhorumMysqlDB_mysql extends PhorumDB
 {
     /**
-     * This function is the central function for handling database
-     * interaction. The function can be used for setting up a database
+     * This method is the central method for handling database
+     * interaction. The method can be used for setting up a database
      * connection, for running a SQL query and for returning query rows.
-     * Which of these actions the function will handle and what the function
-     * return data will be, is determined by the $return function parameter.
+     * Which of these actions the method will handle and what the method
+     * return data will be, is determined by the $return method parameter.
      *
      * @param $return   - What to return. Options are the following constants:
      *                    DB_RETURN_CONN      a db connection handle
@@ -66,7 +66,7 @@ class PhorumMysqlDB_mysql extends PhorumDB
      *                    at all, so you have to make sure that you provide
      *                    a valid $keyfield here!
      *
-     * @param $flags    - Special flags for modifying the function's behavior.
+     * @param $flags    - Special flags for modifying the method's behavior.
      *                    These flags can be OR'ed if multiple flags are needed.
      *                    DB_NOCONNECTOK     Failure to connect is not fatal
      *                                       but lets the call return FALSE
@@ -164,14 +164,14 @@ class PhorumMysqlDB_mysql extends PhorumDB
             }
         }
 
+        // RETURN: quoted parameter.
+        if ($return === DB_RETURN_QUOTED) {
+            return mysql_real_escape_string($sql, $conn);
+        }
+
         // RETURN: database connection handle
         if ($return === DB_RETURN_CONN) {
             return $conn;
-        }
-
-        // Return a quoted parameter.
-        if ($return === DB_RETURN_QUOTED) {
-            return mysql_real_escape_string($sql, $conn);
         }
 
         // By now, we really need a SQL query.
@@ -280,7 +280,7 @@ class PhorumMysqlDB_mysql extends PhorumDB
                     {
                         $err = mysql_error($conn);
 
-                        // RETURN: error message or NULL
+                        // RETURN: error message. 
                         if ($return === DB_RETURN_ERROR) return $err;
 
                         // Trigger an error.
@@ -298,7 +298,7 @@ class PhorumMysqlDB_mysql extends PhorumDB
             }
         }
 
-        // RETURN: error message or NULL
+        // RETURN: NULL (no error).
         if ($return === DB_RETURN_ERROR) {
             return NULL;
         }
@@ -399,24 +399,24 @@ class PhorumMysqlDB_mysql extends PhorumDB
     }
 
     /**
-     * Return a single row from a query result. This function can be used
+     * Return a single row from a query result. This method can be used
      * if a lot of rows have to be processed one by one, in which case the
      * DB_RETURN_ROWS and DB_RETURN_ASSOCS return types for the
-     * {@link PhorumDBLayer::interact()} function might consume lots of memory.
+     * {@link PhorumDBLayer::interact()} method might consume lots of memory.
      *
      * @param resource $res
      *     The result set resource handle. This is the return value of the
-     *     function {@link PhorumDBLayer::interact()}, when running a query
+     *     method {@link PhorumDBLayer::interact()}, when running a query
      *     with the DB_RETURN_RES return type.
      *
      * @param integer $type
      *     A flag, which indicates what type of row has to be returned.
      *     One of {@link DB_RETURN_ASSOC} or {@link DB_RETURN_ROW}, which
-     *     will let this function return respectively an associative array
+     *     will let this method return respectively an associative array
      *     (field name -> value) or an array (field index -> value).
      *
      * @return mixed
-     *     This function returns either an array containing a single row
+     *     This method returns either an array containing a single row
      *     or NULL if there are no more rows to retrieve.
      */
     public function fetch_row($res, $type)

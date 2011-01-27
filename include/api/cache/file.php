@@ -17,10 +17,18 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-/*
- * Simple file-based caching-layer
+
+/**
+ * This script implements the file caching backend for Phorum.
+ *
+ * This is a simple file-based caching-layer.
  * Recommended are some more sophisticated solutions, like
- * the memcached-layer or the apc-layer.
+ * the memcached-layer or the APC-layer.
+ *
+ * @package    PhorumAPI
+ * @subpackage CacheFile
+ * @copyright  2011, Phorum Development Team
+ * @license    Phorum License, http://www.phorum.org/license.txt
  */
 if (!defined("PHORUM")) return;
 

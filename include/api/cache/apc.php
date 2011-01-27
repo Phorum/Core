@@ -22,6 +22,15 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * This script implements the APC caching backend for Phorum.
+ *
+ * @package    PhorumAPI
+ * @subpackage CacheAPC
+ * @copyright  2011, Phorum Development Team
+ * @license    Phorum License, http://www.phorum.org/license.txt
+ */
+
 // {{{ Function: phorum_api_cache_get()
 /**
  * Retrieve an object from the cache.
