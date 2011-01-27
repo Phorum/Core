@@ -87,6 +87,9 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/controlcenter/user.php',
     'include/controlcenter/users.php',
 
+    'include/db/functional_layer.php',
+    'include/db/PhorumDB.php',
+
     'include/index/directory.php',
     'include/index/flat.php',
     'include/javascript/phorum-javascript-library.php',
@@ -217,8 +220,8 @@ $GLOBALS["PHORUM"]["deprecated_distro"] = array
 
 // A list of database layer files that ship with Phorum.
 $GLOBALS["PHORUM"]["distro_dblayers"] = array(
-    "mysql.php",
-    # "postgresql.php", needs Porting to Phorum 5.2
+    "PhorumMysqlDB.php",
+    "PhorumPostgresqlDB.php"
 );
 
 // A list of templates that ship with Phorum.
@@ -298,13 +301,10 @@ function phorum_check_distro()
          and executable for the group and others). Never use mod
          \"777\" for Phorum!"
     );
+    // Database layers have the format "Phorum<Layer>DB.php".
     $ok = false;
-    // The config.php file is skipped. This is the old database configuration
-    // file. From 5.3 on, the database config is stored in
-    // include/config/database.php. Because in old installations, the
-    // config.php might still be in this location, we explicitly still skip it.
     while ($entry = readdir($dir)) {
-        if (substr($entry, -4, 4) == ".php" && $entry != "config.php") {
+        if (preg_match('/^Phorum\w+DB\.php$/', $entry)) {
             $ok = true;
             break;
         }
