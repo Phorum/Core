@@ -83,7 +83,8 @@ class PhorumMysqlDB_mysqli_replication extends PhorumDB
      *                    parameter.
      */
     public function interact(
-        $return, $sql = NULL, $keyfield = NULL, $flags = 0)
+        $return, $sql = NULL, $keyfield = NULL, $flags = 0,
+        $limit = 0, $offset = 0)
     {
         static $querytrack;
         static $conn_read;
@@ -217,6 +218,12 @@ class PhorumMysqlDB_mysqli_replication extends PhorumDB
             __METHOD__ . ': Internal error: ' .
             'missing sql query statement!', E_USER_ERROR
         );
+
+        // Apply limit and offset to the query.
+        settype($limit, 'int');
+        settype($offset, 'int');
+        if ($limit  > 0) $sql .= "LIMIT $limit";
+        if ($offset > 0) $sql .= "OFFSET $offset";
 
         // Execute the SQL query.
 

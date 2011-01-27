@@ -78,11 +78,16 @@ class PhorumMysqlDB_mysql extends PhorumDB
      *                                       not fatal.
      *                    DB_DUPKEYOK        Duplicate key errors not fatal.
      *
+     * @param $limit    - The maximum number of rows to return.
+     * @param $offset   - The number of rows to skip in the result set,
+     *                    before returning rows to the caller.
+     *
      * @return $res     - The result of the query, based on the $return
      *                    parameter.
      */
     public function interact(
-        $return, $sql = NULL, $keyfield = NULL, $flags = 0)
+        $return, $sql = NULL, $keyfield = NULL, $flags = 0,
+        $limit = 0, $offset = 0)
     {
         static $conn;
         static $querytrack;
@@ -175,6 +180,11 @@ class PhorumMysqlDB_mysql extends PhorumDB
             'missing sql query statement!', E_USER_ERROR
         );
 
+        // Apply limit and offset to the query.
+        settype($limit, 'int');
+        settype($offset, 'int');
+        if ($limit  > 0) $sql .= "LIMIT $limit";
+        if ($offset > 0) $sql .= "OFFSET $offset";
 
         $tries = 0;
 

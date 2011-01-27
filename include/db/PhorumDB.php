@@ -576,7 +576,9 @@ abstract class PhorumDB
         // Process all groups.
         foreach ($groups as $group)
         {
-            $sql = NULL;
+            $sql    = NULL;
+            $limit  = 0;
+            $offset = 0;
 
             switch ($group)
             {
@@ -600,7 +602,7 @@ abstract class PhorumDB
                     } else {
                         $limit = $PHORUM['list_length_flat'];
                     }
-                    $start = $page * $limit;
+                    $offset = $page * $limit;
 
                     $sql = "SELECT $messagefields
                             FROM   {$this->message_table} " .
@@ -610,9 +612,7 @@ abstract class PhorumDB
                                    status = ".PHORUM_STATUS_APPROVED." AND
                                    parent_id = 0 AND
                                    sort > 1
-                            ORDER  BY $sortfield DESC
-                            LIMIT  $limit
-                            OFFSET $start";
+                            ORDER  BY $sortfield DESC";
                     break;
 
                 // Reply messages.
@@ -637,7 +637,8 @@ abstract class PhorumDB
             if ($sql === NULL) continue;
 
             // Query the messages for the current group.
-            $rows = $this->interact(DB_RETURN_ASSOCS, $sql, 'message_id');
+            $rows = $this->interact(
+                DB_RETURN_ASSOCS, $sql, 'message_id', $limit, $offset);
             $now  = time();
             foreach ($rows as $id => $row)
             {
@@ -694,11 +695,11 @@ abstract class PhorumDB
      *
      * The original version of this function came from Jim Winstead of mysql.com
      *
-     * @param integer $length
+     * @param integer $limit
      *     Limit the number of returned messages to this number.
      *
      * @param integer $offset
-     *     When using the $length parameter to limit the number of returned
+     *     When using the $limit parameter to limit the number of returned
      *     messages, this parameter can be used to specify the retrieval offset.
      *
      * @param integer $forum_id
@@ -720,16 +721,19 @@ abstract class PhorumDB
      *     "users" is set too. This one contains an array of all involved
      *     user_ids.
      */
-    public function get_recent_messages($length, $offset = 0, $forum_id = 0, $thread = 0, $list_type = LIST_RECENT_MESSAGES)
+    public function get_recent_messages(
+        $limit, $offset = 0, $forum_id = 0, $thread = 0,
+        $list_type = LIST_RECENT_MESSAGES)
     {
         global $PHORUM;
 
         // Backward compatibility for the old $threads_only parameter.
         if (is_bool($list_type)) {
-            $list_type = $list_type ? LIST_RECENT_THREADS : LIST_RECENT_MESSAGES;
+            $list_type = $list_type
+                       ? LIST_RECENT_THREADS : LIST_RECENT_MESSAGES;
         }
 
-        settype($length,    'int');
+        settype($limit,     'int');
         settype($offset,    'int');
         settype($thread,    'int');
         settype($list_type, 'int');
@@ -833,16 +837,9 @@ abstract class PhorumDB
             $sql .= ' ORDER BY datestamp DESC';
         }
 
-        if ($length) {
-            if ($offset > 0) {
-                $sql .= " LIMIT $length OFFSET $offset";
-            } else {
-                $sql .= " LIMIT $length";
-            }
-        }
-
         // Retrieve matching messages from the database.
-        $messages = $this->interact(DB_RETURN_ASSOCS, $sql, 'message_id');
+        $messages = $this->interact(
+            DB_RETURN_ASSOCS, $sql, 'message_id', NULL, $limit, $offset);
 
         // Post processing of received messages.
         $involved_users = array();
@@ -1464,9 +1461,13 @@ abstract class PhorumDB
      *     found at all, then either an empty array or NULL is returned
      *     (also depending on the $value parameter).
      */
-    public function get_message($value, $field='message_id', $ignore_forum_id=FALSE, $write_server=FALSE)
+    public function get_message(
+        $value, $field = 'message_id', $ignore_forum_id = FALSE,
+        $write_server = FALSE)
     {
         global $PHORUM;
+
+        $limit  = 0;
 
         $this->sanitize_mixed($value, 'string');
         settype($ignore_forum_id, 'bool');
@@ -1483,16 +1484,15 @@ abstract class PhorumDB
         if (is_array($value)) {
             $multiple = TRUE;
             $checkvar = "$field IN ('".implode("','",$value)."')";
-            $limit = '';
         } else {
-            $multiple=FALSE;
+            $multiple = FALSE;
             $checkvar = "$field = '$value'";
-            $limit = 'LIMIT 1';
+            $limit = 1;
         }
 
         $return = $multiple ? array() : NULL;
 
-        if($write_server) {
+        if ($write_server) {
             $flags = DB_MASTERQUERY;
         } else {
             $flags = 0;
@@ -1502,10 +1502,9 @@ abstract class PhorumDB
             DB_RETURN_ASSOCS,
             "SELECT *
              FROM   {$this->message_table}
-             WHERE  $forum_id_check $checkvar
-             $limit",
+             WHERE  $forum_id_check $checkvar",
             NULL,
-            $flags
+            $flags, $limit
         );
 
         foreach ($messages as $message)
@@ -1609,19 +1608,23 @@ abstract class PhorumDB
                        $approvedval
                 ORDER  BY datestamp";
 
+        // Handle the page offset.
         if ($page > 0) {
-           // Handle the page offset.
-           $start = $PHORUM['read_length'] * ($page-1);
-           $sql .= " LIMIT {$PHORUM['read_length']} OFFSET $start";
+            $offset = $PHORUM['read_length'] * ($page-1);
+            $limit  = $PHORUM['read_length'];
+        } else {
+            $offset = 0;
+            $limit  = 0;
         }
 
-        if($write_server) {
+        if ($write_server) {
             $flags = DB_MASTERQUERY;
         } else {
             $flags = 0;
         }
 
-        $messages = $this->interact(DB_RETURN_ASSOCS, $sql, 'message_id', $flags);
+        $messages = $this->interact(
+            DB_RETURN_ASSOCS, $sql, 'message_id', $flags, $limit, $offset);
         $involved_users = array();
 
         foreach ($messages as $id => $message)
@@ -1669,9 +1672,11 @@ abstract class PhorumDB
             }
         }
 
-        if(count($messages) && $get_custom_fields) {
+        if (count($messages) && $get_custom_fields)
+        {
             // get custom fields
-            $custom_fields = $this->get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages),$flags);
+            $custom_fields = $this->get_custom_fields(
+                PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages),$flags);
 
             // Add custom fields to the messages
             foreach ($custom_fields as $message_id => $fields)
@@ -1772,10 +1777,10 @@ abstract class PhorumDB
      *     When searching for a user ($match_type = USER_ID), then only the
      *     thread starter messages that were posted by the user are returned.
      *
-     * @param integer $offset
+     * @param integer $page
      *     The result page offset starting with 0.
      *
-     * @param integer $length
+     * @param integer $limit
      *     The result page length (nr. of results per page).
      *
      * @param string $match_type
@@ -1797,10 +1802,10 @@ abstract class PhorumDB
      *     An array containing two fields:
      *     - "count" contains the total number of matching messages.
      *     - "rows" contains the messages that are visible, based on the page
-     *       $offset and page $length. The messages are indexed by message_id.
+     *       $page and page $limit. The messages are indexed by message_id.
      */
     public function search(
-        $search, $author, $return_threads, $offset, $length,
+        $search, $author, $return_threads, $page, $limit,
         $match_type, $days, $match_forum)
     {
         global $PHORUM;
@@ -1808,12 +1813,12 @@ abstract class PhorumDB
         $search = trim($search);
         $author = trim($author);
         settype($return_threads, 'bool');
-        settype($offset, 'int');
-        settype($length, 'int');
+        settype($page, 'int');
+        settype($limit, 'int');
         settype($days, 'int');
 
         // For spreading search results over multiple pages.
-        $start = $offset * $length;
+        $offset = $page * $limit;
 
         // Initialize the return data.
         $return = array('count' => 0, 'rows' => array());
@@ -1888,10 +1893,8 @@ abstract class PhorumDB
                 DB_RETURN_ASSOCS,
                 "SELECT *
                         $from_and_where
-                 ORDER  BY datestamp DESC
-                 LIMIT  $length
-                 OFFSET $start",
-                "message_id"
+                 ORDER  BY datestamp DESC",
+                "message_id", NULL, $limit, $offset
             );
 
             // Retrieve the number of found messages.
@@ -2083,10 +2086,8 @@ abstract class PhorumDB
             $rows = $this->interact(
                 DB_RETURN_ASSOCS,
                 "SELECT * $from_and_where
-                 ORDER  BY datestamp DESC
-                 LIMIT  $length
-                 OFFSET $start",
-                 "message_id"
+                 ORDER  BY datestamp DESC",
+                 "message_id", NULL, $limit, $offset
             );
 
             // Retrieve the number of found messages.
@@ -2158,8 +2159,8 @@ abstract class PhorumDB
                     parent_id = 0
                     $approvedval AND
                     $keyfield $compare $key
-             ORDER  BY $keyfield $orderdir
-             LIMIT  1"
+             ORDER  BY $keyfield $orderdir",
+             NULL, NULL, 1
         );
 
         return $thread;
@@ -3386,23 +3387,18 @@ abstract class PhorumDB
      *       functionality from the user API, if search is extended with an
      *       option to return a resource handle.
      */
-    public function user_get_all($offset = 0, $length = 0)
+    public function user_get_all($offset = 0, $limit = 0)
     {
         global $PHORUM;
 
         settype($offset, 'int');
-        settype($length, 'int');
-
-        $limit = '';
-        if ($length > 0) {
-            $limit = "LIMIT $length OFFSET $offset";
-        }
+        settype($limit, 'int');
 
         return $this->interact(
             DB_RETURN_RES,
             "SELECT *
-             FROM   {$this->user_table}
-            $limit"
+             FROM   {$this->user_table}",
+            NULL, NULL, $limit, $offset
         );
     }
     // }}}
@@ -3815,8 +3811,8 @@ abstract class PhorumDB
      * @param integer $offset
      *     The result page offset starting with 0.
      *
-     * @param integer $length
-     *     The result page length (nr. of results per page)
+     * @param integer $limit
+     *     The result page limit (nr. of results per page)
      *     or 0 (zero, the default) to return all results.
      *
      * @return mixed
@@ -3824,13 +3820,15 @@ abstract class PhorumDB
      *     $return_array parameter). If no user_ids can be found at all,
      *     then 0 (zero) will be returned.
      */
-    public function user_search($field, $value, $operator='=', $return_array=FALSE, $type='AND', $sort=NULL, $offset=0, $length=0)
+    public function user_search(
+        $field, $value, $operator = '=', $return_array = FALSE,
+        $type = 'AND', $sort = NULL, $offset = 0, $limit = 0)
     {
         global $PHORUM;
 
         settype($return_array, 'bool');
         settype($offset, 'int');
-        settype($length, 'int');
+        settype($limit, 'int');
 
         // Convert all search condition parameters to arrays.
         if (!is_array($field))    $field    = array($field);
@@ -3911,22 +3909,18 @@ abstract class PhorumDB
             $order = '';
         }
 
-        // Construct the required "LIMIT" clause.
-        if (!empty($length)) {
-            $limit = "LIMIT $length OFFSET $offset";
-        } else {
-            // If we do not need to return an array, the we can limit the
-            // query results to only one record.
-            $limit = $return_array ? '' : 'LIMIT 1';
-        }
+        // If we do not need to return an array, the we can limit the
+        // query results to only one record.
+        $limit = $return_array ? $limit : 1;
 
         // Retrieve the matching user_ids from the database.
         $user_ids = $this->interact(
             DB_RETURN_ROWS,
             "SELECT user_id
              FROM   {$this->user_table}
-             $where $order $limit",
-            0 // keyfield 0 is the user_id
+             $where $order",
+            0, // keyfield 0 is the user_id
+            NULL, $limit
         );
 
         // No user_ids found at all?
@@ -5548,8 +5542,7 @@ abstract class PhorumDB
         settype($numdelete, 'int');
         settype($forum_id, 'int');
 
-        $limit = $numdelete > 0
-               ? "ORDER BY message_id ASC LIMIT $numdelete" : '';
+        $order = $numdelete > 0 ? 'ORDER BY message_id ASC' : '';
 
         // Delete the provided amount of newflags.
         $this->interact(
@@ -5557,9 +5550,10 @@ abstract class PhorumDB
             "DELETE FROM {$this->user_newflags_table}
              WHERE  user_id  = {$PHORUM['user']['user_id']} AND
                     forum_id = {$forum_id}
-             $limit",
+             $order",
             NULL,
-            DB_MASTERQUERY
+            DB_MASTERQUERY,
+            $numdelete
         );
         // lets recalculate the new min_id
         if ($numdelete > 0) {
@@ -5797,7 +5791,8 @@ abstract class PhorumDB
                      : '';
 
         // Retrieve all subscribed threads from the database for which the
-        // latest message in the thread was posted within the provided time limit.
+        // latest message in the thread was posted within the provided
+        // time limit.
         $threads = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT s.thread         AS thread,
@@ -6517,7 +6512,8 @@ abstract class PhorumDB
             "SELECT user_id
              FROM   {$this->pm_xref_table}
              WHERE  user_id   = $user_id AND
-                    read_flag = 0 LIMIT 1"
+                    read_flag = 0",
+            NULL, NULL, 1
         );
 
         return (bool)$new;
@@ -7366,8 +7362,8 @@ abstract class PhorumDB
      * @param integer $offset
      *     The result page offset starting with 0.
      *
-     * @param integer $length
-     *     The result page length (nr. of results per page)
+     * @param integer $limit
+     *     The result page limit (nr. of results per page)
      *     or 0 (zero, the default) to return all results.
      *
      * @return mixed
@@ -7375,13 +7371,15 @@ abstract class PhorumDB
      *     $return_array parameter). If no relation_ids can be found at all,
      *     then 0 (zero) will be returned.
      */
-    public function search_custom_profile_field($fieldtype,$field_id, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $offset = 0, $length = 0)
+    public function search_custom_profile_field(
+        $fieldtype, $field_id, $value, $operator = '=',
+        $return_array = FALSE, $type = 'AND', $offset = 0, $limit = 0)
     {
         global $PHORUM;
 
         settype($return_array, 'bool');
         settype($offset, 'int');
-        settype($length, 'int');
+        settype($limit, 'int');
         settype($fieldtype,'int');
 
         // Convert all search condition parameters to arrays.
@@ -7430,35 +7428,29 @@ abstract class PhorumDB
             $where = '';
         }
 
-        // Construct the required "LIMIT" clause.
-        if (!empty($length)) {
-            $limit = "LIMIT $length OFFSET $offset";
-        } else {
-            // If we do not need to return an array, the we can limit the
-            // query results to only one record.
-            $limit = $return_array ? '' : 'LIMIT 1';
-        }
+        // If we do not need to return an array, the we can limit the
+        // query results to only one record.
+        $limit = $return_array ? $limit : 1;
 
         // Build the final query.
         if ($type == 'OR' || count($clauses) == 1)
         {
             $sql = "SELECT DISTINCT(relation_id)
                     FROM   {$this->custom_fields_table}
-                    $where
-                    $limit";
+                    $where";
         } else {
             $sql = "SELECT relation_id
                     FROM   {$this->custom_fields_table}
                     $where
                     GROUP  BY relation_id
-                    HAVING count(*) = " . count($clauses) . " " .
-                    $limit;
+                    HAVING count(*) = " . count($clauses);
         }
 
         // Retrieve the matching user_ids from the database.
         $relation_ids = $this->interact(
             DB_RETURN_ROWS, $sql,
-            0 // keyfield 0 is the relation_id
+            0, // keyfield 0 is the relation_id
+            NULL, $limit
         );
 
         // No user_ids found at all?
@@ -7466,7 +7458,9 @@ abstract class PhorumDB
 
         // Return an array of user_ids.
         if ($return_array) {
-            foreach ($relation_ids as $id => $rel_id) $relation_ids[$id] = $rel_id[0];
+            foreach ($relation_ids as $id => $rel_id) {
+                $relation_ids[$id] = $rel_id[0];
+            }
             return $relation_ids;
         }
 
@@ -7782,11 +7776,16 @@ abstract class PhorumDB
      *                                       not fatal.
      *                    DB_DUPKEYOK        Duplicate key errors not fatal.
      *
+     * @param $limit    - The maximum number of rows to return.
+     * @param $offset   - The number of rows to skip in the result set,
+     *                    before returning rows to the caller.
+     *
      * @return $res     - The result of the query, based on the $return
      *                    parameter.
      */
     public function interact(
-        $return, $sql = NULL, $keyfield = NULL, $flags = 0)
+        $return, $sql = NULL, $keyfield = NULL, $flags = 0,
+        $limit = 0, $offset = 0)
     {
         trigger_error(
             __METHOD__ . ': the database layer does not implement interact()',

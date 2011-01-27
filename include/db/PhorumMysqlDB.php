@@ -127,7 +127,8 @@ class PhorumMysqlDB extends PhorumDB
      * The interact() method is relayed to the MySQL layer extension object.
      */
     public function interact(
-        $return, $sql = NULL, $keyfield = NULL, $flags = 0)
+        $return, $sql = NULL, $keyfield = NULL, $flags = 0,
+        $limit = 0, $offset = 0)
     {
         return $this->extension->interact($return, $sql, $keyfield, $flags);
     }
@@ -607,11 +608,11 @@ class PhorumMysqlDB extends PhorumDB
      *     When searching for a user ($match_type = USER_ID), then only the
      *     thread starter messages that were posted by the user are returned.
      *
-     * @param integer $offset
+     * @param integer $page
      *     The result page offset starting with 0.
      *
-     * @param integer $length
-     *     The result page length (nr. of results per page).
+     * @param integer $limit
+     *     The result page limit (nr. of results per page).
      *
      * @param string $match_type
      *     The type of search. This can be one of:
@@ -632,10 +633,10 @@ class PhorumMysqlDB extends PhorumDB
      *     An array containing two fields:
      *     - "count" contains the total number of matching messages.
      *     - "rows" contains the messages that are visible, based on the page
-     *       $offset and page $length. The messages are indexed by message_id.
+     *       $page and page $limit. The messages are indexed by message_id.
      */
     public function search(
-        $search, $author, $return_threads, $offset, $length,
+        $search, $author, $return_threads, $page, $limit,
         $match_type, $days, $match_forum)
     {
         global $PHORUM;
@@ -646,12 +647,12 @@ class PhorumMysqlDB extends PhorumDB
         $search = trim($search);
         $author = trim($author);
         settype($return_threads, 'bool');
-        settype($offset, 'int');
-        settype($length, 'int');
+        settype($page, 'int');
+        settype($limit, 'int');
         settype($days, 'int');
 
         // For spreading search results over multiple pages.
-        $start = $offset * $length;
+        $offset = $page * $limit;
 
         // Initialize the return data.
         $return = array('count' => 0, 'rows' => array());
@@ -719,10 +720,13 @@ class PhorumMysqlDB extends PhorumDB
                     FROM   {$this->message_table} " .
                     ($this->_can_USE_INDEX ? "USE INDEX (user_messages)" : "") .
                    "WHERE  $where $forum_where
-                    ORDER  BY datestamp DESC
-                    LIMIT  $length
-                    OFFSET $start";
-            $rows = $this->interact(DB_RETURN_ASSOCS, $sql,"message_id");
+                    ORDER  BY datestamp DESC";
+
+            // Retrieve the message rows.
+            $rows = $this->interact(
+                DB_RETURN_ASSOCS, $sql,
+                "message_id", NULL, $limit, $offset
+            );
 
             // Retrieve the number of found messages.
             $count = $this->interact(
@@ -950,10 +954,8 @@ class PhorumMysqlDB extends PhorumDB
                  WHERE  status=".PHORUM_STATUS_APPROVED."
                         $forum_where
                         $datestamp_where
-                 ORDER  BY datestamp DESC
-                 LIMIT  $length
-                 OFFSET $start",
-                 "message_id"
+                 ORDER  BY datestamp DESC",
+                 "message_id", NULL, $limit, $offset
             );
 
             // Retrieve the number of found messages.
