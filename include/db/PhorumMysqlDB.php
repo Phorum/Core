@@ -27,6 +27,22 @@
  */
 class PhorumMysqlDB extends PhorumDB
 {
+    /**
+     * Whether or not the database system supports "USE INDEX" in a SELECT
+     * query. This makes it possible to modify some queries, without
+     * having to override the related db layer methods.
+     * @var boolean
+     */
+    protected $_can_USE_INDEX = TRUE;
+
+    /**
+     * Whether or not the database system supports "INSERT DELAYED".
+     * This makes it possible to modify some queries, without having to
+     * override the related db layer methods.
+     * @var boolean
+     */
+    protected $_can_INSERT_DELAYED = TRUE;
+
     // {{{ Method:: __construct()
     /**
      * For the MySQL layer, multiple types of low level implementations

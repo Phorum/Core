@@ -258,6 +258,22 @@ abstract class PhorumDB
         'user_language', 'user_template', 'settings_data'
     );
 
+    /**
+     * Whether or not the database system supports "USE INDEX" in a SELECT
+     * query. This makes it possible to modify some queries, without
+     * having to override the related db layer methods.
+     * @var boolean
+     */
+    protected $_can_USE_INDEX = FALSE;
+
+    /**
+     * Whether or not the database system supports "INSERT DELAYED".
+     * This makes it possible to modify some queries, without having to
+     * override the related db layer methods.
+     * @var boolean
+     */
+    protected $_can_INSERT_DELAYED = FALSE;
+
     // }}}
 
     // ----------------------------------------------------------------------
@@ -577,15 +593,16 @@ abstract class PhorumDB
                     $start = $page * $limit;
 
                     $sql = "SELECT $messagefields
-                            FROM   {$this->message_table}
-                            USE    INDEX ($index)
-                            WHERE  $sortfield > 0 AND
+                            FROM   {$this->message_table} " .
+                            ($this->_can_USE_INDEX ? "USE INDEX ($index)" : "").
+                           "WHERE  $sortfield > 0 AND
                                    forum_id = {$PHORUM['forum_id']} AND
                                    status = ".PHORUM_STATUS_APPROVED." AND
                                    parent_id = 0 AND
                                    sort > 1
                             ORDER  BY $sortfield DESC
-                            LIMIT  $start, $limit";
+                            LIMIT  $limit
+                            OFFSET $start";
                     break;
 
                 // Reply messages.
@@ -808,7 +825,7 @@ abstract class PhorumDB
 
         if ($length) {
             if ($offset > 0) {
-                $sql .= " LIMIT $offset, $length";
+                $sql .= " LIMIT $length OFFSET $offset";
             } else {
                 $sql .= " LIMIT $length";
             }
@@ -991,7 +1008,7 @@ abstract class PhorumDB
             // Check for duplicate messages in the last hour.
             $check_timestamp = $NOW - 3600;
             $sql = "SELECT message_id
-                    FROM   {$message_table}
+                    FROM   {$this->message_table}
                     WHERE  forum_id  = {$message['forum_id']} AND
                            author    ='{$message['author']}' AND
                            subject   ='{$message['subject']}' AND
@@ -1060,7 +1077,7 @@ abstract class PhorumDB
         // Insert the message and get the new message_id.
         $message_id = $this->interact(
             DB_RETURN_NEWID,
-            "INSERT INTO {$message_table}
+            "INSERT INTO {$this->message_table}
                     (".implode(', ', array_keys($insertfields)).")
              VALUES (".implode(', ', $insertfields).")",
             NULL,
@@ -1075,7 +1092,7 @@ abstract class PhorumDB
         {
             $this->interact(
                 DB_RETURN_RES,
-                "UPDATE {$message_table}
+                "UPDATE {$this->message_table}
                  SET    thread     = $message_id
                  WHERE  message_id = $message_id",
                 NULL,
@@ -1097,11 +1114,11 @@ abstract class PhorumDB
                            $message['subject'] .' | '.
                            $message['body'];
 
+            $INSERT = $this->_can_INSERT_DELAYED ? 'INSERT DELAYED' : 'INSERT';
             $this->interact(
                 DB_RETURN_RES,
-                "INSERT DELAYED INTO {$this->search_table}
-                        (message_id, forum_id,
-                         search_text)
+                "$INSERT INTO {$this->search_table}
+                        (message_id, forum_id, search_text)
                  VALUES ({$message['message_id']}, {$message['forum_id']},
                          '$search_text')",
                 NULL,
@@ -1195,15 +1212,30 @@ abstract class PhorumDB
                            $message['subject'] .' | '.
                            $message['body'];
 
-            $this->interact(
+            // Try to insert a new record.
+            $INSERT = $this->_can_INSERT_DELAYED ? 'INSERT DELAYED' : 'INSERT';
+            $res = $this->interact(
                 DB_RETURN_RES,
-                "REPLACE DELAYED INTO {$this->search_table}
-                 SET     message_id  = {$message_id},
-                         forum_id    = {$message['forum_id']},
-                         search_text = '$search_text'",
-               NULL,
-               DB_MASTERQUERY
+                "$INSERT INTO {$this->search_table}
+                         (message_id, forum_id, search_text)
+                 VALUES  ($message_id, {$message['forum_id']}, '$search_text')",
+                NULL,
+                DB_DUPKEYOK | DB_MASTERQUERY
             );
+            // If no result was returned, then the query failed. This probably
+            // means that we already have a record in the database.
+            // So instead of inserting a record, we need to update one here.
+            if (!$res) {
+                $this->interact(
+                    DB_RETURN_RES,
+                    "UPDATE {$this->search_table}
+                     SET    search_text = '$search_text'
+                     WHERE  forum_id    = {$message['forum_id']} AND
+                            message_id  = $message_id",
+                    NULL,
+                    DB_MASTERQUERY
+                );
+            }
         }
     }
     // }}}
@@ -1570,7 +1602,7 @@ abstract class PhorumDB
         if ($page > 0) {
            // Handle the page offset.
            $start = $PHORUM['read_length'] * ($page-1);
-           $sql .= " LIMIT $start,".$PHORUM['read_length'];
+           $sql .= " LIMIT {$PHORUM['read_length']} OFFSET $start";
         }
 
         if($write_server) {
@@ -1831,11 +1863,12 @@ abstract class PhorumDB
                       moved=0";
             if ($return_threads) $where .= " AND parent_id = 0";
             $sql = "SELECT SQL_CALC_FOUND_ROWS *
-                    FROM   {$this->message_table}
-                    USE    KEY(user_messages)
-                    WHERE  $where $forum_where
+                    FROM   {$this->message_table} " .
+                    ($this->_can_USE_INDEX ? "USE INDEX (user_messages)" : "") .
+                   "WHERE  $where $forum_where
                     ORDER  BY datestamp DESC
-                    LIMIT  $start, $length";
+                    LIMIT  $length
+                    OFFSET $start";
             $rows = $this->interact(DB_RETURN_ASSOCS, $sql,"message_id");
 
             // Retrieve the number of found messages.
@@ -1995,7 +2028,7 @@ abstract class PhorumDB
                    KEY (message_id)
                  ) ENGINE=HEAP
                    SELECT message_id
-                   FROM   {$PHORUM["message_table"]}
+                   FROM   {$this->message_table}
                    WHERE  $author_where"
             );
 
@@ -2065,7 +2098,8 @@ abstract class PhorumDB
                         $forum_where
                         $datestamp_where
                  ORDER  BY datestamp DESC
-                 LIMIT  $start, $length",
+                 LIMIT  $length
+                 OFFSET $start",
                  "message_id"
             );
 
@@ -3375,7 +3409,7 @@ abstract class PhorumDB
 
         $limit = '';
         if ($length > 0) {
-            $limit = "LIMIT $offset, $length";
+            $limit = "LIMIT $length OFFSET $offset";
         }
 
         return $this->interact(
@@ -3893,7 +3927,7 @@ abstract class PhorumDB
 
         // Construct the required "LIMIT" clause.
         if (!empty($length)) {
-            $limit = "LIMIT $offset, $length";
+            $limit = "LIMIT $length OFFSET $offset";
         } else {
             // If we do not need to return an array, the we can limit the
             // query results to only one record.
@@ -7045,12 +7079,10 @@ abstract class PhorumDB
      */
     public function get_max_messageid()
     {
-        global $PHORUM;
-
         $maxid = $this->interact(
             DB_RETURN_VALUE,
             "SELECT max(message_id)
-             FROM   {$PHORUM["message_table"]}"
+             FROM   {$this->message_table}"
         );
 
         return $maxid === NULL ? 0 : $maxid;
@@ -7338,7 +7370,7 @@ abstract class PhorumDB
 
         // Construct the required "LIMIT" clause.
         if (!empty($length)) {
-            $limit = "LIMIT $offset, $length";
+            $limit = "LIMIT $length OFFSET $offset";
         } else {
             // If we do not need to return an array, the we can limit the
             // query results to only one record.
