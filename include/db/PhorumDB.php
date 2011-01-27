@@ -3312,22 +3312,22 @@ abstract class PhorumDB
         settype($for_email, 'bool');
 
         // Exclude admins from the list, if requested.
-        $or_where_admin = $exclude_admin ? '' : 'OR user.admin=1';
+        $or_where_admin = $exclude_admin ? '' : 'OR "user".admin=1';
 
         // If we are gathering email addresses for mailing the moderators,
         // then honour the moderation_email setting for the user.
-        $where_moderation_mail = $for_email ? 'AND user.moderation_email = 1' : '';
+        $where_moderation_mail = $for_email ? 'AND "user".moderation_email = 1' : '';
 
         $moderators = array();
 
         // Look up moderators which are configured through user permissions.
         $usermods = $this->interact(
             DB_RETURN_ROWS,
-            "SELECT DISTINCT user.user_id AS user_id,
-                    user.email AS email
-             FROM   {$this->user_table} AS user
+            "SELECT DISTINCT \"user\".user_id AS user_id,
+                    \"user\".email AS email
+             FROM   {$this->user_table} AS \"user\"
                     LEFT JOIN {$this->user_permissions_table} AS perm
-                    ON perm.user_id = user.user_id
+                    ON perm.user_id = \"user\".user_id
              WHERE  ((perm.permission>=".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND
                       (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES.">0)
                       AND perm.forum_id = $forum_id) $or_where_admin)
@@ -3341,13 +3341,13 @@ abstract class PhorumDB
         // Look up moderators which are configured through group permissions.
         $groupmods = $this->interact(
             DB_RETURN_ROWS,
-            "SELECT DISTINCT user.user_id AS user_id,
-                    user.email AS email
-             FROM   {$this->user_table} AS user,
+            "SELECT DISTINCT \"user\".user_id AS user_id,
+                    \"user\".email AS email
+             FROM   {$this->user_table} AS \"user\",
                     {$this->groups_table} AS groups,
                     {$this->user_group_xref_table} AS usergroup,
                     {$this->forum_group_xref_table} AS forumgroup
-             WHERE  user.user_id       = usergroup.user_id AND
+             WHERE  \"user\".user_id   = usergroup.user_id AND
                     usergroup.group_id = groups.group_id AND
                     groups.group_id    = forumgroup.group_id AND
                     forum_id           = $forum_id AND
@@ -7648,14 +7648,14 @@ abstract class PhorumDB
                     message.ip          AS ip,
                     message.status      AS status,
                     message.user_id     AS user_id,
-                    user.username       AS user_username,
+                    \"user\".username   AS user_username,
                     thread.closed       AS thread_closed,
                     thread.modifystamp  AS thread_modifystamp,
                     thread.thread_count AS thread_count
              FROM   {$this->message_table} AS thread,
                     {$this->message_table} AS message
-                        LEFT JOIN {$this->user_table} AS user
-                        ON message.user_id = user.user_id
+                        LEFT JOIN {$this->user_table} AS \"user\"
+                        ON message.user_id = \"user\".user_id
              WHERE  message.thread  = thread.message_id AND
                     ($where)
              ORDER BY message_id ASC",
