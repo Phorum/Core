@@ -218,7 +218,7 @@ function phorum_ajax_return($data)
     global $PHORUM;
 
     header("Content-Type: text/plain; charset=UTF-8");
-    $return =  phorum_api_json_encode($data);
+    $return = phorum_api_json_encode($data);
 
     if ($PHORUM['ajax_jsonp'] === NULL) {
         print $return;
