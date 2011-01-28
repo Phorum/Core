@@ -18,14 +18,20 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * This script implements the PostgreSQL database layer for Phorum.
+ * This script implements the Sqlite database layer for Phorum.
+ *
+ * ----------------------------------------------------------------------
+ * IMPORTANT:
+ * This is an experimental layer. We are not yet sure if it will be
+ * fully supported by the Phorum team.
+ * ----------------------------------------------------------------------
  */
 
 /**
- * The PhorumPostgresqlDB class, which implements the PostgreSQL database
+ * The PhorumSqliteDB class, which implements the Sqlite database
  * layer for Phorum.
  */
-class PhorumPostgresqlDB extends PhorumDB
+class PhorumSqliteDB extends PhorumDB
 {
     // {{{ Method: interact()
     /**
@@ -92,12 +98,17 @@ class PhorumPostgresqlDB extends PhorumDB
 
         static $conn;
 
+        // Return a quoted parameter.
+        if ($return === DB_RETURN_QUOTED) {
+            return sqlite_escape_string($sql);
+        }
+
         // Close the database connection.
         if ($return == DB_CLOSE_CONN)
         {
             if (!empty($conn))
             {
-                pg_close($conn);
+                sqlite_close($conn);
                 $conn = null;
             }
             return;
@@ -107,37 +118,24 @@ class PhorumPostgresqlDB extends PhorumDB
         // available yet.
         if (empty($conn))
         {
-            // Format the connection string for pg_connect.
-            $conn_string = '';
-            if ($PHORUM['DBCONFIG']['server'])
-                $conn_string .= ' host=' . $PHORUM['DBCONFIG']['server'];
-            if ($PHORUM['DBCONFIG']['user'])
-                $conn_string .= ' user=' . $PHORUM['DBCONFIG']['user'];
-            if ($PHORUM['DBCONFIG']['password'])
-                $conn_string .= ' password=' . $PHORUM['DBCONFIG']['password'];
-            if ($PHORUM['DBCONFIG']['name'])
-                $conn_string .= ' dbname=' . $PHORUM['DBCONFIG']['name'];
-
-            // Try to setup a connection to the database.
-            $conn = @pg_connect($conn_string, PGSQL_CONNECT_FORCE_NEW);
-
-            if ($conn === FALSE) {
-                if ($flags & DB_NOCONNECTOK) return FALSE;
-                phorum_api_error(
-                    PHORUM_ERRNO_DATABASE,
-                    'Failed to connect to the database.'
-                );
+            if (!function_exists('sqlite_open')) {
+                print 'Phorum is configured to make use of an sqlite ' .
+                      'database, but Sqlite support has not been enabled ' .
+                      'in PHP.';
                 exit;
             }
-            if (!empty($PHORUM['DBCONFIG']['charset'])) {
-                $charset = $PHORUM['DBCONFIG']['charset'];
-                pg_query($conn, "SET CLIENT_ENCODING TO '$charset'");
-            }        
-        }
 
-        // RETURN: quoted parameter.
-        if ($return === DB_RETURN_QUOTED) {
-            return pg_escape_string($conn, $sql);
+            $error = NULL;
+            $conn = sqlite_open(
+                $PHORUM['DBCONFIG']['dbfile'],
+                0666,
+                $error
+            );
+            if ($conn === FALSE) {
+                if ($flags & DB_NOCONNECTOK) return FALSE;
+                phorum_database_error('Failed to open the database: $error');
+                exit;
+            }
         }
 
         // RETURN: database connection handle.
@@ -151,6 +149,13 @@ class PhorumPostgresqlDB extends PhorumDB
             'missing sql query statement!', E_USER_ERROR
         );
 
+        // Some optimization on the returned results. We know what result
+        // data we want eventually, so we can tell that to sqlite_query().
+        $resulttype = SQLITE_NUM;
+        if ($return == DB_RETURN_ASSOC || $return == DB_RETURN_ASSOCS) {
+            $resulttype = SQLITE_ASSOC;
+        }
+
         // Apply limit and offset to the query.
         settype($limit, 'int');
         settype($offset, 'int');
@@ -158,61 +163,59 @@ class PhorumPostgresqlDB extends PhorumDB
         if ($offset > 0) $sql .= " OFFSET $offset";
 
         // Execute the SQL query.
-        if (!@pg_send_query($conn, $sql)) trigger_error(
-            __METHOD__ . ': Internal error: ' .
-            'pg_send_query() failed!', E_USER_ERROR
-        );
-
-        // Check if an error occurred.
-        $res = pg_get_result($conn);
-        $errno = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-        if ($errno != 0)
+        $exec_error = NULL;
+        if (($res = @sqlite_query($conn, $sql, $resulttype, $exec_error)) === FALSE)
         {
+            // An error has occurred. Fetch the error code and message.
+            $errno = sqlite_last_error($conn);
+            $error = sqlite_error_string($errno);
+
             // See if the $flags tell us to ignore the error.
             $ignore_error = FALSE;
-            switch ($errno)
-            {
-                // Table does not exist.
-                case '42P01':
-                  if ($flags & DB_MISSINGTABLEOK) $ignore_error = TRUE;
-                  break;
 
-                // Table already exists or duplicate key name.
-                // These two cases use the same error code.
-                case '42P07':
-                  if ($flags & DB_TABLEEXISTSOK) $ignore_error = TRUE;
-                  if ($flags & DB_DUPKEYNAMEOK)  $ignore_error = TRUE;
-                  break;
-
-                // Duplicate column name.
-                case '42701':
-                  if ($flags & DB_DUPFIELDNAMEOK) $ignore_error = TRUE;
-                  break;
-
-                // Duplicate entry for key.
-                case '23505':
-                  if ($flags & DB_DUPKEYOK) {
-                      $ignore_error = TRUE;
-
-                      # the code expects res to have no value upon error
-                      $res = NULL;
-                  }
-                  break;
+            if (strstr($exec_error, "no such table") &&
+                ($flags & DB_MISSINGTABLEOK)) {
+                $ignore_error = TRUE;
             }
+
+            if (strstr($exec_error, "already exists") &&
+                substr($exec_error, 0, 5) == 'table') &&
+                ($flags & DB_TABLEEXISTSOK)) {
+                $ignore_error = TRUE;
+            }
+
+            if (strstr($exec_error, "already exists") &&
+                substr($exec_error, 0, 5) == 'index') &&
+                ($flags & DB_DUPKEYNAMEOK)) {
+                $ignore_error = TRUE;
+            }
+
+##### HURDLE: no alter table for Sqlite2, which is the version supported
+##### by php5-sqlite. Maybe PDO can be used, which seems to support Sqlite3.
+#####  // Duplicate column name.
+#####  case '42701':
+#####    if ($flags & DB_DUPFIELDNAMEOK) $ignore_error = TRUE;
+#####    break;
+#####
+#####  // Duplicate entry for key.
+#####  case '23505':
+#####    if ($flags & DB_DUPKEYOK) {
+#####        $ignore_error = TRUE;
+#####
+#####        # the code expects res to have no value upon error
+#####        $res = NULL;
+#####    }
+#####    break;
+
 
             // Handle this error if it's not to be ignored.
             if (! $ignore_error)
             {
-                $errmsg = pg_result_error($res);
-
-                // RETURN: error message
-                if ($return === DB_RETURN_ERROR) return $errmsg;     
+                // RETURN: error message or NULL
+                if ($return === DB_RETURN_ERROR) return $error;
 
                 // Trigger an error.
-                phorum_api_error(
-                    PHORUM_ERRNO_DATABASE,
-                    "$errmsg ($errno): $sql"
-                );
+                phorum_database_error("$error: $sql");
                 exit;
             }
         }
@@ -229,7 +232,8 @@ class PhorumPostgresqlDB extends PhorumDB
 
         // RETURN: number of rows
         if ($return === DB_RETURN_ROWCOUNT) {
-            return $res ? pg_num_rows($res) : 0;
+            if (!$res) return 0;
+            return sqlite_num_rows($res);
         }
 
         // RETURN: array rows or single value
@@ -242,7 +246,7 @@ class PhorumPostgresqlDB extends PhorumDB
 
             $rows = array();
             if ($res) {
-                while ($row = pg_fetch_row($res)) {
+                while ($row = sqlite_fetch_array($res, SQLITE_NUM)) {
                     if ($keyfield === NULL) {
                         $rows[] = $row;
                     } else {
@@ -282,7 +286,7 @@ class PhorumPostgresqlDB extends PhorumDB
 
             $rows = array();
             if ($res) {
-                while ($row = pg_fetch_assoc($res)) {
+                while ($row = sqlite_fetch_array($res, SQLITE_ASSOC)) {
                     if ($keyfield === NULL) {
                         $rows[] = $row;
                     } else {
@@ -307,23 +311,8 @@ class PhorumPostgresqlDB extends PhorumDB
         }
 
         // RETURN: new id after inserting a new record
-        if ($return === DB_RETURN_NEWID)
-        {
-            $res = pg_exec($conn, "SELECT lastval()");
-            if ($res === FALSE) {
-                phorum_api_error(
-                    PHORUM_ERRNO_DATABASE,
-                    'Failed to get a lastval() result.'
-                );
-            }
-            $row = pg_fetch_row($res);
-            if ($row === FALSE) {
-                phorum_api_error(
-                    PHORUM_ERRNO_DATABASE,
-                    'No rows returned from LASTVAL().'
-                );
-            }
-            return $row[0];
+        if ($return === DB_RETURN_NEWID) {
+            return sqlite_last_insert_rowid($conn);
         }
 
         trigger_error(
@@ -358,9 +347,9 @@ class PhorumPostgresqlDB extends PhorumDB
     public function fetch_row($res, $type)
     {
         if ($type === DB_RETURN_ASSOC) {
-            $row = pg_fetch_assoc($res);
+            $row = sqlite_fetch_array($res, SQLITE_ASSOC);
         } elseif ($type === DB_RETURN_ROW) {
-            $row = pg_fetch_row($res);
+            $row = sqlite_fetch_array($res, SQLITE_NUM);
         } else trigger_error(
             __METHOD__ . ': Internal error: ' .
             'illegal \$type parameter used', E_USER_ERROR
@@ -388,86 +377,82 @@ class PhorumPostgresqlDB extends PhorumDB
         $create_table_queries = array(
 
           "CREATE TABLE {$this->forums_table} (
-               forum_id                 bigserial      NOT NULL,
+               forum_id                 integer        PRIMARY KEY,
                name                     varchar(50)    NOT NULL default '',
-               active                   smallint       NOT NULL default 0,
+               active                   tinyint(1)     NOT NULL default 0,
                description              text           NOT NULL,
                template                 varchar(50)    NOT NULL default '',
-               folder_flag              smallint       NOT NULL default 0,
-               parent_id                bigint         NOT NULL default 0,
-               list_length_flat         bigint         NOT NULL default 0,
-               list_length_threaded     bigint         NOT NULL default 0,
-               moderation               bigint         NOT NULL default 0,
-               threaded_list            smallint       NOT NULL default 0,
-               threaded_read            smallint       NOT NULL default 0,
-               float_to_top             smallint       NOT NULL default 0,
-               check_duplicate          smallint       NOT NULL default 0,
+               folder_flag              tinyint(1)     NOT NULL default 0,
+               parent_id                int unsigned   NOT NULL default 0,
+               list_length_flat         int unsigned   NOT NULL default 0,
+               list_length_threaded     int unsigned   NOT NULL default 0,
+               moderation               int unsigned   NOT NULL default 0,
+               threaded_list            tinyint(1)     NOT NULL default 0,
+               threaded_read            tinyint(1)     NOT NULL default 0,
+               float_to_top             tinyint(1)     NOT NULL default 0,
+               check_duplicate          tinyint(1)     NOT NULL default 0,
                allow_attachment_types   varchar(100)   NOT NULL default '',
-               max_attachment_size      bigint         NOT NULL default 0,
-               max_totalattachment_size bigint         NOT NULL default 0,
-               max_attachments          bigint         NOT NULL default 0,
-               pub_perms                bigint         NOT NULL default 0,
-               reg_perms                bigint         NOT NULL default 0,
-               display_ip_address       smallint       NOT NULL default 1,
-               allow_email_notify       smallint       NOT NULL default 1,
+               max_attachment_size      int unsigned   NOT NULL default 0,
+               max_totalattachment_size int unsigned   NOT NULL default 0,
+               max_attachments          int unsigned   NOT NULL default 0,
+               pub_perms                int unsigned   NOT NULL default 0,
+               reg_perms                int unsigned   NOT NULL default 0,
+               display_ip_address       tinyint(1)     NOT NULL default 1,
+               allow_email_notify       tinyint(1)     NOT NULL default 1,
                language                 varchar(100)   NOT NULL default '$lang',
-               email_moderators         smallint       NOT NULL default 0,
-               message_count            bigint         NOT NULL default 0,
-               sticky_count             bigint         NOT NULL default 0,
-               thread_count             bigint         NOT NULL default 0,
-               last_post_time           bigint         NOT NULL default 0,
-               display_order            bigint         NOT NULL default 0,
-               read_length              bigint         NOT NULL default 0,
-               vroot                    bigint         NOT NULL default 0,
+               email_moderators         tinyint(1)     NOT NULL default 0,
+               message_count            int unsigned   NOT NULL default 0,
+               sticky_count             int unsigned   NOT NULL default 0,
+               thread_count             int unsigned   NOT NULL default 0,
+               last_post_time           int unsigned   NOT NULL default 0,
+               display_order            int unsigned   NOT NULL default 0,
+               read_length              int unsigned   NOT NULL default 0,
+               vroot                    int unsigned   NOT NULL default 0,
                forum_path               text           NOT NULL,
-               count_views              smallint       NOT NULL default 0,
-               count_views_per_thread   smallint       NOT NULL default 0,
-               display_fixed            smallint       NOT NULL default 0,
-               reverse_threading        smallint       NOT NULL default 0,
-               inherit_id               bigint             NULL default NULL,
-               cache_version            bigint         NOT NULL default 0,
-
-               PRIMARY KEY (forum_id)
+               count_views              tinyint(1)     NOT NULL default 0,
+               count_views_per_thread   tinyint(1)     NOT NULL default 0,
+               display_fixed            tinyint(1)     NOT NULL default 0,
+               reverse_threading        tinyint(1)     NOT NULL default 0,
+               inherit_id               int unsigned       NULL default NULL,
+               cache_version            int unsigned   NOT NULL default 0
            )",
 
-          "CREATE INDEX {$this->forums_table}_name
+          "CREATE INDEX name
            ON {$this->forums_table} (name)",
 
-          "CREATE INDEX {$this->forums_table}_active
+          "CREATE INDEX active
            ON {$this->forums_table} (active, parent_id)",
 
-          "CREATE INDEX {$this->forums_table}_folder_index
+          "CREATE INDEX folder_index
            ON {$this->forums_table} (parent_id, vroot, active, folder_flag)",
 
           "CREATE TABLE {$this->message_table} (
-               message_id               bigserial      NOT NULL,
-               forum_id                 bigint         NOT NULL default 0,
-               thread                   bigint         NOT NULL default 0,
-               parent_id                bigint         NOT NULL default 0,
-               user_id                  bigint         NOT NULL default 0,
+               message_id               integer        PRIMARY KEY,
+               forum_id                 int unsigned   NOT NULL default 0,
+               thread                   int unsigned   NOT NULL default 0,
+               parent_id                int unsigned   NOT NULL default 0,
+               user_id                  int unsigned   NOT NULL default 0,
                author                   varchar(255)   NOT NULL default '',
                subject                  varchar(255)   NOT NULL default '',
                body                     text           NOT NULL,
                email                    varchar(100)   NOT NULL default '',
                ip                       varchar(255)   NOT NULL default '',
-               status                   smallint       NOT NULL default 2,
+               status                   tinyint(1)     NOT NULL default 2,
                msgid                    varchar(100)   NOT NULL default '',
-               modifystamp              bigint         NOT NULL default 0,
-               thread_count             bigint         NOT NULL default 0,
-               moderator_post           smallint       NOT NULL default 0,
-               sort                     smallint       NOT NULL default 2,
-               datestamp                bigint         NOT NULL default 0,
+               modifystamp              int unsigned   NOT NULL default 0,
+               thread_count             int unsigned   NOT NULL default 0,
+               moderator_post           tinyint(1)     NOT NULL default 0,
+               sort                     tinyint(1)     NOT NULL default 2,
+               datestamp                int unsigned   NOT NULL default 0,
                meta                     text               NULL,
-               viewcount                bigint         NOT NULL default 0,
-               threadviewcount          bigint         NOT NULL default 0,
-               closed                   smallint       NOT NULL default 0,
-               recent_message_id        bigint         NOT NULL default 0,
-               recent_user_id           bigint         NOT NULL default 0,
+               viewcount                int unsigned   NOT NULL default 0,
+               threadviewcount          int unsigned   NOT NULL default 0,
+               closed                   tinyint(1)     NOT NULL default 0,
+               recent_message_id        int unsigned   NOT NULL default 0,
+               recent_user_id           int unsigned   NOT NULL default 0,
                recent_author            varchar(255)   NOT NULL default '',
-               moved                    smallint       NOT NULL default 0,
-               hide_period              bigint         NOT NULL default 0,
-
-               PRIMARY KEY (message_id)
+               moved                    tinyint(1)     NOT NULL default 0,
+               hide_period              int unsigned   NOT NULL default 0
            )",
 
           "CREATE INDEX {$this->message_table}_special_threads
@@ -517,17 +502,16 @@ class PhorumPostgresqlDB extends PhorumDB
           "CREATE TABLE {$this->settings_table} (
                name                     varchar(255)   NOT NULL default '',
                type                     char(1)        NOT NULL default 'V',
-                                        CHECK (type IN ('V', 'S')),
                data                     text           NOT NULL,
 
                PRIMARY KEY (name)
            )",
 
           "CREATE TABLE {$this->subscribers_table} (
-               user_id                  bigint         NOT NULL default 0,
-               forum_id                 bigint         NOT NULL default 0,
-               sub_type                 smallint       NOT NULL default 0,
-               thread                   bigint         NOT NULL default 0,
+               user_id                  int unsigned   NOT NULL default 0,
+               forum_id                 int unsigned   NOT NULL default 0,
+               sub_type                 tinyint(1)     NOT NULL default 0,
+               thread                   int unsigned   NOT NULL default 0,
 
                PRIMARY KEY (user_id, forum_id, thread)
            )",
@@ -536,9 +520,9 @@ class PhorumPostgresqlDB extends PhorumDB
            ON {$this->subscribers_table} (forum_id, thread, sub_type)",
 
           "CREATE TABLE {$this->user_permissions_table} (
-               user_id                  bigint         NOT NULL default 0,
-               forum_id                 bigint         NOT NULL default 0,
-               permission               bigint         NOT NULL default 0,
+               user_id                  int unsigned   NOT NULL default 0,
+               forum_id                 int unsigned   NOT NULL default 0,
+               permission               int unsigned   NOT NULL default 0,
 
                PRIMARY KEY (user_id,forum_id)
            )",
@@ -550,7 +534,7 @@ class PhorumPostgresqlDB extends PhorumDB
           // include/api/custom_field.php script too (it contains a
           // list of reserved names for custom profile fields).
           "CREATE TABLE {$this->user_table} (
-               user_id                  bigserial      NOT NULL,
+               user_id                  integer        PRIMARY KEY,
                username                 varchar(50)    NOT NULL default '',
                real_name                varchar(255)   NOT NULL default '',
                display_name             varchar(255)   NOT NULL default '',
@@ -558,31 +542,29 @@ class PhorumPostgresqlDB extends PhorumDB
                password_temp            varchar(50)    NOT NULL default '',
                sessid_lt                varchar(50)    NOT NULL default '',
                sessid_st                varchar(50)    NOT NULL default '',
-               sessid_st_timeout        bigint         NOT NULL default 0,
+               sessid_st_timeout        int unsigned   NOT NULL default 0,
                email                    varchar(100)   NOT NULL default '',
                email_temp               varchar(110)   NOT NULL default '',
-               hide_email               smallint       NOT NULL default 1,
-               active                   smallint       NOT NULL default 0,
+               hide_email               tinyint(1)     NOT NULL default 1,
+               active                   tinyint(1)     NOT NULL default 0,
                signature                text           NOT NULL,
-               threaded_list            smallint       NOT NULL default 0,
-               posts                    bigint         NOT NULL default 0,
-               admin                    smallint       NOT NULL default 0,
-               threaded_read            smallint       NOT NULL default 0,
-               date_added               bigint         NOT NULL default 0,
-               date_last_active         bigint         NOT NULL default 0,
-               last_active_forum        bigint         NOT NULL default 0,
-               hide_activity            smallint       NOT NULL default 0,
-               show_signature           smallint       NOT NULL default 0,
-               email_notify             smallint       NOT NULL default 0,
-               pm_email_notify          smallint       NOT NULL default 1,
+               threaded_list            tinyint(1)     NOT NULL default 0,
+               posts                    int unsigned   NOT NULL default 0,
+               admin                    tinyint(1)     NOT NULL default 0,
+               threaded_read            tinyint(1)     NOT NULL default 0,
+               date_added               int unsigned   NOT NULL default 0,
+               date_last_active         int unsigned   NOT NULL default 0,
+               last_active_forum        int unsigned   NOT NULL default 0,
+               hide_activity            tinyint(1)     NOT NULL default 0,
+               show_signature           tinyint(1)     NOT NULL default 0,
+               email_notify             tinyint(1)     NOT NULL default 0,
+               pm_email_notify          tinyint(1)     NOT NULL default 1,
                tz_offset                numeric(4,2)   NOT NULL default -99.00,
-               is_dst                   smallint       NOT NULL default 0,
+               is_dst                   tinyint(1)     NOT NULL default 0,
                user_language            varchar(100)   NOT NULL default '',
                user_template            varchar(100)   NOT NULL default '',
-               moderation_email         smallint       NOT NULL default 1,
-               settings_data            text           NOT NULL,
-
-               PRIMARY KEY (user_id)
+               moderation_email         tinyint(1)     NOT NULL default 1,
+               settings_data            text           NOT NULL
           )",
 
           "CREATE UNIQUE INDEX {$this->user_table}_username
@@ -611,9 +593,9 @@ class PhorumPostgresqlDB extends PhorumDB
            ON {$this->user_table} (email_temp)",
 
           "CREATE TABLE {$this->user_newflags_table} (
-               user_id                  bigint         NOT NULL default 0,
-               forum_id                 bigint         NOT NULL default 0,
-               message_id               bigint         NOT NULL default 0,
+               user_id                  int unsigned   NOT NULL default 0,
+               forum_id                 int unsigned   NOT NULL default 0,
+               message_id               int unsigned   NOT NULL default 0,
 
                PRIMARY KEY (user_id, forum_id, message_id)
            )",
@@ -622,17 +604,15 @@ class PhorumPostgresqlDB extends PhorumDB
            ON {$this->user_newflags_table} (message_id, forum_id)",
 
           "CREATE TABLE {$this->groups_table} (
-               group_id                 bigserial      NOT NULL,
+               group_id                 integer        PRIMARY KEY,
                name                     varchar(255)   NOT NULL default '',
-               open                     smallint       NOT NULL default 0,
-
-               PRIMARY KEY (group_id)
+               open                     tinyint(1)     NOT NULL default 0
            )",
 
           "CREATE TABLE {$this->forum_group_xref_table} (
-               forum_id                 bigint         NOT NULL default 0,
-               group_id                 bigint         NOT NULL default 0,
-               permission               bigint         NOT NULL default 0,
+               forum_id                 int unsigned   NOT NULL default 0,
+               group_id                 int unsigned   NOT NULL default 0,
+               permission               int unsigned   NOT NULL default 0,
 
                PRIMARY KEY (forum_id, group_id)
            )",
@@ -641,24 +621,22 @@ class PhorumPostgresqlDB extends PhorumDB
            ON {$this->forum_group_xref_table} (group_id)",
 
           "CREATE TABLE {$this->user_group_xref_table} (
-               user_id                  bigint         NOT NULL default 0,
-               group_id                 bigint         NOT NULL default 0,
-               status                   smallint       NOT NULL default 1,
+               user_id                  int unsigned   NOT NULL default 0,
+               group_id                 int unsigned   NOT NULL default 0,
+               status                   tinyint(1)     NOT NULL default 1,
 
                PRIMARY KEY (user_id, group_id)
            )",
 
           "CREATE TABLE {$this->files_table} (
-               file_id                  bigserial      NOT NULL,
-               user_id                  bigint         NOT NULL default 0,
+               file_id                  integer        PRIMARY KEY,
+               user_id                  int unsigned   NOT NULL default 0,
                filename                 varchar(255)   NOT NULL default '',
-               filesize                 bigint         NOT NULL default 0,
+               filesize                 int unsigned   NOT NULL default 0,
                file_data                text           NOT NULL,
-               add_datetime             bigint         NOT NULL default 0,
-               message_id               bigint         NOT NULL default 0,
-               link                     varchar(10)    NOT NULL default '',
-
-               PRIMARY KEY (file_id)
+               add_datetime             int unsigned   NOT NULL default 0,
+               message_id               int unsigned   NOT NULL default 0,
+               link                     varchar(10)    NOT NULL default ''
            )",
 
           "CREATE INDEX {$this->files_table}_add_datetime
@@ -671,22 +649,20 @@ class PhorumPostgresqlDB extends PhorumDB
            ON {$this->files_table} (user_id, link)",
 
           "CREATE TABLE {$this->banlist_table} (
-               id                       bigserial      NOT NULL,
-               forum_id                 bigint         NOT NULL default 0,
-               type                     smallint       NOT NULL default 0,
-               pcre                     smallint       NOT NULL default 0,
+               id                       integer        PRIMARY KEY,
+               forum_id                 int unsigned   NOT NULL default 0,
+               type                     tinyint(1)     NOT NULL default 0,
+               pcre                     tinyint(1)     NOT NULL default 0,
                string                   varchar(255)   NOT NULL default '',
-               comments                 text           NOT NULL,
-
-               PRIMARY KEY (id)
+               comments                 text           NOT NULL
            )",
 
           "CREATE INDEX {$this->banlist_table}_forum_id
            ON {$this->banlist_table} (forum_id)",
 
           "CREATE TABLE {$this->search_table} (
-               message_id               bigint         NOT NULL default 0,
-               forum_id                 bigint         NOT NULL default 0,
+               message_id               int unsigned   NOT NULL default 0,
+               forum_id                 int unsigned   NOT NULL default 0,
                search_text              text           NOT NULL,
 
                PRIMARY KEY (message_id)
@@ -696,47 +672,41 @@ class PhorumPostgresqlDB extends PhorumDB
            ON {$this->search_table} (forum_id)",
 
           "CREATE TABLE {$this->custom_fields_table} (
-               relation_id              bigint         NOT NULL default 0,
-               field_type               smallint       NOT NULL default 1,
-               type                     bigint         NOT NULL default 0,
+               relation_id              int unsigned   NOT NULL default 0,
+               field_type               tinyint(1)     NOT NULL default 1,
+               type                     int unsigned   NOT NULL default 0,
                data                     text           NOT NULL,
 
                PRIMARY KEY (relation_id, field_type, type)
            )",
 
           "CREATE TABLE {$this->pm_messages_table} (
-               pm_message_id            bigserial      NOT NULL,
-               user_id                  bigint         NOT NULL default 0,
+               pm_message_id            integer        PRIMARY KEY,
+               user_id                  int unsigned   NOT NULL default 0,
                author                   varchar(255)   NOT NULL default '',
                subject                  varchar(100)   NOT NULL default '',
                message                  text           NOT NULL,
-               datestamp                bigint         NOT NULL default 0,
-               meta                     text           NOT NULL,
-
-               PRIMARY KEY (pm_message_id)
+               datestamp                int unsigned   NOT NULL default 0,
+               meta                     text           NOT NULL
            )",
 
           "CREATE INDEX {$this->pm_messages_table}_user_id
            ON {$this->pm_messages_table} (user_id)",
 
           "CREATE TABLE {$this->pm_folders_table} (
-               pm_folder_id             bigserial      NOT NULL,
-               user_id                  bigint         NOT NULL default 0,
-               foldername               varchar(20)    NOT NULL default '',
-
-               PRIMARY KEY (pm_folder_id)
+               pm_folder_id             integer        PRIMARY KEY,
+               user_id                  int unsigned   NOT NULL default 0,
+               foldername               varchar(20)    NOT NULL default ''
            )",
 
           "CREATE TABLE {$this->pm_xref_table} (
-               pm_xref_id               bigserial      NOT NULL,
-               user_id                  bigint         NOT NULL default 0,
-               pm_folder_id             bigint         NOT NULL default 0,
+               pm_xref_id               integer        PRIMARY KEY,
+               user_id                  int unsigned   NOT NULL default 0,
+               pm_folder_id             int unsigned   NOT NULL default 0,
                special_folder           varchar(10)        NULL default NULL,
-               pm_message_id            bigint         NOT NULL default 0,
-               read_flag                smallint       NOT NULL default 0,
-               reply_flag               smallint       NOT NULL default 0,
-
-               PRIMARY KEY (pm_xref_id)
+               pm_message_id            int unsigned   NOT NULL default 0,
+               read_flag                tinyint(1)     NOT NULL default 0,
+               reply_flag               tinyint(1)     NOT NULL default 0
            )",
 
           "CREATE INDEX {$this->pm_xref_table}_xref
@@ -746,11 +716,9 @@ class PhorumPostgresqlDB extends PhorumDB
            ON {$this->pm_xref_table} (read_flag)",
 
           "CREATE TABLE {$this->pm_buddies_table} (
-               pm_buddy_id              bigserial      NOT NULL,
-               user_id                  bigint         NOT NULL default 0,
-               buddy_user_id            bigint         NOT NULL default 0,
-
-               PRIMARY KEY (pm_buddy_id)
+               pm_buddy_id              integer        PRIMARY KEY,
+               user_id                  int unsigned   NOT NULL default 0,
+               buddy_user_id            int unsigned   NOT NULL default 0
            )",
 
           "CREATE UNIQUE INDEX {$this->pm_buddies_table}_userids
@@ -760,23 +728,21 @@ class PhorumPostgresqlDB extends PhorumDB
            ON {$this->pm_buddies_table} (buddy_user_id)",
 
           "CREATE TABLE {$this->message_tracking_table} (
-               track_id                 bigserial      NOT NULL,
-               message_id               bigint         NOT NULL default 0,
-               user_id                  bigint         NOT NULL default 0,
-               time                     bigint         NOT NULL default 0,
+               track_id                 integer        PRIMARY KEY,
+               message_id               int unsigned   NOT NULL default 0,
+               user_id                  int unsigned   NOT NULL default 0,
+               time                     int unsigned   NOT NULL default 0,
                diff_body                text               NULL,
-               diff_subject             text               NULL,
-
-               PRIMARY KEY (track_id)
+               diff_subject             text               NULL
            )",
 
           "CREATE INDEX {$this->message_tracking_table}_message_kd
            ON {$this->message_tracking_table} (message_id)",
 
           "CREATE TABLE {$this->user_newflags_min_id_table} (
-              user_id                  bigint         NOT NULL default 0,
-              forum_id                 bigint         NOT NULL default 0,
-              min_id                   bigint         NOT NULL default 0,
+              user_id                  int unsigned   NOT NULL default 0,
+              forum_id                 int unsigned   NOT NULL default 0,
+              min_id                   int unsigned   NOT NULL default 0,
 
               PRIMARY KEY (user_id, forum_id)
            )"
@@ -785,7 +751,9 @@ class PhorumPostgresqlDB extends PhorumDB
         foreach ($create_table_queries as $sql)
         {
             $error = $this->interact(
-                DB_RETURN_ERROR, $sql, NULL, DB_MASTERQUERY);
+                DB_RETURN_ERROR, $sql, NULL, DB_MASTERQUERY
+            );
+
             if ($error !== NULL) {
                 return $error;
             }

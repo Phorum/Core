@@ -312,14 +312,14 @@ class PhorumMysqlDB_mysqli extends PhorumDB
         }
 
         // RETURN: number of rows
-        elseif ($return === DB_RETURN_ROWCOUNT) {
+        if ($return === DB_RETURN_ROWCOUNT) {
             return $res ? mysqli_num_rows($res) : 0;
         }
 
         // RETURN: array rows or single value
-        elseif ($return === DB_RETURN_ROW ||
-                $return === DB_RETURN_ROWS ||
-                $return === DB_RETURN_VALUE)
+        if ($return === DB_RETURN_ROW ||
+            $return === DB_RETURN_ROWS ||
+            $return === DB_RETURN_VALUE)
         {
             // Keyfields are only valid for DB_RETURN_ROWS.
             if ($return !== DB_RETURN_ROWS) $keyfield = NULL;
@@ -360,8 +360,8 @@ class PhorumMysqlDB_mysqli extends PhorumDB
         }
 
         // RETURN: associative array rows
-        elseif ($return === DB_RETURN_ASSOC ||
-                $return === DB_RETURN_ASSOCS)
+        if ($return === DB_RETURN_ASSOC ||
+            $return === DB_RETURN_ASSOCS)
         {
             // Keyfields are only valid for DB_RETURN_ASSOCS.
             if ($return !== DB_RETURN_ASSOCS) $keyfield = NULL;
@@ -395,7 +395,7 @@ class PhorumMysqlDB_mysqli extends PhorumDB
         }
 
         // RETURN: new id after inserting a new record
-        elseif ($return === DB_RETURN_NEWID) {
+        if ($return === DB_RETURN_NEWID) {
             return mysqli_insert_id($conn);
         }
 

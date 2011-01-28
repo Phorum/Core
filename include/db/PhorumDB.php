@@ -156,6 +156,8 @@ define('DB_MISSINGTABLEOK',  2);
  * Constant for the PhorumDBLayer::interact() function call $flags parameter
  * that indicates that duplicate field errors are not fatal errors. Instead,
  * the function will return FALSE on error.
+ * Duplicate field errors occur when a field is added to a table, when
+ * that field already exists in the table schema.
  */
 define('DB_DUPFIELDNAMEOK',  4);
 
@@ -163,6 +165,8 @@ define('DB_DUPFIELDNAMEOK',  4);
  * Constant for the PhorumDBLayer::interact() function call $flags parameter
  * that indicates that duplicate key name errors are not fatal errors. Instead,
  * the function will return FALSE on error.
+ * Duplicate key name errors occur when an index is added to a table, when
+ * an index by the same name is already defined for the table schema.
  */
 define('DB_DUPKEYNAMEOK',    8);
 
@@ -275,6 +279,12 @@ abstract class PhorumDB
      * @var boolean
      */
     protected $_can_UPDATE_IGNORE = FALSE;
+
+    /**
+     * Whether or not the database system supports "INSERT IGNORE".
+     * @var boolean
+     */
+    protected $_can_INSERT_IGNORE = FALSE;
 
     /**
      * The method to use for string concatenation. Options are:
@@ -5434,13 +5444,14 @@ abstract class PhorumDB
      * Mark a message as read for the active Phorum user.
      *
      * @param mixed $message_ids
-     *     The message_id of the message to mark read in the active forum or an
-     *     array description of messages to mark read. Elements in this array
-     *     can be:
-     *     - Simple message_id values, to mark messages read in the active forum.
-     *     - An array containing two fields: "forum_id" containing a forum_id and
-     *       "id" containing a message_id. This notation can be used to mark
-     *       messages read in other forums than te active one.
+     *     The message_id of the message to mark read in the active forum or
+     *     an array description of messages to mark read. Elements in this
+     *     array can be:
+     *     - Simple message_id values, to mark messages read in the
+     *       active forum.
+     *     - An array containing two fields: "forum_id" containing a
+     *       forum_id and "id" containing a message_id. This notation can
+     *       be used to mark messages read in other forums than te active one.
      */
     public function newflag_add_read($message_ids)
     {
@@ -5480,15 +5491,19 @@ abstract class PhorumDB
         if (count($inserts))
         {
             // Try to insert the values (in a single query for speed.)
+            // For systems that support "INSERT IGNORE", this query
+            // will be all that we need.
+            $INSERT = $this->_can_INSERT_IGNORE ? 'INSERT IGNORE' : 'INSERT';
             $res = $this->interact(
                 DB_RETURN_RES,
-                "INSERT INTO {$this->user_newflags_table}
-                        (user_id, forum_id, message_id)
+                "$INSERT INTO {$this->user_newflags_table}
+                         (user_id, forum_id, message_id)
                  VALUES " . implode(",", $inserts),
                 NULL,
                 DB_DUPKEYOK | DB_MASTERQUERY
             );
 
+            // Without "INSERT IGNORE" support, we might run into this case.
             // If inserting the values failed, then this most probably means
             // that one of the values already existed in the database, causing
             // a duplicate key error. In this case, fallback to one-by-one

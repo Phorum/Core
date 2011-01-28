@@ -48,6 +48,12 @@ class PhorumMysqlDB extends PhorumDB
     protected $_can_UPDATE_IGNORE = TRUE;
 
     /**
+     * Whether or not the database system supports "INSERT IGNORE".
+     * @var boolean
+     */
+    protected $_can_INSERT_IGNORE = TRUE;
+
+    /**
      * The method to use for string concatenation.
      * Either "pipes" (PostgreSQL style) or "concat" (MySQL style, using
      * the concat() function).
