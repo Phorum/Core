@@ -816,6 +816,8 @@ function phorum_api_forums_save($data, $flags = 0)
  */
 function phorum_api_forums_update_path($forum, $recurse = TRUE)
 {
+    global $PHORUM;
+
     // Check if the parent_id is valid.
     $parent = phorum_api_forums_get(
         $forum['parent_id'], PHORUM_FLAG_INCLUDE_INACTIVE

@@ -2036,7 +2036,9 @@ abstract class PhorumDB
                 $joined_tables = "";
                 $main_table = array_shift($tables);
                 foreach ($tables as $tbl) {
-                    $joined_tables.= "INNER JOIN $tbl USING (message_id)";
+                    $joined_tables .=
+                        "INNER JOIN $tbl " .
+                        "ON $main_table.message_id = $tbl.message_id";
                 }
 
                 $this->interact(
@@ -2064,7 +2066,8 @@ abstract class PhorumDB
                        SELECT distinct thread AS message_id
                        FROM   {$this->message_table}
                               INNER JOIN $table
-                              USING (message_id)"
+                              ON {$this->message_table}.message_id =
+                                 $table.message_id"
                 );
                 $this->interact(
                     DB_RETURN_RES,
@@ -2077,7 +2080,8 @@ abstract class PhorumDB
 
             $from_and_where = 
                 "FROM   {$this->message_table}
-                        INNER JOIN $table USING (message_id)
+                        INNER JOIN $table
+                        ON {$this->message_table}.message_id = $table.message_id
                  WHERE  status=".PHORUM_STATUS_APPROVED."
                         $forum_where
                         $datestamp_where";
@@ -2567,11 +2571,21 @@ abstract class PhorumDB
 
         foreach ($forum as $key => $value)
         {
+            // If the forum_id field is set to 0, then we will not include
+            // it in the create query, so the database will generate one
+            // for us. If a specific forum_id is provided, we keep that
+            // one, since the caller might be doing something like a
+            // migration or so, wanting to keep forum ids the same.
+            if ($key == 'forum_id' && empty($value)) {
+                continue;
+            }
+
             if ($this->validate_field($key))
             {
                 // find out if this field is a custom field
                 /**
-                 * @todo duplicated work. the same is done in save_custom_fields.
+                 * @todo duplicated work. the same is done in
+                 *       save_custom_fields.
                  *       find out how to find the custom fields differently
                  *       (define the real fields like for the users?)
                  */
@@ -2757,7 +2771,8 @@ abstract class PhorumDB
             "SELECT file_id
              FROM   {$this->files_table}
                     LEFT JOIN {$this->message_table}
-                    USING (message_id)
+                    ON {$this->files_table}.message_id =
+                       {$this->message_table}.message_id
              WHERE  {$this->files_table}.message_id > 0 AND
                     link = '" . PHORUM_LINK_MESSAGE . "' AND
                     {$this->message_table}.message_id is NULL",
@@ -3489,9 +3504,9 @@ abstract class PhorumDB
                 $users[$perm[0]]['forum_permissions'][$perm[1]] = $perm[2];
             }
 
-            // Retrieve forum group permissions and groups for the requested users.
-            // "status >= ..." is used to retrieve both approved group users
-            // and group moderators.
+            // Retrieve forum group permissions and groups for the requested
+            // users. "status >= ..." is used to retrieve both approved group
+            // users and group moderators.
             $group_permissions = $this->interact(
                 DB_RETURN_ROWS,
                 "SELECT user_id,
@@ -3500,7 +3515,8 @@ abstract class PhorumDB
                         permission
                  FROM   {$this->user_group_xref_table}
                         LEFT JOIN {$this->forum_group_xref_table}
-                        USING (group_id)
+                        ON {$this->user_group_xref_table}.group_id =
+                           {$this->forum_group_xref_table}.group_id
                  WHERE  user_id $user_ids AND
                         status >= ".PHORUM_USER_GROUP_APPROVED,
                 NULL,
@@ -5206,7 +5222,8 @@ abstract class PhorumDB
 
         $user_id = $PHORUM['user']['user_id'];
 
-        // Get a list of forum_ids and minimum message ids from the min_id table.
+        // Get a list of forum_ids and minimum message ids from the
+        // min_id table.
         $min_ids = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT forum_id, min_id AS message_id
@@ -5218,29 +5235,31 @@ abstract class PhorumDB
         // Get the total number of messages the user has read in each forum.
         $message_counts = $this->interact(
             DB_RETURN_ASSOCS,
-            "SELECT {$this->user_newflags_table}.forum_id,
+            "SELECT flags.forum_id,
                     count(*) AS count
-             FROM   {$this->user_newflags_table}
-                    INNER JOIN {$this->message_table}
-                    USING (message_id, forum_id)
-             WHERE  {$this->user_newflags_table}.user_id = $user_id AND
+             FROM   {$this->user_newflags_table} AS flags
+                    INNER JOIN {$this->message_table} AS msg
+                    ON msg.message_id = flags.message_id AND
+                       msg.forum_id   = flags.forum_id
+             WHERE  flags.user_id = $user_id AND
                     status = ".PHORUM_STATUS_APPROVED."
-             GROUP  BY forum_id",
+             GROUP  BY flags.forum_id",
             'forum_id'
         );
 
         // Get the number of threads the user has read in each forum.
         $thread_counts = $this->interact(
             DB_RETURN_ASSOCS,
-            "SELECT {$this->user_newflags_table}.forum_id,
+            "SELECT flags.forum_id AS forum_id,
                     count(*) AS count
-             FROM   {$this->user_newflags_table}
-                    INNER JOIN {$this->message_table}
-                    USING (message_id, forum_id)
-             WHERE  {$this->user_newflags_table}.user_id = $user_id AND
+             FROM   {$this->user_newflags_table} AS flags
+                    INNER JOIN {$this->message_table} AS msg
+                    ON flags.message_id = msg.message_id AND
+                       flags.forum_id   = msg.forum_id
+             WHERE  flags.user_id = $user_id AND
                     parent_id = 0 AND
                     status = ".PHORUM_STATUS_APPROVED."
-             GROUP  BY forum_id",
+             GROUP  BY flags.forum_id",
             'forum_id'
         );
 

@@ -309,11 +309,11 @@ class PhorumPostgresqlDB extends PhorumDB
         // RETURN: new id after inserting a new record
         elseif ($return === DB_RETURN_NEWID)
         {
-            $res = pg_exec($conn, "SELECT LASTVAL()");
+            $res = pg_exec($conn, "SELECT lastval()");
             if ($res === FALSE) {
                 phorum_api_error(
                     PHORUM_ERRNO_DATABASE,
-                    'Failed to get a LASTVAL() result.'
+                    'Failed to get a lastval() result.'
                 );
             }
             $row = pg_fetch_row($res);
