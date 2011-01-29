@@ -72,10 +72,12 @@ function phorum_mod_editor_tools_javascript_register($data)
  */
 function phorum_mod_editor_tools_common()
 {
-    $lang = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
+    global $PHORUM;
+
+    $lang = $PHORUM["DATA"]["LANG"]["mod_editor_tools"];
 
     // Initialize the tool data array.
-    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"] = array (
+    $PHORUM["MOD_EDITOR_TOOLS"] = array (
         "DO_TOOLS"          => false,
         "STARTED"           => false,
         "TOOLS"             => array(),
@@ -86,13 +88,13 @@ function phorum_mod_editor_tools_common()
 
     // Add a help tool. We add it as the first tool, so we can
     // shift it nicely to the right side of the page using CSS float.
-    if (!empty($GLOBALS["PHORUM"]["mod_editor_tools"]["enable_help"])) {
+    if (!empty($PHORUM["mod_editor_tools"]["enable_help"])) {
         editor_tools_register_tool('help', $lang['help']);
     }
 
     // Give other modules a chance to setup their plugged in
     // editor tools. This is done through a standard hook call.
-    if (isset($GLOBALS["PHORUM"]["hooks"]["editor_tool_plugin"]))
+    if (isset($PHORUM["hooks"]["editor_tool_plugin"]))
         phorum_api_hook('editor_tool_plugin');
 
     // Keep track that the editor tools have been setup. From here
@@ -108,8 +110,10 @@ function phorum_mod_editor_tools_common()
  */
 function phorum_mod_editor_tools_tpl_editor_before_textarea()
 {
-    $help = $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["HELP_CHAPTERS"];
-    $lang = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_editor_tools"];
+    global $PHORUM;
+
+    $help = $PHORUM["MOD_EDITOR_TOOLS"]["HELP_CHAPTERS"];
+    $lang = $PHORUM["DATA"]["LANG"]["mod_editor_tools"];
 
     if (!count($help)) return;
 
@@ -142,7 +146,7 @@ function phorum_mod_editor_tools_before_editor($data)
  */
 function phorum_mod_editor_tools_before_footer()
 { 
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $do_tools = false;
     
@@ -229,7 +233,7 @@ function phorum_mod_editor_tools_before_footer()
         // Turn relative URL icon paths into a full URL, to make this
         // module work correctly in portable or embedded environment.
         if (! preg_match('|^\w+://|', $icon) && substr($icon, 0, 1) != '/') {
-            $icon = $GLOBALS["PHORUM"]["http_path"] . "/$icon";
+            $icon = $PHORUM["http_path"] . "/$icon";
         }
 
         print "editor_tools[$idx] = new Array(" .
@@ -249,7 +253,7 @@ function phorum_mod_editor_tools_before_footer()
         // Turn relative URL jslib paths into a full URL, to make this
         // module work correctly in an embedded environment.
         if (! preg_match('|^\w+://|', $jslib) && substr($jslib, 0, 1) != '/') {
-            $jslib = $GLOBALS["PHORUM"]["http_path"] . "/$jslib";
+            $jslib = $PHORUM["http_path"] . "/$jslib";
         }
 
         $qjslib = htmlspecialchars($jslib);
@@ -308,7 +312,9 @@ function phorum_mod_editor_tools_before_footer()
  */
 function editor_tools_register_tool($tool_id, $description, $icon=NULL, $jsaction=NULL, $iwidth=NULL, $iheight=NULL, $target=NULL)
 {
-    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+    global $PHORUM;
+
+    if ($PHORUM["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
         "Internal error for the editor_tools module: " .
         "tool ".htmlspecialchars($toold_id)." was registered " .
         "after the editor_tools were started up. Tools must " .
@@ -316,7 +322,7 @@ function editor_tools_register_tool($tool_id, $description, $icon=NULL, $jsactio
         E_USER_ERROR
     );
 
-    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TOOLS"][$tool_id] = array(
+    $PHORUM["MOD_EDITOR_TOOLS"]["TOOLS"][$tool_id] = array(
         $tool_id,
         $description,
         $icon,
@@ -338,7 +344,9 @@ function editor_tools_register_tool($tool_id, $description, $icon=NULL, $jsactio
  */
 function editor_tools_register_jslib($jslib)
 {
-    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+    global $PHORUM;
+
+    if ($PHORUM["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
         "Internal error for the editor_tools module: " .
         "javascript library ".htmlspecialchars($jslib)." was registered " .
         "after the editor_tools were started up. Libraries must " .
@@ -348,10 +356,10 @@ function editor_tools_register_jslib($jslib)
 
     if (is_array($jslib)) {
         foreach($jslib as $path) {
-            $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["JSLIBS"][] = $path;
+            $PHORUM["MOD_EDITOR_TOOLS"]["JSLIBS"][] = $path;
         }
     } else {
-        $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["JSLIBS"][] = $jslib;
+        $PHORUM["MOD_EDITOR_TOOLS"]["JSLIBS"][] = $jslib;
     }
 }
 
@@ -368,7 +376,9 @@ function editor_tools_register_jslib($jslib)
  */
 function editor_tools_register_help($title, $url)
 {
-    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+    global $PHORUM;
+
+    if ($PHORUM["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
         "Internal error for the editor_tools module: " .
         "help chapter ".htmlspecialchars($title)." was registered " .
         "after the editor_tools were started up. Help chapters must " .
@@ -376,7 +386,7 @@ function editor_tools_register_help($title, $url)
         E_USER_ERROR
     );
 
-    $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["HELP_CHAPTERS"][] = array($title, $url);
+    $PHORUM["MOD_EDITOR_TOOLS"]["HELP_CHAPTERS"][] = array($title, $url);
 }
 
 /**
@@ -388,7 +398,9 @@ function editor_tools_register_help($title, $url)
  */
 function editor_tools_register_translations($translations)
 {
-    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+    global $PHORUM;
+
+    if ($PHORUM["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
         "Internal error for the editor_tools module: " .
         "translation strings were registered after the editor_tools were " .
         "started up. Translation strings must be registered within or " .
@@ -397,7 +409,7 @@ function editor_tools_register_translations($translations)
     );
 
     foreach ($translations as $key => $val) {
-        $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TRANSLATIONS"][$key] = $val;
+        $PHORUM["MOD_EDITOR_TOOLS"]["TRANSLATIONS"][$key] = $val;
     }
 }
 
