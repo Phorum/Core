@@ -54,6 +54,13 @@ class PhorumMysqlDB extends PhorumDB
     protected $_can_INSERT_IGNORE = TRUE;
 
     /**
+     * Whether or not the database system supports multiple inserts
+     * in one command like INSERT INTO .. VALUES (set 1), (set 2), .., (set n).
+     * @var boolean
+     */
+    protected $_can_insert_multiple = TRUE;
+
+    /**
      * The method to use for string concatenation.
      * Either "pipes" (PostgreSQL style) or "concat" (MySQL style, using
      * the concat() function).
@@ -975,6 +982,34 @@ class PhorumMysqlDB extends PhorumDB
         }
 
         return $return;
+    }
+    // }}}
+
+    // {{{ Method: newflag_update_forum()
+    /**
+     * Update the forum_id for the newflags. The newflags are updated by
+     * setting their forum_ids to the forum_ids of the referenced message
+     * table records.
+     *
+     * @param array $message_ids
+     *     An array of message_ids which should be updated.
+     */
+    public function newflag_update_forum($message_ids)
+    {
+        $this->sanitize_mixed($message_ids, 'int');
+        $ids_str = implode(', ', $message_ids);
+
+        return phorum_db_interact(
+            DB_RETURN_RES,
+            "UPDATE IGNORE
+                    {$GLOBALS['PHORUM']['user_newflags_table']} AS flags,
+                    {$GLOBALS['PHORUM']['message_table']}       AS msg
+             SET    flags.forum_id   = msg.forum_id
+             WHERE  flags.message_id = msg.message_id AND
+                    flags.message_id IN ($ids_str)",
+            NULL,
+            DB_MASTERQUERY
+        );
     }
     // }}}
 }

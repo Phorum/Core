@@ -33,6 +33,18 @@
  */
 class PhorumSqliteDB extends PhorumDB
 {
+    /**
+     * Whether or not the database system supports "UPDATE IGNORE".
+     * @var boolean
+     */
+    protected $_can_UPDATE_IGNORE = TRUE;
+
+    /**
+     * Whether or not the database system supports "INSERT IGNORE".
+     * @var boolean
+     */
+    protected $_can_INSERT_IGNORE = TRUE;
+
     // {{{ Method: interact()
     /**
      * This method is the central method for handling database
@@ -98,19 +110,11 @@ class PhorumSqliteDB extends PhorumDB
 
         static $conn;
 
-        // Return a quoted parameter.
-        if ($return === DB_RETURN_QUOTED) {
-            return sqlite_escape_string($sql);
-        }
-
         // Close the database connection.
         if ($return == DB_CLOSE_CONN)
         {
-            if (!empty($conn))
-            {
-                sqlite_close($conn);
-                $conn = null;
-            }
+            // PDO disconnects when the PDO object is destroyed.
+            $conn = NULL;
             return;
         }
 
@@ -118,22 +122,23 @@ class PhorumSqliteDB extends PhorumDB
         // available yet.
         if (empty($conn))
         {
-            if (!function_exists('sqlite_open')) {
-                print 'Phorum is configured to make use of an sqlite ' .
-                      'database, but Sqlite support has not been enabled ' .
-                      'in PHP.';
+            if (empty($PHORUM['DBCONFIG']['dbfile'])) {
+                print 'The Phorum database configuration does not define ' .
+                      'the path for the sqlite database file in the ' .
+                      '"dbfile" option.';
                 exit;
             }
 
-            $error = NULL;
-            $conn = sqlite_open(
-                $PHORUM['DBCONFIG']['dbfile'],
-                0666,
-                $error
-            );
-            if ($conn === FALSE) {
+            try {
+                $conn = new PDO('sqlite:' . $PHORUM['DBCONFIG']['dbfile']);
+            }
+            catch (PDOException $e)
+            {
                 if ($flags & DB_NOCONNECTOK) return FALSE;
-                phorum_database_error('Failed to open the database: $error');
+                phorum_database_error(
+                    'Failed to open the database: ' .
+                    $e->getMessage()
+                );
                 exit;
             }
         }
@@ -143,18 +148,23 @@ class PhorumSqliteDB extends PhorumDB
             return $conn;
         }
 
+        // Return a quoted parameter.
+        if ($return === DB_RETURN_QUOTED)
+        {
+            $quoted = $conn->quote($sql);
+
+            // PDO adds the outer single quotes, but our DB layer adds those
+            // on its own. Strip the quotes from the quoted string.
+            $quoted = preg_replace('/(?:^\'|\'$)/', '', $quoted);
+
+            return $quoted;
+        }
+
         // By now, we really need a SQL query.
         if ($sql === NULL) trigger_error(
             __METHOD__ . ': Internal error: ' .
             'missing sql query statement!', E_USER_ERROR
         );
-
-        // Some optimization on the returned results. We know what result
-        // data we want eventually, so we can tell that to sqlite_query().
-        $resulttype = SQLITE_NUM;
-        if ($return == DB_RETURN_ASSOC || $return == DB_RETURN_ASSOCS) {
-            $resulttype = SQLITE_ASSOC;
-        }
 
         // Apply limit and offset to the query.
         settype($limit, 'int');
@@ -162,33 +172,45 @@ class PhorumSqliteDB extends PhorumDB
         if ($limit  > 0) $sql .= " LIMIT $limit";
         if ($offset > 0) $sql .= " OFFSET $offset";
 
+        // Tweak the syntax of the queries.
+        $sql = preg_replace(
+            '/^(INSERT|UPDATE)\s+IGNORE\s/i',
+            '\\1 OR IGNORE ',
+            $sql
+        );
+
         // Execute the SQL query.
-        $exec_error = NULL;
-        if (($res = @sqlite_query($conn, $sql, $resulttype, $exec_error)) === FALSE)
+        $res = $conn->query($sql);
+        if ($res === FALSE)
         {
             // An error has occurred. Fetch the error code and message.
-            $errno = sqlite_last_error($conn);
-            $error = sqlite_error_string($errno);
+            $error_info = $conn->errorInfo();
+            $errno = $error_info[1];
+            $error = $error_info[2];
 
             // See if the $flags tell us to ignore the error.
             $ignore_error = FALSE;
 
-            if (strstr($exec_error, "no such table") &&
+            if (strstr($error, "no such table") &&
                 ($flags & DB_MISSINGTABLEOK)) {
                 $ignore_error = TRUE;
             }
 
-            if (strstr($exec_error, "already exists") &&
-                substr($exec_error, 0, 5) == 'table') &&
-                ($flags & DB_TABLEEXISTSOK)) {
+            if ($errno == 19 && ($flags & DB_DUPKEYOK)) {
                 $ignore_error = TRUE;
             }
-
-            if (strstr($exec_error, "already exists") &&
-                substr($exec_error, 0, 5) == 'index') &&
-                ($flags & DB_DUPKEYNAMEOK)) {
-                $ignore_error = TRUE;
-            }
+#
+#            if (strstr($exec_error, "already exists") &&
+#                substr($exec_error, 0, 5) == 'table' &&
+#                ($flags & DB_TABLEEXISTSOK)) {
+#                $ignore_error = TRUE;
+#            }
+#
+#            if (strstr($exec_error, "already exists") &&
+#                substr($exec_error, 0, 5) == 'index' &&
+#                ($flags & DB_DUPKEYNAMEOK)) {
+#                $ignore_error = TRUE;
+#            }
 
 ##### HURDLE: no alter table for Sqlite2, which is the version supported
 ##### by php5-sqlite. Maybe PDO can be used, which seems to support Sqlite3.
@@ -215,7 +237,7 @@ class PhorumSqliteDB extends PhorumDB
                 if ($return === DB_RETURN_ERROR) return $error;
 
                 // Trigger an error.
-                phorum_database_error("$error: $sql");
+                phorum_database_error("$error ($errno): $sql");
                 exit;
             }
         }
@@ -233,7 +255,7 @@ class PhorumSqliteDB extends PhorumDB
         // RETURN: number of rows
         if ($return === DB_RETURN_ROWCOUNT) {
             if (!$res) return 0;
-            return sqlite_num_rows($res);
+            return $res->rowCount();
         }
 
         // RETURN: array rows or single value
@@ -246,7 +268,8 @@ class PhorumSqliteDB extends PhorumDB
 
             $rows = array();
             if ($res) {
-                while ($row = sqlite_fetch_array($res, SQLITE_NUM)) {
+                while ($row = $res->fetch(PDO::FETCH_NUM))
+                {
                     if ($keyfield === NULL) {
                         $rows[] = $row;
                     } else {
@@ -286,7 +309,7 @@ class PhorumSqliteDB extends PhorumDB
 
             $rows = array();
             if ($res) {
-                while ($row = sqlite_fetch_array($res, SQLITE_ASSOC)) {
+                while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
                     if ($keyfield === NULL) {
                         $rows[] = $row;
                     } else {
@@ -312,7 +335,7 @@ class PhorumSqliteDB extends PhorumDB
 
         // RETURN: new id after inserting a new record
         if ($return === DB_RETURN_NEWID) {
-            return sqlite_last_insert_rowid($conn);
+            return $conn->lastInsertId();
         }
 
         trigger_error(
@@ -347,9 +370,9 @@ class PhorumSqliteDB extends PhorumDB
     public function fetch_row($res, $type)
     {
         if ($type === DB_RETURN_ASSOC) {
-            $row = sqlite_fetch_array($res, SQLITE_ASSOC);
+            $row = $res->fetch(PDO::FETCH_ASSOC);
         } elseif ($type === DB_RETURN_ROW) {
-            $row = sqlite_fetch_array($res, SQLITE_NUM);
+            $row = $res->fetch(PDO::FETCH_NUM);
         } else trigger_error(
             __METHOD__ . ': Internal error: ' .
             'illegal \$type parameter used', E_USER_ERROR

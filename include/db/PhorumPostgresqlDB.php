@@ -794,6 +794,86 @@ class PhorumPostgresqlDB extends PhorumDB
         return NULL;
     }
     // }}}
+
+    // {{{ Method: newflag_update_forum()
+    /**
+     * Update the forum_id for the newflags. The newflags are updated by
+     * setting their forum_ids to the forum_ids of the referenced message
+     * table records.
+     *
+     * @param array $message_ids
+     *     An array of message_ids which should be updated.
+     */
+    public function newflag_update_forum($message_ids)
+    {
+        $this->sanitize_mixed($message_ids, 'int');
+        $ids_str = implode(', ', $message_ids);
+
+        // Some cunning queries are needed for making moving the newflags
+        // failsafe. A race condition that can happen otherwise, is that a
+        // message is already updated to its new forum_id, but that the
+        // newflags have not yet been updated. A user who already has a
+        // newflag for a specific message and views that message before this
+        // function is finished, will end up with two newflag records:
+        // one for the old forum and one for the new forum.
+        //
+        // When we would simply update the newflags, we could end up with
+        // unique index errors because of this.
+
+        // Step 1: Make sure that there is max 1 record that has
+        // a forum_id different from the target forum_id. This is done
+        // in order to make the second step work. That step runs
+        // into a unique index error if there are more than 1 records
+        // that have a forum_id different from the target forum_id.
+        $this->interact(
+            DB_RETURN_RES,
+            "DELETE FROM {$this->user_newflags_table} AS f1
+             USING  {$this->user_newflags_table} f2,
+                    {$this->message_table} m
+             WHERE  m.message_id IN ($ids_str)    AND
+                    f1.message_id = m.message_id  AND
+                    f1.forum_id  != m.forum_id    AND
+                    f1.message_id = f2.message_id AND
+                    f1.user_id    = f2.user_id    AND
+                    f1.forum_id   < f2.forum_id",
+            NULL,
+            DB_MASTERQUERY
+        );
+
+        // Step 2: Update the forum_ids for the newflags, unless
+        // a record already exists for the target forum_id.
+        $this->interact(
+            DB_RETURN_RES,
+            "UPDATE {$this->user_newflags_table} f1
+             SET    forum_id = m.forum_id
+             FROM   {$this->message_table} m
+             WHERE  m.message_id IN($ids_str)    AND
+                    f1.message_id = m.message_id AND
+                    NOT EXISTS(
+                        SELECT *
+                        FROM   {$this->user_newflags_table} f2
+                        WHERE  f2.user_id    = f1.user_id    AND
+                               f2.message_id = f1.message_id AND
+                               f2.forum_id   = m.forum_id
+                    )",
+            NULL,
+            DB_MASTERQUERY
+        );
+
+        // Step 3: Cleanup for cases where a newflag record already
+        // existed for the target forum_id in the previous query.
+        $this->interact(
+            DB_RETURN_RES,
+            "DELETE FROM {$this->user_newflags_table} f1
+             USING {$this->message_table} m
+             WHERE m.message_id IN ($ids_str)   AND
+                   f1.message_id = m.message_id AND
+                   f1.forum_id  != m.forum_id",
+            NULL,
+            DB_MASTERQUERY
+        );
+    }
+    // }}}
 }
 
 ?>
