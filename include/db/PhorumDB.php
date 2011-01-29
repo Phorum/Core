@@ -925,8 +925,8 @@ abstract class PhorumDB
         } else {
             // Use an UNION for speed. This is much faster than using
             // a (status=X or status=Y) query.
-            $sql = "($sql status = ".PHORUM_STATUS_HOLD.") UNION " .
-                   "($sql status = ".PHORUM_STATUS_HIDDEN.")";
+            $sql = "$sql status = ".PHORUM_STATUS_HOLD." UNION " .
+                   "$sql status = ".PHORUM_STATUS_HIDDEN;
         }
 
         if (!$countonly) {
