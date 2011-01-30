@@ -27,6 +27,16 @@
  */
 class PhorumPostgresqlDB extends PhorumDB
 {
+    // {{{ Properties
+
+    /**
+     * Whether or not the database system supports "TRUNCATE".
+     * @var boolean
+     */
+    protected $_can_TRUNCATE = TRUE;
+
+    // }}}
+
     // {{{ Method: interact()
     /**
      * This method is the central method for handling database

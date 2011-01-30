@@ -287,6 +287,12 @@ abstract class PhorumDB
     protected $_can_INSERT_IGNORE = FALSE;
 
     /**
+     * Whether or not the database system supports "TRUNCATE".
+     * @var boolean
+     */
+    protected $_can_TRUNCATE = FALSE;
+
+    /**
      * Whether or not the database system supports multiple inserts
      * in one command like INSERT INTO .. VALUES (set 1), (set 2), .., (set n).
      * @var boolean
@@ -7200,7 +7206,9 @@ abstract class PhorumDB
         // Delete all records from the search table.
         $this->interact(
             DB_RETURN_RES,
-            "TRUNCATE TABLE {$this->search_table}",
+            $this->_can_TRUNCATE
+            ? "TRUNCATE TABLE {$this->search_table}"
+            : "DELETE FROM {$this->search_table}",
             NULL,
             DB_GLOBALQUERY | DB_MASTERQUERY
         );
