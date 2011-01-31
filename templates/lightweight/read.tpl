@@ -117,6 +117,7 @@
         <a class="icon icon-feed" href="{URL->FEED}">{FEED}</a>
     {/IF}
     {IF MODERATOR true}
+        <br/>
         <a class="icon icon-merge" href="{TOPIC->URL->MERGE}">{LANG->MergeThread}</a>
         {IF TOPIC->closed false}
             <a class="icon icon-close" href="{TOPIC->URL->CLOSE}">{LANG->CloseThread}</a>
@@ -125,6 +126,12 @@
         {/IF}
         <a class="icon icon-delete" href="{TOPIC->URL->DELETE_THREAD}">{LANG->DeleteThread}</a>
         {IF TOPIC->URL->MOVE}<a class="icon icon-move" href="{TOPIC->URL->MOVE}">{LANG->MoveThread}</a>{/IF}
+        {IF TOPIC->URL->STICKY}
+          <a class="icon icon-bell" href="{TOPIC->URL->STICKY}">{LANG->MakeSticky}</a>
+        {/IF}
+        {IF TOPIC->URL->UNSTICKY}
+          <a class="icon icon-bell" href="{TOPIC->URL->UNSTICKY}">{LANG->MakeUnsticky}</a>
+        {/IF}
     {/IF}
 </div>
 

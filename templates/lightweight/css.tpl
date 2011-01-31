@@ -437,6 +437,7 @@ img {
     border: 1px solid {border_color};
     padding: 8px;
     text-align: center;
+    line-height: 2em;
 }
 
 /* Changes styles */
