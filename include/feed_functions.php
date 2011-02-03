@@ -113,7 +113,7 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
         $category = $forums[$message["forum_id"]]["name"];
 
         $author = isset($users[$message['user_id']]) && $users[$message['user_id']] != '' ? $users[$message['user_id']] : $message['author'];
-        
+
         $body = strtr($message['body'], "\001\002\003\004\005\006\007\010\013\014\016\017\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037", "????????????????????????????");
 
         $buffer.= "    <entry>\n";
