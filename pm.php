@@ -1197,6 +1197,32 @@ switch ($page) {
             }
         }
 
+
+        $PHORUM["DATA"]["MESSAGE"] = $msg;
+        $PHORUM["DATA"]["RECIPIENT_COUNT"] = count($msg["recipients"]);
+        $PHORUM["DATA"]["SHOW_USERSELECTION"] = true;
+
+        // Determine what input element gets the focus.
+        $focus_id = 'userselection';
+        if ($PHORUM["DATA"]["RECIPIENT_COUNT"]) $focus_id = 'subject';
+        if (!empty($msg["subject"])) $focus_id = 'body';
+        $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus_id;
+
+        // Create data for a user dropdown list, if configured.
+        if ($PHORUM["DATA"]["SHOW_USERSELECTION"] && $PHORUM["enable_dropdown_userlist"])
+        {
+            $allusers = array();
+            $userlist = phorum_api_user_list(PHORUM_GET_ACTIVE);
+            foreach ($userlist as $user_id => $userinfo){
+                if (isset($msg["recipients"][$user_id])) continue;
+                $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                $userinfo["user_id"] = $user_id;
+                $allusers[] = $userinfo;
+            }
+            $PHORUM["DATA"]["USERS"] = $allusers;
+            if (count($allusers) == 0) $PHORUM["DATA"]["SHOW_USERSELECTION"] = false;
+        }
+
         /**
          * [hook]
          *     pm_before_editor
@@ -1234,32 +1260,7 @@ switch ($page) {
         if (isset($PHORUM['hooks']['pm_before_editor'])) {
             $msg = phorum_hook('pm_before_editor', $msg, $action);
         }
-
-        $PHORUM["DATA"]["MESSAGE"] = $msg;
-        $PHORUM["DATA"]["RECIPIENT_COUNT"] = count($msg["recipients"]);
-        $PHORUM["DATA"]["SHOW_USERSELECTION"] = true;
-
-        // Determine what input element gets the focus.
-        $focus_id = 'userselection';
-        if ($PHORUM["DATA"]["RECIPIENT_COUNT"]) $focus_id = 'subject';
-        if (!empty($msg["subject"])) $focus_id = 'body';
-        $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus_id;
-
-        // Create data for a user dropdown list, if configured.
-        if ($PHORUM["DATA"]["SHOW_USERSELECTION"] && $PHORUM["enable_dropdown_userlist"])
-        {
-            $allusers = array();
-            $userlist = phorum_api_user_list(PHORUM_GET_ACTIVE);
-            foreach ($userlist as $user_id => $userinfo){
-                if (isset($msg["recipients"][$user_id])) continue;
-                $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-                $userinfo["user_id"] = $user_id;
-                $allusers[] = $userinfo;
-            }
-            $PHORUM["DATA"]["USERS"] = $allusers;
-            if (count($allusers) == 0) $PHORUM["DATA"]["SHOW_USERSELECTION"] = false;
-        }
-
+        
         $PHORUM["DATA"]["PMLOCATION"] = $PHORUM["DATA"]["LANG"]["SendPM"];
         $template = "pm_post";
         break;
