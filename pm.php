@@ -375,14 +375,14 @@ if (!empty($action)) {
                          *     function phorum_mod_foo_pm_delete($pm_id)
                          *     {
                          *         // do something with the message going to be deleted
-                         *         
+                         *
                          *         return $pm_id;
                          *     }
                          *     </hookcode>
-                         */                        
-                         if (isset($PHORUM['hooks']['pm_delete'])) { 
-                             phorum_hook('pm_delete', $pm_id);        
-                         }                      
+                         */
+                         if (isset($PHORUM['hooks']['pm_delete'])) {
+                             phorum_hook('pm_delete', $pm_id);
+                         }
 
                     }
                 }
@@ -888,7 +888,49 @@ switch ($page) {
             $template = "stdblock";
         } else {
 
-            $list = phorum_db_pm_list($folder_id);
+            $list = null;
+
+            /**
+             * [hook]
+             *     before_pm_list
+             *
+             * [availability]
+             *     Phorum 5 >= 5.2.17
+             *
+             * [description]
+             *     This hook can be used for retreiveing a list of messages
+             *     via an alernate method other than the built in.
+             *
+             * [category]
+             *     Private message system
+             *
+             * [when]
+             *     Before the private message list is retreived from the database
+             *
+             * [input]
+             *     A PM folder id
+             *
+             * [output]
+             *     A list of private messages compatible with
+             *     phourm_db_pm_list()
+             *
+             * [example]
+             *     <hookcode>
+             *     function phorum_mod_foo_before_pm_list($folder_id)
+             *     {
+             *         // Query the db directly and apply custom code
+             *
+             *         return $messages;
+             *     }
+             *     </hookcode>
+             */
+            if (isset($PHORUM['hooks']['before_pm_list'])) {
+                $list = phorum_hook('before_pm_list', $folder_id);
+            }
+
+            if(is_null($list)){
+                $list = phorum_db_pm_list($folder_id);
+            }
 
             // Prepare data for the templates (formatting and XSS prevention).
             $list = phorum_pm_format($list);
@@ -1260,7 +1302,7 @@ switch ($page) {
         if (isset($PHORUM['hooks']['pm_before_editor'])) {
             $msg = phorum_hook('pm_before_editor', $msg, $action);
         }
-        
+
         $PHORUM["DATA"]["PMLOCATION"] = $PHORUM["DATA"]["LANG"]["SendPM"];
         $template = "pm_post";
         break;
