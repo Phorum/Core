@@ -164,7 +164,7 @@ $GLOBALS['PHORUM']['API']['folder_fields'] = array(
  * This array describes forum data fields. It is mainly used internally
  * for configuring how to handle the fields and for doing checks on them.
  * Value format: <m|v>:<type>[:default]
- * m = master field; always determined by the folder's configuration data.
+ * m = master field; always determined by the forum's configuration data.
  * s = slave field; overridden by inheritance parent if inherid_id is set.
  */
 $GLOBALS['PHORUM']['API']['forum_fields'] = array(
@@ -522,23 +522,27 @@ function phorum_api_forums_save($data, $flags = 0)
 
     // A copy of the $fields array to keep track of missing fields.
     $missing = $fields;
+    
+    // the empty array to collect custom fields
+    $custom_forum_field_data=array();
 
     // Check and format the provided fields.
     foreach ($dbdata as $fld => $val)
     {
-        // Silently remove fields that are not used for the saved
-        // entity from the data.
+    	
+        // Determine the field type.
         if (!array_key_exists($fld, $fields)) {
-            unset($dbdata[$fld]);
-            continue;
+            $spec=array(FFLD_MS=>'m',FFLD_TYPE=>'custom_field');
+        } else {
+        	$spec = explode(':', $fields[$fld]);
         }
-
-        $spec = explode(':', $fields[$fld]);
-
+        
+        $fldtype = $spec[FFLD_TYPE];
+    	
         // For tracking if all required fields are available.
         unset($missing[$fld]);
 
-        switch ($spec[FFLD_TYPE])
+        switch ($fldtype)
         {
             case 'int':
                 $dbdata[$fld] = (int) $val;
@@ -563,6 +567,10 @@ function phorum_api_forums_save($data, $flags = 0)
 
             case 'array':
                 $dbdata[$fld] = is_array($val) ? serialize($val) : '';
+                break;
+            case 'custom_field':
+                $custom_forum_field_data[$fld] = $val;
+                unset($dbdata[$fld]);
                 break;
 
             default:
@@ -751,6 +759,15 @@ function phorum_api_forums_save($data, $flags = 0)
         $PHORUM['DB']->update_forum($dbdata);
     } else {
         $dbdata['forum_id'] = $PHORUM['DB']->add_forum($dbdata);
+    }
+    
+    if(is_array($custom_forum_field_data) && count($custom_forum_field_data) &&
+    	!empty($dbdata['forum_id'])) {
+        $PHORUM['DB']->save_custom_fields(
+            $dbuser['forum_id'],
+            PHORUM_CUSTOM_FIELD_FORUM,
+            $custom_forum_field_data
+        );
     }
 
     // Handle changes that influence the forum tree paths.
