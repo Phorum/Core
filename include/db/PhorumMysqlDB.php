@@ -149,7 +149,8 @@ class PhorumMysqlDB extends PhorumDB
         $return, $sql = NULL, $keyfield = NULL, $flags = 0,
         $limit = 0, $offset = 0)
     {
-        return $this->extension->interact($return, $sql, $keyfield, $flags);
+        return $this->extension->interact(
+            $return, $sql, $keyfield, $flags, $limit, $offset);
     }
     // }}}
 

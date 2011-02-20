@@ -661,7 +661,7 @@ abstract class PhorumDB
 
             // Query the messages for the current group.
             $rows = $this->interact(
-                DB_RETURN_ASSOCS, $sql, 'message_id', $limit, $offset);
+                DB_RETURN_ASSOCS, $sql, 'message_id', NULL, $limit, $offset);
             $now  = time();
             foreach ($rows as $id => $row)
             {

@@ -369,13 +369,15 @@ if($rows == null)
     }
 }
 
-if($PHORUM["count_views"] == 2) { // viewcount as column
-    $PHORUM["DATA"]["VIEWCOUNT_COLUMN"]=true;
+if ($PHORUM["count_views"] == 2) { // viewcount as column
+    $PHORUM["DATA"]["VIEWCOUNT_COLUMN"] = true;
 }
-if($PHORUM['DATA']['LOGGEDIN']) {
 
+if ($PHORUM['DATA']['LOGGEDIN'])
+{
     // used later if user is moderator
-    if($PHORUM["DATA"]["MODERATOR"]){
+    if ($PHORUM["DATA"]["MODERATOR"])
+    {
         $delete_url_template        = phorum_api_url(PHORUM_MODERATION_URL, PHORUM_DELETE_MESSAGE, '%message_id%', 'ref_message_id=%message_id%');
         $delete_thread_url_template = phorum_api_url(PHORUM_MODERATION_URL, PHORUM_DELETE_TREE, '%message_id%', 'ref_message_id=%message_id%');
         $move_thread_url_template   = phorum_api_url(PHORUM_MODERATION_URL, PHORUM_MOVE_THREAD, '%message_id%', 'ref_message_id=%message_id%');
@@ -385,10 +387,12 @@ if($PHORUM['DATA']['LOGGEDIN']) {
             $recent_url_template      = phorum_api_url(PHORUM_READ_URL, '%thread_id%','%message_id%', 'ref_message_id=%message_id%');
         }
     }
+
     $mark_thread_read_url_template = phorum_api_url(PHORUM_READ_URL, '%thread_id%', "markthreadread", "list");
 
     // Add newflags to the messages for authenticated users.
-    if ($PHORUM['user']['user_id']) {
+    if ($PHORUM['user']['user_id'])
+    {
         $message_type = $PHORUM['threaded_list']
               ? PHORUM_NEWFLAGS_BY_MESSAGE_EXSTICKY
               : PHORUM_NEWFLAGS_BY_THREAD;
@@ -402,7 +406,6 @@ if($PHORUM['DATA']['LOGGEDIN']) {
                 '%thread_id%', $row['thread'], $mark_thread_read_url_template
             );
         }
-
 
         if($PHORUM["DATA"]["MODERATOR"]){
 

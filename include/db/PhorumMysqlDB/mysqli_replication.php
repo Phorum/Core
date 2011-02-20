@@ -222,8 +222,8 @@ class PhorumMysqlDB_mysqli_replication extends PhorumDB
         // Apply limit and offset to the query.
         settype($limit, 'int');
         settype($offset, 'int');
-        if ($limit  > 0) $sql .= "LIMIT $limit";
-        if ($offset > 0) $sql .= "OFFSET $offset";
+        if ($limit  > 0) $sql .= " LIMIT $limit";
+        if ($offset > 0) $sql .= " OFFSET $offset";
 
         // Execute the SQL query.
 
