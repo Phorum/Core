@@ -3,7 +3,7 @@
 if(!defined("PHORUM")) return;
 
 // Load the definitions for the constants that we use.
-require_once('./mods/event_logging/constants.php');
+require_once PHORUM_PATH . '/mods/event_logging/constants.php';
 
 // The database schema version, which is used to handle
 // installation and upgrades directly from the module.
@@ -42,7 +42,7 @@ function event_logging_db_install()
         }
 
         $sqlqueries = array();
-        include($sqlfile);
+        include $sqlfile;
 
         if (count($sqlqueries) == 0) {
             print "<b>Unexpected situation on installing " .

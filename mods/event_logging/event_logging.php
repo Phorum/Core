@@ -18,8 +18,8 @@ global $PHORUM;
 $PHORUM["MOD_EVENT_LOGGING"]["LOOPLOCK"] = 0;
 $PHORUM["MOD_EVENT_LOGGING"]["SUSPEND"]  = 0;
 
-require_once './mods/event_logging/db.php';
-require_once './mods/event_logging/defaults.php';
+require_once PHORUM_PATH . '/mods/event_logging/db.php';
+require_once PHORUM_PATH . '/mods/event_logging/defaults.php';
 
 function phorum_mod_event_logging_common_pre()
 {
@@ -221,7 +221,7 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     $details = "$type generated at $file:$line\n";
 
     // Construct a backtrace and add it to the details info.
-    require_once PHORUM_PATH.'/include/api/error/backtrace.php';
+    require_once PHORUM_PATH . '/include/api/error/backtrace.php';
     $backtrace = phorum_api_error_backtrace(2);
     $details .= $backtrace === NULL ? "" : "\nBack trace:\n\n$backtrace\n";
 
@@ -267,7 +267,7 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     if ($loglevel == EVENTLOG_LVL_ALERT)
     {
         // Clear any buffered output so far.
-        require_once PHORUM_PATH.'/include/api/buffer.php';
+        require_once PHORUM_PATH . '/include/api/buffer.php';
         phorum_api_buffer_clear();
 
         // Notify the user and exit.
@@ -577,7 +577,7 @@ function phorum_mod_event_logging_database_error($error)
     $PHORUM["MOD_EVENT_LOGGING"]["LOOPLOCK"]++;
 
     // Construct a backtrace.
-    require_once PHORUM_PATH.'/include/api/error/backtrace.php';
+    require_once PHORUM_PATH . '/include/api/error/backtrace.php';
     $backtrace = phorum_api_error_backtrace(3);
 
     list ($source, $from_module) = event_logging_find_source(4);

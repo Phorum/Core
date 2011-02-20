@@ -4,11 +4,11 @@
 // Direct access to this file is not allowed.
 if (! defined("PHORUM_ADMIN")) return;
 
-require_once './mods/event_logging/db.php';
+require_once PHORUM_PATH . '/mods/event_logging/db.php';
 
 // Load the constants and defaults that we use.
-require_once PHORUM_PATH.'/mods/event_logging/constants.php';
-require_once PHORUM_PATH.'/mods/event_logging/defaults.php';
+require_once PHORUM_PATH . '/mods/event_logging/constants.php';
+require_once PHORUM_PATH . '/mods/event_logging/defaults.php';
 
 print '<h1>Phorum Event Logging</h1>';
 
@@ -54,7 +54,7 @@ print "</div>";
 // we follow a strict naming scheme here.
 $settings_file = "./mods/event_logging/settings/{$action}.php";
 if (file_exists($settings_file)) {
-    include($settings_file);
+    include $settings_file;
 } else {
     trigger_error("Illegal settings action requested.", E_USER_ERROR);
 }
