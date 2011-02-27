@@ -776,7 +776,6 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     );
     settype($file["file_id"], "int");
 
-   
     /*
      * [hook]
      *     file_retrieve
@@ -803,7 +802,6 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
      * [output]
      *     Same as input with file_data filled in.
      */
-    
     $file["result"]    = 0;
     $file["mime_type"] = NULL;
     $file["file_data"] = NULL;
@@ -836,7 +834,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     if ($file["mime_type"] === NULL)
     {
         $extension_mime_type = phorum_api_file_get_mimetype($file["filename"]);
-        
+
         // mime magic file in case its needed
         if(!empty($PHORUM['mime_magic_file'])) {
             $mime_magic_file = $PHORUM['mime_magic_file']; 
