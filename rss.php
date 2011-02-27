@@ -14,7 +14,6 @@
 //                                                                            //
 //   You should have received a copy of the Phorum License                    //
 //   along with this program.                                                 //
-//   July 19 Fixed by Dagon, Date format and Location default                 //
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
