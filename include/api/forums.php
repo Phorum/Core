@@ -764,7 +764,7 @@ function phorum_api_forums_save($data, $flags = 0)
     if(is_array($custom_forum_field_data) && count($custom_forum_field_data) &&
     	!empty($dbdata['forum_id'])) {
         $PHORUM['DB']->save_custom_fields(
-            $dbuser['forum_id'],
+            $dbdata['forum_id'],
             PHORUM_CUSTOM_FIELD_FORUM,
             $custom_forum_field_data
         );
