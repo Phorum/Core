@@ -434,7 +434,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
             
             // add a dummy entry if needed
             if(count($db_groups) == 1) {
-            	array_unshift($db_groups, array('-1'=>array('name'=>'Please select ...')));            	
+            	array_unshift($db_groups, array('name'=>'Please select ...'));            	
             }
             
             foreach ($db_groups as $group_id => $group) {
@@ -618,7 +618,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
     if (!empty($_REQUEST["member_of_group"])) {
         $groups = explode(",",$_REQUEST["member_of_group"]);
         foreach($groups as $glid => $glrid) {
-        	if($glrid < 0) {
+        	if($glrid < 1) {
         		unset($groups[$glid]);
         	}	
         }
