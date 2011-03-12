@@ -434,8 +434,9 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
             
             // add a dummy entry if needed
             if(count($db_groups) == 1) {
-            	array_unshift($db_groups, array('name'=>'Please select ...'));            	
+            	$db_groups[-1]=array('name'=>'Please select ...');            	
             }
+            ksort($db_groups);
             
             foreach ($db_groups as $group_id => $group) {
                 $group_select .= "<option value=\"$group_id\"";
