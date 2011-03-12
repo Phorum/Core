@@ -419,7 +419,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
         }
         $db_groups = phorum_db_get_groups(0,true);
         if (count($db_groups)) {
-            $multiple = (count($db_groups) > 1) ? "multiple=\"multiple\" size=\"2\"" : "";
+            $multiple = (count($db_groups) > 1) ? "multiple=\"multiple\" size=\"3\"" : "";
             $group_select = "<select name=\"member_of_group[]\" $multiple>\n";
             $selected_groups = array();
             if(!empty($_REQUEST['member_of_group'])) {
@@ -431,6 +431,12 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
                     $selected_groups[(int)$_REQUEST['member_of_group']] = (int)$_REQUEST['member_of_group'];
                 }
             }
+            
+            // add a dummy entry if needed
+            if(count($db_groups) == 1) {
+            	array_unshift($db_groups, array('-1'=>array('name'=>'Please select ...')));            	
+            }
+            
             foreach ($db_groups as $group_id => $group) {
                 $group_select .= "<option value=\"$group_id\"";
                 if (isset($selected_groups[$group_id])) $group_select .= " selected=\"selected\"";
@@ -444,7 +450,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
     }
 
 ?>
-    <hr class=\"PhorumAdminHR\" />
+    <hr class="PhorumAdminHR" />
 
     <script type="text/javascript">
     <!--
@@ -611,14 +617,21 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
     }
     if (!empty($_REQUEST["member_of_group"])) {
         $groups = explode(",",$_REQUEST["member_of_group"]);
-        $db_group_members = phorum_db_get_group_members($groups);
-        $group_members = array();
-        foreach ($db_group_members as $user_id => $group_status) {
-            $group_members[] = $user_id;
+        foreach($groups as $glid => $glrid) {
+        	if($glrid < 0) {
+        		unset($groups[$glid]);
+        	}	
         }
-        $search_fields[] = 'user_id';
-        $search_values[] = $group_members;
-        $search_operators[] = '()';
+        if(count($groups)) {
+	        $db_group_members = phorum_db_get_group_members($groups);
+	        $group_members = array();
+	        foreach ($db_group_members as $user_id => $group_status) {
+	            $group_members[] = $user_id;
+	        }
+	        $search_fields[] = 'user_id';
+	        $search_values[] = $group_members;
+	        $search_operators[] = '()';
+        }
     }
     
     if (!empty($_REQUEST["forum_permissions"]) && !empty($_REQUEST["forum_permissions_forums"])) {
