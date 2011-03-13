@@ -81,7 +81,7 @@ if ($mode == "reply" || $mode == "quote")
 
         if (empty($quoted) || is_array($quoted))
         {
-            $quoted = phorum_strip_body($dbmessage["body"]);
+            $quoted = phorum_strip_body($dbmessage["body"], false);
             $quoted = str_replace("\n", "\n> ", $quoted);
             $quoted = wordwrap(trim($quoted), 50, "\n> ", true);
             $quoted = "$author " .

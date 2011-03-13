@@ -348,12 +348,14 @@ function phorum_relative_date($time)
  * @param body - The block of body text to strip
  * @return stripped - The stripped body
  */
-function phorum_strip_body( $body )
+function phorum_strip_body( $body, $strip_tags = true)
 {
-    // Strip HTML <tags>
-    $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $body);
-    // Strip BB Code [tags]
-    $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
+	if($strip_tags) {
+	    // Strip HTML <tags>
+	    $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $body);
+	    // Strip BB Code [tags]
+	    $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
+	}
 
 
     // do badwords check
