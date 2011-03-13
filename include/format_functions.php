@@ -355,6 +355,8 @@ function phorum_strip_body( $body, $strip_tags = true)
 	    $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $body);
 	    // Strip BB Code [tags]
 	    $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
+	} else {
+		$stripped = $body;
 	}
 
 
