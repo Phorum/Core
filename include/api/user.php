@@ -1226,14 +1226,18 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
  *     The result page length (nr. of results per page)
  *     or 0 (zero, the default) to return all results.
  *
+ * @param boolean $count_only
+ *     Tells the function to just return the count of results for this 
+ *     search query.
+ *
  * @return mixed
  *     An array of matching user_ids or a single user_id (based on the
- *     $return_array parameter). If no user_ids can be found at all,
- *     then 0 (zero) will be returned.
+ *     $return_array parameter) or a count of results (based on $count_only). 
+ *     If no user_ids can be found at all, then 0 (zero) will be returned.
  */
-function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $sort = NULL, $offset = 0, $length = 0)
+function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $sort = NULL, $offset = 0, $length = 0,$count_only=false)
 {
-    return phorum_db_user_search($field, $value, $operator, $return_array, $type, $sort, $offset, $length);
+    return phorum_db_user_search($field, $value, $operator, $return_array, $type, $sort, $offset, $length,$count_only);
 }
 // }}}
 
