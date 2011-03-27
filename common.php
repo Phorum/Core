@@ -387,7 +387,7 @@ if (!defined( "PHORUM_ADMIN" ))
         $PHORUM['compat_languages'][PHORUM_DEFAULT_LANGUAGE] =
             PHORUM_DEFAULT_LANGUAGE;
     }
-    foreach (split(',', PHORUM_DEFAULT_LANGUAGE_COMPAT) as $fallback) {
+    foreach (explode(',', PHORUM_DEFAULT_LANGUAGE_COMPAT) as $fallback) {
         if (!isset($PHORUM['compat_languages'][$fallback])) {
             $PHORUM['compat_languages'][$fallback] = $fallback;
         }
