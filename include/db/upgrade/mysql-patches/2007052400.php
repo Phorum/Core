@@ -11,6 +11,6 @@ $upgrade_queries[]=
 			
 			PRIMARY KEY track_id (track_id),
 			KEY message_id ( message_id )
-	   ) TYPE = MYISAM";
+	   ) ENGINE = MYISAM";
 
 ?>
