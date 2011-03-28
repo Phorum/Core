@@ -16,10 +16,8 @@ foreach ($PHORUM['PROFILE_FIELDS'] as $type => $configs)
         if ($id == 'num_fields') continue;
 
         // The field "type" is named "field_type" from now on.
-        if (isset($config['type'])) {
-            $config['field_type'] = $config['type'];
-            unset($config['type']);
-        }
+        unset($config['type']); // Note: not necessarily set
+        $config['field_type'] = $type;
 
         $PHORUM['DB']->custom_field_config_set($config);
     }
