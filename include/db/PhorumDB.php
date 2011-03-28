@@ -7442,28 +7442,20 @@ abstract class PhorumDB
      *
      * @param integer $field_id
      *   The id of the custom field to delete.
-     *
-     * @param integer $field_type
-     *   The type of field to delete.
      */
-    public function custom_field_config_delete($field_id, $field_type)
+    public function custom_field_config_delete($field_id)
     {
         if ($field_id === NULL) trigger_error(
             'custom_field_config_delete(): param $field_id cannot be NULL',
             E_USER_ERROR
         );
-        if ($field_type === NULL) trigger_error(
-            'custom_field_config_delete(): param $field_type cannot be NULL',
-            E_USER_ERROR
-        );
 
         settype($field_id, 'int');
-        settype($field_type, 'int');
 
         $this->interact(
             DB_RETURN_RES,
             "DELETE FROM {$this->custom_fields_config_table}
-             WHERE  id = $field_id AND field_type = $field_type"
+             WHERE  id = $field_id"
         );
     }
     // }}}

@@ -43,7 +43,7 @@ if(count($_POST) && $_POST['name'] != '')
     {
       // Handle restoring a deleted field.
       if (isset($_POST["restore"])) {
-        if (phorum_api_custom_field_restore($check["id"],$_POST['field_type']) === FALSE) {
+        if (phorum_api_custom_field_restore($check["id"]) === FALSE) {
             phorum_admin_error(phorum_api_error_message());
         } else {
             phorum_admin_okmsg("The custom field " .
@@ -58,7 +58,7 @@ if(count($_POST) && $_POST['name'] != '')
       // Handle hard deleting a deleted field, so a new field with
       // the same name can be created.
       elseif (isset($_POST["create"])) {
-          phorum_api_custom_field_delete($check["id"], $_POST['field_type'], TRUE);
+          phorum_api_custom_field_delete($check["id"], TRUE);
       }
 
       // Ask the admin what to do.
@@ -147,7 +147,7 @@ if (isset($_GET["curr"]) && isset($_GET["delete"]))
 // Delete a custom field after confirmation.
 if (isset($_POST["curr"]) && isset($_POST["delete"]) &&
     $_POST["confirm"] == "Yes") {
-    phorum_api_custom_field_delete((int)$_POST["curr"], (int)$_POST['field_type']);
+    phorum_api_custom_field_delete((int)$_POST["curr"]);
     phorum_admin_okmsg("Profile field deleted");
 }
 
@@ -198,7 +198,7 @@ if($curr == 'NEW') {
 $row = $frm->addrow("Field Name", $frm->text_box('name', $name, 50));
 $frm->addhelp($row, "Field Name", "This is the name to assign to the custom field. Because it must be possible to use this name as the name property for an input element in an HTML form, there are a few restrictions to it:<br/><ul><li>it can only contain letters, numbers<br/> and underscores (_);</li><li>it must start with a letter.</li></ul>");
 
-$frm->addrow("Field Length (Max. ".PHORUM_MAX_CPLENGTH.")", $frm->text_box("length", $length, 50));
+$frm->addrow("Field Length (Max. ".PHORUM_MAX_CUSTOM_FIELD_LENGTH.")", $frm->text_box("length", $length, 50));
 
 $row = $frm->addrow("Disable HTML", $frm->checkbox("html_disabled",1,"Yes",$html_disabled));
 $frm->addhelp($row, "Disable HTML", "

@@ -44,7 +44,7 @@
  * value for this, then mind that the custom fields table needs to be
  * altered as wel.
  */
-define('PHORUM_MAX_CPLENGTH', 65000);
+define('PHORUM_MAX_CUSTOM_FIELD_LENGTH', 65000);
 
 /**
  * The custom field type that indicates that a custom field
@@ -200,12 +200,12 @@ function phorum_api_custom_field_configure($field)
     }
 
     // Check the bounds for the field length.
-    if ($field['length'] > PHORUM_MAX_CPLENGTH) {
+    if ($field['length'] > PHORUM_MAX_CUSTOM_FIELD_LENGTH) {
         return phorum_api_error(
             PHORUM_ERRNO_INVALIDINPUT,
             "The length \"{$field['length']}\" for the custom " .
             'field is too large. The maximum length that can be used ' .
-            'is ' . PHORUM_MAX_CPLENGTH . '.'
+            'is ' . PHORUM_MAX_CUSTOM_FIELD_LENGTH . '.'
         );
     }
     if ($field['length'] <= 0) {
@@ -281,8 +281,6 @@ function phorum_api_custom_field_byname($name, $field_type)
     } else {
         return NULL;
     }
-
-    return NULL;
 }
 // }}}
 
@@ -293,9 +291,6 @@ function phorum_api_custom_field_byname($name, $field_type)
  * @param int $id
  *     The id of the custom field to delete.
  *
- * @param int $field_type
- *     The type of the custom field to delete
- *
  * @param bool $hard_delete
  *     If this parameter is set to a false value (the default), then the
  *     custom field will only be marked as deleted. The configuration
@@ -305,33 +300,19 @@ function phorum_api_custom_field_byname($name, $field_type)
  *     If it is set to a true value, then the configuration will be
  *     fully deleted.
  */
-function phorum_api_custom_field_delete($id, $field_type, $hard_delete = FALSE)
+function phorum_api_custom_field_delete($id, $hard_delete = FALSE)
 {
     global $PHORUM;
 
     settype($id, "int");
     settype($hard_delete, "bool");
 
-    if ($field_type === NULL) trigger_error(
-        'phorum_api_custom_field_delete(): $field_type param cannot be NULL',
-        E_USER_ERROR
-    );
-
-    settype($field_type, "int");
-
-    if ($field_type !== PHORUM_CUSTOM_FIELD_USER &&
-        $field_type !== PHORUM_CUSTOM_FIELD_FORUM &&
-        $field_type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
-        'phorum_api_custom_field_delete(): Illegal custom field type: ' .
-        $field_type, E_USER_ERROR
-    );
-
     // Only act if we really have something to delete.
-    $field = $PHORUM['DB']->custom_field_config_get($id, $field_type);
+    $field = $PHORUM['DB']->custom_field_config_get($id);
     if ($field !== NULL)
     {
         if ($hard_delete) {
-            $PHORUM['DB']->custom_field_config_delete($id, $field_type);
+            $PHORUM['DB']->custom_field_config_delete($id);
         } else {
             $field['deleted'] = TRUE;
             $PHORUM['DB']->custom_field_config_set($field);
@@ -352,36 +333,19 @@ function phorum_api_custom_field_delete($id, $field_type, $hard_delete = FALSE)
  * @param int $id
  *     The id of the custom field to restore.
  *
- * @param int $field_type
- *     The type of the custom field to delete
- *
  * @return bool
  *     TRUE if the restore was successfull or FALSE if there was an error.
  *     The functions {@link phorum_api_error_message()} and
  *     {@link phorum_api_error_code()} can be used to retrieve information
  *     about the error that occurred.
  */
-function phorum_api_custom_field_restore($id, $field_type)
+function phorum_api_custom_field_restore($id)
 {
     global $PHORUM;
 
     settype($id, "int");
 
-    if ($field_type === NULL) trigger_error(
-        'phorum_api_custom_field_restore(): $field_type param cannot be NULL',
-        E_USER_ERROR
-    );
-
-    settype($field_type, 'int');
-
-    if ($field_type !== PHORUM_CUSTOM_FIELD_USER &&
-        $field_type !== PHORUM_CUSTOM_FIELD_FORUM &&
-        $field_type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
-        'phorum_api_custom_field_restore(): Illegal custom field type: ' .
-        $field_type, E_USER_ERROR
-    );
-
-    $field = $PHORUM['DB']->custom_field_config_get($id, $field_type);
+    $field = $PHORUM['DB']->custom_field_config_get($id);
     if ($field !== NULL)
     {
         $field['deleted'] = FALSE;

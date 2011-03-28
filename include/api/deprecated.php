@@ -166,8 +166,7 @@ function phorum_api_custom_profile_field_byname($name) {
  */
 function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE) {
     require_once PHORUM_PATH.'/include/api/custom_field.php';
-    return phorum_api_custom_field_delete(
-        $id, PHORUM_CUSTOM_FIELD_USER, $hard_delete);
+    return phorum_api_custom_field_delete($id, $hard_delete);
 }
 
 /**
@@ -175,7 +174,7 @@ function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE) {
  */
 function phorum_api_custom_profile_field_restore($id) {
     require_once PHORUM_PATH.'/include/api/custom_field.php';
-    return phorum_api_custom_field_restore($id, PHORUM_CUSTOM_FIELD_USER);
+    return phorum_api_custom_field_restore($id);
 }
 
 /**

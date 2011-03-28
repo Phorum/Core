@@ -1,10 +1,18 @@
 <?php
 
-require_once PHORUM_PATH.'/include/api/custom_field.php';
-
 // Find out if we have an active real_name custom user profile field.
-$field = phorum_api_custom_field_byname('real_name', PHORUM_CUSTOM_FIELD_USER);
-if (empty($field) || !empty($field['deleted'])) return;
+if (empty($PHORUM['PROFILE_FIELDS'])) return;
+$real_name_field = NULL;
+foreach ($PHORUM['PROFILE_FIELDS'] as $id => $field)
+{
+    if ($id == 'num_fields') continue;
+
+    if ($field['name'] == 'real_name') {
+        $real_name_field = $field;
+        break;
+    }
+}
+if (empty($real_name_field) || !empty($real_name_field['deleted'])) return;
 
 // If we do, then copy all available real_names to the new real_name
 // field in the user table.
@@ -19,9 +27,12 @@ if (!empty($ids)) {
     }
 }
 
-// Now we can delete the existing real_name field.
-phorum_api_custom_field_delete(
-    $real_name_field_id, PHORUM_CUSTOM_FIELD_USER, TRUE
-);
+// Now we move the existing real_name field out of the way.
+// We keep it around for reference.
+$field =& $PHORUM['PROFILE_FIELDS'][$field['id']];
+$field['name'] = 'real_name_old';
+$PHORUM['DB']->update_settings(array(
+    'PROFILE_FIELDS' => $PHORUM['PROFILE_FIELDS']
+));
 
 ?>
