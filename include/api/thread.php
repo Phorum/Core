@@ -223,7 +223,7 @@ function phorum_api_thread_update_metadata($thread_id)
     $save['recent_user_id']    = $recent_message['user_id'];
     $save['recent_author']     = $recent_message['author'];
 
-    if ($PHORUM['cache_messages'])
+    if (!empty($PHORUM['cache_messages']))
     {
         // Cache the message index.
         // We can simply store the data here again. There is no need to
@@ -290,7 +290,7 @@ function phorum_api_thread_set_sort($thread_id, $sort = PHORUM_SORT_DEFAULT)
 
             $PHORUM['DB']->update_message($id, array('sort' => $sort));
 
-            if ($PHORUM['cache_messages'])
+            if (!empty($PHORUM['cache_messages']))
             {
                 $cache_key = $PHORUM["forum_id"] . "-" . $message["message_id"];
                 phorum_api_cache_remove('message', $cache_key);
