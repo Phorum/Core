@@ -158,10 +158,10 @@ function phorum_db_get_thread_list() {
     );
 }
 
-function phorum_db_get_Recent_messages() {
+function phorum_db_get_recent_messages() {
     $args = func_get_args();
     return call_user_func_array(
-        array($GLOBALS['PHORUM']['DB'], 'get_Recent_messages'), $args
+        array($GLOBALS['PHORUM']['DB'], 'get_recent_messages'), $args
     );
 }
 
