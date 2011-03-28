@@ -390,11 +390,8 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
             $frm->addrow("Personal permission to", $forum_permissions_select . "&nbsp;in&nbsp;" . $forum_permissions_forums_select);
         }
         
-        if (isset($PHORUM['PROFILE_FIELDS'][1]["num_fields"]))
-            unset($PHORUM['PROFILE_FIELDS'][1]["num_fields"]);
-    
         $active_profile_fields = 0;
-        foreach($PHORUM["PROFILE_FIELDS"][1] as $profile_field) {
+        foreach($PHORUM["CUSTOM_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $profile_field) {
             if (empty($profile_field['deleted']) && !empty($profile_field['show_in_admin'])) $active_profile_fields ++;
         }
     
@@ -414,7 +411,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
                 }
             }
             
-            foreach($PHORUM["PROFILE_FIELDS"][1] as $key => $profile_field) {
+            foreach($PHORUM["CUSTOM_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $key => $profile_field) {
                 // Do not show deleted fields.
                 if (!empty($profile_field['deleted']) || empty($profile_field['show_in_admin'])) continue;
                 
@@ -914,7 +911,7 @@ if (isset($_REQUEST["user_id"]))
         $frm->addhelp($row, "Date last active", "This shows the date, when the user was last seen in the forum. Check your setting on \"Track user usage\" in the \"General Settings\". As long as this setting is not enabled, the activity will not be tracked.");
 
         $cf_header_shown=0;
-        foreach($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $key => $item){
+        foreach($PHORUM["CUSTOM_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $key => $item){
             if ($key === 'num_rows' || !empty($item['deleted'])) continue;
             if(!empty($item['show_in_admin'])) {
                 if(!$cf_header_shown) {

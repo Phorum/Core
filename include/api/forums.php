@@ -320,7 +320,7 @@ function phorum_api_forums_get(
     }
 
     // retrieve and apply the custom fields for forums
-    if (!empty($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_FORUM])) {
+    if (!empty($PHORUM['CUSTOM_FIELDS'][PHORUM_CUSTOM_FIELD_FORUM])) {
         $forums = phorum_api_custom_field_apply(
             PHORUM_CUSTOM_FIELD_FORUM, $forums);
     }
@@ -522,23 +522,22 @@ function phorum_api_forums_save($data, $flags = 0)
 
     // A copy of the $fields array to keep track of missing fields.
     $missing = $fields;
-    
+
     // the empty array to collect custom fields
     $custom_forum_field_data=array();
 
     // Check and format the provided fields.
     foreach ($dbdata as $fld => $val)
     {
-    	
         // Determine the field type.
         if (!array_key_exists($fld, $fields)) {
             $spec=array(FFLD_MS=>'m',FFLD_TYPE=>'custom_field');
         } else {
-        	$spec = explode(':', $fields[$fld]);
+            $spec = explode(':', $fields[$fld]);
         }
-        
+
         $fldtype = $spec[FFLD_TYPE];
-    	
+
         // For tracking if all required fields are available.
         unset($missing[$fld]);
 
@@ -760,9 +759,11 @@ function phorum_api_forums_save($data, $flags = 0)
     } else {
         $dbdata['forum_id'] = $PHORUM['DB']->add_forum($dbdata);
     }
-    
-    if(is_array($custom_forum_field_data) && count($custom_forum_field_data) &&
-    	!empty($dbdata['forum_id'])) {
+
+    if (is_array($custom_forum_field_data) &&
+        count($custom_forum_field_data) &&
+        !empty($dbdata['forum_id']))
+    {
         $PHORUM['DB']->save_custom_fields(
             $dbdata['forum_id'],
             PHORUM_CUSTOM_FIELD_FORUM,

@@ -30,6 +30,9 @@
  * compatibility layer, which relays all database calls transparently to the
  * new OO layer.
  *
+ * Note: new methods that are added to the OO layer, do not have to be added
+ * to this functional layer. This layer is only here for backward compatibility.
+ *
  * @package    PhorumDBLayer
  * @copyright  2011, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
@@ -58,6 +61,7 @@ $PHORUM['user_permissions_table']     = $prefix . '_user_permissions';
 $PHORUM['groups_table']               = $prefix . '_groups';
 $PHORUM['forum_group_xref_table']     = $prefix . '_forum_group_xref';
 $PHORUM['user_group_xref_table']      = $prefix . '_user_group_xref';
+$PHORUM['custom_fields_config_table'] = $prefix . '_custom_fields_config';
 $PHORUM['custom_fields_table']        = $prefix . '_custom_fields';
 $PHORUM['banlist_table']              = $prefix . '_banlists';
 $PHORUM['pm_messages_table']          = $prefix . '_pm_messages';

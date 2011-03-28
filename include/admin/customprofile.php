@@ -29,7 +29,7 @@ $TYPES_ARRAY = array(PHORUM_CUSTOM_FIELD_USER    => 'User',
 if(count($_POST) && $_POST['name'] != '')
 {
     $_POST['curr'] = $_POST['curr'] == 'NEW' ? 'NEW' : (int)$_POST['curr'];
-    $_POST['type'] = (int)$_POST['type'];
+    $_POST['field_type'] = (int)$_POST['field_type'];
     $_POST['name'] = trim($_POST['name']);
     $_POST['length'] = (int)$_POST['length'];
     $_POST['html_disabled'] = !empty($_POST['html_disabled']) ? 1 : 0;
@@ -38,12 +38,12 @@ if(count($_POST) && $_POST['name'] != '')
     // Check if there is a deleted field with the same name.
     // If this is the case, then we want to give the admin a chance
     // to restore the deleted field.
-    $check = phorum_api_custom_field_byname($_POST['name'],$_POST['type']);
+    $check = phorum_api_custom_field_byname($_POST['name'],$_POST['field_type']);
     if ($check !== FALSE && !empty($check["deleted"]))
     {
       // Handle restoring a deleted field.
       if (isset($_POST["restore"])) {
-        if (phorum_api_custom_field_restore($check["id"],$_POST['type']) === FALSE) {
+        if (phorum_api_custom_field_restore($check["id"],$_POST['field_type']) === FALSE) {
             phorum_admin_error(phorum_api_error_message());
         } else {
             phorum_admin_okmsg("The custom field " .
@@ -58,7 +58,7 @@ if(count($_POST) && $_POST['name'] != '')
       // Handle hard deleting a deleted field, so a new field with
       // the same name can be created.
       elseif (isset($_POST["create"])) {
-          phorum_api_custom_field_delete($check["id"], $_POST['type'], TRUE);
+          phorum_api_custom_field_delete($check["id"], $_POST['field_type'], TRUE);
       }
 
       // Ask the admin what to do.
@@ -82,8 +82,8 @@ if(count($_POST) && $_POST['name'] != '')
                 value="<?php print htmlspecialchars($_POST['curr']) ?>" />
             <input type="hidden" name="name"
                 value="<?php print htmlspecialchars($_POST['name']) ?>" />
-            <input type="hidden" name="type"
-                value="<?php print htmlspecialchars($_POST['type']) ?>" />
+            <input type="hidden" name="field_type"
+                value="<?php print htmlspecialchars($_POST['field_type']) ?>" />
             <input type="hidden" name="length"
                 value="<?php print htmlspecialchars($_POST['length']) ?>" />
             <input type="hidden" name="html_disabled"
@@ -106,7 +106,7 @@ if(count($_POST) && $_POST['name'] != '')
         $field = array(
             'id'            => $_POST['curr'] == 'NEW' ? NULL : $_POST['curr'],
             'name'          => $_POST['name'],
-            'type'          => $_POST['type'],
+            'field_type'    => $_POST['field_type'],
             'length'        => $_POST['length'],
             'html_disabled' => $_POST['html_disabled'],
             'show_in_admin' => $_POST['show_in_admin'],
@@ -134,7 +134,7 @@ if (isset($_GET["curr"]) && isset($_GET["delete"]))
       <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
       <input type="hidden" name="module" value="<?php print $module; ?>" />
       <input type="hidden" name="curr" value="<?php print (int) $_GET['curr']; ?>" />
-      <input type="hidden" name="type" value="<?php print (int) $_GET['type']; ?>" />
+      <input type="hidden" name="field_type" value="<?php print (int) $_GET['field_type']; ?>" />
       <input type="hidden" name="delete" value="1" />
       <input type="submit" name="confirm" value="Yes" />
       <input type="submit" name="confirm" value="No" />
@@ -147,16 +147,16 @@ if (isset($_GET["curr"]) && isset($_GET["delete"]))
 // Delete a custom field after confirmation.
 if (isset($_POST["curr"]) && isset($_POST["delete"]) &&
     $_POST["confirm"] == "Yes") {
-    phorum_api_custom_field_delete((int)$_POST["curr"], (int)$_POST['type']);
+    phorum_api_custom_field_delete((int)$_POST["curr"], (int)$_POST['field_type']);
     phorum_admin_okmsg("Profile field deleted");
 }
 
 // Check if we are in create or edit mode.
 $curr = isset($_GET['curr']) ? (int)$_GET['curr'] : "NEW";
-$curr_type = isset($_GET['type']) ? (int)$_GET['type'] : PHORUM_CUSTOM_FIELD_USER;
+$curr_type = isset($_GET['field_type']) ? (int)$_GET['field_type'] : PHORUM_CUSTOM_FIELD_USER;
 
-$field = ($curr != 'NEW' && isset($PHORUM['PROFILE_FIELDS'][$curr_type][$curr]))
-       ? $PHORUM['PROFILE_FIELDS'][$curr_type][$curr] : NULL;
+$field = ($curr != 'NEW' && isset($PHORUM['CUSTOM_FIELDS'][$curr_type][$curr]))
+       ? $PHORUM['CUSTOM_FIELDS'][$curr_type][$curr] : NULL;
 
 // Setup data for create mode.
 if ($field === NULL) {
@@ -164,7 +164,7 @@ if ($field === NULL) {
     $length        = 255;
     $html_disabled = 1;
     $show_in_admin = 0;
-    $type          = PHORUM_CUSTOM_FIELD_USER;
+    $field_type    = PHORUM_CUSTOM_FIELD_USER;
     $title         = "Add A Profile Field";
     $submit        = "Add";
 // Setup data for edit mode.
@@ -174,8 +174,8 @@ if ($field === NULL) {
     $html_disabled = $field['html_disabled'];
     $show_in_admin = isset($field['show_in_admin'])
                    ? $field['show_in_admin'] : 0;
-    $type          = isset($field['type'])
-                   ? $field['type'] : PHORUM_CUSTOM_FIELD_USER;
+    $field_type    = isset($field['field_type'])
+                   ? $field['field_type'] : PHORUM_CUSTOM_FIELD_USER;
     $title         = "Edit Profile Field";
     $submit        = "Update";
 }
@@ -191,9 +191,9 @@ $frm->addbreak($title);
 
 // don't make this editable - needs deletion and recreation of field
 if($curr == 'NEW') {
-    $row = $frm->addrow("Field Type", $frm->select_tag('type',$TYPES_ARRAY,$type));
+    $row = $frm->addrow("Field Type", $frm->select_tag('field_type',$TYPES_ARRAY,$field_type));
 } else {
-    $frm->hidden('type',$type);
+    $frm->hidden('field_type',$field_type);
 }
 $row = $frm->addrow("Field Name", $frm->text_box('name', $name, 50));
 $frm->addhelp($row, "Field Name", "This is the name to assign to the custom field. Because it must be possible to use this name as the name property for an input element in an HTML form, there are a few restrictions to it:<br/><ul><li>it can only contain letters, numbers<br/> and underscores (_);</li><li>it must start with a letter.</li></ul>");
@@ -240,7 +240,7 @@ if ($curr == "NEW")
 
 
     $active_fields = 0;
-    foreach($PHORUM["PROFILE_FIELDS"] as $f) {
+    foreach($PHORUM["CUSTOM_FIELDS"] as $f) {
         if (empty($f['deleted'])) $active_fields ++;
     }
 
@@ -257,7 +257,7 @@ if ($curr == "NEW")
           <td class="PhorumAdminTableHead">&nbsp;</td>
         </tr> <?php
 
-        foreach($PHORUM["PROFILE_FIELDS"] as $type => $fields)
+        foreach($PHORUM["CUSTOM_FIELDS"] as $field_type => $fields)
         {
              if (isset($fields["num_fields"]))
                     unset($fields["num_fields"]);
@@ -267,9 +267,9 @@ if ($curr == "NEW")
                 if (!empty($item['deleted'])) continue;
                 
                 $edit_url = phorum_admin_build_url(array('module=customprofile','edit=1',"curr=$key"));
-                $delete_url = phorum_admin_build_url(array('module=customprofile','delete=1',"curr=$key","type=".$item['type']));                
+                $delete_url = phorum_admin_build_url(array('module=customprofile','delete=1',"curr=$key","field_type=".$item['field_type']));                
                 
-                $readable_type = $TYPES_ARRAY[$type];
+                $readable_type = $TYPES_ARRAY[$field_type];
 
                 print "<tr>\n";
                 print "  <td class=\"PhorumAdminTableRow\">".$item['name']."</td>\n";

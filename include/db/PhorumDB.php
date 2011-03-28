@@ -3609,7 +3609,8 @@ abstract class PhorumDB
      *     An array of custom fields is returned, indexed by relation_id.
      *     For relation_ids that cannot be found, there will be no array element at all.
      */
-    public function get_custom_fields($type, $relation_id, $db_flags = 0, $raw_data = FALSE)
+    public function get_custom_fields(
+        $type, $relation_id, $db_flags = 0, $raw_data = FALSE)
     {
         global $PHORUM;
 
@@ -3638,20 +3639,20 @@ abstract class PhorumDB
             $db_flags
         );
 
-        $requested_data=array();
         // Add custom user profile fields to the users.
+        $requested_data = array();
         foreach ($custom_fields as $fld)
         {
 
             // Skip unknown custom fields.
-            if (! isset($PHORUM['PROFILE_FIELDS'][$type][$fld['type']])) continue;
+            if (! isset($PHORUM['CUSTOM_FIELDS'][$type][$fld['type']])) continue;
 
             // Fetch the name for the custom field.
-            $name = $PHORUM['PROFILE_FIELDS'][$type][$fld['type']]['name'];
+            $name = $PHORUM['CUSTOM_FIELDS'][$type][$fld['type']]['name'];
 
             // For "html_disabled" fields, the data is XSS protected by
             // replacing special HTML characters with their HTML entities.
-            if ($PHORUM['PROFILE_FIELDS'][$type][$fld['type']]['html_disabled'] && $raw_data === FALSE ) {
+            if ($PHORUM['CUSTOM_FIELDS'][$type][$fld['type']]['html_disabled'] && $raw_data === FALSE ) {
                 $requested_data[$fld['relation_id']][$name] = htmlspecialchars($fld['data']);
                 continue;
             }
@@ -4044,7 +4045,7 @@ abstract class PhorumDB
      *     - user_data:
      *       This field can contain an array of key/value pairs which will be
      *       inserted in the database as custom profile fields. The keys are
-     *       profile type ids (as defined by $PHORUM["PROFILE_FIELDS"]).
+     *       profile type ids (as defined by $PHORUM["CUSTOM_FIELDS"]).
      *
      * @return boolean
      *     True if all settings were stored successfully. This function will
@@ -7270,6 +7271,203 @@ abstract class PhorumDB
     }
     // }}}
 
+    // {{{ Method: custom_field_config_get()
+    /**
+     * Retrieve the configuration for one or all of the custom fields.
+     *
+     * @param integer $field_id
+     *   When NULL (the default), an array containing all custom
+     *   field configurations is returned. Otherwise, only the
+     *   custom field matching the provided id is returned.
+     *
+     * @param integer $field_type
+     *   The field type to retrieve. When NULL (the default), then any
+     *   field type is returned. Otherwise, only custom fields that match
+     *   the provided field type are returned.
+     *
+     * @return null|array
+     *   When a $field_id is provided, then the field config data is
+     *   returned or NULL when no record exists for the $field_id.
+     *   Otherwise, an array of field config data arrays is returned.
+     *
+     *   Note: when a $field_id is provided, but no existing config is
+     *   found, then no error is triggered. This behavior was required
+     *   for the conversion from the previous custom field management
+     *   system to the new one that uses this method.
+     */
+    public function custom_field_config_get(
+        $field_id = NULL, $field_type = NULL)
+    {
+        $where = array();
+
+        if ($field_id !== NULL) {
+            settype($field_id, 'int');
+            $where[] = "id = $field_id";
+        }
+
+        if ($field_type !== NULL) {
+            settype($field_type, 'int');
+            $where[] = "field_type = $field_type";
+        }
+
+        $sql = "SELECT * FROM {$this->custom_fields_config_table}";
+        if ($where) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
+        }
+
+        $rows = $this->interact(DB_RETURN_ASSOCS, $sql, 'id');
+
+        if ($field_id !== NULL) {
+            return empty($rows[$field_id]) ? NULL : $rows[$field_id];
+        } else {
+            return $rows;
+        }
+    }
+    // }}}
+
+    // {{{ Method: custom_field_configure()
+    /**
+     * Configure (create or update) a custom field.
+     *
+     * @param array $config
+     *   An array containing configuration data for the custom field.
+     *
+     * @return integer $custom_field_id
+     *   The id of the newly created custom field.
+     */
+    public function custom_field_config_set($config)
+    {
+        global $PHORUM;
+
+        // The keys that we expect in the config and some default values
+        // in case keys are missing.
+        $fields = array(
+            'id'            => NULL,
+            'name'          => NULL,
+            'field_type'    => NULL,
+            'length'        => 255,
+            'html_disabled' => TRUE,
+            'show_in_admin' => FALSE,
+            'deleted'       => FALSE
+        );
+
+        // Take data from an existing config, when applicable.
+        $existing = NULL;
+        if (!empty($config['id']))
+        {
+            $existing = $this->custom_field_config_get($config['id']);
+            if ($existing) {
+                foreach ($existing as $field => $value) {
+                    $fields[$field] = $value;
+                }
+            }
+        }
+
+
+        // Merge in the fields from the provided $config.
+        foreach ($config as $field => $value) {
+            if (array_key_exists($field, $fields)) {
+                $fields[$field] = $value;
+            }
+        }
+
+        // Check if all required fields are set.
+        foreach ($fields as $field => $value) {
+            if ($value === NULL && $field !== 'id') trigger_error(
+                "custom_field_config_set(): field $field cannot be NULL",
+                E_USER_ERROR
+            );
+        }
+
+        // Prepare fields for the SQL queries below.
+        if (empty($fields['id'])) {
+            unset($fields['id']);
+        } else {
+            $fields['id'] = (int) $fields['id'];
+        }
+        $name = $this->interact(DB_RETURN_QUOTED, $config['name']);
+        $fields['name']          = "'$name'";
+        $fields['field_type']    = (int) $fields['field_type'];
+        $fields['length']        = (int) $fields['length'];
+        $fields['html_disabled'] = $fields['html_disabled'] ? 1 : 0;
+        $fields['show_in_admin'] = $fields['show_in_admin'] ? 1 : 0;
+        $fields['deleted']       = $fields['deleted'] ? 1 : 0;
+
+        // Update an existing config record.
+        if ($existing)
+        {
+            $config_id = $fields['id'];
+            unset($fields['id']);
+
+            $updates = array();
+            foreach ($fields as $field => $value) {
+                $updates[] = "$field = $value";
+            }
+
+            $this->interact(
+                DB_RETURN_RES,
+                "UPDATE {$this->custom_fields_config_table}
+                 SET " . implode(', ', $updates) . "
+                 WHERE id = $config_id"
+            );
+        }
+        // Insert a new config record.
+        else
+        {
+            $flist = array();
+            $vlist = array();
+            foreach ($fields as $field => $value)
+            {
+                $flist[] = $field;
+                $vlist[] = $value;
+            }
+
+            $config_id = $this->interact(
+                DB_RETURN_NEWID,
+                "INSERT INTO {$this->custom_fields_config_table}
+                        (" . implode(', ', $flist) . ")
+                 VALUES (" . implode(', ', $vlist) . ")",
+                NULL,
+                DB_MASTERQUERY
+            );
+        }
+
+        return $config_id;
+    }
+    // }}}
+
+    // {{{ Method: custom_field_config_delete()
+    /**
+     * Delete the configuration for a custom field.
+     *
+     * @param integer $field_id
+     *   The id of the custom field to delete.
+     *
+     * @param integer $field_type
+     *   The type of field to delete.
+     */
+    public function custom_field_config_delete($field_id, $field_type)
+    {
+        if ($field_id === NULL) trigger_error(
+            'custom_field_config_delete(): param $field_id cannot be NULL',
+            E_USER_ERROR
+        );
+        if ($field_type === NULL) trigger_error(
+            'custom_field_config_delete(): param $field_type cannot be NULL',
+            E_USER_ERROR
+        );
+
+        settype($field_id, 'int');
+        settype($field_type, 'int');
+
+        $this->interact(
+            DB_RETURN_RES,
+            "DELETE FROM {$this->custom_fields_config_table}
+             WHERE  id = $field_id AND field_type = $field_type"
+        );
+    }
+    // }}}
+
     // {{{ Method: user_search_custom_profile_field()
     /**
      * Search for users, based on a simple search condition,
@@ -7927,6 +8125,7 @@ abstract class PhorumDB
         $this->groups_table               = $prefix . '_groups';
         $this->forum_group_xref_table     = $prefix . '_forum_group_xref';
         $this->user_group_xref_table      = $prefix . '_user_group_xref';
+        $this->custom_fields_config_table = $prefix . '_custom_fields_config';
         $this->custom_fields_table        = $prefix . '_custom_fields';
         $this->banlist_table              = $prefix . '_banlists';
         $this->pm_messages_table          = $prefix . '_pm_messages';

@@ -149,7 +149,7 @@ function phorum_valid_email($address) {
  */
 function phorum_api_custom_profile_field_configure($field) {
     require_once PHORUM_PATH.'/include/api/custom_field.php';
-    $field['type'] = PHORUM_CUSTOM_FIELD_USER;
+    $field['field_type'] = PHORUM_CUSTOM_FIELD_USER;
     return phorum_api_custom_field_configure($field);
 }
 
@@ -176,14 +176,6 @@ function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE) {
 function phorum_api_custom_profile_field_restore($id) {
     require_once PHORUM_PATH.'/include/api/custom_field.php';
     return phorum_api_custom_field_restore($id, PHORUM_CUSTOM_FIELD_USER);
-}
-
-/**
- * @deprecated Replaced by {@link phorum_api_custom_field_checkconfig()}.
- */
-function phorum_api_custom_profile_field_checkconfig() {
-    require_once PHORUM_PATH.'/include/api/custom_field.php';
-    return phorum_api_custom_field_checkconfig();
 }
 
 /**

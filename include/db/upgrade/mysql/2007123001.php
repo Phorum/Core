@@ -2,9 +2,9 @@
 if(!defined("PHORUM_ADMIN")) return;
 
 if(!empty($PHORUM['DBCONFIG']['charset'])) {
-    $charset_str = " DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}";
+    $charset = " DEFAULT CHARACTER SET {$PHORUM['DBCONFIG']['charset']}";
 } else {
-    $charset_str = "";
+    $charset = "";
 }
 
 $upgrade_queries[]="
@@ -15,7 +15,7 @@ $upgrade_queries[]="
            data                     text           NOT NULL,
 
            PRIMARY KEY (relation_id, field_type, type)
-       )$charset_str
+       ) $charset
        SELECT user_id as relation_id,
               ".PHORUM_CUSTOM_FIELD_USER." as field_type,
               type,

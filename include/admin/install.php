@@ -22,6 +22,7 @@ define("PHORUM_INSTALL", 1);
 
 require_once PHORUM_PATH.'/include/api/user.php';
 require_once PHORUM_PATH.'/include/api/thread.php';
+require_once PHORUM_PATH.'/include/api/custom_field.php';
 
 if (!$PHORUM['DB']->check_connection()){
     phorum_admin_error(
@@ -403,11 +404,6 @@ switch ($step){
             "default_feed" => "rss",
             "internal_version" => "" . PHORUM_SCHEMA_VERSION . "",
             "internal_patchlevel" => "" . PHORUM_SCHEMA_PATCHLEVEL . "",
-            "PROFILE_FIELDS" => array(
-                PHORUM_CUSTOM_FIELD_USER => array(),
-                PHORUM_CUSTOM_FIELD_FORUM => array(),
-                PHORUM_CUSTOM_FIELD_MESSAGE => array()
-            ),
             "enable_pm" => "1",
             "display_name_source" => "username",
             "user_edit_timelimit" => "0",
@@ -452,6 +448,10 @@ switch ($step){
             }
             
             $PHORUM['DB']->update_settings($settings);
+
+            // Generate the (at this point empty) cache data for the
+            // custom field handling.
+            phorum_api_custom_field_rebuild_cache();
 
             // posting forum and test-message
 

@@ -138,7 +138,7 @@ function phorum_api_custom_field_configure($field)
     $fields = array(
         'id'            => NULL,
         'name'          => NULL,
-        'type'          => NULL,
+        'field_type'    => NULL,
         'length'        => 255,
         'html_disabled' => TRUE,
         'show_in_admin' => FALSE
@@ -166,16 +166,16 @@ function phorum_api_custom_field_configure($field)
 
     $field['id'] = $field['id'] === NULL ? NULL : (int)$field['id'];
     $field['name'] = trim($field['name']);
-    settype($field['type'], 'int');
+    settype($field['field_type'], 'int');
     settype($field['length'], 'int');
     settype($field['html_disabled'], 'bool');
     settype($field['show_in_admin'], 'bool');
 
-    if ($field['type'] !== PHORUM_CUSTOM_FIELD_USER &&
-        $field['type'] !== PHORUM_CUSTOM_FIELD_FORUM &&
-        $field['type'] !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
+    if ($field['field_type'] !== PHORUM_CUSTOM_FIELD_USER &&
+        $field['field_type'] !== PHORUM_CUSTOM_FIELD_FORUM &&
+        $field['field_type'] !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
         'phorum_api_custom_field_configure(): Illegal custom field type: ' .
-        $field['type'], E_USER_ERROR
+        $field['field_type'], E_USER_ERROR
     );
 
     // Check the custom field name.
@@ -217,7 +217,7 @@ function phorum_api_custom_field_configure($field)
 
     // For new fields, check if the name isn't already in use.
     if ($field['id'] === NULL &&
-        phorum_api_custom_field_byname($field['name'], $field['type'])) {
+        phorum_api_custom_field_byname($field['name'], $field['field_type'])) {
         return phorum_api_error(
             PHORUM_ERRNO_INVALIDINPUT,
             "A custom field with the name \"{$field['name']}\" " .
@@ -226,46 +226,9 @@ function phorum_api_custom_field_configure($field)
         );
     }
 
-    // For existing fields, check if the field id really exists.
-    if ($field['id'] !== NULL &&
-        !isset($PHORUM['PROFILE_FIELDS'][$field['type']][$field['id']])) {
-        return phorum_api_error(
-            PHORUM_ERRNO_INVALIDINPUT,
-            "A custom field with id \"{$field['id']}\" does not " .
-            'exist. Maybe the field was deleted before you updated its ' .
-            'settings.'
-        );
-    }
-
-    // If we have to create a new field, then find a new id for it.
-    // For indexing, we use the "num_fields" custom field configuration
-    // setting. This field is more an auto increment index counter than
-    // the number of fields. For historical reasons, we keep this name
-    // in here (some module contain code that makes use of num_fields
-    // directly).
-    if ($field['id'] === NULL)
-    {
-        // Since there are modules meddling with the data, we do not
-        // fully trust the num_fields. If we see a field with an id
-        // higher than what's in num_fields, then we move the counter up.
-        $high = isset($PHORUM['PROFILE_FIELDS'][$field['type']]['num_fields'])
-              ? (int) $PHORUM['PROFILE_FIELDS'][$field['type']]['num_fields'] : 0;
-        foreach ($PHORUM['PROFILE_FIELDS'] as $checkid => $custom_field) {
-            if ($checkid > $high) $high = $checkid;
-        }
-
-        // Use the next available value as our id.
-        $field['id'] = $high + 1;
-
-        // Update the index.
-        $PHORUM['PROFILE_FIELDS'][$field['type']]['num_fields'] = $field['id'];
-    }
-
-    // Update the custom fields information in the settings.
-    $PHORUM['PROFILE_FIELDS'][$field['type']][$field['id']] = $field;
-    $PHORUM['DB']->update_settings(array(
-        'PROFILE_FIELDS' => $PHORUM['PROFILE_FIELDS']
-    ));
+    // Setup the field configuration in the database.
+    $field['id'] = $PHORUM['DB']->custom_field_config_set($field);
+    phorum_api_custom_field_rebuild_cache();
 
     return $field;
 }
@@ -278,7 +241,7 @@ function phorum_api_custom_field_configure($field)
  * @param string $name
  *     The name of the custom field to lookup.
  *
- * @param integer $type
+ * @param integer $field_type
  *     The type of custom field. This is one of
  *     {@link PHORUM_CUSTOM_FIELD_USER},
  *     {@link PHORUM_CUSTOM_FIELD_FORUM} or
@@ -288,45 +251,35 @@ function phorum_api_custom_field_configure($field)
  *     If no custom field could be found for the name, then NULL will
  *     be returned. Otherwise the field configuration will be returned.
  *     The field configuration is an array, containing the fields:
- *     "id", "name", "length" and "html_disabled".
+ *     "id", "name", "length", "html_disabled", "show_in_admin" and "deleted".
  *
  *     If the field was marked as deleted by the
  *     {@link phorum_api_custom_field_delete()} function, then the
- *     field "deleted" will be available and set to a true value.
+ *     field "deleted" will be set to a true value.
  */
-function phorum_api_custom_field_byname($name, $type)
+function phorum_api_custom_field_byname($name, $field_type)
 {
     global $PHORUM;
 
-    static $profile_fields_reverse = array();
-
-    if ($type === NULL) trigger_error(
-        'phorum_api_custom_field_byname(): $type parameter cannot be NULL',
+    if ($field_type === NULL) trigger_error(
+        'phorum_api_custom_field_byname(): $field_type param cannot be NULL',
         E_USER_ERROR
     );
 
-    settype($type, "int");
+    settype($field_type, "int");
 
-    if ($type !== PHORUM_CUSTOM_FIELD_USER &&
-        $type !== PHORUM_CUSTOM_FIELD_FORUM &&
-        $type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
-        'phorum_api_custom_field_byname(): Illegal custom field type: ' . $type,
-        E_USER_ERROR
+    if ($field_type !== PHORUM_CUSTOM_FIELD_USER &&
+        $field_type !== PHORUM_CUSTOM_FIELD_FORUM &&
+        $field_type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
+        'phorum_api_custom_field_byname(): Illegal custom field type: ' .
+        $field_type, E_USER_ERROR
     );
 
-    if (isset($PHORUM['PROFILE_FIELDS'][$type]) &&
-        is_array($PHORUM['PROFILE_FIELDS'][$type])) {
-        if (empty($profile_fields_reverse[$type])) {
-            foreach ($PHORUM['PROFILE_FIELDS'][$type] as $id => $custom_field) {
-                if ($id !== 'num_fields') {
-                    $profile_fields_reverse[$type][$custom_field['name']] = $custom_field;
-                }
-            }
-        }
-
-        if (isset($profile_fields_reverse[$type][$name])) {
-            return $profile_fields_reverse[$type][$name];
-        }
+    if (isset($PHORUM['CUSTOM_FIELDS_REV'][$field_type][$name])) {
+        $id = $PHORUM['CUSTOM_FIELDS_REV'][$field_type][$name];
+        return $PHORUM['CUSTOM_FIELDS'][$field_type][$id];
+    } else {
+        return NULL;
     }
 
     return NULL;
@@ -340,7 +293,7 @@ function phorum_api_custom_field_byname($name, $type)
  * @param int $id
  *     The id of the custom field to delete.
  *
- * @param int $type
+ * @param int $field_type
  *     The type of the custom field to delete
  *
  * @param bool $hard_delete
@@ -352,39 +305,38 @@ function phorum_api_custom_field_byname($name, $type)
  *     If it is set to a true value, then the configuration will be
  *     fully deleted.
  */
-function phorum_api_custom_field_delete($id, $type, $hard_delete = FALSE)
+function phorum_api_custom_field_delete($id, $field_type, $hard_delete = FALSE)
 {
     global $PHORUM;
 
     settype($id, "int");
     settype($hard_delete, "bool");
 
-    if ($type === NULL) trigger_error(
-        'phorum_api_custom_field_delete(): $type parameter cannot be NULL',
+    if ($field_type === NULL) trigger_error(
+        'phorum_api_custom_field_delete(): $field_type param cannot be NULL',
         E_USER_ERROR
     );
 
-    settype($type, "int");
+    settype($field_type, "int");
 
-    if ($type !== PHORUM_CUSTOM_FIELD_USER &&
-        $type !== PHORUM_CUSTOM_FIELD_FORUM &&
-        $type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
-        'phorum_api_custom_field_delete(): Illegal custom field type: ' . $type,
-        E_USER_ERROR
+    if ($field_type !== PHORUM_CUSTOM_FIELD_USER &&
+        $field_type !== PHORUM_CUSTOM_FIELD_FORUM &&
+        $field_type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
+        'phorum_api_custom_field_delete(): Illegal custom field type: ' .
+        $field_type, E_USER_ERROR
     );
 
     // Only act if we really have something to delete.
-    if (isset($GLOBALS["PHORUM"]["PROFILE_FIELDS"][$type][$id]))
+    $field = $PHORUM['DB']->custom_field_config_get($id, $field_type);
+    if ($field !== NULL)
     {
         if ($hard_delete) {
-            unset($GLOBALS["PHORUM"]["PROFILE_FIELDS"][$type][$id]);
+            $PHORUM['DB']->custom_field_config_delete($id, $field_type);
         } else {
-            $GLOBALS["PHORUM"]["PROFILE_FIELDS"][$type][$id]["deleted"] = TRUE;
+            $field['deleted'] = TRUE;
+            $PHORUM['DB']->custom_field_config_set($field);
         }
-
-        $PHORUM['DB']->update_settings(array(
-            'PROFILE_FIELDS' => $GLOBALS["PHORUM"]['PROFILE_FIELDS']
-        ));
+        phorum_api_custom_field_rebuild_cache();
     }
 }
 // }}}
@@ -400,7 +352,7 @@ function phorum_api_custom_field_delete($id, $type, $hard_delete = FALSE)
  * @param int $id
  *     The id of the custom field to restore.
  *
- * @param int $type
+ * @param int $field_type
  *     The type of the custom field to delete
  *
  * @return bool
@@ -409,35 +361,32 @@ function phorum_api_custom_field_delete($id, $type, $hard_delete = FALSE)
  *     {@link phorum_api_error_code()} can be used to retrieve information
  *     about the error that occurred.
  */
-function phorum_api_custom_field_restore($id, $type)
+function phorum_api_custom_field_restore($id, $field_type)
 {
     global $PHORUM;
 
     settype($id, "int");
 
-    if ($type === NULL) trigger_error(
-        'phorum_api_custom_field_restore(): $type parameter cannot be NULL',
+    if ($field_type === NULL) trigger_error(
+        'phorum_api_custom_field_restore(): $field_type param cannot be NULL',
         E_USER_ERROR
     );
 
-    settype($type, 'int');
+    settype($field_type, 'int');
 
-    if ($type !== PHORUM_CUSTOM_FIELD_USER &&
-        $type !== PHORUM_CUSTOM_FIELD_FORUM &&
-        $type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
-        'phorum_api_custom_field_restore(): Illegal custom field type: ' . $type,
-        E_USER_ERROR
+    if ($field_type !== PHORUM_CUSTOM_FIELD_USER &&
+        $field_type !== PHORUM_CUSTOM_FIELD_FORUM &&
+        $field_type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
+        'phorum_api_custom_field_restore(): Illegal custom field type: ' .
+        $field_type, E_USER_ERROR
     );
 
-    if (isset($GLOBALS["PHORUM"]["PROFILE_FIELDS"][$type][$id]))
+    $field = $PHORUM['DB']->custom_field_config_get($id, $field_type);
+    if ($field !== NULL)
     {
-        $f = $GLOBALS["PHORUM"]["PROFILE_FIELDS"][$type][$id];
-        if (isset($f['deleted']) && $f['deleted']) $f['deleted'] = 0;
-        $GLOBALS["PHORUM"]["PROFILE_FIELDS"][$type][$id] = $f;
-
-        $PHORUM['DB']->update_settings(array(
-            'PROFILE_FIELDS' => $GLOBALS["PHORUM"]['PROFILE_FIELDS']
-        ));
+        $field['deleted'] = FALSE;
+        $PHORUM['DB']->custom_field_config_set($field);
+        phorum_api_custom_field_rebuild_cache();
     }
     else return phorum_api_error(
         PHORUM_ERRNO_NOTFOUND,
@@ -448,91 +397,11 @@ function phorum_api_custom_field_restore($id, $type)
 }
 // }}}
 
-// {{{ Function: phorum_api_custom_field_checkconfig()
-/**
- * Check and fix the custom field configuration.
- *
- * This function has mainly been implemented for fixing problems that
- * are introduced by modules that create custom fields on their own.
- * Besides that, it was also written to upgrade the custom field
- * configuration.
- */
-function phorum_api_custom_field_checkconfig()
-{
-    global $PHORUM;
-
-    // upgrading from pre 5.3-code
-    if(is_array($PHORUM['PROFILE_FIELDS'])) {
-           if(isset($PHORUM['PROFILE_FIELDS']['num_fields'])) {
-               $new_fields = array(PHORUM_CUSTOM_FIELD_USER => $PHORUM['PROFILE_FIELDS']);
-               $PHORUM['PROFILE_FIELDS']=$new_fields;
-           } else {
-               $first = current($PHORUM['PROFILE_FIELDS']);
-               if(isset($first['name'])) {
-                    $new_fields = array(PHORUM_CUSTOM_FIELD_USER => $PHORUM['PROFILE_FIELDS']);
-                    $PHORUM['PROFILE_FIELDS']=$new_fields;
-               }
-           }
-    }
-
-    foreach($PHORUM['PROFILE_FIELDS'] as $type => $fields) {
-
-        // Used to find the real maximum used field id.
-        $max_id = isset($PHORUM['PROFILE_FIELDS'][$type]['num_fields'])
-                ? (int) $PHORUM['PROFILE_FIELDS'][$type]['num_fields'] : 0;
-
-
-
-        foreach ($fields as $id => $config)
-        {
-            // Keep track of the highest id that we see.
-            if ($id > $max_id) $max_id = $id;
-
-            // The least that should be in the config, is the name of the
-            // field. If there is no name, then we don't bother at all.
-            if (!isset($config['name']) || $config['name'] == '') continue;
-
-            // 5.2 includes the id in the field configuration.
-            if (empty($config['id'])) {
-                $PHORUM['PROFILE_FIELDS'][$type][$id]['id'] = $id;
-            }
-
-            // Some default values.
-            if (!array_key_exists('length', $config)) {
-                $PHORUM['PROFILE_FIELDS'][$type][$id]['length'] = 255;
-            }
-            if (!array_key_exists('html_disabled', $config)) {
-                $PHORUM['PROFILE_FIELDS'][$type][$id]['html_disabled'] = TRUE;
-            }
-            if (!array_key_exists('show_in_admin', $config)) {
-                $PHORUM['PROFILE_FIELDS'][$type][$id]['show_in_admin'] = FALSE;
-            }
-
-            // Some typecasting won't hurt.
-            settype($PHORUM['PROFILE_FIELDS'][$type][$id]['id'],            'int');
-            settype($PHORUM['PROFILE_FIELDS'][$type][$id]['name'],          'string');
-            settype($PHORUM['PROFILE_FIELDS'][$type][$id]['length'],        'int');
-            settype($PHORUM['PROFILE_FIELDS'][$type][$id]['html_disabled'], 'bool');
-            settype($PHORUM['PROFILE_FIELDS'][$type][$id]['show_in_admin'], 'bool');
-        }
-
-        // Set the maximum field id that we've seen.
-        $PHORUM['PROFILE_FIELDS'][$type]['num_fields'] = $max_id;
-
-        }
-
-    // Save the custom field settings to the database.
-    $PHORUM['DB']->update_settings(array(
-        'PROFILE_FIELDS' => $PHORUM['PROFILE_FIELDS']
-    ));
-}
-// }}}
-
 // {{{ Function: phorum_api_custom_field_apply()
 /**
  * Retrieve custom fields and add/apply them to the given array
  *
- * @param int $type
+ * @param int $field_type
  *     The type of the custom fields to retrieve for the input array
  *
  * @param array $data_array
@@ -547,31 +416,31 @@ function phorum_api_custom_field_checkconfig()
  * @return array
  *     Returns the input array with the custom fields added.
  */
-function phorum_api_custom_field_apply($type = NULL, $data_array, $raw_data = FALSE)
+function phorum_api_custom_field_apply($field_type = NULL, $data_array, $raw_data = FALSE)
 {
     global $PHORUM;
 
-    if ($type === NULL) trigger_error(
-        'phorum_api_custom_field_apply(): $type parameter cannot be NULL',
+    if ($field_type === NULL) trigger_error(
+        'phorum_api_custom_field_apply(): $field_type param cannot be NULL',
         E_USER_ERROR
     );
 
-    settype($type, 'int');
+    settype($field_type, 'int');
 
-    if ($type !== PHORUM_CUSTOM_FIELD_USER &&
-        $type !== PHORUM_CUSTOM_FIELD_FORUM &&
-        $type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
-        'phorum_api_custom_field_apply(): Illegal custom field type: ' . $type,
-        E_USER_ERROR
+    if ($field_type !== PHORUM_CUSTOM_FIELD_USER &&
+        $field_type !== PHORUM_CUSTOM_FIELD_FORUM &&
+        $field_type !== PHORUM_CUSTOM_FIELD_MESSAGE) trigger_error(
+        'phorum_api_custom_field_apply(): Illegal custom field type: ' .
+        $field_type, E_USER_ERROR
     );
 
     // If no custom fields are defined for the type, then we are done.
-    if (empty($PHORUM['PROFILE_FIELDS'][$type])) {
+    if (empty($PHORUM['CUSTOM_FIELDS'][$field_type])) {
         return $data_array;
     }
 
     $custom_fields = $PHORUM['DB']->get_custom_fields(
-        $type,
+        $field_type,
         array_keys($data_array),
         $raw_data
     );
@@ -585,12 +454,132 @@ function phorum_api_custom_field_apply($type = NULL, $data_array, $raw_data = FA
         // are lingering in the database.
         if (!isset($data_array[$id])) continue;
 
-        foreach($fields as $fieldname => $fielddata) {
+        foreach ($fields as $fieldname => $fielddata) {
             $data_array[$id][$fieldname] = $fielddata;
         }
     }
 
     return $data_array;
+}
+// }}}
+
+// {{{ Function: phorum_api_custom_field_rebuild_cache()
+/**
+ * Rebuild the cached custom field data (internal use only).
+ */
+function phorum_api_custom_field_rebuild_cache()
+{
+    global $PHORUM;
+
+    // Rebuild the cached custom fields data.
+    $PHORUM['CUSTOM_FIELDS'] = array(
+        PHORUM_CUSTOM_FIELD_USER    => array(),
+        PHORUM_CUSTOM_FIELD_FORUM   => array(),
+        PHORUM_CUSTOM_FIELD_MESSAGE => array()
+    );
+
+    // Rebuild the name => id map data.
+    $PHORUM['CUSTOM_FIELDS_REV'] = array(
+        PHORUM_CUSTOM_FIELD_USER    => array(),
+        PHORUM_CUSTOM_FIELD_FORUM   => array(),
+        PHORUM_CUSTOM_FIELD_MESSAGE => array()
+    );
+
+    foreach ($PHORUM['DB']->custom_field_config_get() as $field) {
+        $store =& $PHORUM['CUSTOM_FIELDS'][$field['field_type']];
+        $store[$field['id']] = $field;
+
+        $revstore =& $PHORUM['CUSTOM_FIELDS_REV'][$field['field_type']];
+        $revstore[$field['name']] = $field['id'];
+    }
+
+    $PHORUM['DB']->update_settings(array(
+        'CUSTOM_FIELDS'     => $PHORUM['CUSTOM_FIELDS'],
+        'CUSTOM_FIELDS_REV' => $PHORUM['CUSTOM_FIELDS_REV']
+    ));
+}
+// }}}
+
+// {{{ Function: phorum_api_custom_field_checkconfig()
+/**
+ * Check and fix the custom field configuration (internal use only).
+ *
+ * This function was implemented for fixing problems that
+ * were introduced by modules that created custom fields on their own.
+ * Besides that, it was also written to upgrade the PROFILE_FIELDS 
+ * configuration. In Phorum 5.3 and up, this function is no longer
+ * in active used, besides the use in the upgrade scripts.
+ */
+function phorum_api_custom_field_checkconfig()
+{
+    global $PHORUM;
+
+    // upgrading from pre 5.3-code
+    if(is_array($PHORUM['PROFILE_FIELDS'])) {
+           if(isset($PHORUM['PROFILE_FIELDS']['num_fields'])) {
+               $new_fields = array(PHORUM_CUSTOM_FIELD_USER => $PHORUM['PROFILE_FIELDS']);
+               $PHORUM['PROFILE_FIELDS'] = $new_fields;
+           } else {
+               $first = current($PHORUM['PROFILE_FIELDS']);
+               if(isset($first['name'])) {
+                    $new_fields = array(PHORUM_CUSTOM_FIELD_USER => $PHORUM['PROFILE_FIELDS']);
+                    $PHORUM['PROFILE_FIELDS']=$new_fields;
+               }
+           }
+    }
+
+    foreach($PHORUM['PROFILE_FIELDS'] as $field_type => $fields) {
+
+        // Used to find the real maximum used field id.
+        $max_id = isset($PHORUM['PROFILE_FIELDS'][$field_type]['num_fields'])
+                ? (int) $PHORUM['PROFILE_FIELDS'][$field_type]['num_fields'] : 0;
+
+
+
+        foreach ($fields as $id => $config)
+        {
+            if ($id == 'num_fields') continue;
+
+            // Keep track of the highest id that we see.
+            if ($id > $max_id) $max_id = $id;
+
+            // The least that should be in the config, is the name of the
+            // field. If there is no name, then we don't bother at all.
+            if (!isset($config['name']) || $config['name'] == '') continue;
+
+            // 5.2 includes the id in the field configuration.
+            if (empty($config['id'])) {
+                $PHORUM['PROFILE_FIELDS'][$field_type][$id]['id'] = $id;
+            }
+
+            // Some default values.
+            if (!array_key_exists('length', $config)) {
+                $PHORUM['PROFILE_FIELDS'][$field_type][$id]['length'] = 255;
+            }
+            if (!array_key_exists('html_disabled', $config)) {
+                $PHORUM['PROFILE_FIELDS'][$field_type][$id]['html_disabled'] = TRUE;
+            }
+            if (!array_key_exists('show_in_admin', $config)) {
+                $PHORUM['PROFILE_FIELDS'][$field_type][$id]['show_in_admin'] = FALSE;
+            }
+
+            // Some typecasting won't hurt.
+            settype($PHORUM['PROFILE_FIELDS'][$field_type][$id]['id'],            'int');
+            settype($PHORUM['PROFILE_FIELDS'][$field_type][$id]['name'],          'string');
+            settype($PHORUM['PROFILE_FIELDS'][$field_type][$id]['length'],        'int');
+            settype($PHORUM['PROFILE_FIELDS'][$field_type][$id]['html_disabled'], 'bool');
+            settype($PHORUM['PROFILE_FIELDS'][$field_type][$id]['show_in_admin'], 'bool');
+        }
+
+        // Set the maximum field id that we've seen.
+        $PHORUM['PROFILE_FIELDS'][$field_type]['num_fields'] = $max_id;
+
+    }
+
+    // Save the custom field settings to the database.
+    $PHORUM['DB']->update_settings(array(
+        'PROFILE_FIELDS' => $PHORUM['PROFILE_FIELDS']
+    ));
 }
 // }}}
 

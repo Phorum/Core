@@ -10,6 +10,9 @@
             {IF PROFILE->USERPROFILE}
                 <dt>{LANG->RealName}:&nbsp;</dt>
                 <dd><input type="text" name="real_name" size="30" value="{PROFILE->real_name}" /></dd>
+
+                <dt>Shoe size:&nbsp;</dt>
+                <dd><input type="text" name="shoe_size" size="10" value="{PROFILE->shoe_size}" /></dd>
             {/IF}
 
             {IF PROFILE->SIGSETTINGS}

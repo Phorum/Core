@@ -120,8 +120,8 @@ foreach ($user as $key => $val) {
 }
 
 // Initialize any custom profile fields that are not present.
-if (!empty($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER])) {
-    foreach($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $id => $field) {
+if (!empty($PHORUM["CUSTOM_FIELDS"][PHORUM_CUSTOM_FIELD_USER])) {
+    foreach($PHORUM["CUSTOM_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $id => $field) {
         if ($id === 'num_fields' || !empty($field['deleted'])) continue;
         if (!isset($user[$field['name']])) $user[$field['name']] = "";
     }
@@ -310,7 +310,7 @@ function phorum_controlcenter_user_save($panel)
       $userdata['email_temp'] = NULL;
     }
     // Add custom profile fields as acceptable fields.
-    foreach ($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $id => $field) {
+    foreach ($PHORUM["CUSTOM_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $id => $field) {
         if ($id === "num_fields" || !empty($field['deleted'])) continue;
         $userdata[$field["name"]] = NULL;
     }

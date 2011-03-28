@@ -705,6 +705,22 @@ class PhorumPostgresqlDB extends PhorumDB
           "CREATE INDEX {$this->search_table}_forum_id
            ON {$this->search_table} (forum_id)",
 
+          "CREATE TABLE {$this->custom_fields_config_table} (
+               id                       bigint         NOT NULL auto_increment,
+               field_type               tinyint(1)     NOT NULL default 1,
+               name                     varchar(50)    NOT NULL,
+               length                   mediumint      NOT NULL default 255,
+               html_disabled            smallint       NOT NULL default 1,
+               show_in_admin            smallint       NOT NULL default 0,
+               deleted                  smallint       NOT NULL default 0,
+
+               PRIMARY KEY (id)
+          )",
+
+          "CREATE UNIQUE INDEX
+              {$this->custom_fields_config_table}_field_type_name
+           ON {$this->custom_fields_config_table} (field_type, name)",
+
           "CREATE TABLE {$this->custom_fields_table} (
                relation_id              bigint         NOT NULL default 0,
                field_type               smallint       NOT NULL default 1,

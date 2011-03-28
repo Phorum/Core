@@ -1006,7 +1006,7 @@ function phorum_api_user_get(
         $db_users = $PHORUM['DB']->user_get($user_ids, $detailed, $use_write_server);
 
         // Retrieve and apply the custom fields for users.
-        if (!empty($PHORUM['PROFILE_FIELDS'][PHORUM_CUSTOM_FIELD_USER])) {
+        if (!empty($PHORUM['CUSTOM_FIELDS'][PHORUM_CUSTOM_FIELD_USER])) {
             $db_users = phorum_api_custom_field_apply(
                 PHORUM_CUSTOM_FIELD_USER, $db_users, $raw_data
             );

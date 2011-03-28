@@ -24,9 +24,9 @@ if(count($_POST)) {
 }
 
 // need their names for the later check
-$profile_field_names=array();
-if(is_array($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER])) {
-    foreach ($PHORUM["PROFILE_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $id => $fieldinfo) {
+$profile_field_names = array();
+if(is_array($PHORUM["CUSTOM_FIELDS"][PHORUM_CUSTOM_FIELD_USER])) {
+    foreach ($PHORUM["CUSTOM_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $id => $fieldinfo) {
         $profile_field_names[$fieldinfo['name']]=$fieldinfo['name'];
     }
 }
