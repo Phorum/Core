@@ -32,3 +32,11 @@ hook: pm_before_send|phorum_mod_spamhurdles_pm_before_send
 # garbage cleaning purposes, so let's push it as far down as possible.
 hook: before_footer|phorum_mod_spamhurdles_before_footer
 priority: run hook before_footer after *
+
+# Fallback hooks for cases where a template does not use a tpl_* hook for a
+# reason, but where the spam hurdles need to be enabled in the form.
+hook: sh_editor_before_textarea|phorum_mod_spamhurdles_tpl_editor_before_textarea
+hook: sh_register_form|phorum_mod_spamhurdles_tpl_register_form
+
+hook: sh_pm_editor_before_textarea|phorum_mod_spamhurdles_tpl_pm_editor_before_textarea
+

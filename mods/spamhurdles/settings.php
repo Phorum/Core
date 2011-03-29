@@ -402,7 +402,9 @@ function create_spamhurdle_options($frm, $section, $tpl, $tplhook, $statusspec)
                     if (!file_exists($check_file)) continue;
                     $contents = file_get_contents($check_file);
 
-                    if (!preg_match("/$tplhook/", $contents)) {
+                    $althook = preg_replace('/^tpl_/', 'sh_', $tplhook);
+                    if (!preg_match("/$tplhook/", $contents) &&
+                        !preg_match("/$althook/", $contents)) {
                         $incompatible = htmlspecialchars($check_file);
                     } else {
                         $incompatible = FALSE;
