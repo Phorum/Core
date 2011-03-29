@@ -430,6 +430,9 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
         if (count($db_groups)) {
             $multiple = (count($db_groups) > 1) ? "multiple=\"multiple\" size=\"2\"" : "";
             $group_select = "<select name=\"member_of_group[]\" $multiple>\n";
+            if (!$multiple) {
+               $group_select .= '<option value="">Any group</option>';
+            }
             $selected_groups = array();
             if(!empty($_REQUEST['member_of_group'])) {
                 if (is_array($_REQUEST['member_of_group'])) {
