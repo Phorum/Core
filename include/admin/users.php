@@ -420,7 +420,12 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
         $db_groups = phorum_db_get_groups(0,true);
         if (count($db_groups)) {
             $multiple = (count($db_groups) > 1) ? "multiple=\"multiple\" size=\"3\"" : "";
+
             $group_select = "<select name=\"member_of_group[]\" $multiple>\n";
+            if (!$multiple) {
+                $group_select .= '<option value="">Any group</option>';
+            }
+
             $selected_groups = array();
             if(!empty($_REQUEST['member_of_group'])) {
                 if (is_array($_REQUEST['member_of_group'])) {
@@ -432,10 +437,6 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
                 }
             }
             
-            // add a dummy entry if needed
-            if(count($db_groups) == 1) {
-            	$db_groups[-1]=array('name'=>'Please select ...');            	
-            }
             ksort($db_groups);
             
             foreach ($db_groups as $group_id => $group) {
