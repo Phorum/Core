@@ -5034,7 +5034,7 @@ abstract class PhorumDB
     /**
      * Retrieve a list of stale files from the database.
      *
-     * Stale files are files that are not linked to anything anymore.'
+     * Stale files are files that are not linked to anything anymore.
      * These can for example be caused by users that are writing a message
      * with attachments, but never post it.
      *
@@ -5070,6 +5070,37 @@ abstract class PhorumDB
         );
 
         return $stale_files;
+    }
+    // }}}
+
+    // {{{ Method: list_stale_messages()
+    /**
+     * Retrieve a list of stale messages from the database.
+     *
+     * Stale messages are messages that are not linked to an existing
+     * thread anymore. This should not happen on a healthy system, but
+     * we have had some bugs in the past that could result in stale
+     * messages in the database.
+     *
+     * @return array
+     *     An array of stale Phorum messages.
+     */
+    public function list_stale_messages()
+    {
+        global $PHORUM;
+
+        return $this->interact(
+            DB_RETURN_ASSOCS,
+            "SELECT *
+             FROM   {$this->message_table} m1
+             WHERE  NOT EXISTS (
+                 SELECT *
+                 FROM   {$this->message_table} m2
+                 WHERE  m2.message_id = m1.thread
+             )",
+            'message_id',
+            DB_GLOBALQUERY
+        );
     }
     // }}}
 
