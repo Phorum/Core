@@ -68,16 +68,18 @@
             <td><input type="checkbox" name="is_dst" value="1"{IF PROFILE->is_dst 1} checked="checked"{/IF}/></td>
           </tr>
         {/IF}
-        <tr>
-          <td nowrap="nowrap">{LANG->Language}:&nbsp;</td>
-          <td>
-            <select name="user_language">
-              {LOOP LANGUAGES}
-                <option value="{LANGUAGES->file}"{LANGUAGES->sel}>{LANGUAGES->name}</option>
-              {/LOOP LANGUAGES}
-            </select>
-          </td>
-        </tr>
+        {IF PROFILE->LANGSELECTION}
+          <tr>
+            <td nowrap="nowrap">{LANG->Language}:&nbsp;</td>
+            <td>
+              <select name="user_language">
+                {LOOP LANGUAGES}
+                  <option value="{LANGUAGES->file}"{LANGUAGES->sel}>{LANGUAGES->name}</option>
+                {/LOOP LANGUAGES}
+              </select>
+            </td>
+          </tr>
+        {/IF}
         {IF PROFILE->TMPLSELECTION}
           <tr>
             <td nowrap="nowrap">{LANG->Template}:&nbsp;</td>

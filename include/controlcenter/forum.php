@@ -120,6 +120,12 @@ foreach( $PHORUM['DATA']['LANG']['TIME'] as $tz => $str ) {
 }
 
 $PHORUM['DATA']['LANGUAGES'] = phorum_cc_get_language_info();
+if (count($PHORUM['DATA']['LANGUAGES']) < 2 || empty($PHORUM['user_language'])){
+    $PHORUM['DATA']['PROFILE']['LANGSELECTION'] = FALSE;
+} else {
+    $PHORUM['DATA']['PROFILE']['LANGSELECTION'] = TRUE;
+}
+
 if ( isset( $PHORUM["user_template"] ) ) {
     $PHORUM['DATA']['PROFILE']['TMPLSELECTION'] = $PHORUM["user_template"];
 }

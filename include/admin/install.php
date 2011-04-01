@@ -414,6 +414,7 @@ switch ($step){
             "dns_lookup" => "1",
             "tz_offset" => "0",
             "user_time_zone" => "1",
+            "user_language" => "1",
             "user_template" => "0",
             "registration_control" => "1",
             "file_uploads" => "0",

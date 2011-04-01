@@ -336,6 +336,18 @@ $frm->addhelp($row, "Short Session Timeout", "When tight security is enabled, th
 $frm->addbreak( "User Settings" );
 
 $row=$frm->addrow( "Allow Time Zone Selection", $frm->select_tag( "user_time_zone", array( "No", "Yes" ), $PHORUM["user_time_zone"] ) );
+$frm->addhelp($row, "Allow Time Zone Selection",
+    "If enabled, the user will find an option in his control center to
+     select the time zone to use.");
+
+$row=$frm->addrow( "Allow Language Selection", $frm->select_tag( "user_language", array( "No", "Yes" ), $PHORUM["user_language"] ) );
+$frm->addhelp($row, "Allow Language Selection",
+    "If enabled, the user will find an option in his control center to
+     select the language to use.
+     <br />
+     Note: The user selected language will only be used for forums,
+     which do not have \"Fixed Display-Settings\" enabled in the
+     forum's settings.");
 
 $row=$frm->addrow( "Allow Template Selection", $frm->select_tag( "user_template", array( "No", "Yes" ), $PHORUM["user_template"] ) );
 $frm->addhelp($row, "Allow Template Selection",
@@ -344,7 +356,7 @@ $frm->addhelp($row, "Allow Template Selection",
      <br />
      Note: The user selected template will only be used for forums,
      which do not have \"Fixed Display-Settings\" enabled in the
-     forum settings.");
+     forum's settings.");
 
 $reg_con_arr = array(
 

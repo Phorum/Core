@@ -46,7 +46,7 @@
             {/IF}
 
             {IF PROFILE->BOARDSETTINGS}
-                    {IF PROFILE->TZSELECTION}
+                {IF PROFILE->TZSELECTION}
                     <dt>{LANG->Timezone}:&nbsp;</dt>
                     <dd>
                         <select name="tz_offset">
@@ -58,15 +58,16 @@
                     <dt>{LANG->IsDST}:&nbsp;</dt>
                     <dd><input type="checkbox" name="is_dst" value="1"{IF PROFILE->is_dst 1} checked="checked"{/IF}/></dd>
                 {/IF}
-                <dt>{LANG->Language}:&nbsp;</dt>
-                <dd>
-                    <select name="user_language">
-                        {LOOP LANGUAGES}
-                            <option value="{LANGUAGES->file}"{LANGUAGES->sel}>{LANGUAGES->name}</option>
-                        {/LOOP LANGUAGES}
-                    </select>
-                </dd>
-
+                {IF PROFILE->LANGSELECTION}
+                    <dt>{LANG->Language}:&nbsp;</dt>
+                    <dd>
+                        <select name="user_language">
+                            {LOOP LANGUAGES}
+                                <option value="{LANGUAGES->file}"{LANGUAGES->sel}>{LANGUAGES->name}</option>
+                            {/LOOP LANGUAGES}
+                        </select>
+                    </dd>
+                {/IF}
                 {IF PROFILE->TMPLSELECTION}
                     <dt>{LANG->Template}:&nbsp;</dt>
                     <dd>

@@ -313,8 +313,9 @@ if (!defined( "PHORUM_ADMIN" ))
             $PHORUM['DATA']['POST_VARS'] .= "<input type=\"hidden\" name=\"template\" value=\"".htmlspecialchars($template)."\" />\n";
         }
 
-        // User language override.
-        if (!empty($PHORUM['user']['user_language'])) {
+        // User language override, when allowed by the general Phorum settings.
+        if (!empty($PHORUM['user_language']) &&
+            !empty($PHORUM['user']['user_language'])) {
             $PHORUM['language'] = $PHORUM['user']['user_language'];
         }
     }
