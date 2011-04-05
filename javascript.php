@@ -20,10 +20,31 @@
 define('phorum_page', 'javascript');
 require_once './common.php';
 
+// ----------------------------------------------------------------------
+// Flags, added by Phorum internally
+// ----------------------------------------------------------------------
+
 // When loaded from the admin interface, the admin parameter will be set
 // in the URL. We use that parameter to not load template and module
 // related javascript code.
-$for_admin = !empty($PHORUM['args']['admin']);
+$only_core = !empty($PHORUM['args']['admin']);
+
+// ----------------------------------------------------------------------
+// Flags that external sites can add to the javascript URL:
+// ----------------------------------------------------------------------
+
+// "core" can be added to the URL, to flag that only the core scripts
+// need to be included, e.g. http://example.com/phorum/javascript?core
+$only_core = in_array('core', $PHORUM['args']);
+
+// "nojquery" can be added to the URL, to flag that the jquery library
+// needs to be omitted. This can be useful if the site loads a jquery
+// library already. E.g. http://example.com/phorum/javascript?core,nojquery
+$no_jquery = in_array('nojquery', $PHORUM['args']);
+
+// ----------------------------------------------------------------------
+// Start of main code
+// ----------------------------------------------------------------------
 
 // So we can use {URL->HTTP_PATH} in the templates.
 phorum_build_common_urls();
@@ -32,12 +53,14 @@ phorum_build_common_urls();
 // have to be added to the javascript code.
 $module_registrations = array();
 
-// Add the jQuery JavaScript library code.
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/javascript/jquery-1.4.4.min.js)',
-    'cache_key' => '1.4.4.min'
-);
+// Add the jQuery JavaScript library code, unless "nojquery" was flagged.
+if (!$no_jquery) {
+    $module_registrations[] = array(
+        'module'    => 'core',
+        'source'    => 'file(include/javascript/jquery-1.4.4.min.js)',
+        'cache_key' => '1.4.4.min'
+    );
+}
 
 // Add the jQuery JSON plugin.
 $module_registrations[] = array(
@@ -62,7 +85,7 @@ $module_registrations[] = array(
 // Add template specific javascript code, if available. The template writer
 // can put the javascript code to include in the file
 // "templates/<name>/javascript.tpl" or "templates/<name>/javascript.php".
-if (!$for_admin) {
+if (!$only_core) {
     if (file_exists("./templates/{$PHORUM['template']}/javascript.tpl") ||
         file_exists("./templates/{$PHORUM['template']}/javascript.php")) {
         $module_registrations[] = array(
@@ -143,7 +166,7 @@ if (!$for_admin) {
  *     The same array as the one that was used as the hook call
  *     argument, possibly extended with one or more registrations.
  */
-if (!$for_admin && isset($PHORUM['hooks']['javascript_register'])) {
+if (!$only_core && isset($PHORUM['hooks']['javascript_register'])) {
     $module_registrations = phorum_api_hook(
         'javascript_register', $module_registrations
     );
