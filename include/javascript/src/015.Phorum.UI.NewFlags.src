@@ -65,21 +65,24 @@ Phorum.UI.NewFlags = {
      * </p>
      * <p><pre><code>
 Phorum.UI.NewFlags.registerCallback(function (mode, item_id) {
-  alert("Mark read was successful for " + mode + ", id " + item_id
+  alert("Mark read was successful for " + mode + ", id " + item_id);
 });
      * </code></pre></p>
      * 
      * @param {Function} callback
      *   The callback function to register.
+     *
+     * @param {Object} scope (optional)
+     *   The scope to use for the callback.
      */
-    registerCallback: function (callback)
+    registerCallback: function (callback, scope)
     {
         if (!(callback instanceof Function)) {
             throw this.className + '.registerCallback(): ' +
                   'the callback must be a function';
         }
 
-        this.callbacks.global.push(callback);
+        this.callbacks.global.push([callback, scope]);
     },
 
     /**
@@ -122,8 +125,11 @@ In template:
      *
      * @param {Function} callback
      *   The callback function to register.
+     *
+     * @param {Object} scope (optional)
+     *   The scope to use for the callback.
      */
-    registerActionCallback: function (action, callback)
+    registerActionCallback: function (action, callback, scope)
     {
         if (!(callback instanceof Function)) {
             throw this.className + '.registerActionCallback(): ' +
@@ -132,7 +138,7 @@ In template:
         if (this.callbacks.action[action] === undefined) {
             this.callbacks.action[action] = [ ];
         }
-        this.callbacks.action[action].push(callback);
+        this.callbacks.action[action].push([callback, scope]);
     },
 
     /**
@@ -163,11 +169,19 @@ In template:
      *     A vroot, forum, thread or message id (which one to use depends
      *     on the "mode" parameter).
      *
+     * @param {Function} callback (optional)
+     *     A callback function to call when the operation has been completed.
+     *     This function will get true (mark read successful) or false
+     *     (mark read failed) as its argument.
+     *
+     * @param {Object} scope (optional)
+     *     The scope to use for the callback.
+     *
      * @return boolean false
      *     This method always returns false, which makes it simple to cancel
      *     events (e.g. onclick="return Phorum.UI.NewFlags.markRead(...)")
      */
-    markRead: function (mode, item_id)
+    markRead: function (mode, item_id, callback, scope)
     {
         // Request busy notification for the user.
         Phorum.UI.BusyMarker.increment();
@@ -177,9 +191,15 @@ In template:
             'onSuccess': function (data) {
                 Phorum.UI.BusyMarker.decrement();
                 Phorum.UI.NewFlags.updateUI(mode, item_id);
+                if (callback instanceof Function) {
+                    callback.call(scope || this, true);
+                }
             },
             'onFailure': function (data) {
                 Phorum.UI.BusyMarker.decrement();
+                if (callback instanceof Function) {
+                    callback.call(scope || this, false);
+                }
             }
         };
 
@@ -370,7 +390,9 @@ For example:
                     if (me.callbacks.action[action] !== undefined) {
                         var callbacks = me.callbacks.action[action];
                         for (var j = 0; j < callbacks.length; j++) {
-                            callbacks[j](this, $element);
+                            var callback = callbacks[j][0];
+                            var scope    = callbacks[j][1];
+                            callback.call(scope || this, this, $element);
                         }
                     }
                 }
@@ -380,7 +402,9 @@ For example:
         // Call all registered global callback functions
         // to handle custom mark read functionality.
         for (var i = 0; i < this.callbacks.global.length; i++) {
-            this.callbacks[i](mode, item_id);
+            var callback = this.callbacks[i][0];
+            var scope    = this.callbacks[i][1];
+            callback.call(scope || this, mode, item_id);
         }
     }
 };
