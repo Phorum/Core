@@ -286,22 +286,22 @@ function phorum_check_posting_token($page = NULL) {
 /**
  * @deprecated Replaced by {@link phorum_api_cache_get()}.
  */
-function phorum_cache_get($type,$key,$version=NULL) {
-    return phorum_api_cache_get($type,$key,$version);
+function phorum_cache_get($type, $key, $version=NULL) {
+    return phorum_api_cache_get($type, $key, $version);
 }
 
 /**
  * @deprecated Replaced by {@link phorum_api_cache_put()}.
  */
-function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$version=NULL) {
-    return phorum_api_cache_put($type,$key,$data,$ttl,$version);
+function phorum_cache_put($type, $key, $data, $ttl = PHORUM_CACHE_DEFAULT_TTL, $version = NULL) {
+    return phorum_api_cache_put($type, $key, $data, $ttl, $version);
 }
 
 /**
  * @deprecated Replaced by {@link phorum_api_cache_remove()}.
  */
-function phorum_cache_remove($type,$key) {
-    return phorum_api_cache_remove($type,$key);
+function phorum_cache_remove($type, $key) {
+    return phorum_api_cache_remove($type, $key);
 }
 
 /**
@@ -324,6 +324,17 @@ function phorum_cache_clear() {
 function phorum_get_system_max_upload() {
     require_once PHORUM_PATH.'/include/api/system.php'; 
     return phorum_api_system_get_max_upload();
+}
+
+/**
+ * @deprecated Replaced by {@link phorum_api_newflags_apply_to_messages()}.
+ */
+function phorum_api_newflags_format_messages($messages, $mode = PHORUM_NEWFLAGS_BY_MESSAGE, $fullcount = FALSE) {
+    require_once PHORUM_PATH.'/include/api/newflags.php';
+    return phorum_api_newflags_apply_to_messages(
+        $messages, $mode,
+        $fullcount ? PHORUM_NEWFLAGS_CHECK : PHORUM_NEWFLAGS_COUNT
+    );
 }
 
 ?>
