@@ -267,6 +267,13 @@ function editor_tools_construct()
         img_obj.alt = description;
         img_obj.title = description;
 
+        // Skip over the editor tool buttons in the first tabbing run.
+        // This makes it a lot quicker for the user to jump from the
+        // subject field to the message body textarea when writing
+        // a message.
+        $PJ(a_obj).attr('tabindex', 1);
+        $PJ(img_obj).attr('tabindex', 1);
+
         // If an icon is added that is less high than our default icon
         // height, we try to make the button the same height as the
         // others by adding some dynamic padding to it.
