@@ -758,15 +758,6 @@ abstract class PhorumDB
     {
         global $PHORUM;
 
-        if ($list_type == LIST_UNREAD_MESSAGES) {
-            if (empty($PHORUM['user']['user_id'])) trigger_error(
-                __METHOD__ . ": \$list_type parameter LIST_UNREAD_MESSAGES " .
-                "used, but no authenticated user available; this feature " .
-                "can only be used for authenticated users",
-                E_USER_ERROR
-            );
-        }
-
         // Backward compatibility for the old $threads_only parameter.
         if (is_bool($list_type)) {
             $list_type = $list_type
@@ -778,6 +769,15 @@ abstract class PhorumDB
         settype($thread,    'int');
         settype($list_type, 'int');
         $this->sanitize_mixed($forum_id, 'int');
+
+        if ($list_type == LIST_UNREAD_MESSAGES) {
+            if (empty($PHORUM['user']['user_id'])) trigger_error(
+                __METHOD__ . ": \$list_type parameter LIST_UNREAD_MESSAGES " .
+                "used, but no authenticated user available; this feature " .
+                "can only be used for authenticated users",
+                E_USER_ERROR
+            );
+        }
 
         // In case -1 is used as "any" value by the caller.
         if ($forum_id < 0) $forum_id = 0;
