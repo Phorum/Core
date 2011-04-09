@@ -220,6 +220,13 @@ define('LIST_RECENT_THREADS',    1);
  */
 define('LIST_UPDATED_THREADS',   2);
 
+/**
+ * Constant for the PhorumDBLayer::interact() function call
+ * $list_type parameter that indicates that unread messages have
+ * to be returned.
+ */
+define('LIST_UNREAD_MESSAGES',   3);
+
 // }}}
 
 abstract class PhorumDB
@@ -738,6 +745,7 @@ abstract class PhorumDB
      *     - LIST_RECENT_MESSAGES: return a list of recent messages
      *     - LIST_RECENT_THREADS: return a list of recent threads
      *     - LIST_UPDATED_THREADS: return a list of recently updated threads
+     *     - LIST_UNREAD_MESSAGES: return a list of unread messages
      *
      * @return array
      *     An array of recent messages, indexed by message_id. One special key
@@ -749,6 +757,15 @@ abstract class PhorumDB
         $list_type = LIST_RECENT_MESSAGES)
     {
         global $PHORUM;
+
+        if ($list_type == LIST_UNREAD_MESSAGES) {
+            if (empty($PHORUM['user']['user_id'])) trigger_error(
+                __METHOD__ . ": \$list_type parameter LIST_UNREAD_MESSAGES " .
+                "used, but no authenticated user available; this feature " .
+                "can only be used for authenticated users",
+                E_USER_ERROR
+            );
+        }
 
         // Backward compatibility for the old $threads_only parameter.
         if (is_bool($list_type)) {
@@ -779,9 +796,10 @@ abstract class PhorumDB
 
         // We have to check what forums the active Phorum user can read first.
         // Even if a $thread is passed, we have to make sure that the user
-        // can read the containing forum. Here we convert the $forum_id argument
-        // into an argument that is usable for phorum_api_user_check_access(),
-        // in such way that it will always return an array of accessible forum_ids.
+        // can read the containing forum. Here we convert the $forum_id
+        // argument into an argument that is usable for
+        // phorum_api_user_check_access(), in such way that it will always
+        // return an array of accessible forum_ids.
         if ($forum_id == 0) {
             $forum_id = PHORUM_ACCESS_LIST;
         } elseif(!is_array($forum_id)) {
@@ -804,8 +822,9 @@ abstract class PhorumDB
         // Indexes to use if we query exactly one forum.
         elseif (count($allowed_forums) == 1)
         {
-            switch($list_type) {
+            switch ($list_type) {
                 case LIST_RECENT_MESSAGES:
+                case LIST_UNREAD_MESSAGES:
                     $use_key = 'forum_recent_messages';
                     break;
                 case LIST_RECENT_THREADS:
@@ -819,8 +838,9 @@ abstract class PhorumDB
         // Indexes to use if we query more than one forum.
         else
         {
-            switch($list_type) {
+            switch ($list_type) {
                 case LIST_RECENT_MESSAGES:
+                case LIST_UNREAD_MESSAGES:
                     $use_key = 'PRIMARY';
                     break;
                 case LIST_RECENT_THREADS:
@@ -833,31 +853,47 @@ abstract class PhorumDB
         }
 
         // Build the SQL query.
-        $sql = "SELECT  *
-                FROM    {$this->message_table}
-                WHERE   status=".PHORUM_STATUS_APPROVED;
+        $sql = "SELECT msg.* FROM {$this->message_table} msg";
+
+        if ($list_type == LIST_UNREAD_MESSAGES) {
+            $sql .=
+                " LEFT JOIN {$this->user_newflags_min_id_table} min
+                  ON msg.forum_id = min.forum_id AND
+                  min.user_id = " . (int) $PHORUM['user']['user_id'] .
+                " LEFT JOIN {$this->user_newflags_table} new
+                  ON msg.message_id = new.message_id AND
+                  new.user_id = " . (int) $PHORUM['user']['user_id'];
+
+        }
+
+        $sql .= " WHERE msg.status = ".PHORUM_STATUS_APPROVED;
 
         if (count($allowed_forums) == 1) {
-            $sql .= " AND forum_id = " . array_shift($allowed_forums);
+            $sql .= " AND msg.forum_id = " . array_shift($allowed_forums);
         } else {
-            $sql .= " AND forum_id IN (".implode(",", $allowed_forums).")";
+            $sql .= " AND msg.forum_id IN (".implode(",", $allowed_forums).")";
         }
 
         if ($thread) {
-            $sql.=" AND thread = $thread";
+            $sql .= " AND msg.thread = $thread";
         }
 
-        $sql .= " AND moved = 0";
+        $sql .= " AND msg.moved = 0";
+
+        if ($list_type == LIST_UNREAD_MESSAGES) {
+            $sql .= " AND (min_id IS NULL OR msg.message_id > min_id)
+                      AND new.message_id IS NULL";
+        }
 
         if ($list_type == LIST_RECENT_THREADS ||
             $list_type == LIST_UPDATED_THREADS) {
-            $sql .= ' AND parent_id = 0';
+            $sql .= ' AND msg.parent_id = 0';
         }
 
         if ($list_type == LIST_UPDATED_THREADS) {
-            $sql .= ' ORDER BY modifystamp DESC';
+            $sql .= ' ORDER BY msg.modifystamp DESC';
         } else {
-            $sql .= ' ORDER BY datestamp DESC';
+            $sql .= ' ORDER BY msg.datestamp DESC';
         }
 
         // Retrieve matching messages from the database.
