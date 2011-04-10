@@ -5252,41 +5252,58 @@ abstract class PhorumDB
 
         $this->sanitize_mixed($forum_ids, 'int');
 
-        $sql = "select forum_id, min_id as message_id
-                from {$this->user_newflags_min_id_table}
-                where user_id=".$PHORUM["user"]["user_id"];
+        // Retrieve the min_id per forum.
+        $min_ids = $this->interact(
+            DB_RETURN_ASSOCS,
+            "SELECT forum_id, min_id as message_id
+             FROM   {$this->user_newflags_min_id_table}
+             WHERE  user_id = " . $PHORUM["user"]["user_id"],
+            "forum_id"
+        );
 
-        $list = $this->interact(DB_RETURN_ASSOCS, $sql, "forum_id");
-
-        $sql = "select forum_id, count(*) as count
-                from {$this->user_newflags_table}
-                where user_id=".$PHORUM["user"]["user_id"]."
-                group by forum_id";
-
-        $counts = $this->interact(DB_RETURN_ASSOCS, $sql, "forum_id");
+        // Retrieve the number of newflags per forum (these should all
+        // be newflags that have message_id > min_id.
+        $counts = $this->interact(
+            DB_RETURN_ASSOCS,
+            "SELECT forum_id, count(*) as count
+             FROM   {$this->user_newflags_table}
+             WHERE  user_id=".$PHORUM["user"]["user_id"]."
+             GROUP  BY forum_id",
+            "forum_id"
+        );
 
         $new_checks = array();
 
-        foreach($forum_ids as $forum_id){
-
-            if (empty($list[$forum_id]) || empty($counts[$forum_id])){
-
-                $new_checks[$forum_id] = FALSE;
-
-            } else {
-
-                // check for new messages
-                $sql = "select count(*) as count from {$this->message_table}
-                        where forum_id=".$forum_id." and
-                        message_id>=".$list[$forum_id]["message_id"]." and
-                        status=".PHORUM_STATUS_APPROVED." and
-                        moved=0";
-
-                list($count) = $this->interact(DB_RETURN_ROW, $sql);
-
-                $new_checks[$forum_id] = ($count > $counts[$forum_id]["count"]);
-
+        foreach ($forum_ids as $forum_id)
+        {
+            // No min_id available for this forum. This is a completely new
+            // forum for the user, so all the messages in it are new as well.
+            if (empty($min_ids[$forum_id])) {
+                $new_checks[$forum_id] = TRUE;
+                continue;
             }
+
+            // When no newflags exist in the database, then use a count of 0.
+            if (empty($counts[$forum_id])) {
+                $counts[$forum_id]["count"] = 0;
+            }
+
+            // Check how many messages exist in the database, which have
+            // a message_id that is higher than the min_id for the forum.
+            $count = $this->interact(
+                DB_RETURN_VALUE,
+                "SELECT count(*)
+                 FROM  {$this->message_table}
+                 WHERE forum_id=".$forum_id." AND
+                       message_id > {$min_ids[$forum_id]["message_id"]} AND
+                       status = " . PHORUM_STATUS_APPROVED . " AND
+                       moved = 0"
+            );
+
+            // If we have more messages beyond the min_id than we have
+            // newflags, then we have one or more new messages to read
+            // for the user.
+            $new_checks[$forum_id] = ($count > $counts[$forum_id]["count"]);
         }
 
         return $new_checks;
