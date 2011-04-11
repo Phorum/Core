@@ -556,6 +556,7 @@ abstract class PhorumDB
      *
      * @param boolean $include_bodies
      *     Whether to include the message bodies in the return data or not.
+     *     When bodies are included, then custom fields are included as well.
      *
      * @return array
      *     An array of messages, indexed by message id.
@@ -691,21 +692,12 @@ abstract class PhorumDB
             }
         }
 
+        // Add custom fields to the messages.
         if ($include_bodies && count($messages))
         {
-            // get custom fields
             $custom_fields = $this->get_custom_fields(
-                PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages));
-
-            // Add custom fields to the messages
-            foreach ($custom_fields as $message_id => $fields)
-            {
-                // Skip profile fields for messages which are not in our
-                // $return array. This should not happen, but it could
-                // happen in case some orphan custom fields
-                // are lingering in the database.
-                if (!isset($messages[$message_id])) continue;
-
+                PHORUM_CUSTOM_FIELD_MESSAGE, array_keys($messages));
+            foreach ($custom_fields as $message_id => $fields) {
                 foreach($fields as $fieldname => $fielddata) {
                     $messages[$message_id][$fieldname] = $fielddata;
                 }
@@ -993,19 +985,12 @@ abstract class PhorumDB
                                    : unserialize($message['meta']);
         }
 
-        if(!$countonly && count($messages)) {
-            // get custom fields
-            $custom_fields = $this->get_custom_fields(PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages));
-
-            // Add custom fields to the messages
-            foreach ($custom_fields as $message_id => $fields)
-            {
-                // Skip profile fields for messages which are not in our
-                // $return array. This should not happen, but it could
-                // happen in case some orphan custom fields
-                // are lingering in the database.
-                if (!isset($messages[$message_id])) continue;
-
+        // Add custom fields to the messages.
+        if (!$countonly && count($messages))
+        {
+            $custom_fields = $this->get_custom_fields(
+                PHORUM_CUSTOM_FIELD_MESSAGE, array_keys($messages));
+            foreach ($custom_fields as $message_id => $fields) {
                 foreach($fields as $fieldname => $fielddata) {
                     $messages[$message_id][$fieldname] = $fielddata;
                 }
@@ -1580,22 +1565,12 @@ abstract class PhorumDB
             $return[$message['message_id']] = $message;
         }
 
+        // Add custom fields to the messages.
         if (count($return))
         {
-            // get custom fields
-
             $custom_fields = $this->get_custom_fields(
-                PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($return),$flags);
-
-            // Add custom fields to the messages
-            foreach ($custom_fields as $message_id => $fields)
-            {
-                // Skip profile fields for messages which are not in our
-                // $return array. This should not happen, but it could
-                // happen in case some orphan custom fields
-                // are lingering in the database.
-                if (!isset($return[$message_id])) continue;
-
+                PHORUM_CUSTOM_FIELD_MESSAGE, array_keys($return), $flags);
+            foreach ($custom_fields as $message_id => $fields) {
                 foreach($fields as $fieldname => $fielddata) {
                     $return[$message_id][$fieldname] = $fielddata;
                 }
@@ -1628,12 +1603,13 @@ abstract class PhorumDB
      *
      * @param boolean $write_server
      *     This value can be set to true to specify that the message should be
-     *     retrieved from the master (aka write-server) in case replication is used
+     *     retrieved from the master (aka write-server) in case replication
+     *     is used
      *
      * @param boolean $get_custom_fields
-     *     This value can be set to false to specify that no custom fields should be
-     *     retrieved for the message, avoids another query and therefore speed
-     *     up things
+     *     This value can be set to false to specify that no custom fields
+     *     should be retrieved for the message, avoids another query and
+     *     therefore speed *     up things
      *
      * @return array
      *     An array of messages, indexed by message_id. One special key "users"
@@ -1731,21 +1707,12 @@ abstract class PhorumDB
             }
         }
 
+        // Add custom fields to the messages.
         if (count($messages) && $get_custom_fields)
         {
-            // get custom fields
             $custom_fields = $this->get_custom_fields(
-                PHORUM_CUSTOM_FIELD_MESSAGE,array_keys($messages),$flags);
-
-            // Add custom fields to the messages
-            foreach ($custom_fields as $message_id => $fields)
-            {
-                // Skip profile fields for messages which are not in our
-                // $return array. This should not happen, but it could
-                // happen in case some orphan custom fields
-                // are lingering in the database.
-                if (!isset($messages[$message_id])) continue;
-
+                PHORUM_CUSTOM_FIELD_MESSAGE, array_keys($messages), $flags);
+            foreach ($custom_fields as $message_id => $fields) {
                 foreach($fields as $fieldname => $fielddata) {
                     $messages[$message_id][$fieldname] = $fielddata;
                 }
@@ -3621,11 +3588,10 @@ abstract class PhorumDB
 
     // {{{ Method: get_custom_fields()
     /**
-     * Retrieve custom fields for one or more objects
-     * of the given type
+     * Retrieve custom fields for one or more objects of the given type
      *
      * @param integer $type
-     *     The type of the fields to be retrieved, can currently be:
+     *     The type of the fields to be retrieved, which can currently be:
      *         PHORUM_CUSTOM_FIELD_USER
      *         PHORUM_CUSTOM_FIELD_FORUM
      *         PHORUM_CUSTOM_FIELD_MESSAGE
@@ -3643,7 +3609,8 @@ abstract class PhorumDB
      *
      * @return mixed
      *     An array of custom fields is returned, indexed by relation_id.
-     *     For relation_ids that cannot be found, there will be no array element at all.
+     *     For relation_ids that cannot be found, there will be no
+     *     array element at all.
      */
     public function get_custom_fields(
         $type, $relation_id, $db_flags = 0, $raw_data = FALSE)
@@ -3663,46 +3630,45 @@ abstract class PhorumDB
             $relation_ids = "= $relation_id";
         }
 
-
-       // Retrieve custom user profile fields for the requested users.
         $custom_fields = $this->interact(
             DB_RETURN_ASSOCS,
-            "SELECT *
-             FROM   {$this->custom_fields_table}
-             WHERE  relation_id $relation_ids AND
-                    field_type = $type",
+            "SELECT f.*, c.name, c.html_disabled
+             FROM   {$this->custom_fields_config_table} c
+                    INNER JOIN {$this->custom_fields_table} f
+                    ON c.id = f.type
+             WHERE  c.field_type = $type AND
+                    c.deleted = 0 AND
+                    f.relation_id $relation_ids",
             NULL,
             $db_flags
         );
 
-        // Add custom user profile fields to the users.
+        // Format the custom field data.
         $requested_data = array();
         foreach ($custom_fields as $fld)
         {
-
-            // Skip unknown custom fields.
-            if (! isset($PHORUM['CUSTOM_FIELDS'][$type][$fld['type']])) continue;
-
-            // Fetch the name for the custom field.
-            $name = $PHORUM['CUSTOM_FIELDS'][$type][$fld['type']]['name'];
+            $name   = $fld['name'];
+            $rel_id = $fld['relation_id'];
+            $data   = $fld['data'];
 
             // For "html_disabled" fields, the data is XSS protected by
             // replacing special HTML characters with their HTML entities.
-            if ($PHORUM['CUSTOM_FIELDS'][$type][$fld['type']]['html_disabled'] && $raw_data === FALSE ) {
-                $requested_data[$fld['relation_id']][$name] = htmlspecialchars($fld['data']);
+            if ($fld['html_disabled'] && !$raw_data)
+            {
+                $requested_data[$rel_id][$name] = htmlspecialchars($data);
                 continue;
             }
 
             // Other fields can either contain raw values or serialized
             // arrays. For serialized arrays, the field data is prefixed with
             // a magic "P_SER:" (Phorum serialized) marker.
-            if (substr($fld['data'],0,6) == 'P_SER:') {
-                $requested_data[$fld['relation_id']][$name]=unserialize(substr($fld['data'],6));
+            if (substr($data, 0, 6) == 'P_SER:') {
+                $requested_data[$rel_id][$name] = unserialize(substr($data, 6));
                 continue;
             }
 
             // The rest of the fields contain raw field data.
-            $requested_data[$fld['relation_id']][$name] = $fld['data'];
+            $requested_data[$rel_id][$name] = $data;
         }
 
         return $requested_data;
@@ -3711,7 +3677,8 @@ abstract class PhorumDB
 
     // {{{ Method: user_get_fields()
     /**
-     * Retrieve the data for a couple of user table fields for one or more users.
+     * Retrieve the data for a couple of provided user table fields for
+     * one or more users.
      *
      * @param mixed $user_id
      *     The user_id or an array of user_ids for which to retrieve
@@ -4076,12 +4043,12 @@ abstract class PhorumDB
      *     the user for which to update the data. The array can contain two
      *     special fields:
      *     - forum_permissions:
-     *       This field can contain an array with forum permissions for the user.
-     *       The keys are forum_ids and the values are permission values.
+     *       This field can contain an array with forum permissions for the
+     *       user. The keys are forum_ids and the values are permission values.
      *     - user_data:
      *       This field can contain an array of key/value pairs which will be
      *       inserted in the database as custom profile fields. The keys are
-     *       profile type ids (as defined by $PHORUM["CUSTOM_FIELDS"]).
+     *       profile type ids (ids from the custom field config table).
      *
      * @return boolean
      *     True if all settings were stored successfully. This function will

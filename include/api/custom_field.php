@@ -363,7 +363,7 @@ function phorum_api_custom_field_restore($id)
 
 // {{{ Function: phorum_api_custom_field_apply()
 /**
- * Retrieve custom fields and add/apply them to the given array
+ * Retrieve custom fields and add/apply them to the provided objects.
  *
  * @param int $field_type
  *     The type of the custom fields to retrieve for the input array
@@ -371,6 +371,7 @@ function phorum_api_custom_field_restore($id)
  * @param array $data_array
  *     The data array where the custom fields should be added to.
  *     Keys should be the ids to retrieve custom fields for.
+ *     The values are the objects to add the custom field data to.
  *
  * @param boolean $raw_data
  *     When this parameter is TRUE (default is FALSE), then custom fields
@@ -380,7 +381,8 @@ function phorum_api_custom_field_restore($id)
  * @return array
  *     Returns the input array with the custom fields added.
  */
-function phorum_api_custom_field_apply($field_type = NULL, $data_array, $raw_data = FALSE)
+function phorum_api_custom_field_apply(
+    $field_type = NULL, $data_array, $raw_data = FALSE)
 {
     global $PHORUM;
 
@@ -403,21 +405,15 @@ function phorum_api_custom_field_apply($field_type = NULL, $data_array, $raw_dat
         return $data_array;
     }
 
+    // Retrieve the custom field data from the database.
     $custom_fields = $PHORUM['DB']->get_custom_fields(
         $field_type,
         array_keys($data_array),
         $raw_data
     );
 
-    // Add custom fields to the forums
-    foreach ($custom_fields as $id => $fields)
-    {
-        // Skip custom fields for entries which are not in our
-        // $data_array array. This should not happen, but it could
-        // happen in case some orphan custom fields
-        // are lingering in the database.
-        if (!isset($data_array[$id])) continue;
-
+    // Add custom fields to the objects.
+    foreach ($custom_fields as $id => $fields) {
         foreach ($fields as $fieldname => $fielddata) {
             $data_array[$id][$fieldname] = $fielddata;
         }
