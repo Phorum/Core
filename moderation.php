@@ -208,14 +208,19 @@ switch ($mod_step)
 }
 
 // Remove the affected messages from the cache if caching is enabled.
-if ($PHORUM['cache_messages'])
-{
-    foreach ($invalidate_message_cache as $message) {
-        phorum_api_cache_remove(
-            'message', $message['forum_id']."-".$message["message_id"]);
+if ($PHORUM['cache_messages']) {
+	$invalidate_forums = array();
+    foreach($invalidate_message_cache as $message) {
+        phorum_api_cache_remove('message', $message['forum_id']."-".$message["message_id"]);
+        $invalidate_forums[$message['forum_id']]=$message['forum_id'];
     }
-
-    phorum_api_forums_increment_cache_version($PHORUM['forum_id']);
+    
+    if(is_array($invalidate_forums) && count($invalidate_forums)) {
+	    // increment the cache version for all involved forums once
+	    foreach($invalidate_forums as $forum_id) {
+	    	phorum_api_forums_increment_cache_version($forum_id);
+	    }
+    }
 }
 
 if (!isset($PHORUM['DATA']['BACKMSG'])) {
