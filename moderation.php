@@ -1037,9 +1037,20 @@ switch ($mod_step) {
 
 // remove the affected messages from the cache if caching is enabled.
 if ($PHORUM['cache_messages']) {
+	$invalidate_forums = array();
     foreach($invalidate_message_cache as $message) {
         phorum_cache_remove('message', $message["message_id"]);
-        phorum_db_update_forum(array('forum_id'=>$PHORUM['forum_id'],'cache_version'=>($PHORUM['cache_version']+1)));
+        $invalidate_forums[$message['forum_id']]=$message['forum_id'];
+    }
+    
+    if(is_array($invalidate_forums) && count($invalidate_forums)) {
+	    // retrieve the data for all involved forums to get the correct cache version
+	    $forums_data = phorum_api_forums_get($invalidate_forums); 
+	    
+	    // increment the cache version for all involved forums once
+	    foreach($invalidate_forums as $forum_id) {
+	    	phorum_db_update_forum(array('forum_id'=>$forum_id,'cache_version'=>($forums_data[$forum_id]['cache_version']+1)));
+	    }
     }
 }
 
