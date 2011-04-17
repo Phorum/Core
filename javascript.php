@@ -72,8 +72,8 @@ $module_registrations[] = array(
 // Add the jQuery bgiframe plugin.
 $module_registrations[] = array(
     'module'    => 'core',
-    'source'    => 'file(include/javascript/jquery.bgiframe-2.1.1.min.js)',
-    'cache_key' => '2.1.1.min'
+    'source'    => 'file(include/javascript/jquery.bgiframe-2.1.2.min.js)',
+    'cache_key' => '2.1.2.min'
 );
 
 // Add the Phorum JavaScript library.
