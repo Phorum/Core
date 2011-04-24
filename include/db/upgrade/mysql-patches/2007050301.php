@@ -17,7 +17,7 @@ if (empty($real_name_field) || !empty($real_name_field['deleted'])) return;
 
 // If we do, then copy all available real_names to the new real_name
 // field in the user table.
-$sth = phorum_db_interact(
+$sth = $PHORUM['DB']->interact(
     DB_RETURN_RES,
     "SELECT * FROM {$PHORUM['DB']->prefix}_user_custom_fields
      WHERE  type = {$real_name_field['id']}"

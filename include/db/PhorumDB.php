@@ -5707,7 +5707,7 @@ abstract class PhorumDB
         {
             $flags = $this->user_newflags_table;
             $msg   = $this->message_table;
-            return phorum_db_interact(
+            return $this->interact(
                 DB_RETURN_RES,
                 "UPDATE IGNORE $flags
                  SET forum_id = (

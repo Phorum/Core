@@ -1019,7 +1019,7 @@ class PhorumMysqlDB extends PhorumDB
         $this->sanitize_mixed($message_ids, 'int');
         $ids_str = implode(', ', $message_ids);
 
-        return phorum_db_interact(
+        return $this->interact(
             DB_RETURN_RES,
             "UPDATE IGNORE
                     {$GLOBALS['PHORUM']['user_newflags_table']} AS flags,

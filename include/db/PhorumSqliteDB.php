@@ -339,7 +339,7 @@ class PhorumSqliteDB extends PhorumDB
         }
 
         trigger_error(
-            'Internal error: phorum_db_interact(): ' .
+            __METHOD__ . ': Internal error: ' .
             'illegal return type specified!', E_USER_ERROR
         );
     }
