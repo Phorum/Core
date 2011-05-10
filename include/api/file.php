@@ -640,6 +640,9 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     // If we do not do any permission checking, then we are done.
     if ($flags & PHORUM_FLAG_IGNORE_PERMS) return $file;
 
+    // If PHORUM_ADMIN is defined, we don't need to check permissions
+    if (defined("PHORUM_ADMIN")) return $file;
+
     // Is the file linked to a forum message? In that case, we have to
     // check if the message does really belong to the requested forum_id.
     if ($file["link"] == PHORUM_LINK_MESSAGE && !empty($file["message_id"]))
@@ -812,7 +815,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
      *     Same as input with file_data filled in.
      *
      */
-    
+
     $file["result"]    = 0;
     $file["mime_type"] = NULL;
     $file["file_data"] = NULL;
@@ -847,21 +850,21 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         // Determine the MIME type based on the file extension using
         // the MIME types as defined in the Phorum API code.
         $extension_mime_type = phorum_api_file_get_mimetype($file["filename"]);
-        
+
         // The MIME magic file to use for the fileinfo extension.
         if(!empty($PHORUM['mime_magic_file'])) {
-            $mime_magic_file = $PHORUM['mime_magic_file']; 
+            $mime_magic_file = $PHORUM['mime_magic_file'];
         } else {
             $mime_magic_file = NULL;
         }
 
         // Retrieve the MIME-type using the fileinfo extension if
         // it is available and enabled.
-        if (function_exists("finfo_open") && 
+        if (function_exists("finfo_open") &&
             (!isset($PHORUM['file_fileinfo_ext']) ||
              !empty($PHORUM['file_fileinfo_ext'])) &&
             $finfo = @finfo_open(FILEINFO_MIME, $mime_magic_file)) {
-            
+
             $file["mime_type"] = finfo_buffer($finfo, $file['file_data']);
             finfo_close($finfo);
             if ($file["mime_type"] === FALSE) return phorum_api_error(
@@ -889,15 +892,15 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     // download the file instead.
     $safe_to_cache = TRUE;
     $safe_to_view  = TRUE;
-    if (!($flags & PHORUM_FLAG_FORCE_DOWNLOAD) && !$mime_type_verified) 
-    {       
-        list ($safe_to_view, $safe_to_cache) = 
+    if (!($flags & PHORUM_FLAG_FORCE_DOWNLOAD) && !$mime_type_verified)
+    {
+        list ($safe_to_view, $safe_to_cache) =
             phorum_api_file_safe_to_view($file);
-        if (!$safe_to_view) { 
+        if (!$safe_to_view) {
             $flags = $flags | PHORUM_FLAG_FORCE_DOWNLOAD;
-        } 
-    }   
-    
+        }
+    }
+
     // Allow for post processing on the retrieved file.
     /**
      * @todo document the file_after_retrieve hook.
@@ -921,7 +924,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
         $time = (int)$file['add_datetime'];
 
         // Handle client side caching.
-        if ($safe_to_cache) 
+        if ($safe_to_cache)
         {
             // Check if an If-Modified-Since header is in the request. If yes,
             // then check if the file has changed, based on the date from
@@ -1244,7 +1247,7 @@ function phorum_api_file_safe_to_view($file)
 
     $safe_to_cache = TRUE;
     $safe_to_view  = TRUE;
-    
+
     // Based on info from:
     // http://webblaze.cs.berkeley.edu/2009/content-sniffing/
     //
