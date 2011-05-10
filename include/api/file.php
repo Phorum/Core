@@ -632,6 +632,9 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
     // If we do not do any permission checking, then we are done.
     if ($flags & PHORUM_FLAG_IGNORE_PERMS) return $file;
 
+    // If PHORUM_ADMIN is defined, we don't need to check permissions
+    if (defined("PHORUM_ADMIN")) return $file;
+
     // Is the file linked to a forum message? In that case, we have to
     // check if the message does really belong to the requested forum_id.
     if ($file["link"] == PHORUM_LINK_MESSAGE && !empty($file["message_id"]))
@@ -805,7 +808,7 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     $file["result"]    = 0;
     $file["mime_type"] = NULL;
     $file["file_data"] = NULL;
-    if (isset($PHORUM["hooks"]["file_retrieve"])) {     
+    if (isset($PHORUM["hooks"]["file_retrieve"])) {
         list($file,$flags) = phorum_hook("file_retrieve", array($file,$flags));
         if ($file === FALSE) return FALSE;
 
@@ -837,15 +840,15 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 
         // mime magic file in case its needed
         if(!empty($PHORUM['mime_magic_file'])) {
-            $mime_magic_file = $PHORUM['mime_magic_file']; 
+            $mime_magic_file = $PHORUM['mime_magic_file'];
         } else {
             $mime_magic_file = NULL;
         }
         // retrieve the mime-type using the fileinfo extension if its available and enabled
-        if(function_exists("finfo_open") && 
+        if(function_exists("finfo_open") &&
            (!isset($PHORUM['file_fileinfo_ext']) || !empty($PHORUM['file_fileinfo_ext'])) &&
            $finfo = @finfo_open(FILEINFO_MIME,$mime_magic_file)) {
-            
+
             $file["mime_type"] = finfo_buffer($finfo,$file['file_data']);
             finfo_close($finfo);
             if ($file["mime_type"] === FALSE) return phorum_api_error_set(
@@ -923,9 +926,9 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
             header('Last-Modified: '.gmdate('D, d M Y H:i:s \G\M\T', time()));
             // HTTP/1.1
             header('cache-Control: no-store, no-cache, must-revalidate');
-            header('cache-Control: post-check=0, pre-check=0', FALSE); 
+            header('cache-Control: post-check=0, pre-check=0', FALSE);
             // HTTP/1.0
-            header('Pragma: no-cache'); 
+            header('Pragma: no-cache');
         }
 
         if ($flags & PHORUM_FLAG_FORCE_DOWNLOAD) {
@@ -1232,7 +1235,7 @@ function phorum_api_file_safe_to_view($file)
 
     $safe_to_cache = TRUE;
     $safe_to_view  = TRUE;
-    
+
     // Based on info from:
     // http://webblaze.cs.berkeley.edu/2009/content-sniffing/
     //
