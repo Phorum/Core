@@ -26,7 +26,7 @@ chdir(dirname(__FILE__));
 include_once("./common.php");
 
 // if we are running in the webserver, bail out
-if (isset($_SERVER["REMOTE_ADDR"])) {
+if ('cli' != php_sapi_name()) {
     echo $PHORUM["DATA"]["LANG"]["CannotBeRunFromBrowser"];
     return;
 }
