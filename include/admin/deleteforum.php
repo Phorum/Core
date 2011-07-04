@@ -86,7 +86,7 @@ if ($_GET["confirm"]=="Yes")
 
 } else {
 
-    $forum = phorum_api_forums_get((int)$_GET['forum_id']);
+    $forum = phorum_api_forums_get((int)$_GET['forum_id'],NULL,NULL,NULL,PHORUM_FLAG_INCLUDE_INACTIVE);
 
     if($forum["folder_flag"]){
         $msg="Are you sure you want to delete $forum[name]?  All forums and folders in this folder will be moved to this folder's parent.";
