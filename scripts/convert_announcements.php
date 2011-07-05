@@ -1,9 +1,14 @@
+#!/usr/bin/php
 <?php
 
 define('PHORUM_ADMIN', 1);
 
 define('phorum_page', 'convert_announcements');
 
+if ('cli' != php_sapi_name()) {
+    echo "This script cannot be run from a browser.";
+    return;
+}
 chdir(dirname(__FILE__) . "/..");
 require_once './common.php';
 

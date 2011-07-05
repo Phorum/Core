@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 /*
@@ -69,6 +70,11 @@ Instructions:
 9. Delete the upgrade script phorum3to5convert.php.
 
 */
+
+if ('cli' != php_sapi_name()) {
+    echo "This script cannot be run from a browser.";
+    return;
+}
 
 ini_set ( "zlib.output_compression", "0");
 ini_set ( "output_handler", "");

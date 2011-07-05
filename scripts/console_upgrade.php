@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
@@ -19,6 +20,12 @@
 
 // I guess the phorum-directory is one level up. if you move the script to
 // somewhere else you'll need to change that.
+
+if ('cli' != php_sapi_name()) {
+    echo "This script cannot be run from a browser.";
+    return;
+}
+
 $PHORUM_DIRECTORY = dirname(__FILE__) . "/../";
 
 // change directory to the main-dir so we can use common.php
