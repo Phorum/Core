@@ -1528,9 +1528,8 @@ function phorum_db_get_message_index($thread=0, $message_id=0)
          WHERE  $forum_id_check
                 thread = $thread
                 $approvedval AND
-                message_id <= $message_id
-         ORDER  BY message_id"
-    );
+                message_id <= $message_id"
+                );
 
     return $index;
 }
