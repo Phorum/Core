@@ -875,7 +875,7 @@ function phorum_api_forums_update_path($forum, $recurse = TRUE)
     {
         // Retrieve the info from the vroot.
         $vroot = phorum_api_forums_get(
-            $forum['vroot'], PHORUM_FLAG_INCLUDE_INACTIVE
+            $forum['vroot'], NULL, NULL, NULL, PHORUM_FLAG_INCLUDE_INACTIVE
         );
 
         // Check if the vroot was found.
