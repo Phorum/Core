@@ -1,5 +1,9 @@
+#!/usr/bin/php
 <?php
-
+if ('cli' != php_sapi_name()) {
+    echo "This script cannot be run from a browser.";
+    return;
+}
 print "\n";
 print "------------------------------------------------------------------\n";
 print "Gathering hook information from the source code ...\n";

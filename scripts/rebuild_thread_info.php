@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 // rebuild thread info
 // this script rebuilds the thread info data for all threads 
@@ -6,7 +7,7 @@
 // i.e. in case of errors, required updates etc.
 
 // if we are running in the webserver, bail out
-if (isset($_SERVER["REMOTE_ADDR"])) {
+if ('cli' != php_sapi_name()) {
     echo "This script cannot be run from a browser.";
     return;
 }

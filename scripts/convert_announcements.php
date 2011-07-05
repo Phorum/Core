@@ -1,5 +1,9 @@
+#!/usr/bin/php
 <?php
-
+if ('cli' != php_sapi_name()) {
+    echo "This script cannot be run from a browser.";
+    return;
+}
 define('PHORUM_ADMIN', 1);
 
 define('phorum_page', 'convert_announcements');

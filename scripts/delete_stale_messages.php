@@ -1,14 +1,14 @@
+#!/usr/bin/php
 <?php
 // delete stale messages
 // this script deletes all stale messages (reply messages without an
 // existing parent thread) from the database
 
 // if we are running in the webserver, bail out
-if (isset($_SERVER["REMOTE_ADDR"])) {
+if ('cli' != php_sapi_name()) {
     echo "This script cannot be run from a browser.";
     return;
 }
-
 define('phorum_page', 'delete_stale_messages');
 define('PHORUM_ADMIN', 1);
 require_once(dirname(__FILE__).'/../include/api.php');

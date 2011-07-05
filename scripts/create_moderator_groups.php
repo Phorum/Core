@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 // This script creates a moderator group for every forum on the system.
@@ -5,7 +6,7 @@
 // moderators to the forums.
 
 // if we are running in the webserver, bail out
-if (isset($_SERVER["REMOTE_ADDR"])) {
+if ('cli' != php_sapi_name()) {
     echo "This script cannot be run from a browser.";
     return;
 }

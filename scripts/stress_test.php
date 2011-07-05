@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
@@ -18,9 +19,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // if we are running in the webserver, bail out
-if (isset($_SERVER["REMOTE_ADDR"])) {
-   print "This script cannot be run from a browser.";
-   return;
+if ('cli' != php_sapi_name()) {
+    echo "This script cannot be run from a browser.";
+    return;
 }
 
 define("phorum_page", "stresstest");

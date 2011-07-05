@@ -1,4 +1,6 @@
+#!/usr/bin/php
 <?php
+
 /*
 
 This is just a simple script for updating the post-count of each user, which
@@ -10,7 +12,7 @@ Depending on the number of messages and users, it may take some time.
 */
 
 // if we are running in the webserver, bail out
-if (isset($_SERVER["REMOTE_ADDR"])) {
+if ('cli' != php_sapi_name()) {
     echo "This script cannot be run from a browser.";
     return;
 }

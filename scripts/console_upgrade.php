@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
@@ -37,11 +38,10 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
 }
 
 // if we are running in the webserver, bail out
-if (isset($_SERVER["REMOTE_ADDR"])) {
-   echo "This script cannot be run from a browser.";
-   return;
+if ('cli' != php_sapi_name()) {
+    echo "This script cannot be run from a browser.";
+    return;
 }
-
 // Load Phorum core code.
 define("phorum_page", "console_upgrade");
 define("PHORUM_ADMIN", 1);

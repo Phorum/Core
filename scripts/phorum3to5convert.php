@@ -1,5 +1,9 @@
+#!/usr/bin/php
 <?php
-
+if ('cli' != php_sapi_name()) {
+    echo "This script cannot be run from a browser.";
+    return;
+}
 /*
 
 ***** IT IS HIGHLY RECCOMENDED THAT YOU RUN THIS SCRIPT ON A CONSOLE

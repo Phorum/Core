@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 // rebuild search-table
 // this script rebuilds the search-table
@@ -8,7 +9,7 @@
 define('phorum_page', 'rebuild_search_table');
 
 // if we are running in the webserver, bail out
-if (isset($_SERVER["REMOTE_ADDR"])) {
+if ('cli' != php_sapi_name()) {
     echo "This script cannot be run from a browser.";
     return;
 }

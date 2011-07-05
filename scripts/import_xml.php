@@ -1,6 +1,9 @@
 #!/usr/local/bin/php
 <?php
-
+if ('cli' != php_sapi_name()) {
+    echo "This script cannot be run from a browser.";
+    return;
+}
 $opts = getopt("hf:");
 
 if(isset($opts["h"])){
