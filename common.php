@@ -766,7 +766,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
         } elseif(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY){
             $PHORUM["DATA"]["GLOBAL_ERROR"]=$PHORUM["DATA"]["LANG"]["ReadOnlyMessage"];
-            $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array());
+            $PHORUM["user"] = array("user_id" => 0, "username" => "", "admin" => false, "newinfo" => array(),"tz_offset" => -99);
             $PHORUM["DATA"]["LOGGEDIN"] = false;
         }
     }
