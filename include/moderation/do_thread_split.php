@@ -19,6 +19,13 @@ $PHORUM['DB']->split_thread(
     $update_subjects
 );
 
+if ($PHORUM['cache_messages']) {
+    $message = $PHORUM['DB']->get_message($_POST['thread']);
+    foreach ($message['meta']['message_ids'] as $message_id) {
+        phorum_api_cache_remove('message', $message_id);
+    }
+}
+
 // update message count / stats
 phorum_api_thread_update_metadata($_POST['thread']);
 phorum_api_thread_update_metadata($_POST['message']);
