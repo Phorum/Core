@@ -999,6 +999,15 @@ switch ($mod_step) {
            settype($_POST['message'], "int");
            settype($_POST['thread'], "int");
            phorum_db_split_thread($_POST['message'],$_POST['forum_id']);
+
+           if ($PHORUM['cache_messages']) {
+               $message = phorum_db_get_message($_POST['thread']);
+               foreach ($message['meta']['message_ids'] as $message_id) {
+                   phorum_cache_remove('message', $message_id);
+               }
+           }
+
+
            // update message count / stats
            phorum_update_thread_info($_POST['thread']);
            phorum_update_thread_info($_POST['message']);
