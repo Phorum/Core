@@ -41,9 +41,13 @@ if (!phorum_api_file_check_write_access(array("link" => PHORUM_LINK_USER))) {
 if (!empty($_FILES) && is_uploaded_file($_FILES["newfile"]["tmp_name"]))
 {
     // Read in the uploaded file.
-    $fp = fopen($_FILES["newfile"]["tmp_name"], "r");
-    $file_data = fread($fp, $_FILES["newfile"]["size"]);
-    fclose($fp);
+    if(!empty($_FILES["newfile"]["size"])) {
+        $fp = fopen($_FILES["newfile"]["tmp_name"], "r");
+        $file_data = fread($fp, $_FILES["newfile"]["size"]);
+        fclose($fp);
+    } else {
+        $file_data = "";
+    }
 
     // Create the file array for the file storage API.
     $file = array(
