@@ -57,17 +57,11 @@ $module_registrations = array();
 if (!$no_jquery) {
     $module_registrations[] = array(
         'module'    => 'core',
-        'source'    => 'file(include/javascript/jquery-1.4.4.min.js)',
+        'source'    => 'file(include/javascript/jquery-1.6.2.min.js)',
         'cache_key' => '1.4.4.min'
     );
 }
 
-// Add the jQuery JSON plugin.
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/javascript/jquery.json-1.3.min.js)',
-    'cache_key' => '1.3.min'
-);
 
 // Add the jQuery bgiframe plugin.
 $module_registrations[] = array(

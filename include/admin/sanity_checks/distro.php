@@ -93,8 +93,7 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/index/directory.php',
     'include/index/flat.php',
     'include/javascript/phorum-javascript-library.php',
-    'include/javascript/jquery.json-1.3.min.js',
-    'include/javascript/jquery-1.4.4.min.js',
+    'include/javascript/jquery-1.6.2.min.js',
     'include/version_functions.php',
 
     'include/posting/action_attachments.php',
