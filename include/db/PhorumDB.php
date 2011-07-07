@@ -400,8 +400,6 @@ abstract class PhorumDB
      */
     public function update_settings($settings)
     {
-        // not used in here
-        //global $PHORUM;
 
         if (count($settings) > 0)
         {
@@ -517,8 +515,6 @@ abstract class PhorumDB
      */
     public function run_queries($queries)
     {
-        // not used in here
-        //global $PHORUM;
 
         $error = NULL;
 
@@ -935,8 +931,6 @@ abstract class PhorumDB
      */
     public function get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $moddays=0, $countonly = FALSE)
     {
-        // not used in here
-        //global $PHORUM;
 
         settype($on_hold_only, 'bool');
         settype($moddays, 'int');
@@ -1315,8 +1309,6 @@ abstract class PhorumDB
      */
     public function delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     {
-        // not used in this function
-        // global $PHORUM;
 
         settype($message_id, 'int');
         settype($mode, 'int');
@@ -1458,9 +1450,6 @@ abstract class PhorumDB
      */
     public function get_messagetree($message_id, $forum_id)
     {
-        // not used in here
-        //global $PHORUM;
-
         settype($message_id, 'int');
         settype($forum_id, 'int');
 
@@ -2258,8 +2247,6 @@ abstract class PhorumDB
      */
     public function get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL, $only_inherit_masters = FALSE, $return_type = 0, $include_inactive = FALSE)
     {
-        // not used in here
-        //global $PHORUM;
 
         $this->sanitize_mixed($forum_ids, 'int');
         if ($parent_id  !== NULL) settype($parent_id, 'int');
@@ -2541,8 +2528,6 @@ abstract class PhorumDB
      */
     public function close_thread($thread_id)
     {
-        // not used in here
-        //global $PHORUM;
 
         settype($thread_id, 'int');
 
@@ -2568,8 +2553,6 @@ abstract class PhorumDB
      */
     public function reopen_thread($thread_id)
     {
-        global $PHORUM;
-
         settype($thread_id, 'int');
 
         if ($thread_id > 0) {
@@ -2602,8 +2585,6 @@ abstract class PhorumDB
      */
     public function add_forum($forum)
     {
-        global $PHORUM;
-
         // check for fields that must be set for mysql strict mode
         if(empty($forum["description"])) $forum["description"] = "";
         if(empty($forum["forum_path"])) $forum["forum_path"] = "";
@@ -2688,8 +2669,6 @@ abstract class PhorumDB
      */
     public function update_forum($forum)
     {
-        global $PHORUM;
-
         // Check if the forum_id is set.
         if (!isset($forum['forum_id']) || empty($forum['forum_id'])) trigger_error(
             __METHOD__ . ': $forum["forum_id"] cannot be empty',
@@ -2771,8 +2750,6 @@ abstract class PhorumDB
      */
     public function drop_forum($forum_id)
     {
-        global $PHORUM;
-
         settype($forum_id, 'int');
 
         // These are the tables that hold forum related data.
@@ -2866,7 +2843,6 @@ abstract class PhorumDB
      */
     public function drop_folder($forum_id)
     {
-        global $PHORUM;
 
         settype($forum_id, 'int');
 
@@ -2921,9 +2897,6 @@ abstract class PhorumDB
      */
     public function add_message_edit($edit_data)
     {
-        // not used in here
-        //global $PHORUM;
-
 
         foreach ($edit_data as $key => $value) {
             if (is_numeric($value)) {
@@ -2972,8 +2945,6 @@ abstract class PhorumDB
      */
     public function get_message_edits($message_id)
     {
-        global $PHORUM;
-
         settype($message_id, 'int');
 
         // Select the message files from the database.
@@ -3114,8 +3085,6 @@ abstract class PhorumDB
      */
     public function get_group_members($group_id, $status = NULL)
     {
-        global $PHORUM;
-
         $this->sanitize_mixed($group_id, 'int');
         if ($status !== NULL) settype($status, 'int');
 
@@ -3172,8 +3141,6 @@ abstract class PhorumDB
      */
     public function add_group($group_name, $group_id=0)
     {
-        global $PHORUM;
-
         settype($group_id, 'int');
         $group_name = $this->interact(DB_RETURN_QUOTED, $group_name);
 
@@ -3226,8 +3193,6 @@ abstract class PhorumDB
      */
     public function update_group($group)
     {
-        global $PHORUM;
-
         // Check if the group_id is set.
         if (!isset($group['group_id']) || empty($group['group_id'])) trigger_error(
             __METHOD__ . ': $group["group_id"] cannot be empty',
@@ -3301,8 +3266,6 @@ abstract class PhorumDB
      */
     public function delete_group($group_id)
     {
-        global $PHORUM;
-
         settype($group_id, 'int');
 
         // These are the tables that hold group related data.
@@ -3348,8 +3311,6 @@ abstract class PhorumDB
      */
     public function user_get_moderators($forum_id, $exclude_admin=FALSE, $for_email=FALSE)
     {
-        global $PHORUM;
-
         settype($forum_id, 'int');
         settype($exclude_admin, 'bool');
         settype($for_email, 'bool');
@@ -3416,8 +3377,6 @@ abstract class PhorumDB
      */
     public function user_count()
     {
-        global $PHORUM;
-
         return $this->interact(
             DB_RETURN_VALUE,
             "SELECT count(*)
@@ -3445,8 +3404,6 @@ abstract class PhorumDB
      */
     public function user_get_all($offset = 0, $limit = 0)
     {
-        global $PHORUM;
-
         settype($offset, 'int');
         settype($limit, 'int');
 
@@ -3485,8 +3442,6 @@ abstract class PhorumDB
      */
     public function user_get($user_id, $detailed = FALSE, $write_server = FALSE)
     {
-        // not used in here
-        //global $PHORUM;
 
         $this->sanitize_mixed($user_id, 'int');
 
@@ -3631,8 +3586,6 @@ abstract class PhorumDB
     public function get_custom_fields(
         $type, $relation_id, $db_flags = 0, $raw_data = FALSE)
     {
-        global $PHORUM;
-
         $this->sanitize_mixed($relation_id, 'int');
         $this->sanitize_mixed($type, 'int');
 
@@ -3710,8 +3663,6 @@ abstract class PhorumDB
      */
     public function user_get_fields($user_id, $fields)
     {
-        global $PHORUM;
-
         $this->sanitize_mixed($user_id, 'int');
 
         if (is_array($user_id)) {
@@ -3764,8 +3715,6 @@ abstract class PhorumDB
      */
     public function user_get_list($type = 0)
     {
-        global $PHORUM;
-
         settype($type, 'int');
 
         $where = '';
@@ -3807,8 +3756,6 @@ abstract class PhorumDB
      */
     public function user_check_login($username, $password, $temp_password=FALSE)
     {
-        // not used in here
-        //global $PHORUM;
 
         settype($temp_password, 'bool');
         $username = $this->interact(DB_RETURN_QUOTED, $username);
@@ -3884,8 +3831,6 @@ abstract class PhorumDB
         $field, $value, $operator = '=', $return_array = FALSE,
         $type = 'AND', $sort = NULL, $offset = 0, $limit = 0)
     {
-        // not used in here
-        //global $PHORUM;
 
         settype($return_array, 'bool');
         settype($offset, 'int');
@@ -4014,8 +3959,6 @@ abstract class PhorumDB
      */
     public function user_add($userdata)
     {
-        // not used in here
-        //global $PHORUM;
 
         // We need at least the username for the user.
         if (! isset($userdata['username'])) trigger_error(
@@ -4076,8 +4019,6 @@ abstract class PhorumDB
      */
     public function user_save($userdata)
     {
-        global $PHORUM;
-
         // Pull some non user table fields from the userdata. These can be
         // set in case the $userdata parameter that is used is coming from
         // phorum_api_user_get() or user_get().
@@ -4178,8 +4119,6 @@ abstract class PhorumDB
     // {{{ Method: save_custom_fields()
     public function save_custom_fields($relation_id, $field_type, $customfield_data)
     {
-        // not used in here
-        // global $PHORUM;
 
         // Update custom fields for the object.
         if (isset($customfield_data))
@@ -4251,8 +4190,6 @@ abstract class PhorumDB
      */
     public function user_display_name_updates($userdata)
     {
-        // not used in here
-        //global $PHORUM;
         
         if (!isset($userdata['user_id'])) trigger_error(
             __METHOD__ . ': Missing user_id field in ' .
@@ -4344,8 +4281,6 @@ abstract class PhorumDB
      */
     public function user_save_groups($user_id, $groups)
     {
-        global $PHORUM;
-
         settype($user_id, 'int');
 
         // Delete all existing group memberships.
@@ -4407,8 +4342,6 @@ abstract class PhorumDB
      */
     public function user_subscribe($user_id, $thread, $forum_id, $type)
     {
-        global $PHORUM;
-
         settype($user_id, 'int');
         settype($forum_id, 'int');
         settype($thread, 'int');
@@ -4462,8 +4395,6 @@ abstract class PhorumDB
      */
     public function user_unsubscribe($user_id, $thread, $forum_id=0)
     {
-        global $PHORUM;
-
         settype($user_id, 'int');
         settype($forum_id, 'int');
         settype($thread, 'int');
@@ -4523,9 +4454,6 @@ abstract class PhorumDB
      */
     public function user_get_groups($user_id)
     {
-        // not used in here
-        //global $PHORUM;
-
         settype($user_id, 'int');
 
         // Retrieve the groups for the user_id from the database.
@@ -4560,8 +4488,6 @@ abstract class PhorumDB
      */
     public function user_get_unapproved()
     {
-        global $PHORUM;
-
         $users = $this->interact(
             DB_RETURN_ASSOCS,
             "SELECT user_id,
@@ -4685,8 +4611,6 @@ abstract class PhorumDB
     // {{{ Method: delete_custom_fields
     public function delete_custom_fields($type,$relation_id)
     {
-        global $PHORUM;
-
         if (is_array($relation_id)) {
             $rel_where = "relation_id IN (".implode(',',$relation_id).")";
         } else {
@@ -4729,8 +4653,6 @@ abstract class PhorumDB
      */
     public function get_file_list($link_type = NULL, $user_id = NULL, $message_id = NULL)
     {
-        global $PHORUM;
-
         $where = '';
         $clauses = array();
         if ($link_type !== NULL) {
@@ -4815,8 +4737,6 @@ abstract class PhorumDB
      */
     public function file_get($file_id, $include_file_data = TRUE)
     {
-        global $PHORUM;
-
         settype($file_id, 'int');
 
         $fields = "file_id, user_id, filename, filesize, " .
@@ -4896,8 +4816,6 @@ abstract class PhorumDB
      */
     public function file_save($file)
     {
-        global $PHORUM;
-
         // If a link type is not provided, we'll guess for the type of link.
         // This is done to provide some backward compatibility.
         if ($file["link"] === NULL) {
@@ -4968,8 +4886,6 @@ abstract class PhorumDB
      */
     public function file_delete($file_id)
     {
-        global $PHORUM;
-
         settype($file_id, 'int');
 
         $this->interact(
@@ -5005,8 +4921,6 @@ abstract class PhorumDB
      */
     public function file_link($file_id, $message_id, $link = NULL)
     {
-        global $PHORUM;
-
         settype($file_id, 'int');
         settype($message_id, 'int');
 
@@ -5040,8 +4954,6 @@ abstract class PhorumDB
      */
     public function get_user_filesize_total($user_id)
     {
-        global $PHORUM;
-
         settype($user_id, 'int');
 
         $size = $this->interact(
@@ -5076,8 +4988,6 @@ abstract class PhorumDB
      */
     public function list_stale_files()
     {
-        global $PHORUM;
-
         // Select orphan editor files.
         // These are files that are linked to the editor and that were added
         // a while ago. These are from posts that were abandoned before posting.
@@ -5114,7 +5024,6 @@ abstract class PhorumDB
      */
     public function list_stale_messages()
     {
-        global $PHORUM;
 
         return $this->interact(
             DB_RETURN_ASSOCS,
@@ -5854,7 +5763,6 @@ abstract class PhorumDB
      */
     public function user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
     {
-        global $PHORUM;
 
         settype($user_id, 'int');
         settype($days, 'int');
@@ -5936,7 +5844,6 @@ abstract class PhorumDB
      */
     public function user_get_subscription($user_id, $forum_id, $thread)
     {
-        global $PHORUM;
 
         settype($user_id, 'int');
         settype($forum_id, 'int');
@@ -6029,7 +5936,6 @@ abstract class PhorumDB
      */
     public function get_banitem($banid)
     {
-        global $PHORUM;
 
         settype($banid, 'int');
 
@@ -6065,7 +5971,6 @@ abstract class PhorumDB
      */
     public function del_banitem($banid)
     {
-        global $PHORUM;
 
         settype($banid, 'int');
 
@@ -6117,7 +6022,6 @@ abstract class PhorumDB
      */
     public function mod_banlists($type, $pcre, $string, $forum_id, $comments, $banid=0)
     {
-        global $PHORUM;
 
         $retarr = array();
 
@@ -6903,7 +6807,6 @@ abstract class PhorumDB
      */
     public function pm_update_message_info($pm_id)
     {
-        global $PHORUM;
 
         settype($pm_id, 'int');
 
@@ -7290,7 +7193,6 @@ abstract class PhorumDB
      */
     public function rebuild_search_data()
     {
-        global $PHORUM;
 
         // Delete all records from the search table.
         $this->interact(
@@ -7324,7 +7226,6 @@ abstract class PhorumDB
      */
     public function rebuild_user_posts()
     {
-        global $PHORUM;
 
         // Reset the post count for all users.
         $this->interact(
@@ -7425,7 +7326,6 @@ abstract class PhorumDB
      */
     public function custom_field_config_set($config)
     {
-        global $PHORUM;
 
         // The keys that we expect in the config and some default values
         // in case keys are missing.
@@ -7658,7 +7558,6 @@ abstract class PhorumDB
         $fieldtype, $field_id, $value, $operator = '=',
         $return_array = FALSE, $type = 'AND', $offset = 0, $limit = 0)
     {
-        global $PHORUM;
 
         settype($return_array, 'bool');
         settype($offset, 'int');
@@ -7967,7 +7866,6 @@ abstract class PhorumDB
      */
     public function metaquery_messagesearch($metaquery)
     {
-        global $PHORUM;
 
         // Compile the metaquery into a where statement.
         list($success, $where) = $this->metaquery_compile($metaquery);
