@@ -400,7 +400,8 @@ abstract class PhorumDB
      */
     public function update_settings($settings)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
         if (count($settings) > 0)
         {
@@ -516,7 +517,8 @@ abstract class PhorumDB
      */
     public function run_queries($queries)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
         $error = NULL;
 
@@ -669,7 +671,7 @@ abstract class PhorumDB
 
             // Query the messages for the current group.
             $rows = $this->interact(
-                DB_RETURN_ASSOCS, $sql, 'message_id', NULL, $limit, $offset);
+                DB_RETURN_ASSOCS, $sql, 'message_id', 0, $limit, $offset);
             $now  = time();
             foreach ($rows as $id => $row)
             {
@@ -920,19 +922,21 @@ abstract class PhorumDB
      *
      * NOTE: ALL dates must be returned as Unix timestamps
      *
-     * @param $forum_id     - The forum id to work with or NULL in case all
-     *                        forums have to be searched. You can also pass an
-     *                        array of forum ids.
-     * @param $on_hold_only - Only take into account messages which have to
-     *                        be approved directly after posting. Do not include
-     *                        messages which were hidden by a moderator.
-     * @param $moddays      - Limit the search to the last $moddays number of days.
+     * @param integer $forum_id     - The forum id to work with or NULL in case all
+     *                                forums have to be searched. You can also pass an
+     *                                array of forum ids.
+     * @param boolean $on_hold_only - Only take into account messages which have to
+     *                                be approved directly after posting. Do not include
+     *                                messages which were hidden by a moderator.
+     * @param integer $moddays      - Limit the search to the last $moddays number of days.
+     * @param boolean $countonly    - Return only a count of the possible results
      *
-     * @return              - An array of messages, indexed by message id.
+     * @return                      - An array of messages, indexed by message id.
      */
     public function get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $moddays=0, $countonly = FALSE)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
         settype($on_hold_only, 'bool');
         settype($moddays, 'int');
@@ -1208,6 +1212,7 @@ abstract class PhorumDB
         );
 
         $customfields=array();
+        $fields = array();
 
         foreach ($message as $field => $value)
         {
@@ -1239,14 +1244,16 @@ abstract class PhorumDB
             }
         }
 
-        $this->interact(
-            DB_RETURN_RES,
-            "UPDATE {$this->message_table}
-             SET " . implode(', ', $fields) . "
-             WHERE message_id = $message_id",
-            NULL,
-            DB_MASTERQUERY
-        );
+        if(count($fields)) {
+            $this->interact(
+                DB_RETURN_RES,
+                "UPDATE {$this->message_table}
+                 SET " . implode(', ', $fields) . "
+                 WHERE message_id = $message_id",
+                NULL,
+                DB_MASTERQUERY
+            );
+        }
 
         if (count($customfields)) {
             $this->save_custom_fields($message_id, PHORUM_CUSTOM_FIELD_MESSAGE, $customfields);
@@ -1303,10 +1310,13 @@ abstract class PhorumDB
      *     - PHORUM_DELETE_MESSAGE: Delete a message and reconnect
      *       its reply messages to the parent of the deleted message.
      *     - PHORUM_DELETE_TREE: Delete a message and all its reply messages.
+     *
+     * @return array - An array of the message-ids deleted
      */
     public function delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
     {
-        global $PHORUM;
+        // not used in this function
+        // global $PHORUM;
 
         settype($message_id, 'int');
         settype($mode, 'int');
@@ -1325,7 +1335,7 @@ abstract class PhorumDB
         // accidentally try to remove the same message twice (or two
         // moderators that try to delete the same message) would get
         // a nasty error message as a result.
-        if (empty($msg)) return;
+        if (empty($msg)) return array();
 
         // Find all message_ids that have to be deleted, based on the mode.
         if ($mode == PHORUM_DELETE_TREE) {
@@ -1448,7 +1458,8 @@ abstract class PhorumDB
      */
     public function get_messagetree($message_id, $forum_id)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
         settype($message_id, 'int');
         settype($forum_id, 'int');
@@ -1920,7 +1931,7 @@ abstract class PhorumDB
                 "SELECT *
                         $from_and_where
                  ORDER  BY datestamp DESC",
-                "message_id", NULL, $limit, $offset
+                "message_id", 0, $limit, $offset
             );
 
             // Retrieve the number of found messages.
@@ -2117,7 +2128,7 @@ abstract class PhorumDB
                 DB_RETURN_ASSOCS,
                 "SELECT * $from_and_where
                  ORDER  BY datestamp DESC",
-                 "message_id", NULL, $limit, $offset
+                 "message_id", 0, $limit, $offset
             );
 
             // Retrieve the number of found messages.
@@ -2162,6 +2173,9 @@ abstract class PhorumDB
 
         $keyfield = $PHORUM['float_to_top'] ? 'modifystamp' : 'datestamp';
 
+        $compare  = "";
+        $orderdir = "";
+        
         switch ($direction) {
             case 'newer': $compare = '>'; $orderdir = 'ASC';  break;
             case 'older': $compare = '<'; $orderdir = 'DESC'; break;
@@ -2190,7 +2204,7 @@ abstract class PhorumDB
                     $approvedval AND
                     $keyfield $compare $key
              ORDER  BY $keyfield $orderdir",
-             NULL, NULL, 1
+             NULL, 0, 1
         );
 
         return $thread;
@@ -2228,7 +2242,7 @@ abstract class PhorumDB
      *     are the forums for which customized settings are used, which means
      *     that inherit_id is NULL).
      *
-     * @param boolean $return_type
+     * @param integer $return_type
      *     0 to return both forums and folders.
      *     1 to return only folders.
      *     2 to return only forums.
@@ -2244,7 +2258,8 @@ abstract class PhorumDB
      */
     public function get_forums($forum_ids = NULL, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL, $only_inherit_masters = FALSE, $return_type = 0, $include_inactive = FALSE)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
         $this->sanitize_mixed($forum_ids, 'int');
         if ($parent_id  !== NULL) settype($parent_id, 'int');
@@ -2433,7 +2448,7 @@ abstract class PhorumDB
      * @param integer $thread_id
      *     The id of the thread that has to be moved.
      *
-     * @param integer
+     * @param integer $toforum
      *     The id of the destination forum.
      */
     public function move_thread($thread_id, $toforum)
@@ -2526,7 +2541,8 @@ abstract class PhorumDB
      */
     public function close_thread($thread_id)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
         settype($thread_id, 'int');
 
@@ -2681,8 +2697,6 @@ abstract class PhorumDB
         );
 
         $this->sanitize_mixed($forum['forum_id'], 'int');
-
-        $forum_id = $forum['forum_id'];
 
         // See what forum(s) to update.
         if (is_array($forum['forum_id'])) {
@@ -2907,7 +2921,8 @@ abstract class PhorumDB
      */
     public function add_message_edit($edit_data)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
 
         foreach ($edit_data as $key => $value) {
@@ -3470,7 +3485,8 @@ abstract class PhorumDB
      */
     public function user_get($user_id, $detailed = FALSE, $write_server = FALSE)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
         $this->sanitize_mixed($user_id, 'int');
 
@@ -3791,7 +3807,8 @@ abstract class PhorumDB
      */
     public function user_check_login($username, $password, $temp_password=FALSE)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
         settype($temp_password, 'bool');
         $username = $this->interact(DB_RETURN_QUOTED, $username);
@@ -3867,7 +3884,8 @@ abstract class PhorumDB
         $field, $value, $operator = '=', $return_array = FALSE,
         $type = 'AND', $sort = NULL, $offset = 0, $limit = 0)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
         settype($return_array, 'bool');
         settype($offset, 'int');
@@ -3963,7 +3981,7 @@ abstract class PhorumDB
              FROM   {$this->user_table}
              $where $order",
             0, // keyfield 0 is the user_id
-            NULL, $limit
+            0, $limit
         );
 
         // No user_ids found at all?
@@ -3996,7 +4014,8 @@ abstract class PhorumDB
      */
     public function user_add($userdata)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
         // We need at least the username for the user.
         if (! isset($userdata['username'])) trigger_error(
@@ -4159,7 +4178,8 @@ abstract class PhorumDB
     // {{{ Method: save_custom_fields()
     public function save_custom_fields($relation_id, $field_type, $customfield_data)
     {
-        global $PHORUM;
+        // not used in here
+        // global $PHORUM;
 
         // Update custom fields for the object.
         if (isset($customfield_data))
@@ -4231,7 +4251,9 @@ abstract class PhorumDB
      */
     public function user_display_name_updates($userdata)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
+        
         if (!isset($userdata['user_id'])) trigger_error(
             __METHOD__ . ': Missing user_id field in ' .
             'the $userdata parameter',
@@ -4473,6 +4495,7 @@ abstract class PhorumDB
     {
         settype($user_id, 'int');
 
+        $res = 0;
         if (!empty($user_id)) {
             $res = $this->interact(
                 DB_RETURN_RES,
@@ -4500,7 +4523,8 @@ abstract class PhorumDB
      */
     public function user_get_groups($user_id)
     {
-        global $PHORUM;
+        // not used in here
+        //global $PHORUM;
 
         settype($user_id, 'int');
 
@@ -4877,8 +4901,8 @@ abstract class PhorumDB
         // If a link type is not provided, we'll guess for the type of link.
         // This is done to provide some backward compatibility.
         if ($file["link"] === NULL) {
-            if     ($message_id) $file["link"] = PHORUM_LINK_MESSAGE;
-            elseif ($user_id)    $file["link"] = PHORUM_LINK_USER;
+            if     (!empty($file['message_id'])) $file["link"] = PHORUM_LINK_MESSAGE;
+            elseif (!empty($file['user_id']))    $file["link"] = PHORUM_LINK_USER;
             else trigger_error(
                 __METHOD__ . ': Missing link field in the $file parameter',
                 E_USER_ERROR
@@ -5162,9 +5186,6 @@ abstract class PhorumDB
 
         if ($forum_id === NULL) $forum_id = $PHORUM['forum_id'];
         settype($forum_id, 'int');
-
-        // Initialize the read messages array.
-        $read_msgs = array('min_id' => 0);
 
         // Select the read messages from the newflags table.
         $newflags = $this->interact(
@@ -5728,6 +5749,8 @@ abstract class PhorumDB
             'be provided in the derived database layer class.',
             E_USER_ERROR
         );
+
+        return true;
     }
     // }}}
 
@@ -6164,6 +6187,8 @@ abstract class PhorumDB
         settype($user_id, 'int');
         settype($reverse, 'bool');
 
+        $folder_where = "";
+
         if (is_numeric($folder)) {
             $folder_where = "pm_folder_id = $folder";
         } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
@@ -6228,6 +6253,8 @@ abstract class PhorumDB
         if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
         settype($user_id, 'int');
         settype($pm_id, 'int');
+
+        $folder_where = "";
 
         if ($folder === NULL) {
             $folder_where = '';
@@ -6513,6 +6540,8 @@ abstract class PhorumDB
         if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
         settype($user_id, 'int');
 
+        $folder_where = "";
+
         if (is_numeric($folder)) {
             $folder_where = "pm_folder_id = $folder AND";
         } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
@@ -6766,6 +6795,8 @@ abstract class PhorumDB
         if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
         settype($user_id, 'int');
 
+        $folder_where="";
+
         if (is_numeric($folder)) {
             $folder_where = "pm_folder_id = $folder";
         } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
@@ -6816,6 +6847,12 @@ abstract class PhorumDB
 
         if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
         settype($user_id, 'int');
+
+        // init vars
+        $pm_folder_id   = 0;
+        $special_folder = "";
+        $folder_where   = "";
+
 
         if (is_numeric($from)) {
             $folder_where = "pm_folder_id = $from";
