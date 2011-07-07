@@ -1249,7 +1249,7 @@ abstract class PhorumDB
         );
 
         if (count($customfields)) {
-            $this->save_custom_fields($message_id, $customfields);
+            $this->save_custom_fields($message_id, PHORUM_CUSTOM_FIELD_MESSAGE, $customfields);
         }
 
         // Full text searching updates.
