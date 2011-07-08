@@ -865,7 +865,7 @@ switch ($mod_step) {
         if( !$merge_t1 || $merge_t1==$msgthd_id ) {
             phorum_moderator_data_put('merge_t1', $msgthd_id);
             $PHORUM['DATA']["FORM"]["merge_none"] =true;
-            $message = phorum_db_get_message($merge_t1, "message_id", true);
+            $message = phorum_db_get_message($msgthd_id, "message_id", true);
             $PHORUM['DATA']["FORM"]["merge_subject1"] =htmlspecialchars($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
         }
         // the moderator selects the source thread to merge from
