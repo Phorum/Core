@@ -812,6 +812,8 @@ function phorum_api_user_save_raw($user)
             phorum_api_cache_remove('user', $user['user_id']);
         }
     }
+
+    return true;
 }
 // }}}
 
@@ -992,9 +994,9 @@ function phorum_api_user_get(
             );
 
             // Store the results in the users array.
-            foreach ($dynamic_data as $id => $data) {
-                $users[$user['user_id']] =
-                  array_merge($users[$user['user_id']],$data);
+            foreach ($dynamic_data as $d_user_id => $data) {
+                $users[$d_user_id] =
+                  array_merge($users[$d_user_id],$data);
             }
         }
     }
@@ -2082,7 +2084,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     if ($PHORUM['user']['active'] != PHORUM_USER_ACTIVE) {
         return phorum_api_error(
             PHORUM_ERRNO_NOACCESS,
-            'The user is not (yet) activated (user id '.$user['user_id'].')'
+            'The user is not (yet) activated (user id '.$PHORUM['user']['user_id'].')'
         );
     }
 
@@ -2093,7 +2095,7 @@ function phorum_api_user_session_create($type, $reset = 0)
         empty($PHORUM['user']['admin'])) {
         return phorum_api_error(
             PHORUM_ERRNO_NOACCESS,
-            'The user is not an administrator (user id '.$user['user_id'].')'
+            'The user is not an administrator (user id '.$PHORUM['user']['user_id'].')'
         );
     }
 
@@ -2725,6 +2727,8 @@ function phorum_api_user_session_destroy($type)
 
     // Force Phorum to see the anonymous user from here on.
     phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, NULL);
+
+    return true;
 }
 // }}}
 
