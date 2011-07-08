@@ -131,7 +131,7 @@ function phorum_get_forum_info($forums_only=0,$vroot = -1)
 * $vroot  = virtual root we set the folders/forums to
 * $old_vroot = virtual root which should be overrideen with the new value
 *
-*/
+*
 function phorum_admin_set_vroot($folder,$vroot=-1,$old_vroot=0)
 {
     global $PHORUM;
@@ -183,6 +183,7 @@ function phorum_admin_get_descending($parent) {
     }
     return $ret_data;
 }
+*/
 
 function phorum_admin_build_url($input_args) {
     global $PHORUM;
