@@ -811,7 +811,9 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     // here, because of modules adding images and formatting.
     $PHORUM["DATA"]["HTML_TITLE"] = trim(strip_tags($PHORUM["threaded_read"] ? $PHORUM["DATA"]["MESSAGE"]["subject"] : $PHORUM["DATA"]["TOPIC"]["subject"]));
 
-    $PHORUM["DATA"]["DESCRIPTION"] = htmlspecialchars(preg_replace('!\s+!s'," ",strip_tags(substr($PHORUM["DATA"]["TOPIC"]["body"],0,300))), ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+    $PHORUM["DATA"]["DESCRIPTION"] = preg_replace('!\s+!s'," ", strip_tags($PHORUM["DATA"]["TOPIC"]["body"]));
+    $PHORUM["DATA"]["DESCRIPTION"] = mb_substr($PHORUM["DATA"]["DESCRIPTION"], 0, 300, $PHORUM["DATA"]["HCHARSET"]);
+    $PHORUM["DATA"]["DESCRIPTION"] = htmlspecialchars($PHORUM["DATA"]["DESCRIPTION"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
 
     // add feed url
     if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']){

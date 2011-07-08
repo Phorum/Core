@@ -258,7 +258,8 @@ if(!empty($phorum_search) || !empty($phorum_author)){
             // strip HTML & BB Code
             if(!$raw_body) {
                 $body = phorum_api_format_strip($arr["rows"][$key]["body"]);
-                $arr["rows"][$key]["short_body"] = substr($body, 0, 400);
+                $arr["rows"][$key]["short_body"] = mb_substr($body, 0, 400, $PHORUM["DATA"]["HCHARSET"]);
+
             }
             $arr["rows"][$key]["raw_datestamp"] = $row["datestamp"];
             $arr["rows"][$key]["datestamp"] = phorum_api_format_relative_date($row["datestamp"]);
