@@ -96,6 +96,19 @@ if (empty($PHORUM['ajax_args']) || !isset($PHORUM['ajax_args']['call'])) {
 
 $ajax_call = basename($PHORUM['ajax_args']['call']);
 
+// try to get some session-id if there isn't already a user loaded through
+// the regular ways
+if(empty($PHORUM['user']['user_id'])) {
+    // check if we got a session-id in the ajax args and if we got one
+    // try to load a user with that data
+    $ajax_session_id = phorum_ajax_getarg(PHORUM_SESSION_LONG_TERM,'string',0);
+    if(!empty($ajax_session_id)) {
+        $PHORUM['use_cookies']=PHORUM_USE_COOKIES;
+        $PHORUM['args'][PHORUM_SESSION_LONG_TERM]=$ajax_session_id;
+        phorum_api_user_session_restore(PHORUM_FORUM_SESSION);
+    }
+}
+
 /**
  * [hook]
  *     ajax_<call>
