@@ -2052,7 +2052,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     if ($PHORUM['user']['active'] != PHORUM_USER_ACTIVE) {
         return phorum_api_error_set(
             PHORUM_ERRNO_NOACCESS,
-            'The user is not (yet) activated (user id '.$user['user_id'].')'
+            'The user is not (yet) activated (user id '.$PHORUM['user']['user_id'].')'
         );
     }
 
@@ -2063,7 +2063,7 @@ function phorum_api_user_session_create($type, $reset = 0)
         empty($PHORUM['user']['admin'])) {
         return phorum_api_error_set(
             PHORUM_ERRNO_NOACCESS,
-            'The user is not an administrator (user id '.$user['user_id'].')'
+            'The user is not an administrator (user id '.$PHORUM['user']['user_id'].')'
         );
     }
 
