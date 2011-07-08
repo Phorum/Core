@@ -1729,11 +1729,11 @@ function phorum_api_forums_set_vroot($folder,$vroot=-1,$old_vroot=0)
  *     An array of forums and folders, index by the their forum_id and sorted
  *     by their display order.
  */
-function phorum_api_forums_delete($forum_id)
+function phorum_api_forums_delete($forum_id, $flags=0)
 {
 	global $PHORUM;
 	$oldforum = phorum_api_forums_get($forum_id);
-	if ($oldforum ['folder_flag']) {
+	if ($flags) {
 		//is a folder
 		if($oldforum['parent_id'] > 0) { 
 			$parent_folder = phorum_api_forums_get($oldforum['parent_id']);
@@ -1781,6 +1781,7 @@ function phorum_api_forums_delete($forum_id)
         phorum_api_hook("admin_forum_delete", $forum_id);
         $PHORUM['DB']->drop_forum($forum_id);
 	}
+	return flags;
 }
 // }}}
 
