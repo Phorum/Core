@@ -23,7 +23,7 @@ require_once './include/api/forums.php';
 
 if ($_GET["confirm"]=="Yes")
 {
-	$res = phorum_api_forums_delete((int)$_GET['forum_id'], $_GET["folder_flag"]);
+	$res = phorum_api_forums_delete((int)$_GET['forum_id']);
 	$msg = ($res) ? 
 	"The folder was deleted.  All forums and folders in this folder have been moved to this folder's parent.":
 	"The forum was deleted.  All messages in that forum were deleted.";
