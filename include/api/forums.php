@@ -1734,7 +1734,7 @@ function phorum_api_forums_delete($forum_id, $flags=0)
 	global $PHORUM;
 	$oldforum = phorum_api_forums_get($forum_id);
 	if ($flags) {
-		//is a folder
+		//treat as a folder, obviously we could have used $oldforum['folder_flag'] instead
 		if($oldforum['parent_id'] > 0) { 
 			$parent_folder = phorum_api_forums_get($oldforum['parent_id']);
 			// is a vroot set?
@@ -1781,7 +1781,7 @@ function phorum_api_forums_delete($forum_id, $flags=0)
         phorum_api_hook("admin_forum_delete", $forum_id);
         $PHORUM['DB']->drop_forum($forum_id);
 	}
-	return flags;
+	return $flags;
 }
 // }}}
 
