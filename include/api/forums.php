@@ -1725,9 +1725,8 @@ function phorum_api_forums_set_vroot($folder,$vroot=-1,$old_vroot=0)
  *     This function takes the same flags as the
  *     {@link phorum_api_forums_get()} function.
  *
- * @return array
- *     An array of forums and folders, index by the their forum_id and sorted
- *     by their display order.
+ * @return int
+ *     same as the $flags parameter
  */
 function phorum_api_forums_delete($forum_id, $flags=0)
 {
