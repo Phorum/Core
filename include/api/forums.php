@@ -1721,19 +1721,16 @@ function phorum_api_forums_set_vroot($folder,$vroot=-1,$old_vroot=0)
  * @param integer $forum_id
  *     The forum_id to delete.
  *
- * @param int $flags
- *     This function takes the same flags as the
- *     {@link phorum_api_forums_get()} function.
- *
  * @return int
- *     same as the $flags parameter
+ *     the folder flag setting of the forum or folder just deleted
  */
-function phorum_api_forums_delete($forum_id, $flags=0)
+function phorum_api_forums_delete($forum_id)
 {
 	global $PHORUM;
 	$oldforum = phorum_api_forums_get($forum_id);
-	if ($flags) {
-		//treat as a folder, obviously we could have used $oldforum['folder_flag'] instead
+	//check folder or forum
+	if ($oldforum['folder_flag']) {
+		//if is folder and has a parent folder
 		if($oldforum['parent_id'] > 0) { 
 			$parent_folder = phorum_api_forums_get($oldforum['parent_id']);
 			// is a vroot set?
@@ -1780,7 +1777,7 @@ function phorum_api_forums_delete($forum_id, $flags=0)
         phorum_api_hook("admin_forum_delete", $forum_id);
         $PHORUM['DB']->drop_forum($forum_id);
 	}
-	return $flags;
+	return $oldforum['folder_flag'];
 }
 // }}}
 
