@@ -4527,8 +4527,8 @@ function phorum_db_file_save($file)
     // If a link type is not provided, we'll guess for the type of link.
     // This is done to provide some backward compatibility.
     if ($file["link"] === NULL) {
-        if     ($message_id) $file["link"] = PHORUM_LINK_MESSAGE;
-        elseif ($user_id)    $file["link"] = PHORUM_LINK_USER;
+        if     ($file["message_id"]) $file["link"] = PHORUM_LINK_MESSAGE;
+        elseif ($file["user_id"])    $file["link"] = PHORUM_LINK_USER;
         else trigger_error(
             'phorum_db_file_save(): Missing link field in the $file parameter',
             E_USER_ERROR
