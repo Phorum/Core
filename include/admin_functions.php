@@ -122,68 +122,6 @@ function phorum_get_forum_info($forums_only=0,$vroot = -1)
 
 }
 
-
-/*
-* Sets the given vroot for the descending forums / folders
-* which are not yet in another descending vroot
-*
-* $folder = folder from which we should go down
-* $vroot  = virtual root we set the folders/forums to
-* $old_vroot = virtual root which should be overrideen with the new value
-*
-*/
-function phorum_admin_set_vroot($folder,$vroot=-1,$old_vroot=0)
-{
-    global $PHORUM;
-
-    // which vroot
-    if($vroot == -1) {
-        $vroot=$folder;
-    }
-
-    // get the desc forums/folders
-    $descending=phorum_admin_get_descending($folder);
-    $valid=array();
-
-    // collecting vroots
-    $vroots=array();
-    foreach($descending as $id => $data) {
-        if($data['folder_flag'] == 1 && $data['vroot'] != 0 && $data['forum_id'] == $data['vroot']) {
-            $vroots[$data['vroot']]=true;
-        }
-    }
-
-    // getting forums which are not in a vroot or not in *this* vroot
-    foreach($descending as $id => $data) {
-        if($data['vroot'] == $old_vroot || !isset($vroots[$data['vroot']])) {
-            $valid[$id]=$data;
-        }
-    }
-
-    // $valid = forums/folders which are not in another vroot
-    $set_ids=array_keys($valid);
-    $set_ids[]=$folder;
-
-    $new_forum_data=array('forum_id'=>$set_ids,'vroot'=>$vroot);
-    $returnval=$PHORUM['DB']->update_forum($new_forum_data);
-
-    return $returnval;
-}
-
-function phorum_admin_get_descending($parent) {
-
-    $ret_data=array();
-    $arr_data = phorum_api_forums_by_parent_id($parent);
-    foreach($arr_data as $key => $val) {
-        $ret_data[$key]=$val;
-        if($val['folder_flag'] == 1) {
-            $more_data=phorum_api_forums_by_parent_id($val['forum_id']);
-            $ret_data=$ret_data + $more_data; // array_merge reindexes the array
-        }
-    }
-    return $ret_data;
-}
-
 function phorum_admin_build_url($input_args) {
     global $PHORUM;
     

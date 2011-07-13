@@ -1638,4 +1638,147 @@ function phorum_api_forums_by_inheritance($forum_id = 0, $flags = 0)
 }
 // }}}
 
+// {{{ Function: phorum_api_forums_get_descending()
+/*
+* Get forum descendants
+* 
+* @param integer $parent
+* 	the forum Id of folder you like find descendants for
+*
+* @return array
+* 	an array of descendant forums
+*/
+function phorum_api_forums_get_descending($parent) {
+
+    $ret_data=array();
+    $arr_data = phorum_api_forums_by_parent_id($parent);
+    foreach($arr_data as $key => $val) {
+        $ret_data[$key]=$val;
+        if($val['folder_flag'] == 1) {
+            $more_data=phorum_api_forums_by_parent_id($val['forum_id']);
+            $ret_data=$ret_data + $more_data; // array_merge reindexes the array
+        }
+    }
+    return $ret_data;
+}
+
+// {{{ Function: phorum_api_forums_set_vroot()
+/*
+* Sets the given vroot for the descending forums / folders
+* which are not yet in another descending vroot
+*
+* @param integer $folder 
+*		folder from which we should go down
+* @param integer $vroot
+*		virtual root we set the folders/forums to
+* @param integer $old_vroot 
+*	 	virtual root which should be overrideen with the new value
+*
+*/
+function phorum_api_forums_set_vroot($folder,$vroot=-1,$old_vroot=0)
+{
+    global $PHORUM;
+
+    // which vroot
+    if($vroot == -1) {
+        $vroot=$folder;
+    }
+
+    // get the desc forums/folders
+    $descending=phorum_api_forums_get_descending($folder);
+    $valid=array();
+
+    // collecting vroots
+    $vroots=array();
+    foreach($descending as $id => $data) {
+        if($data['folder_flag'] == 1 && $data['vroot'] != 0 && $data['forum_id'] == $data['vroot']) {
+            $vroots[$data['vroot']]=true;
+        }
+    }
+
+    // getting forums which are not in a vroot or not in *this* vroot
+    foreach($descending as $id => $data) {
+        if($data['vroot'] == $old_vroot || !isset($vroots[$data['vroot']])) {
+            $valid[$id]=$data;
+        }
+    }
+
+    // $valid = forums/folders which are not in another vroot
+    $set_ids=array_keys($valid);
+    $set_ids[]=$folder;
+
+    $new_forum_data=array('forum_id'=>$set_ids,'vroot'=>$vroot);
+    $returnval=$PHORUM['DB']->update_forum($new_forum_data);
+
+    return $returnval;
+}
+
+
+// {{{ Function: phorum_api_forums_delete()
+/**
+ * Delete a forum or folder.
+ *
+ * @param integer $forum_id
+ *     The forum_id to delete.
+ *
+ * @return int
+ *     the folder flag setting of the forum or folder just deleted
+ */
+function phorum_api_forums_delete($forum_id)
+{
+	global $PHORUM;
+	$oldforum = phorum_api_forums_get($forum_id);
+	//check folder or forum
+	if ($oldforum['folder_flag']) {
+		//if is folder and has a parent folder
+		if($oldforum['parent_id'] > 0) { 
+			$parent_folder = phorum_api_forums_get($oldforum['parent_id']);
+			// is a vroot set?
+			if($parent_folder['vroot'] > 0) { 
+				// then set the vroot to the vroot of the parent-folder
+				phorum_api_forums_set_vroot($forum_id,$parent_folder['vroot'],$forum_id);
+			}
+		} else { // just default root ...
+			phorum_api_forums_set_vroot($forum_id,0,$forum_id);
+		}
+		$PHORUM['DB']->drop_folder($forum_id);
+	} else {
+       /*
+        * [hook]
+        *     admin_forum_delete
+        *
+        * [description]
+        *     This hook is called whenever a forum is deleted.
+        *
+        * [category]
+        *     Admin interface
+        *
+        * [when]
+        *     Right before the forum will be deleted from the database
+        *
+        * [input]
+        *     The ID of the forum.
+        *
+        * [output]
+        *     Same as input.
+        *
+        * [example]
+        *     <hookcode>
+        *     function phorum_mod_foo_admin_forum_delete ($id) 
+        *     {
+        *         // E.g. Notify the external system that the forum has been deleted
+        *
+        *         // Return forum ID for other hooks
+        *         return $id;
+        *
+        *     }
+        *     </hookcode>
+        */	
+        phorum_api_hook("admin_forum_delete", $forum_id);
+        $PHORUM['DB']->drop_forum($forum_id);
+	}
+	return $oldforum['folder_flag'];
+}
+// }}}
+
 ?>

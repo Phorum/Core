@@ -23,63 +23,11 @@ require_once './include/api/forums.php';
 
 if ($_GET["confirm"]=="Yes")
 {
-    if ($_GET["folder_flag"])
-    {
-        $cur_folder_id=(int)$_GET['forum_id'];
-        // handling vroots
-        $oldfolder = phorum_api_forums_get($cur_folder_id);
-
-        if($oldfolder['parent_id'] > 0) { // is it a real folder?
-            $parent_folder = phorum_api_forums_get($oldfolder['parent_id']);
-            if($parent_folder['vroot'] > 0) { // is a vroot set?
-                // then set the vroot to the vroot of the parent-folder
-                phorum_admin_set_vroot($cur_folder_id,$parent_folder['vroot'],$cur_folder_id);
-            }
-        } else { // just default root ...
-            phorum_admin_set_vroot($cur_folder_id,0,$cur_folder_id);
-        }
-        // done with vroots
-
-        $PHORUM['DB']->drop_folder($cur_folder_id);
-        $msg="The folder was deleted.  All forums and folders in this folder have been moved to this folder's parent.";
-    } else {
-       /*
-        * [hook]
-        *     admin_forum_delete
-        *
-        * [description]
-        *     This hook is called whenever a forum is deleted.
-        *
-        * [category]
-        *     Admin interface
-        *
-        * [when]
-        *     Right before the forum will be deleted from the database
-        *
-        * [input]
-        *     The ID of the forum.
-        *
-        * [output]
-        *     Same as input.
-        *
-        * [example]
-        *     <hookcode>
-        *     function phorum_mod_foo_admin_forum_delete ($id) 
-        *     {
-        *         // E.g. Notify the external system that the forum has been deleted
-        *
-        *         // Return forum ID for other hooks
-        *         return $id;
-        *
-        *     }
-        *     </hookcode>
-        */
-        phorum_api_hook("admin_forum_delete", $_GET["forum_id"]);
-
-        $PHORUM['DB']->drop_forum($_GET["forum_id"]);
-        $msg="The forum was deleted.  All messages in that forum were deleted.";
-    }
-
+	$res = phorum_api_forums_delete((int)$_GET['forum_id']);
+	$msg = ($res) ? 
+	"The folder was deleted.  All forums and folders in this folder have been moved to this folder's parent.":
+	"The forum was deleted.  All messages in that forum were deleted.";
+	
 } elseif($_GET["confirm"]=="No"){
 
     $msg="No action was taken.";
