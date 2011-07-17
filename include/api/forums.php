@@ -1643,10 +1643,10 @@ function phorum_api_forums_by_inheritance($forum_id = 0, $flags = 0)
 * Get forum descendants
 * 
 * @param integer $parent
-* 	the forum Id of folder you like find descendants for
+*   the forum Id of folder you like find descendants for
 *
 * @return array
-* 	an array of descendant forums
+*   an array of descendant forums
 */
 function phorum_api_forums_get_descending($parent) {
 
@@ -1668,11 +1668,11 @@ function phorum_api_forums_get_descending($parent) {
 * which are not yet in another descending vroot
 *
 * @param integer $folder 
-*		folder from which we should go down
+*       folder from which we should go down
 * @param integer $vroot
-*		virtual root we set the folders/forums to
+*       virtual root we set the folders/forums to
 * @param integer $old_vroot 
-*	 	virtual root which should be overrideen with the new value
+*       virtual root which should be overrideen with the new value
 *
 */
 function phorum_api_forums_set_vroot($folder,$vroot=-1,$old_vroot=0)
@@ -1726,23 +1726,25 @@ function phorum_api_forums_set_vroot($folder,$vroot=-1,$old_vroot=0)
  */
 function phorum_api_forums_delete($forum_id)
 {
-	global $PHORUM;
-	$oldforum = phorum_api_forums_get($forum_id);
-	//check folder or forum
-	if ($oldforum['folder_flag']) {
-		//if is folder and has a parent folder
-		if($oldforum['parent_id'] > 0) { 
-			$parent_folder = phorum_api_forums_get($oldforum['parent_id']);
-			// is a vroot set?
-			if($parent_folder['vroot'] > 0) { 
-				// then set the vroot to the vroot of the parent-folder
-				phorum_api_forums_set_vroot($forum_id,$parent_folder['vroot'],$forum_id);
-			}
-		} else { // just default root ...
-			phorum_api_forums_set_vroot($forum_id,0,$forum_id);
-		}
-		$PHORUM['DB']->drop_folder($forum_id);
-	} else {
+    global $PHORUM;
+
+    $oldforum = phorum_api_forums_get($forum_id);
+
+    //check folder or forum
+    if ($oldforum['folder_flag']) {
+        //if is folder and has a parent folder
+        if($oldforum['parent_id'] > 0) { 
+            $parent_folder = phorum_api_forums_get($oldforum['parent_id']);
+            // is a vroot set?
+            if($parent_folder['vroot'] > 0) { 
+                // then set the vroot to the vroot of the parent-folder
+                phorum_api_forums_set_vroot($forum_id,$parent_folder['vroot'],$forum_id);
+            }
+        } else { // just default root ...
+            phorum_api_forums_set_vroot($forum_id,0,$forum_id);
+        }
+        $PHORUM['DB']->drop_folder($forum_id);
+    } else {
        /*
         * [hook]
         *     admin_forum_delete
@@ -1773,11 +1775,11 @@ function phorum_api_forums_delete($forum_id)
         *
         *     }
         *     </hookcode>
-        */	
+        */  
         phorum_api_hook("admin_forum_delete", $forum_id);
         $PHORUM['DB']->drop_forum($forum_id);
-	}
-	return $oldforum['folder_flag'];
+    }
+    return $oldforum['folder_flag'];
 }
 // }}}
 
