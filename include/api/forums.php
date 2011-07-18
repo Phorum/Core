@@ -1521,6 +1521,141 @@ function phorum_api_forums_increment_cache_version($forum_id)
 }
 // }}}
 
+// {{{ Function: phorum_api_forums_delete()
+/**
+ * Delete a forum or folder.
+ *
+ * When a folder is deleted, then the contained folders and forums are
+ * linked to the parent of the folder.
+ *
+ * @param integer $forum_id
+ *   The forum_id to delete.
+ *
+ * @return mixed
+ *   An array containing the data for the deleted forum or folder.
+ *   NULL in case no forum or folder exists for the provided forum id. 
+ */
+function phorum_api_forums_delete($forum_id)
+{
+    global $PHORUM;
+
+    $forum = phorum_api_forums_get($forum_id);
+
+    // Check if the forum or folder was found. If not, then return NULL.
+    // We do not trigger an error here, since the forum/folder not existing
+    // is the desired situation anyway.
+    if ($forum === NULL) {
+        return NULL;
+    }
+
+    /*
+     * [hook]
+     *     admin_folder_delete
+     *
+     * [availability]
+     *     Phorum 5 >= 5.3
+     *
+     * [description]
+     *     This hook is called whenever a folder is deleted.
+     *
+     * [category]
+     *     Admin interface
+     *
+     * [when]
+     *     Right before the folder will be deleted from the database.
+     *
+     * [input]
+     *     The ID of the folder.
+     *
+     * [output]
+     *     Same as input.
+     *
+     * [example]
+     *     <hookcode>
+     *     function phorum_mod_foo_admin_folder_delete ($id) 
+     *     {
+     *         // E.g. Notify an external system that the folder has
+     *         // been deleted.
+     *
+     *         // Return the folder ID for other hooks.
+     *         return $id;
+     *
+     *     }
+     *     </hookcode>
+     */  
+    phorum_api_hook("admin_folder_delete", $forum_id);
+
+    // Handle deleting a folder.
+    if ($forum['folder_flag'])
+    {
+        // When the folder is a vroot folder currently, then disable
+        // the vroot setting for it by linking it to the vroot of
+        // the parent folder. This will take care of recursive updates
+        // down the hierarchy as well.
+        if ($forum['vroot'] == $forum['forum_id'])
+        {
+            $parent_vroot = 0;
+            if ($forum['parent_id']) {
+                $parent_folder = phorum_api_forums_get($forum['parent_id']);
+                if ($parent_folder) { // This check should not be necessary.
+                    $parent_vroot = $parent_folder['vroot'];
+                }
+            }
+
+            phorum_api_forums_save(array(
+                'forum_id'      => $forum['forum_id'],
+                'vroot'         => $parent_vroot
+            ));
+        }
+
+        // This call deletes the folder from the database.
+        // It will link child folders and forums to the deleted folder's parent.
+        $PHORUM['DB']->drop_folder($forum_id);
+    }
+    // Handle deleting a forum.
+    else
+    {
+       /*
+        * [hook]
+        *     admin_forum_delete
+        *
+        * [description]
+        *     This hook is called whenever a forum is deleted.
+        *
+        * [category]
+        *     Admin interface
+        *
+        * [when]
+        *     Right before the forum will be deleted from the database.
+        *
+        * [input]
+        *     The ID of the forum.
+        *
+        * [output]
+        *     Same as input.
+        *
+        * [example]
+        *     <hookcode>
+        *     function phorum_mod_foo_admin_forum_delete ($id) 
+        *     {
+        *         // E.g. Notify an external system that the forum has
+        *         // been deleted.
+        *
+        *         // Return the forum ID for other hooks.
+        *         return $id;
+        *
+        *     }
+        *     </hookcode>
+        */  
+        phorum_api_hook("admin_forum_delete", $forum_id);
+
+        $PHORUM['DB']->drop_forum($forum_id);
+    }
+
+    return $forum;
+}
+// }}}
+
 // ------------------------------------------------------------------------
 // Alias functions (useful shortcut calls to the main file api functions).
 // ------------------------------------------------------------------------
@@ -1635,174 +1770,6 @@ function phorum_api_forums_by_vroot($vroot_id = 0, $flags = 0)
 function phorum_api_forums_by_inheritance($forum_id = 0, $flags = 0)
 {
     return phorum_api_forums_get(NULL, NULL, $forum_id, NULL, $flags);
-}
-// }}}
-
-// {{{ Function: phorum_api_forums_get_descending()
-/*
-* Get forum descendants
-* 
-* @param integer $parent
-*     The forum Id of folder you like find descendants for.
-*
-* @return array
-*     An array of descendant forums.
-*/
-function phorum_api_forums_get_descending($parent)
-{
-    $ret_data = array();
-    $arr_data = phorum_api_forums_by_parent_id($parent);
-
-    foreach ($arr_data as $key => $val)
-    {
-        $ret_data[$key] = $val;
-        if ($val['folder_flag'] == 1) {
-            $more_data = phorum_api_forums_by_parent_id($val['forum_id']);
-            $ret_data = $ret_data + $more_data; // array_merge reindexes the array
-        }
-    }
-
-    return $ret_data;
-}
-
-// {{{ Function: phorum_api_forums_set_vroot()
-/*
-* Sets the given vroot for the descending forums / folders
-* which are not yet in another descending vroot
-*
-* @param integer $folder 
-*       folder from which we should go down
-* @param integer $vroot
-*       virtual root we set the folders/forums to
-* @param integer $old_vroot 
-*       virtual root which should be overrideen with the new value
-*
-*/
-function phorum_api_forums_set_vroot($folder, $vroot = -1, $old_vroot = 0)
-{
-    global $PHORUM;
-
-    // which vroot
-    if($vroot == -1) {
-        $vroot=$folder;
-    }
-
-    // get the desc forums/folders
-    $descending = phorum_api_forums_get_descending($folder);
-    $valid = array();
-
-    // collecting vroots
-    $vroots=array();
-    foreach($descending as $id => $data) {
-        if($data['folder_flag'] == 1 && $data['vroot'] != 0 && $data['forum_id'] == $data['vroot']) {
-            $vroots[$data['vroot']]=true;
-        }
-    }
-
-    // getting forums which are not in a vroot or not in *this* vroot
-    foreach($descending as $id => $data) {
-        if($data['vroot'] == $old_vroot || !isset($vroots[$data['vroot']])) {
-            $valid[$id]=$data;
-        }
-    }
-
-    // $valid = forums/folders which are not in another vroot
-    $set_ids=array_keys($valid);
-    $set_ids[]=$folder;
-
-    $new_forum_data=array('forum_id'=>$set_ids,'vroot'=>$vroot);
-    $returnval=$PHORUM['DB']->update_forum($new_forum_data);
-
-    return $returnval;
-}
-
-
-// {{{ Function: phorum_api_forums_delete()
-/**
- * Delete a forum or folder.
- *
- * When a folder is deleted, then the contained folders and forums are
- * linked to the parent of the folder.
- *
- * @param integer $forum_id
- *   The forum_id to delete.
- *
- * @return mixed
- *   An array containing the data for the deleted forum or folder.
- *   NULL in case no forum or folder exists for the provided forum id. 
- */
-function phorum_api_forums_delete($forum_id)
-{
-    global $PHORUM;
-
-    $forum = phorum_api_forums_get($forum_id);
-
-    // Check if the forum or folder was found. If not, then return NULL.
-    if ($forum === NULL) {
-        return NULL;
-    }
-
-    // Handle deleting a folder.
-    if ($forum['folder_flag'])
-    {
-        //if is folder and has a parent folder
-        if ($forum['parent_id'] > 0)
-        { 
-            $parent_folder = phorum_api_forums_get($forum['parent_id']);
-
-            // is a vroot set?
-            if($parent_folder['vroot'] > 0) { 
-                // then set the vroot to the vroot of the parent-folder
-                phorum_api_forums_set_vroot($forum_id,$parent_folder['vroot'],$forum_id);
-            }
-        } else { // just default root ...
-            phorum_api_forums_set_vroot($forum_id,0,$forum_id);
-        }
-
-        // This call deletes the folder from the database.
-        // It will link child folders and forums to the deleted folder's parent.
-        $PHORUM['DB']->drop_folder($forum_id);
-    }
-    // Handle deleting a forum.
-    else
-    {
-       /*
-        * [hook]
-        *     admin_forum_delete
-        *
-        * [description]
-        *     This hook is called whenever a forum is deleted.
-        *
-        * [category]
-        *     Admin interface
-        *
-        * [when]
-        *     Right before the forum will be deleted from the database.
-        *
-        * [input]
-        *     The ID of the forum.
-        *
-        * [output]
-        *     Same as input.
-        *
-        * [example]
-        *     <hookcode>
-        *     function phorum_mod_foo_admin_forum_delete ($id) 
-        *     {
-        *         // E.g. Notify an external system that the forum has
-        *         // been deleted.
-        *
-        *         // Return the forum ID for other hooks.
-        *         return $id;
-        *
-        *     }
-        *     </hookcode>
-        */  
-        phorum_api_hook("admin_forum_delete", $forum_id);
-        $PHORUM['DB']->drop_forum($forum_id);
-    }
-
-    return $forum;
 }
 // }}}
 
