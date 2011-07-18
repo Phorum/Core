@@ -21,19 +21,25 @@ if (!defined("PHORUM_ADMIN")) return;
 
 require_once './include/api/forums.php';
 
-if ($_GET["confirm"]=="Yes")
+if ($_GET["confirm"] == "Yes")
 {
-	$res = phorum_api_forums_delete((int)$_GET['forum_id']);
-	$msg = ($res) ? 
-	"The folder was deleted.  All forums and folders in this folder have been moved to this folder's parent.":
-	"The forum was deleted.  All messages in that forum were deleted.";
-	
-} elseif($_GET["confirm"]=="No"){
+    $res = phorum_api_forums_delete((int)$_GET['forum_id']);
 
-    $msg="No action was taken.";
-
-} else {
-
+    if ($res === NULL) {
+        $msg = "No action was taken.";
+    } else {
+        $msg = $res['folder_flag']
+             ? "The folder has been deleted. All forums and folders from " .
+               "this folder have been moved to the folder's parent."
+             : "The forum and all messages it contained have been deleted.";
+    }
+}
+elseif ($_GET["confirm"] == "No")
+{
+    $msg = "No action was taken.";
+}
+else
+{
     $forum = phorum_api_forums_get((int)$_GET['forum_id'],NULL,NULL,NULL,PHORUM_FLAG_INCLUDE_INACTIVE);
 
     if($forum["folder_flag"]){
