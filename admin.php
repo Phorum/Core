@@ -35,9 +35,9 @@ require_once PHORUM_PATH.'/include/api/lang.php';
 // initialized as empty
 $PHORUM['admin_token']="";
 if(!empty($_GET['phorum_admin_token'])) {
-	$PHORUM['admin_token']=$_GET['phorum_admin_token'];
+    $PHORUM['admin_token']=$_GET['phorum_admin_token'];
 } elseif(!empty($_POST['phorum_admin_token'])) {
-	$PHORUM['admin_token']=$_POST['phorum_admin_token'];
+    $PHORUM['admin_token']=$_POST['phorum_admin_token'];
 }
 
 // determine absolute URI for the admin

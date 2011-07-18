@@ -357,7 +357,7 @@ foreach ($list['modules'] as $name => $info)
     {
         $links = array();
         if ($info["settings"]) {
-        	$setting_url = phorum_admin_build_url(array('module=modsettings','mod='.$name));
+            $setting_url = phorum_admin_build_url(array('module=modsettings','mod='.$name));
             $links[] = "<a name=\"link-settings-$name\" href=\"$setting_url\">" .
                       "Edit module settings</a>";
         }
@@ -367,7 +367,7 @@ foreach ($list['modules'] as $name => $info)
 
         foreach(array('README','INSTALL','Changelog') as $file) {
             if(file_exists("./mods/$name/$file")){
-            	$add_url = phorum_admin_build_url(array('module=mods','mod='.$name,'info='.$file));
+                $add_url = phorum_admin_build_url(array('module=mods','mod='.$name,'info='.$file));
                 $links[] = "<a href=\"$add_url\">View $file</a>";
             }
         }

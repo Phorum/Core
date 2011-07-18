@@ -97,7 +97,7 @@ if ($folder_id > 0)
             if (empty($folder['vroot'])) {
                 $name = 'Root folder';
             } else {
-            	$elturl = phorum_admin_build_url(array('module=default','parent_id='.$folder['parent_id']));
+                $elturl = phorum_admin_build_url(array('module=default','parent_id='.$folder['parent_id']));
                 $elts[] = "<a href=\"$elturl\">Back to parent folder</a>";
                 $name = 'Virtual Root "'.$name.'"';
             }
@@ -105,7 +105,7 @@ if ($folder_id > 0)
         if ($folder_id == $id) {
             $elts[] = '<strong>' . $name . '</strong>';
         } else {
-        	$elturl = phorum_admin_build_url(array('module=default',"parent_id=$id"));
+            $elturl = phorum_admin_build_url(array('module=default',"parent_id=$id"));
             $elts[] = "<a href=\"$elturl\">$name</a>";
         }
     }
@@ -127,7 +127,7 @@ else {
   if (empty($folder['forum_id'])) {
       print "<span class=\"icon-folder\"></span>";
   } else {
-  	$upurl = phorum_admin_build_url(array('module=default',"parent_id=$parent_parent_id"));
+      $upurl = phorum_admin_build_url(array('module=default',"parent_id=$parent_parent_id"));
       print "<a href=\"$upurl\"><span class=\"icon-folder-up\"></span></a>";
   }
   echo "$path";
