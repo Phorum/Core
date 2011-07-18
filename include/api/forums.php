@@ -524,14 +524,14 @@ function phorum_api_forums_save($data, $flags = 0)
     $missing = $fields;
 
     // the empty array to collect custom fields
-    $custom_forum_field_data=array();
+    $custom_forum_field_data = array();
 
     // Check and format the provided fields.
     foreach ($dbdata as $fld => $val)
     {
         // Determine the field type.
         if (!array_key_exists($fld, $fields)) {
-            $spec=array(FFLD_MS=>'m',FFLD_TYPE=>'custom_field');
+            $spec = array(FFLD_MS => 'm', FFLD_TYPE => 'custom_field');
         } else {
             $spec = explode(':', $fields[$fld]);
         }
@@ -1643,22 +1643,25 @@ function phorum_api_forums_by_inheritance($forum_id = 0, $flags = 0)
 * Get forum descendants
 * 
 * @param integer $parent
-*   the forum Id of folder you like find descendants for
+*     The forum Id of folder you like find descendants for.
 *
 * @return array
-*   an array of descendant forums
+*     An array of descendant forums.
 */
-function phorum_api_forums_get_descending($parent) {
-
-    $ret_data=array();
+function phorum_api_forums_get_descending($parent)
+{
+    $ret_data = array();
     $arr_data = phorum_api_forums_by_parent_id($parent);
-    foreach($arr_data as $key => $val) {
-        $ret_data[$key]=$val;
-        if($val['folder_flag'] == 1) {
-            $more_data=phorum_api_forums_by_parent_id($val['forum_id']);
-            $ret_data=$ret_data + $more_data; // array_merge reindexes the array
+
+    foreach ($arr_data as $key => $val)
+    {
+        $ret_data[$key] = $val;
+        if ($val['folder_flag'] == 1) {
+            $more_data = phorum_api_forums_by_parent_id($val['forum_id']);
+            $ret_data = $ret_data + $more_data; // array_merge reindexes the array
         }
     }
+
     return $ret_data;
 }
 
@@ -1675,7 +1678,7 @@ function phorum_api_forums_get_descending($parent) {
 *       virtual root which should be overrideen with the new value
 *
 */
-function phorum_api_forums_set_vroot($folder,$vroot=-1,$old_vroot=0)
+function phorum_api_forums_set_vroot($folder, $vroot = -1, $old_vroot = 0)
 {
     global $PHORUM;
 
@@ -1685,8 +1688,8 @@ function phorum_api_forums_set_vroot($folder,$vroot=-1,$old_vroot=0)
     }
 
     // get the desc forums/folders
-    $descending=phorum_api_forums_get_descending($folder);
-    $valid=array();
+    $descending = phorum_api_forums_get_descending($folder);
+    $valid = array();
 
     // collecting vroots
     $vroots=array();
@@ -1718,23 +1721,35 @@ function phorum_api_forums_set_vroot($folder,$vroot=-1,$old_vroot=0)
 /**
  * Delete a forum or folder.
  *
- * @param integer $forum_id
- *     The forum_id to delete.
+ * When a folder is deleted, then the contained folders and forums are
+ * linked to the parent of the folder.
  *
- * @return int
- *     the folder flag setting of the forum or folder just deleted
+ * @param integer $forum_id
+ *   The forum_id to delete.
+ *
+ * @return mixed
+ *   An array containing the data for the deleted forum or folder.
+ *   NULL in case no forum or folder exists for the provided forum id. 
  */
 function phorum_api_forums_delete($forum_id)
 {
     global $PHORUM;
 
-    $oldforum = phorum_api_forums_get($forum_id);
+    $forum = phorum_api_forums_get($forum_id);
 
-    //check folder or forum
-    if ($oldforum['folder_flag']) {
+    // Check if the forum or folder was found. If not, then return NULL.
+    if ($forum === NULL) {
+        return NULL;
+    }
+
+    // Handle deleting a folder.
+    if ($forum['folder_flag'])
+    {
         //if is folder and has a parent folder
-        if($oldforum['parent_id'] > 0) { 
-            $parent_folder = phorum_api_forums_get($oldforum['parent_id']);
+        if ($forum['parent_id'] > 0)
+        { 
+            $parent_folder = phorum_api_forums_get($forum['parent_id']);
+
             // is a vroot set?
             if($parent_folder['vroot'] > 0) { 
                 // then set the vroot to the vroot of the parent-folder
@@ -1743,8 +1758,14 @@ function phorum_api_forums_delete($forum_id)
         } else { // just default root ...
             phorum_api_forums_set_vroot($forum_id,0,$forum_id);
         }
+
+        // This call deletes the folder from the database.
+        // It will link child folders and forums to the deleted folder's parent.
         $PHORUM['DB']->drop_folder($forum_id);
-    } else {
+    }
+    // Handle deleting a forum.
+    else
+    {
        /*
         * [hook]
         *     admin_forum_delete
@@ -1756,7 +1777,7 @@ function phorum_api_forums_delete($forum_id)
         *     Admin interface
         *
         * [when]
-        *     Right before the forum will be deleted from the database
+        *     Right before the forum will be deleted from the database.
         *
         * [input]
         *     The ID of the forum.
@@ -1768,9 +1789,10 @@ function phorum_api_forums_delete($forum_id)
         *     <hookcode>
         *     function phorum_mod_foo_admin_forum_delete ($id) 
         *     {
-        *         // E.g. Notify the external system that the forum has been deleted
+        *         // E.g. Notify an external system that the forum has
+        *         // been deleted.
         *
-        *         // Return forum ID for other hooks
+        *         // Return the forum ID for other hooks.
         *         return $id;
         *
         *     }
@@ -1779,7 +1801,8 @@ function phorum_api_forums_delete($forum_id)
         phorum_api_hook("admin_forum_delete", $forum_id);
         $PHORUM['DB']->drop_forum($forum_id);
     }
-    return $oldforum['folder_flag'];
+
+    return $forum;
 }
 // }}}
 
