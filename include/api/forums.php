@@ -601,6 +601,7 @@ function phorum_api_forums_save($data, $flags = 0)
             }
         }
     }
+
     // Apply inheritance driven settings to the data if some sort of
     // inheritance is configured. Options for this field are:
     // - NULL       : no inheritance used
@@ -928,11 +929,9 @@ function phorum_api_forums_update_path($forum, $recurse = TRUE)
         // Find the forums and folders that are contained by this folder.
         $childs = phorum_api_forums_by_parent_id($forum['forum_id']);
 
-        // If there are childs, then update their vroot (which might have
-        // changed) and save them to have the path updated.
+        // Handle recursion for the child forums and folders.
         if (!empty($childs)) {
             foreach ($childs as $child){
-                $child['vroot'] = $forum['vroot'];
                 if (!phorum_api_forums_update_path($child)) {
                     return NULL;
                 }
