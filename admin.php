@@ -31,6 +31,7 @@ require_once PHORUM_PATH.'/include/admin_functions.php';
 require_once PHORUM_PATH.'/include/api/buffer.php';
 require_once PHORUM_PATH.'/include/api/sign.php';
 require_once PHORUM_PATH.'/include/api/lang.php';
+require_once PHORUM_PATH.'/include/api/admin.php';
 
 // initialized as empty
 $PHORUM['admin_token']="";

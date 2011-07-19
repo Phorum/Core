@@ -122,7 +122,7 @@ if (count($_POST))
             // Store the default settings in the database.
             phorum_api_forums_save($forum, PHORUM_FLAG_DEFAULTS);
 
-            $url = phorum_admin_build_url(array('module=forum_defaults','okmsg='.rawurlencode('The default settings were successfully saved')));
+            $url = phorum_api_admin_url(array('module=forum_defaults','okmsg='.rawurlencode('The default settings were successfully saved')));
                    
         }
         // Create or update a forum.
@@ -142,7 +142,7 @@ if (count($_POST))
             $okmsg = "Forum \"{$forum['name']}\" was successfully saved";
 
             // The URL to redirect to.
-            $url = phorum_admin_build_url(array('module=default',"parent_id=$forum[parent_id]", 'okmsg='.rawurlencode($okmsg)));
+            $url = phorum_api_admin_url(array('module=default',"parent_id=$forum[parent_id]", 'okmsg='.rawurlencode($okmsg)));
         }
 
         phorum_api_redirect($url);
@@ -277,7 +277,7 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
                               "the current forum already:<br /><ul>\n";
             foreach($slaves as $id => $data) {
                 array_shift($data['forum_path']);
-                $edit_url = phorum_admin_build_url(array('module=edit'.($data['folder_flag'] ? 'folder' : 'forum'),"forum_id=$id"));
+                $edit_url = phorum_api_admin_url(array('module=edit'.($data['folder_flag'] ? 'folder' : 'forum'),"forum_id=$id"));
                 $add_inherit_text .= "<li><a href=\"$edit_url\">" .
                                      implode(" / ", $data['forum_path']) .
                                      "</li>\n";

@@ -242,7 +242,7 @@ if(empty($_REQUEST["edit"])){
 
     $frm->show();
 
-    $frm_url = phorum_admin_build_url('base');
+    $frm_url = phorum_api_admin_url();
     
     echo "<hr class=\"PhorumAdminHR\" />";
     echo "<form action=\"$frm_url\" method=\"post\">\n";
@@ -256,7 +256,7 @@ if(empty($_REQUEST["edit"])){
     echo "</tr>\n";
 
     foreach($groups as $group){
-      $edit_url = phorum_admin_build_url(array('module=groups','edit=1','group_id='.$group['group_id']));
+      $edit_url = phorum_api_admin_url(array('module=groups','edit=1','group_id='.$group['group_id']));
         echo "<tr>\n";
         echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$edit_url\">".htmlspecialchars($group['name'])."</a></td>\n";
         echo "    <td class=\"PhorumAdminTableRow\">Delete? <input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$group['group_id']}\"></td>\n";

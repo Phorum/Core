@@ -61,15 +61,15 @@ foreach($forums as $forum_id => $forum)
     {
         $visit_url = phorum_api_url(PHORUM_INDEX_URL, $forum['forum_id']);
         $type="folder";
-        $folder_edit_url = phorum_admin_build_url(array('module=editfolder',"forum_id=$forum_id"));
-        $folder_delete_url = phorum_admin_build_url(array('module=deletefolder',"forum_id=$forum_id"));
+        $folder_edit_url = phorum_api_admin_url(array('module=editfolder',"forum_id=$forum_id"));
+        $folder_delete_url = phorum_api_admin_url(array('module=deletefolder',"forum_id=$forum_id"));
         $actions="<a href=\"$folder_edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$folder_delete_url\">Delete</a>&nbsp;&#149;&nbsp;<a href=\"$visit_url\">Visit</a>";
-        $mainurl=phorum_admin_build_url(array('module=default',"parent_id=$forum_id"));
+        $mainurl=phorum_api_admin_url(array('module=default',"parent_id=$forum_id"));
     } else {
         $visit_url = phorum_api_url(PHORUM_LIST_URL, $forum['forum_id']);
         $type="forum";
-        $forum_edit_url = phorum_admin_build_url(array('module=editforum',"forum_id=$forum_id"));
-        $forum_delete_url = phorum_admin_build_url(array('module=deleteforum',"forum_id=$forum_id"));
+        $forum_edit_url = phorum_api_admin_url(array('module=editforum',"forum_id=$forum_id"));
+        $forum_delete_url = phorum_api_admin_url(array('module=deleteforum',"forum_id=$forum_id"));
         $actions="<a href=\"$forum_edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$forum_delete_url\">Delete</a>&nbsp;&#149;&nbsp;<a href=\"$visit_url\">Visit</a>";
         $mainurl=NULL;
     }
@@ -79,8 +79,8 @@ foreach($forums as $forum_id => $forum)
     $rows .= "<span class=\"icon-$type\"></span>";
     $rows .= '<strong>' . ($forum['vroot'] == $forum['forum_id'] ? 'Virtual root: ' : '') . $forum['name'] . '</strong>';
     if ($mainurl) $rows .= "</a>";
-    $mv_up_url = phorum_admin_build_url(array('module=default',"display_up=$forum_id","parent_id=$folder_id")); 
-    $mv_down_url = phorum_admin_build_url(array('module=default',"display_down=$forum_id","parent_id=$folder_id"));
+    $mv_up_url = phorum_api_admin_url(array('module=default',"display_up=$forum_id","parent_id=$folder_id")); 
+    $mv_down_url = phorum_api_admin_url(array('module=default',"display_down=$forum_id","parent_id=$folder_id"));
     $rows .= "<p class=\"forum-description\">$forum[description]</p></th><td class=\"PhorumAdminTableRow\"><a href=\"$mv_up_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_up.png\" alt=\"Up\" title=\"Up\"/></a>&nbsp;<a href=\"$mv_down_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_down.png\" alt=\"Down\" title=\"Down\"/></a></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
 }
 
@@ -97,7 +97,7 @@ if ($folder_id > 0)
             if (empty($folder['vroot'])) {
                 $name = 'Root folder';
             } else {
-                $elturl = phorum_admin_build_url(array('module=default','parent_id='.$folder['parent_id']));
+                $elturl = phorum_api_admin_url(array('module=default','parent_id='.$folder['parent_id']));
                 $elts[] = "<a href=\"$elturl\">Back to parent folder</a>";
                 $name = 'Virtual Root "'.$name.'"';
             }
@@ -105,7 +105,7 @@ if ($folder_id > 0)
         if ($folder_id == $id) {
             $elts[] = '<strong>' . $name . '</strong>';
         } else {
-            $elturl = phorum_admin_build_url(array('module=default',"parent_id=$id"));
+            $elturl = phorum_api_admin_url(array('module=default',"parent_id=$id"));
             $elts[] = "<a href=\"$elturl\">$name</a>";
         }
     }
@@ -127,7 +127,7 @@ else {
   if (empty($folder['forum_id'])) {
       print "<span class=\"icon-folder\"></span>";
   } else {
-      $upurl = phorum_admin_build_url(array('module=default',"parent_id=$parent_parent_id"));
+      $upurl = phorum_api_admin_url(array('module=default',"parent_id=$parent_parent_id"));
       print "<a href=\"$upurl\"><span class=\"icon-folder-up\"></span></a>";
   }
   echo "$path";

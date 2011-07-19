@@ -91,7 +91,7 @@ if (isset($_POST['referrer'])) {
 } else {
     $input_args = array('module=users');
     if(count($page_args_array)) $input_args = array_merge($input_args,$page_args_array);
-    $referrer = phorum_admin_build_url($input_args);
+    $referrer = phorum_api_admin_url($input_args);
 }
 
 if(count($_POST))
@@ -293,8 +293,8 @@ if(!defined("PHORUM_ORIGINAL_USER_CODE") || PHORUM_ORIGINAL_USER_CODE!==true){
 
 if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !isset($_POST['section']))
 {
-    $users_url = phorum_admin_build_url(array('module=users'));
-    $users_add_url = phorum_admin_build_url(array('module=users','add=1'));
+    $users_url = phorum_api_admin_url(array('module=users'));
+    $users_add_url = phorum_api_admin_url(array('module=users','add=1'));
     print "<a href=\"$users_url\">" .
           "Show all users</a> | <a href=\"$users_add_url\">Add User</a><br/>";
 
@@ -737,36 +737,36 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
         $input_args = array('module=users');
         $input_args = array_merge($input_args,$url_safe_search_arr);
         
-        $frm_url = phorum_admin_build_url($input_args);
+        $frm_url = phorum_api_admin_url($input_args);
         
         $sort_input_args = array('page='.$page,'pagelength='.$pagelength);
         $sort_input_args = array_merge($sort_input_args,$input_args);
         
         $display_name_sort_dir = ($sort == "display_name") ? $reverse_sort_dir : "";
         $display_name_sort_url_args = array_merge(array('sort=display_name','sort_dir='.$display_name_sort_dir),$sort_input_args);
-        $display_name_sort_url = phorum_admin_build_url($display_name_sort_url_args);
+        $display_name_sort_url = phorum_api_admin_url($display_name_sort_url_args);
         
         $email_sort_dir = ($sort == "email") ? $reverse_sort_dir : "";
         $email_sort_url_args = array_merge(array('sort=email','sort_dir='.$email_sort_dir),$sort_input_args);
-        $email_sort_url = phorum_admin_build_url($email_sort_url_args);
+        $email_sort_url = phorum_api_admin_url($email_sort_url_args);
         
         $status_sort_dir = ($sort == "active") ? $reverse_sort_dir : "";
         $status_sort_url_args = array_merge(array('sort=active','sort_dir='.$status_sort_dir),$sort_input_args);
-        $status_sort_url = phorum_admin_build_url($status_sort_url_args);
+        $status_sort_url = phorum_api_admin_url($status_sort_url_args);
         
         $posts_sort_dir = ($sort == "posts") ? $reverse_sort_dir : "";
         $posts_sort_url_args = array_merge(array('sort=posts','sort_dir='.$posts_sort_dir),$sort_input_args);
-        $posts_sort_url = phorum_admin_build_url($posts_sort_url_args);
+        $posts_sort_url = phorum_api_admin_url($posts_sort_url_args);
         
         $last_activity_sort_dir = ($sort == "date_last_active") ? $reverse_sort_dir : "";
         $last_activity_sort_url_args = array_merge(array('sort=date_last_active','sort_dir='.$last_activity_sort_dir),$sort_input_args);
-        $last_activity_sort_url = phorum_admin_build_url($last_activity_sort_url_args);
+        $last_activity_sort_url = phorum_api_admin_url($last_activity_sort_url_args);
         
         if (!empty($_REQUEST["registered"])) {
             $cols++;
             $registered_sort_dir = ($sort == "date_added") ? $reverse_sort_dir : "";
             $registered_sort_url_args = array_merge(array('sort=date_added','sort_dir='.$registered_sort_dir),$sort_input_args);
-            $registered_sort_url = phorum_admin_build_url($registered_sort_url_args);
+            $registered_sort_url = phorum_api_admin_url($registered_sort_url_args);
         }
         
         echo <<<EOT
@@ -830,7 +830,7 @@ EOT;
             
             $user_input_args = array('module=users','user_id='.$user['user_id'],'edit=1','page='.$page,'pagelength='.$pagelength,'sort='.$sort,'sort_dir='.$sort_dir);
             $user_input_args = array_merge($user_input_args,$url_safe_search_arr);
-            $edit_url = phorum_admin_build_url($user_input_args);
+            $edit_url = phorum_api_admin_url($user_input_args);
             echo "<tr>\n";
             echo "    <td class=\"".$ta_class."\"><a href=\"$edit_url\">".(empty($PHORUM['custom_display_name']) ? htmlspecialchars($user['display_name']) : $user['display_name'])."</a></td>\n";
             echo "    <td class=\"".$ta_class."\">".htmlspecialchars($user['email'])."</td>\n";

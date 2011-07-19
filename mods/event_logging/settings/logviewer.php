@@ -37,7 +37,7 @@ $pagelengths = array(
 
 // The base URL for creating URL's to the filter page. This will be used
 // later on, for making parts of the output clickable for adjusting the filter.
-$filter_base = phorum_admin_build_url(array(
+$filter_base = phorum_api_admin_url(array(
     'module=modsettings',
     'mod=event_logging',
     'el_action=filter'
