@@ -31,40 +31,6 @@ function phorum_admin_okmsg($error)
     echo "<div class=\"PhorumAdminOkMsg\">$error</div>\n";
 }
 
-function phorum_get_folder_info()
-{
-    $folders=array();
-    $folder_data=array();
-
-    $forums = phorum_api_forums_get(
-        NULL, NULL, NULL, NULL,
-        PHORUM_FLAG_INCLUDE_INACTIVE | PHORUM_FLAG_FOLDERS
-    );
-
-    foreach($forums as $forum){
-        $path = $forum["name"];
-        $parent_id=$forum["parent_id"];
-        while($parent_id!=0  && $parent_id!=$forum["forum_id"]){
-            $path=$forums[$parent_id]["name"]."::$path";
-            $parent_id=$forums[$parent_id]["parent_id"];
-        }
-        $folders[$forum["forum_id"]]=$path;
-    }
-
-    asort($folders);
-
-    $tmp=array("--None--");
-
-    foreach($folders as $id => $folder){
-        $tmp[$id]=$folder;
-    }
-
-    $folders=$tmp;
-
-    return $folders;
-
-}
-
 /*
 *
 * $forums_only can be 0,1,2,3
@@ -83,7 +49,6 @@ function phorum_get_folder_info()
 function phorum_get_forum_info($forums_only=0,$vroot = -1)
 {
     $folders=array();
-    $folder_data=array();
 
     $forums = phorum_api_forums_get(
         NULL, NULL, NULL, NULL,
@@ -124,13 +89,13 @@ function phorum_get_forum_info($forums_only=0,$vroot = -1)
 
 function phorum_admin_build_url($input_args) {
     global $PHORUM;
-    
+
     $url = $PHORUM["admin_http_path"];
-    
+
     if($input_args == 'base') {
         return $url;
     }
-    
+
     if(is_array($input_args) && count($input_args)) {
         $url .="?".implode("&",$input_args);
         $url = preg_replace("!&{0,1}phorum_admin_token=([A-Za-z0-9]*)!", "", $url);
@@ -149,9 +114,9 @@ function phorum_admin_build_url($input_args) {
             $url .="?phorum_admin_token=".$PHORUM['admin_token'];
         }
     }
-    
-    
-    
+
+
+
     return $url;
 }
 ?>
