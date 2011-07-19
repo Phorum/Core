@@ -1547,46 +1547,46 @@ function phorum_api_forums_delete($forum_id)
         return NULL;
     }
 
-    /*
-     * [hook]
-     *     admin_folder_delete
-     *
-     * [availability]
-     *     Phorum 5 >= 5.3
-     *
-     * [description]
-     *     This hook is called whenever a folder is deleted.
-     *
-     * [category]
-     *     Admin interface
-     *
-     * [when]
-     *     Right before the folder will be deleted from the database.
-     *
-     * [input]
-     *     The ID of the folder.
-     *
-     * [output]
-     *     Same as input.
-     *
-     * [example]
-     *     <hookcode>
-     *     function phorum_mod_foo_admin_folder_delete ($id) 
-     *     {
-     *         // E.g. Notify an external system that the folder has
-     *         // been deleted.
-     *
-     *         // Return the folder ID for other hooks.
-     *         return $id;
-     *
-     *     }
-     *     </hookcode>
-     */  
-    phorum_api_hook("admin_folder_delete", $forum_id);
-
     // Handle deleting a folder.
     if ($forum['folder_flag'])
     {
+        /*
+         * [hook]
+         *     admin_folder_delete
+         *
+         * [availability]
+         *     Phorum 5 >= 5.3
+         *
+         * [description]
+         *     This hook is called whenever a folder is deleted.
+         *
+         * [category]
+         *     Admin interface
+         *
+         * [when]
+         *     Right before the folder will be deleted from the database.
+         *
+         * [input]
+         *     The ID of the folder.
+         *
+         * [output]
+         *     Same as input.
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_admin_folder_delete ($id) 
+         *     {
+         *         // E.g. Notify an external system that the folder has
+         *         // been deleted.
+         *
+         *         // Return the folder ID for other hooks.
+         *         return $id;
+         *
+         *     }
+         *     </hookcode>
+         */  
+        phorum_api_hook("admin_folder_delete", $forum_id);
+
         // When the folder is a vroot folder currently, then disable
         // the vroot setting for it by linking it to the vroot of
         // the parent folder. This will take care of recursive updates
