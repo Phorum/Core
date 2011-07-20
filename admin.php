@@ -27,7 +27,7 @@ define("PHORUM_ADMIN", 1);
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_USER_ERROR );
 
 require_once './common.php';
-require_once PHORUM_PATH.'/include/admin_functions.php';
+require_once PHORUM_PATH.'/include/admin/functions.php';
 require_once PHORUM_PATH.'/include/api/buffer.php';
 require_once PHORUM_PATH.'/include/api/sign.php';
 require_once PHORUM_PATH.'/include/api/lang.php';
