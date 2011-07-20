@@ -44,6 +44,7 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/admin/file_purge.php',
     'include/admin/footer.php',
     'include/admin/forum_defaults.php',
+    'include/admin/functions.php',
     'include/admin/groups.php',
     'include/admin/header.php',
     'include/admin/index.php',
@@ -107,6 +108,7 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/posting/request_first.php',
     'include/posting/request_followup.php',
 
+    'include/api/admin.php',
     'include/api/template.php',
     'include/api/output.php',
     'include/api/write_file.php',
@@ -214,6 +216,7 @@ $GLOBALS["PHORUM"]["deprecated_distro"] = array
       'include/thread_info.php',       // moved to Thread API
       'include/thread_sort.php',       // moved to Thread API
       'include/email_functions.php',   // moved to Mail API
+      'include/admin_functions.php',   // moved to include/admin/functions.php
     )
 );
 
@@ -232,7 +235,7 @@ $GLOBALS["PHORUM"]["distro_templates"] = array(
 
 // A list of language files that ship with Phorum.
 $GLOBALS["PHORUM"]["distro_languages"] = array(
-    "english.php",
+    "en_US.UTF-8.php",
 );
 
 function phorum_check_distro()
