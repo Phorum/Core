@@ -63,7 +63,7 @@ class PhorumAdminMenu
             
             $input_args = array();
             if(!empty($link["module"])) $input_args[]="module=$link[module]";
-            $url = phorum_admin_build_url($input_args);
+            $url = phorum_api_admin_url($input_args);
             $html ="<a title=\"$desc\" href=\"$url";
             $html .= "\">$title</a><br />";
             echo $html;

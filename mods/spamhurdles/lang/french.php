@@ -11,7 +11,7 @@ $PHORUM["DATA"]["LANG"]["mod_spamhurdles"] = array
     "CaptchaUnclearExplain" =>
         "Si le code n'est pas clair, essayez de le deviner. Si vous
          faites erreur, une nouvelle image sera créée et vous pourrez
-		 essayer à nouveau.",
+         essayer à nouveau.",
     "CaptchaSpoken" =>
         "Écoutez la version orale du code (en anglais seulement).",
     "CaptchaFieldLabel" =>
@@ -44,7 +44,7 @@ $PHORUM["DATA"]["LANG"]["mod_spamhurdles"] = array
     // A message that is shown when a bot post is suspected.
     "PostingRejected" =>
         "Les informations que vous avez envoyées ont été rejetées,
-		 parce qu'elles semblent envoyées par un robot d'envois automatiques.",
+         parce qu'elles semblent envoyées par un robot d'envois automatiques.",
 
     // A message for failed spam hurdle checks, for which a repost
     // of the form could make a difference.
@@ -63,6 +63,6 @@ $PHORUM["DATA"]["LANG"]["mod_spamhurdles"] = array
     // if the problems persist.
     "ContactSiteOwner" =>
         "Si le problème d'envoi des informations persiste,
-		 contactez le responsable du site."
+         contactez le responsable du site."
 );
 ?>

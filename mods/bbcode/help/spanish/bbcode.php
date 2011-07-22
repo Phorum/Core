@@ -7,8 +7,8 @@
     <h2>Información BBcode</h2>
 
     BBCode es una abreviatura de Bulletin Board Code. Es un lenguaje
-	de marcado usado en foros para dar formato a los mensajes. Esta
-	página de ayuda describe cómo puede usarse el BBCode en este foro.
+    de marcado usado en foros para dar formato a los mensajes. Esta
+    página de ayuda describe cómo puede usarse el BBCode en este foro.
 
     <h3>Negrita: [b]...[/b]<br/>
         Subrayado: [u]...[/u]<br/>
@@ -16,8 +16,8 @@
         Tachado: [s]...[/s]<br/>
         </h3>
 
-	Usando estas etiquetas, puedes aplicar estilo a fragmentos de texto.
-	Ejemplos:
+    Usando estas etiquetas, puedes aplicar estilo a fragmentos de texto.
+    Ejemplos:
     <br/><br/>
     <tt>
     [b]Texto en negrita[/b]<br/>
@@ -28,7 +28,7 @@
     </tt><br/><br/>
 
 
-	Aparecerán como:<br/><br/>
+    Aparecerán como:<br/><br/>
     <b>Texto en negrita</b><br/>
     <i>Texto en cursiva</i><br/>
     <u>Texto subrayado</u><br/>
@@ -38,7 +38,7 @@
 
     <h3>Superíndice: [sup]...[/sup]<br/>Subíndice: [sub]...[/sub] </h3>
     Usando estas etiquetas, puedes marcar un fragmento de texto como
-	superíndice o subíndice. Esto es útil para cosas como
+    superíndice o subíndice. Esto es útil para cosas como
     "2<sup>4</sup> = 16" o "H<sub>2</sub>O". Ejemplo:<br/><br/>
     <tt>
     [sup]superíncide[/sup] normal [sub]subíndice[/sub]
@@ -47,8 +47,8 @@
     <sup>superíndice</sup> normal <sub>subíndice</sub>
 
     <h3>Color de la fuente: [color=...]...[/color]</h3>
-	Esta etiqueta se utiliza para aplicar un color al texto.
-	El color tiene que ser un código de color HTML válido (como "blue", "red",
+    Esta etiqueta se utiliza para aplicar un color al texto.
+    El color tiene que ser un código de color HTML válido (como "blue", "red",
     "#ff0000", "#888", etc.). Ejemplo:<br/><br/>
     <tt>
     Quien tiene miedo del
@@ -64,8 +64,8 @@
 
     <h3>Tamaño de fuente: [size=...]...[/size]</h3>
 
-	Esta etiqueta se usa para cambiar el tamaño del texto.
-	El tamaño tiene que ser una indicación válida en HTML (como "12px",
+    Esta etiqueta se usa para cambiar el tamaño del texto.
+    El tamaño tiene que ser una indicación válida en HTML (como "12px",
     "small", "large", etc.). Ejemplo:<br/><br/>
     <tt>
     <nobr>[size=x-small]Parece[/size]</nobr>
@@ -83,7 +83,7 @@
 
     <h3>Centrado: [center]...[/center]</h3>
     Puedes usar esta etiqueta para centrar el texto en pantalla.
-	Ejemplo:<br/><br/>
+    Ejemplo:<br/><br/>
     <tt>
     [center]Estoy justo en el centro[/center]
     </tt><br/><br/>
@@ -94,8 +94,8 @@
         Enlazar a otra página: [url]...[/url] or [url=...]...[/url]<br/>
         Enlazar a una dirección de correo: [email]...[/email]</h3>
 
-	Estas son etiquetas para enlazar a otros recursos.
-	Estos son algunos ejemplos: <br/><br/>
+    Estas son etiquetas para enlazar a otros recursos.
+    Estos son algunos ejemplos: <br/><br/>
     <tt>
     [img]http://www.somesite.com/cool/thumbsup.gif[/img]<br/>
     [url]http://www.phorum.org[/url]<br/>
@@ -110,8 +110,8 @@
 
     <h3>Texto monoespaciado, preformateado: [code]...[/code]</h3>
     En ocasiones puedes llegar a utilizar cosas como arte ASCII,
-	código de programación, tabulaciones de guitarra... para incluirlos
-	en el mensaje. Para esos casos, puedes usar la etiqueta [code]. Ejemplo:
+    código de programación, tabulaciones de guitarra... para incluirlos
+    en el mensaje. Para esos casos, puedes usar la etiqueta [code]. Ejemplo:
 <pre>
 [code]
  _____  _
@@ -145,15 +145,15 @@ Pero si le aplicamos la etiqueta [code], nos quedará así:
 </pre>
 
     <h3>Citas textuales: [quote]...[/quote] or [quote=...]...[/quote]</h3>
-	Si quieres citar a alguien en tu mensaje, puedes usar esta etiqueta.
-	Puedes elegir si incluir el nombre de la persona a la que citas o no.
-	Ejemplos:
+    Si quieres citar a alguien en tu mensaje, puedes usar esta etiqueta.
+    Puedes elegir si incluir el nombre de la persona a la que citas o no.
+    Ejemplos:
     <br/><br/>
     <tt>
     [quote]Phorum es lo mejor![/quote]<br/>
     [quote=De Hamlet, por William Shakespeare]<br/>
     Ser o no ser, esa es la cuestión<br/>
-	[/quote]
+    [/quote]
     </tt><br/><br/>
     Aparecerá como:<br/><br/>
     <blockquote class="bbcode">Cita:<div>Phorum es lo mejor!</div></blockquote>
@@ -164,7 +164,7 @@ Pero si le aplicamos la etiqueta [code], nos quedará así:
     Para añadir una linea horizontal de separación, puedes usar [hr].
     Aparecerá como:
     <hr>
-	Esto es útil para estructurar mensajes largos.
+    Esto es útil para estructurar mensajes largos.
 
     <h3>Itemized list: [list] [*] item 1 [*] item 2 [/list]</h3>
 

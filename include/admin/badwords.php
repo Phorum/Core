@@ -90,7 +90,7 @@ if($_GET["curr"] && $_GET["delete"]){
 
     <div class="PhorumInfoMessage">
         Are you sure you want to delete this entry?
-            <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
+            <form action="<?php echo phorum_api_admin_url(); ?>" method="post">
             <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
             <input type="hidden" name="module" value="<?php echo $module; ?>" />
             <input type="hidden" name="curr" value="<?php echo htmlspecialchars($_GET['curr']) ?>" />
@@ -165,8 +165,8 @@ if($_GET["curr"] && $_GET["delete"]){
 
         foreach($bad_words as $key => $item){
 
-            $edit_url = phorum_admin_build_url(array('module=badwords','edit=1',"curr=$key"));
-            $delete_url = phorum_admin_build_url(array('module=badwords','delete=1',"curr=$key"));
+            $edit_url = phorum_api_admin_url(array('module=badwords','edit=1',"curr=$key"));
+            $delete_url = phorum_api_admin_url(array('module=badwords','delete=1',"curr=$key"));
 
             $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
             echo "<tr>\n";

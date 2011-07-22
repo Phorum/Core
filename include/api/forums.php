@@ -524,14 +524,14 @@ function phorum_api_forums_save($data, $flags = 0)
     $missing = $fields;
 
     // the empty array to collect custom fields
-    $custom_forum_field_data=array();
+    $custom_forum_field_data = array();
 
     // Check and format the provided fields.
     foreach ($dbdata as $fld => $val)
     {
         // Determine the field type.
         if (!array_key_exists($fld, $fields)) {
-            $spec=array(FFLD_MS=>'m',FFLD_TYPE=>'custom_field');
+            $spec = array(FFLD_MS => 'm', FFLD_TYPE => 'custom_field');
         } else {
             $spec = explode(':', $fields[$fld]);
         }
@@ -601,6 +601,7 @@ function phorum_api_forums_save($data, $flags = 0)
             }
         }
     }
+
     // Apply inheritance driven settings to the data if some sort of
     // inheritance is configured. Options for this field are:
     // - NULL       : no inheritance used
@@ -928,11 +929,9 @@ function phorum_api_forums_update_path($forum, $recurse = TRUE)
         // Find the forums and folders that are contained by this folder.
         $childs = phorum_api_forums_by_parent_id($forum['forum_id']);
 
-        // If there are childs, then update their vroot (which might have
-        // changed) and save them to have the path updated.
+        // Handle recursion for the child forums and folders.
         if (!empty($childs)) {
             foreach ($childs as $child){
-                $child['vroot'] = $forum['vroot'];
                 if (!phorum_api_forums_update_path($child)) {
                     return NULL;
                 }
@@ -1518,6 +1517,141 @@ function phorum_api_forums_increment_cache_version($forum_id)
         'forum_id'      => $forum['forum_id'],
         'cache_version' => $forum['cache_version'] + 1
     ));
+}
+// }}}
+
+// {{{ Function: phorum_api_forums_delete()
+/**
+ * Delete a forum or folder.
+ *
+ * When a folder is deleted, then the contained folders and forums are
+ * linked to the parent of the folder.
+ *
+ * @param integer $forum_id
+ *   The forum_id to delete.
+ *
+ * @return mixed
+ *   An array containing the data for the deleted forum or folder.
+ *   NULL in case no forum or folder exists for the provided forum id. 
+ */
+function phorum_api_forums_delete($forum_id)
+{
+    global $PHORUM;
+
+    $forum = phorum_api_forums_get($forum_id);
+
+    // Check if the forum or folder was found. If not, then return NULL.
+    // We do not trigger an error here, since the forum/folder not existing
+    // is the desired situation anyway.
+    if ($forum === NULL) {
+        return NULL;
+    }
+
+    // Handle deleting a folder.
+    if ($forum['folder_flag'])
+    {
+        /*
+         * [hook]
+         *     admin_folder_delete
+         *
+         * [availability]
+         *     Phorum 5 >= 5.3
+         *
+         * [description]
+         *     This hook is called whenever a folder is deleted.
+         *
+         * [category]
+         *     Admin interface
+         *
+         * [when]
+         *     Right before the folder will be deleted from the database.
+         *
+         * [input]
+         *     The ID of the folder.
+         *
+         * [output]
+         *     Same as input.
+         *
+         * [example]
+         *     <hookcode>
+         *     function phorum_mod_foo_admin_folder_delete ($id) 
+         *     {
+         *         // E.g. Notify an external system that the folder has
+         *         // been deleted.
+         *
+         *         // Return the folder ID for other hooks.
+         *         return $id;
+         *
+         *     }
+         *     </hookcode>
+         */  
+        phorum_api_hook("admin_folder_delete", $forum_id);
+
+        // When the folder is a vroot folder currently, then disable
+        // the vroot setting for it by linking it to the vroot of
+        // the parent folder. This will take care of recursive updates
+        // down the hierarchy as well.
+        if ($forum['vroot'] == $forum['forum_id'])
+        {
+            $parent_vroot = 0;
+            if ($forum['parent_id']) {
+                $parent_folder = phorum_api_forums_get($forum['parent_id']);
+                if ($parent_folder) { // This check should not be necessary.
+                    $parent_vroot = $parent_folder['vroot'];
+                }
+            }
+
+            phorum_api_forums_save(array(
+                'forum_id'      => $forum['forum_id'],
+                'vroot'         => $parent_vroot
+            ));
+        }
+
+        // This call deletes the folder from the database.
+        // It will link child folders and forums to the deleted folder's parent.
+        $PHORUM['DB']->drop_folder($forum_id);
+    }
+    // Handle deleting a forum.
+    else
+    {
+       /*
+        * [hook]
+        *     admin_forum_delete
+        *
+        * [description]
+        *     This hook is called whenever a forum is deleted.
+        *
+        * [category]
+        *     Admin interface
+        *
+        * [when]
+        *     Right before the forum will be deleted from the database.
+        *
+        * [input]
+        *     The ID of the forum.
+        *
+        * [output]
+        *     Same as input.
+        *
+        * [example]
+        *     <hookcode>
+        *     function phorum_mod_foo_admin_forum_delete ($id) 
+        *     {
+        *         // E.g. Notify an external system that the forum has
+        *         // been deleted.
+        *
+        *         // Return the forum ID for other hooks.
+        *         return $id;
+        *
+        *     }
+        *     </hookcode>
+        */  
+        phorum_api_hook("admin_forum_delete", $forum_id);
+
+        $PHORUM['DB']->drop_forum($forum_id);
+    }
+
+    return $forum;
 }
 // }}}
 

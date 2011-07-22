@@ -27,17 +27,18 @@ define("PHORUM_ADMIN", 1);
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_USER_ERROR );
 
 require_once './common.php';
-require_once PHORUM_PATH.'/include/admin_functions.php';
+require_once PHORUM_PATH.'/include/admin/functions.php';
 require_once PHORUM_PATH.'/include/api/buffer.php';
 require_once PHORUM_PATH.'/include/api/sign.php';
 require_once PHORUM_PATH.'/include/api/lang.php';
+require_once PHORUM_PATH.'/include/api/admin.php';
 
 // initialized as empty
 $PHORUM['admin_token']="";
 if(!empty($_GET['phorum_admin_token'])) {
-	$PHORUM['admin_token']=$_GET['phorum_admin_token'];
+    $PHORUM['admin_token']=$_GET['phorum_admin_token'];
 } elseif(!empty($_POST['phorum_admin_token'])) {
-	$PHORUM['admin_token']=$_POST['phorum_admin_token'];
+    $PHORUM['admin_token']=$_POST['phorum_admin_token'];
 }
 
 // determine absolute URI for the admin

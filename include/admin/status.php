@@ -21,7 +21,7 @@ if (!defined("PHORUM_ADMIN")) return;
 
 $PHORUM['DB']->update_settings(array("status" => $_POST["status"]));
 
-$redir_url = phorum_admin_build_url('');
+$redir_url = phorum_api_admin_url();
 phorum_api_redirect($redir_url);
 
 exit();
