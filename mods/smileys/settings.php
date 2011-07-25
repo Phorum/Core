@@ -386,14 +386,14 @@ if ($smiley_id == "NEW")
                 $item[$key] = htmlspecialchars($val);
             }
             
-            $edit_url = phorum_api_admin_url(array(
+            $edit_url = phorum_admin_build_url(array(
                 'module=modsettings',
                 'mod=smileys',
                 'smiley_id='.$id,
                 'edit=1'
             ));
 
-            $delete_url = phorum_api_admin_url(array(
+            $delete_url = phorum_admin_build_url(array(
                 'module=modsettings',
                 'mod=smileys',
                 'smiley_id='.$id,

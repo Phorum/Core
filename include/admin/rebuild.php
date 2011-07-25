@@ -175,7 +175,7 @@ if (count($_POST))
 
     if (!empty($_POST['rebuild_display_names']))
     {
-        $redir_url = phorum_api_admin_url(array(
+        $redir_url = phorum_admin_build_url(array(
             'module=update_display_names', 'request=integrity'
         ));
         phorum_api_redirect($redir_url);

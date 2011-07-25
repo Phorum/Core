@@ -337,13 +337,4 @@ function phorum_api_newflags_format_messages($messages, $mode = PHORUM_NEWFLAGS_
     );
 }
 
-/**
- * @deprcated Replaced by {@link phorum_api_admin_url()}.
- */
-function phorum_admin_build_url($input_args = 'base') {
-    require_once PHORUM_PATH.'/include/api/admin.php';
-    if ($input_args === 'base') $input_args = NULL;
-    return phorum_api_admin_url($input_args);
-}
-
 ?>

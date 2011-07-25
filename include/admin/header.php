@@ -181,7 +181,7 @@ if ($notification !== NULL) {
 
     <div id="phorum-status">
 <?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
-<form id="status-form" action="<?php echo phorum_api_admin_url(); ?>" method="post">
+<form id="status-form" action="<?php echo phorum_admin_build_url(); ?>" method="post">
 <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
 <input type="hidden" name="module" value="status" />
 Phorum Status:

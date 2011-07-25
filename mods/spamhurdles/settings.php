@@ -159,7 +159,7 @@ $row = $frm->addrow(
     )
 );
 
-$url = phorum_api_admin_url(array(
+$url = phorum_admin_build_url(array(
    'module=modsettings',
    'mod=event_logging',
    'el_action=logviewer'

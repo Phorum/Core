@@ -73,7 +73,7 @@ if(count($_POST) && $_POST['name'] != '')
           you can choose to restore the old field's configuration and
           data. You can also create a totally new field and ignore
           the deleted field. What do you want to do?<br/><br/>
-          <form action="<?php echo phorum_api_admin_url(); ?>" method="post">
+          <form action="<?php echo phorum_admin_build_url(); ?>" method="post">
             <input type="hidden" name="phorum_admin_token" 
                 value="<?php echo $PHORUM['admin_token'];?>" />
             <input type="hidden" name="module"
@@ -130,7 +130,7 @@ if (isset($_GET["curr"]) && isset($_GET["delete"]))
   <div class="PhorumInfoMessage">
     Are you sure you want to delete this custom field?
     <br/><br/>
-    <form action="<?php echo phorum_api_admin_url(); ?>" method="post">
+    <form action="<?php echo phorum_admin_build_url(); ?>" method="post">
       <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
       <input type="hidden" name="module" value="<?php print $module; ?>" />
       <input type="hidden" name="curr" value="<?php print (int) $_GET['curr']; ?>" />
@@ -266,8 +266,8 @@ if ($curr == "NEW")
                 // Do not show deleted fields.
                 if (!empty($item['deleted'])) continue;
                 
-                $edit_url = phorum_api_admin_url(array('module=customprofile','edit=1',"curr=$key"));
-                $delete_url = phorum_api_admin_url(array('module=customprofile','delete=1',"curr=$key","field_type=".$item['field_type']));                
+                $edit_url = phorum_admin_build_url(array('module=customprofile','edit=1',"curr=$key"));
+                $delete_url = phorum_admin_build_url(array('module=customprofile','delete=1',"curr=$key","field_type=".$item['field_type']));                
                 
                 $readable_type = $TYPES_ARRAY[$field_type];
 

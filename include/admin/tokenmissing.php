@@ -41,9 +41,9 @@
                } elseif(!empty($_POST['continue'])) {
                    
                    if(!empty($_POST['target'])) {
-                       $url = phorum_api_admin_url($_POST['target']);
+                       $url = phorum_admin_build_url($_POST['target']);
                    } else {
-                       $url = phorum_api_admin_url();
+                       $url = phorum_admin_build_url();
                    }
                 
                    phorum_api_redirect($url);
@@ -80,14 +80,14 @@
         } elseif (isset($_GET['module'])) {
             $module = basename($_GET['module']);
         }
-        $url = phorum_api_admin_url('module='.urlencode($module));
+        $url = phorum_admin_build_url('module='.urlencode($module));
         phorum_api_redirect($url);
     }
 
     $targetargs = $_SERVER['QUERY_STRING'];
-    $target_html = htmlspecialchars(phorum_api_admin_url($targetargs));
+    $target_html = htmlspecialchars(phorum_admin_build_url($targetargs));
     $targs_html = htmlspecialchars($targetargs);
-    $post_url = phorum_api_admin_url();
+    $post_url = phorum_admin_build_url();
 ?>
 You are accessing the admin after a security timeout.<br /><br />
 The requested URL was: 
