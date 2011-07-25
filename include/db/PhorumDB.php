@@ -803,6 +803,10 @@ abstract class PhorumDB
         // then return an empty array.
         if (empty($allowed_forums)) return array();
 
+        // Keep track of the database index that we want to force
+        // in order to optimize the query.
+        $use_key = NULL;
+
         // We need to differentiate on which key to use.
         // If selecting on a specific thread, then the best index
         // to use would be the thread_message index.
@@ -844,6 +848,10 @@ abstract class PhorumDB
 
         // Build the SQL query.
         $sql = "SELECT msg.* FROM {$this->message_table} msg";
+
+        if ($this->_can_USE_INDEX && $use_key !== NULL) {
+            $sql .= " USE INDEX ($use_key)";
+        }
 
         if ($list_type == LIST_UNREAD_MESSAGES) {
             $sql .=

@@ -159,7 +159,7 @@ Phorum.debug = function (message, level, data)
         console !== undefined && console.debug instanceof Function)
     {
         if (data !== undefined) {
-            data = ': ' + $PJ.toJSON(data);
+            data = ': ' + JSON.stringify(data);
         } else {
             data = '';
         }
@@ -448,7 +448,7 @@ Phorum.Ajax.call({
                 // Convert complex arguments to JSON, otherwise they will
                 // not survive the translation to a JSONP request URL.
                 if (typeof(req[key]) === 'object') {
-                    args[key] = '$JSON$' + $PJ.toJSON(req[key]);
+                    args[key] = '$JSON$' + JSON.stringify(req[key]);
                 } else {
                     args[key] = req[key];
                 }
