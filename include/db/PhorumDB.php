@@ -4544,7 +4544,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: user_delete
+    // {{{ Method: user_delete()
     /**
      * Delete a user completely. Messages that were posted by the user in the
      * forums, will be changed into anonymous messages (user_id = 0). If the
@@ -4648,7 +4648,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: delete_custom_fields
+    // {{{ Method: delete_custom_fields()
     public function delete_custom_fields($type,$relation_id)
     {
         if (is_array($relation_id)) {
@@ -5962,7 +5962,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: get_banitem
+    // {{{ Method: get_banitem()
     /**
      * Retrieve a single ban item from the ban lists.
      *
@@ -6002,7 +6002,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: del_banitem
+    // {{{ Method: del_banitem()
     /**
      * Delete a single ban item from the ban lists.
      *
@@ -6460,7 +6460,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: pm_messagecount
+    // {{{ Method: pm_messagecount()
     /**
      * Compute the total number of private messages a user has and return
      * both the total number of messages and the number of unread messages.
@@ -6548,7 +6548,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: pm_send
+    // {{{ Method: pm_send()
     /**
      * Send a private message.
      *
