@@ -149,6 +149,17 @@ class PhorumMysqlDB extends PhorumDB
         $return, $sql = NULL, $keyfield = NULL, $flags = 0,
         $limit = 0, $offset = 0)
     {
+        global $PHORUM;
+
+        // When the 'disable_sql_cache' option is enabled in the database
+        // configuration, then rewrite MySQL SELECT queries to make use
+        // of the additive SQL_NO_CACHE. This will tell the MySQL database
+        // server to run the query, without using the query cache.
+        if ($sql !== NULL && !empty($PHORUM['DBCONFIG']['disable_sql_cache'])) {
+            $sql = preg_replace(
+                '/^\s*select\s/i', 'SELECT SQL_NO_CACHE ', $sql);
+        }
+
         return $this->extension->interact(
             $return, $sql, $keyfield, $flags, $limit, $offset);
     }

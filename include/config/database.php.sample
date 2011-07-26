@@ -77,7 +77,11 @@ $PHORUM['DBCONFIG']=array(
     // query performance. Do not use it on a production system.
     // Some template code is required for showing the results. The emerald
     // template includes templates/emerald/dbdebug.tpl by default.
-    'dbdebug' => 0
+    'dbdebug' => 0,
+
+    // For disabling the SQL cache for executed queries. This option
+    // is currently only used by the MySQL database layers.
+    'disable_sql_cache' => 0
 );
 
 /*
