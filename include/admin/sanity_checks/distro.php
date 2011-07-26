@@ -108,7 +108,6 @@ $GLOBALS["PHORUM"]["minimal_distro"] = array
     'include/posting/request_first.php',
     'include/posting/request_followup.php',
 
-    'include/api/admin.php',
     'include/api/template.php',
     'include/api/output.php',
     'include/api/write_file.php',
