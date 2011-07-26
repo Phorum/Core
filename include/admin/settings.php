@@ -401,9 +401,6 @@ $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;File Space Quota (KB)", $frm->text_box( "f
 
 $row=$frm->addrow( "Private Messaging (PM):", $frm->select_tag( "enable_pm", array( "Off", "On" ), $PHORUM["enable_pm"] ) );
 
-$row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Check For New PM", $frm->select_tag( "enable_new_pm_count", array( "No", "Yes" ), $PHORUM["enable_new_pm_count"] ) );
-$frm->addhelp($row, "Check For Private Messages", "By setting this to Yes, Phorum will check if a user has new private messages, and display an indicator. On a Phorum with a lot of users and private messages, this may hurt performance. This option has no effect if Private Messaging is disabled." );
-
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Max number of stored messages", $frm->text_box( "max_pm_messagecount", $PHORUM["max_pm_messagecount"], 30 ) );
 $frm->addhelp($row, "Max number of stored messages", "This is the maximum number of private messages that a user may store on the server. The number of private messages is the total of all messages in all PM folders together. Setting this value to zero will allow for unlimited messages.");
 

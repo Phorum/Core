@@ -585,6 +585,7 @@ class PhorumPostgresqlDB extends PhorumDB
                show_signature           smallint       NOT NULL default 0,
                email_notify             smallint       NOT NULL default 0,
                pm_email_notify          smallint       NOT NULL default 1,
+               pm_new_count             bigint         NOT NULL default 0,
                tz_offset                numeric(4,2)   NOT NULL default -99.00,
                is_dst                   smallint       NOT NULL default 0,
                user_language            varchar(100)   NOT NULL default '',

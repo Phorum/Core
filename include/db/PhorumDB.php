@@ -6356,6 +6356,8 @@ abstract class PhorumDB
             NULL,
             DB_MASTERQUERY
         );
+
+        $this->pm_update_user_info($user_id);
     }
     // }}}
 
@@ -6518,15 +6520,16 @@ abstract class PhorumDB
 
     // {{{ Method: pm_checknew()
     /**
-     * Check if the user has any new private messages. This is useful in case
-     * you only want to know whether the user has new messages or not and when
-     * you are not interested in the exact amount of new messages.
+     * Check if the user has new private messages.
      *
      * @param mixed $user_id
-     *     The user to check for or NULL to use the active Phorum user (default).
+     *     The user to check for or NULL to use the active Phorum user's id
+     *     (default, but note that directly checking the "pm_new_count"
+     *     field for that user is more efficient).
      *
-     * @return boolean
-     *     TRUE in case there are new messages, FALSE otherwise.
+     * @return integer
+     *     The number of new private messages for the user,
+     *     zero when there are none.
      */
     public function pm_checknew($user_id = NULL)
     {
@@ -6537,14 +6540,13 @@ abstract class PhorumDB
 
         $new = $this->interact(
             DB_RETURN_VALUE,
-            "SELECT user_id
-             FROM   {$this->pm_xref_table}
-             WHERE  user_id   = $user_id AND
-                    read_flag = 0",
+            "SELECT pm_new_count
+             FROM   {$this->user_table}
+             WHERE  user_id   = $user_id",
             NULL, NULL, 1
         );
 
-        return (bool)$new;
+        return $new;
     }
     // }}}
 
@@ -6573,7 +6575,8 @@ abstract class PhorumDB
      * @return integer
      *     The id that was assigned to the new message.
      */
-    public function pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
+    public function pm_send(
+        $subject, $message, $to, $from = NULL, $keepcopy = FALSE)
     {
         global $PHORUM;
 
@@ -6658,6 +6661,8 @@ abstract class PhorumDB
             );
         }
 
+        $this->pm_update_user_info($to);
+
         return $pm_id;
     }
     // }}}
@@ -6712,6 +6717,7 @@ abstract class PhorumDB
         // Update message counters.
         if ($flag == PHORUM_PM_READ_FLAG) {
             $this->pm_update_message_info($pm_id);
+            $this->pm_update_user_info($user_id);
         }
     }
     // }}}
@@ -6763,6 +6769,7 @@ abstract class PhorumDB
 
         // Update message counters.
         $this->pm_update_message_info($pm_id);
+        $this->pm_update_user_info($user_id);
     }
     // }}}
 
@@ -6834,6 +6841,38 @@ abstract class PhorumDB
     }
     // }}}
 
+    // {{{ Method: pm_update_user_info()
+    /**
+     * Update the pm_new_count field for one or more users.
+     *
+     * @param mixed $user_id
+     *   One user_id or an array of user_ids.
+     */
+    public function pm_update_user_info($user_id)
+    {
+        if (!is_array($user_id)) {
+            $user_id = array($user_id);
+        }
+        $user_ids = array();
+        foreach ($user_id as $id) {
+            $user_ids[] = (int) $id;
+        }
+
+        if (empty($user_ids)) return;
+
+        $this->interact(
+            DB_RETURN_RES,
+            "UPDATE $this->user_table u
+             SET pm_new_count = (
+                 SELECT count(*)
+                 FROM   $this->pm_xref_table x
+                 WHERE  read_flag = 0 AND u.user_id = x.user_id
+             )
+             WHERE u.user_id IN (" . implode(', ', $user_ids) . ")"
+        );
+    }
+    // }}}
+
     // {{{ Method: pm_update_message_info()
     /**
      * Update the meta information for a message.
@@ -6843,11 +6882,11 @@ abstract class PhorumDB
      * message anymore, the message will be deleted from the database.
      *
      * @param integer $pm_id
-     *     The id of the private message for which to update the meta information.
+     *     The id of the private message for which to update the
+     *     meta information.
      */
     public function pm_update_message_info($pm_id)
     {
-
         settype($pm_id, 'int');
 
         // Retrieve the meta data for the private message.
@@ -7260,13 +7299,40 @@ abstract class PhorumDB
     }
     // }}}
 
+    // {{{ Method: rebuild_pm_new_counts()
+    /**
+     * Rebuild the user pm new counts from scratch.
+     */
+    public function rebuild_pm_new_counts()
+    {
+        // Clear the existing PM counts.
+        $this->interact(
+            DB_RETURN_RES,
+            "UPDATE {$this->user_table}
+             SET pm_new_count = 0",
+            NULL,
+            DB_GLOBALQUERY | DB_MASTERQUERY
+        );
+
+        // Set the new PM counts for the users to their correct values.
+        $this->interact(
+            DB_RETURN_RES,
+            "UPDATE $this->user_table u
+             SET pm_new_count = (
+                 SELECT count(*)
+                 FROM   $this->pm_xref_table x
+                 WHERE  read_flag = 0 AND u.user_id = x.user_id
+             )"
+        );
+    }
+    // }}}
+
     // {{{ Method: rebuild_user_posts()
     /**
      * Rebuild the user post counts from scratch.
      */
     public function rebuild_user_posts()
     {
-
         // Reset the post count for all users.
         $this->interact(
             DB_RETURN_RES,

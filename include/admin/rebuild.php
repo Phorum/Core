@@ -150,6 +150,12 @@ if (count($_POST))
         $okmsg .= "Postcounts for users updated.<br />";
     }
 
+    if (!empty($_POST['rebuild_newpmcounts']))
+    {
+        $ret = $PHORUM['DB']->rebuild_pm_new_counts();
+        $okmsg .= "New PM counts for users updated.<br />";
+    }
+
     if (!empty($_POST['cleanup_stale_messages']))
     {
         // Delete the stale messages.
@@ -266,11 +272,28 @@ $frm->addhelp($row,
     "Phorum stores the numbers of posts a user has made in the user-data.<br/>
      In case of manual changes to the database like deleting
      messages manually, this data can be outdated or broken, therefore this
-     option rebuilds the post-counts from the existing messages for the
-     user-id.<br/>
+     option rebuilds the post-counts from the existing messages for all
+     users.<br/>
      <br/>
      <strong>ATTENTION:</strong> This can take a some time with
      lots of messages and eventually lead to timeouts if your execution
+     timeout is too low."
+);
+
+$row = $frm->addrow(
+    "Rebuild user new PM counts",
+    $frm->checkbox('rebuild_newpmcounts',1,"Yes")
+);
+$frm->addhelp($row,
+    "Rebuild user new PM counts",
+    "Phorum stores the number of new PM's for a user in the user-data.<br/>
+     In case of manual changes to the database like deleting
+     PM's manually, this data can be outdated or broken, therefore this
+     option rebuilds the new PM-counts from the existing PM's for the
+     all users.<br/>
+     <br/>
+     <strong>ATTENTION:</strong> This can take a some time with
+     lots of PM's and eventually lead to timeouts if your execution
      timeout is too low."
 );
 

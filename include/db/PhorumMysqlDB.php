@@ -445,6 +445,7 @@ class PhorumMysqlDB extends PhorumDB
                show_signature           tinyint(1)     NOT NULL default 0,
                email_notify             tinyint(1)     NOT NULL default 0,
                pm_email_notify          tinyint(1)     NOT NULL default 1,
+               pm_new_count             int unsigned   NOT NULL default 0,
                tz_offset                float(4,2)     NOT NULL default '-99.00',
                is_dst                   tinyint(1)     NOT NULL default 0,
                user_language            varchar(100)   NOT NULL default '',
