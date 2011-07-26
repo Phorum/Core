@@ -866,6 +866,38 @@ abstract class PhorumDB
 
         $sql .= " WHERE msg.status = ".PHORUM_STATUS_APPROVED;
 
+        // When we are retrieving unread messages, we need to find out
+        // how many new messages we have and what forums contain those
+        // new messages. This is a relatively light query, which' output
+        // can be used to greatly improve the query that we need to
+        // run here.
+        if ($list_type == LIST_UNREAD_MESSAGES)
+        {
+            $tmp = $this->get_forums(
+                $allowed_forums, NULL, NULL, NULL, NULL, 2);
+            $tmp = phorum_api_newflags_apply_to_forums(
+                $tmp, PHORUM_NEWFLAGS_COUNT);
+
+            $unread_count = 0;
+            $unread_forums = array();
+            foreach ($tmp as $f) {
+                if (!empty($f['new_messages'])) {
+                    $unread_count += $f['new_messages']; 
+                    $unread_forums[$f['forum_id']] =  $f['forum_id'];
+                }
+            }   
+
+            // No new messages? Then we're done here.
+            if ($unread_count == 0) {
+                return array();
+            }
+
+            // Otherwise, update the query parameters to improve
+            // the unread messages query.
+            if ($unread_count < $limit) $limit = $unread_count;
+            $allowed_forums = $unread_forums;
+        }
+
         if (count($allowed_forums) == 1) {
             $sql .= " AND msg.forum_id = " . array_shift($allowed_forums);
         } else {
