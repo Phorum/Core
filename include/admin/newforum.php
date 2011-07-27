@@ -254,7 +254,7 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
     // then disable the inherited fields in the input.
     $disabled_form_input = '';
     if ($inherit_id != -1) {
-//        $disabled_form_input = 'disabled="disabled"';
+        $disabled_form_input = 'disabled="disabled"';
     }
 
     $frm->addbreak("Inherit Forum Settings");
