@@ -283,7 +283,6 @@ function updateInheritedSettings(data)
                 // When no data is provided, then we make the field read/write.
                 if (!data)
                 {
-                    $PJ(f).css('color', 'black');
                     $PJ(f).removeAttr('disabled');
                 }
                 // Data is provided. Fill the default value and make the
@@ -298,7 +297,6 @@ function updateInheritedSettings(data)
                         $f.val(data[f.name]);
                     }
 
-                    $PJ(f).css('color', '#444');
                     $PJ(f).attr('disabled', 'disabled');
                 }
             });
