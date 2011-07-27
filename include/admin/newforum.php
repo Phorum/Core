@@ -254,7 +254,7 @@ if (!defined("PHORUM_DEFAULT_OPTIONS"))
     // then disable the inherited fields in the input.
     $disabled_form_input = '';
     if ($inherit_id != -1) {
-        $disabled_form_input = 'disabled="disabled"';
+//        $disabled_form_input = 'disabled="disabled"';
     }
 
     $frm->addbreak("Inherit Forum Settings");
@@ -339,7 +339,7 @@ $frm->addrow("Move Threads On Reply", $frm->select_tag("float_to_top", array("No
 $frm->addrow("Message List Length (Flat Mode)", $frm->text_box("list_length_flat", $list_length_flat, 10, false, false, $disabled_form_input));
 $frm->addrow("Message List Length (Threaded Mode, Nr. of Threads)", $frm->text_box("list_length_threaded", $list_length_threaded, 10, false, false, $disabled_form_input));
 
-$frm->addrow("Read Page Length", $frm->text_box("read_length", $read_length, 10, false, false, $disabled_form_input, $disabled_form_input));
+$frm->addrow("Read Page Length", $frm->text_box("read_length", $read_length, 10, false, false, $disabled_form_input));
 
 $frm->addrow("Display IP Addresses <small>(note: admins always see it)</small>", $frm->select_tag("display_ip_address", array("No", "Yes"), $display_ip_address, $disabled_form_input));
 
@@ -385,3 +385,100 @@ $frm->addrow("Max cumulative File Size In KB (0 for unlimited)", $frm->text_box(
 $frm->show();
 
 ?>
+
+<script type="text/javascript">
+//<![CDATA[
+
+// Handle changes to the setting inheritance select list.
+$PJ('select[name=inherit_id]').change(function updateInheritedFields()
+{
+    var inherit = $PJ('select[name=inherit_id]').val();
+
+    // No inheritance. All fields will be made read/write.
+    if (inherit == -1) {
+        updateInheritedSettings(null);
+    }
+    // An inheritance option is selected. Retrieve the settings for
+    // the selection option and update the form with those. All
+    // inherited settings are made read only.
+    else {
+        Phorum.call({
+            call: 'getforumsettings',
+            forum_id: inherit,
+            cache_id: 'forum_settings_' + inherit,
+            onSuccess: function (data) {
+                updateInheritedSettings(data);
+            },
+            onFailure: function (err) {
+                alert("Could not retrieve inherited settings: " + err);
+            }
+        });
+    }
+});
+
+function updateInheritedSettings(data)
+{
+    // Find the settings form.
+    $PJ('input.input-form-submit').parents('form').each(function (idx, frm) {
+        // Loop over all form fields.
+        $PJ(frm).find('input[type!=hidden],textarea,select')
+            .each(function (idx, f) {
+
+                $f = $PJ(f);
+
+                // Skip the form submit button.
+                if ($f.hasClass('input-form-submit')) return;
+
+                // SKip fields that are not inherited.
+                if (f.name == 'name' ||
+                    f.name == 'description' ||
+                    f.name == 'parent_id' ||
+                    f.name == 'active' ||
+                    f.name == 'inherit_id') return;
+
+                // When no data is provided, then we make the field read/write.
+                if (!data)
+                {
+                    $PJ(f).css('color', 'black');
+                    $PJ(f).removeAttr('disabled');
+                }
+                // Data is provided. Fill the default value and make the
+                // field read only.
+                else
+                {
+                    // Some browsers will not update the field when it
+                    // is disabled. Therefor, we temporarily enable it here.
+                    $PJ(f).removeAttr('disabled');
+
+                    // Special handling for bit-wise permission fields.
+                    var m = f.name.match(/^(\w+)\[(\d+)\]$/);
+                    if (m) {
+                        var checked = 0;
+                        if (data[m[1]] !== undefined) {
+                            if ((m[2] & data[m[1]]) == m[2]) {
+                                checked = 1;
+                            }
+                        }
+                        if (checked) {
+                            $f.attr('checked', 'checked');
+                        } else {
+                            $f.removeAttr('checked');
+                        }
+                    }
+                    // Handling for standard fields.
+                    else {
+                        if (data[f.name] !== undefined) {
+                            $f.val(data[f.name]);
+                        }
+                    }
+
+                    // Make the field read only.
+                    $PJ(f).css('color', '#444');
+                    $PJ(f).attr('disabled', 'disabled');
+                }
+            });
+        });
+}
+// ]]>
+</script>
+
