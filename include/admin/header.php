@@ -233,8 +233,13 @@ Phorum Status:
 
         $menu->add("Manage Forums", "", "Takes you to the default Admin page.");
         $menu->add("Default Settings", "forum_defaults", "Allows you to set defaults settings that can be inherited by forums.");
-        $menu->add("Create Forum", "newforum", "Creates a new area for your users to post messages.");
-        $menu->add("Create Folder", "newfolder", "Creates a folder which can contain other folders of forums.");
+        $parent_folder_params = array();
+        if (!empty($_GET['parent_id'])) {
+            $parent_folder_params[] =
+                "parent_id=" . (int) $_GET['parent_id'];
+        }
+        $menu->add("Create Forum", "newforum", "Creates a new area for your users to post messages.", $parent_folder_params);
+        $menu->add("Create Folder", "newfolder", "Creates a folder which can contain other folders of forums.", $parent_folder_params);
 
         $menu->show();
 

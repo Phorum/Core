@@ -171,11 +171,17 @@ elseif (defined("PHORUM_DEFAULT_OPTIONS"))
 // Initialize the form for creating a new forum.
 else
 {
+    $parent_id = $PHORUM['vroot'];
+    if (!empty($_GET['parent_id'])) {
+        $parent_id = (int) $_GET['parent_id'];
+    }
+
     // Prepare a forum data array for initializing the form.
     $forum = phorum_api_forums_save(array(
         'forum_id'    => NULL,
         'folder_flag' => 0,
         'inherit_id'  => 0,
+        'parent_id'   => $parent_id,
         'name'        => ''
     ), PHORUM_FLAG_PREPARE);
     extract($forum);

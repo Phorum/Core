@@ -119,11 +119,17 @@ elseif (defined("PHORUM_EDIT_FOLDER"))
 // Initialize the form for creating a new folder.
 else
 {
+    $parent_id = $PHORUM['vroot'];
+    if (!empty($_GET['parent_id'])) {
+        $parent_id = (int) $_GET['parent_id'];
+    }
+
     // Prepare a folder data array for initializing the form.
     $folder = phorum_api_forums_save(array(
         'forum_id'    => NULL,
         'folder_flag' => 1,
         'inherit_id'  => 0,
+        'parent_id'   => $parent_id,
         'name'        => ''
     ), PHORUM_FLAG_PREPARE);
 }
