@@ -175,11 +175,11 @@ function editor_tools_handle_code() {
 function editor_tools_handle_email()
 {
     var email = prompt(editor_tools_translate("enter email"), '');
-    if (email == null) return;
+    if (email == '' || email == null) return;
     email = editor_tools_strip_whitespace(email);
 
     var subject = prompt(editor_tools_translate("enter subject"), '');
-    if (subject == null) return;
+    if (subject == '' || subject == null) return;
     subject = editor_tools_strip_whitespace(subject);
     if (subject != '') {
         subject = ' subject=' + quote_bbcode_argument(subject);
@@ -206,7 +206,7 @@ function editor_tools_handle_url()
     {
         // Read input.
         url = prompt(editor_tools_translate("enter url"), url);
-        if (url == null) return; // Cancel clicked.
+        if (url == '' || url == null) return; // Cancel clicked.
         url = editor_tools_strip_whitespace(url);
 
         // Check the URL scheme (http, https, ftp and mailto are allowed).
@@ -309,7 +309,7 @@ function editor_tools_handle_img()
     {
         // Read input.
         url = prompt(editor_tools_translate("enter image url"), url);
-        if (url == null) return; // Cancel clicked.
+        if (url == '' || url == null) return; // Cancel clicked.
         url = editor_tools_strip_whitespace(url);
 
         // Check the URL scheme (http, https, ftp and mailto are allowed).
@@ -337,7 +337,7 @@ function editor_tools_handle_quote()
 {
     // Read input.
     var who = prompt(editor_tools_translate("enter who you quote"), '');
-    if (who == null) return;
+    if (who == '' || who == null) return;
     who = editor_tools_strip_whitespace(who);
 
     if (who == '') {
@@ -432,7 +432,7 @@ function editor_tools_handle_list_select(type)
     for (;;)
     {
         var item = prompt(editor_tools_translate('enter new list item'), '');
-        if (item == null) return;
+        if (item == '' || item == null) return;
         item = editor_tools_strip_whitespace(item);
         if (item == '') break;
         items[idx++] = item;
