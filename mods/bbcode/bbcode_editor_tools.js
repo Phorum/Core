@@ -206,7 +206,10 @@ function editor_tools_handle_url()
     {
         // Read input.
         url = prompt(editor_tools_translate("enter url"), url);
-        if (url == null) return; // Cancel clicked.
+        // Cancel clicked? Empty string is also handled as cancel here,
+        // because Safari returns an empty string for cancel. Without this
+        // check, this loop would never end.
+        if (url == '' || url == null) return;
         url = editor_tools_strip_whitespace(url);
 
         // Check the URL scheme (http, https, ftp and mailto are allowed).
@@ -310,7 +313,10 @@ function editor_tools_handle_img()
     {
         // Read input.
         url = prompt(editor_tools_translate("enter image url"), url);
-        if (url == null) return; // Cancel clicked.
+        // Cancel clicked? Empty string is also handled as cancel here,
+        // because Safari returns an empty string for cancel. Without this
+        // check, this loop would never end.
+        if (url == '' || url == null) return;
         url = editor_tools_strip_whitespace(url);
 
         // Check the URL scheme (http, https, ftp and mailto are allowed).
