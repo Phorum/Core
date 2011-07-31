@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2009  Phorum Development Team                              //
+//   Copyright (C) 2011  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -175,11 +175,11 @@ function editor_tools_handle_code() {
 function editor_tools_handle_email()
 {
     var email = prompt(editor_tools_translate("enter email"), '');
-    if (email == '' || email == null) return;
+    if (email == null) return;
     email = editor_tools_strip_whitespace(email);
 
     var subject = prompt(editor_tools_translate("enter subject"), '');
-    if (subject == '' || subject == null) return;
+    if (subject == null) return;
     subject = editor_tools_strip_whitespace(subject);
     if (subject != '') {
         subject = ' subject=' + quote_bbcode_argument(subject);
@@ -206,7 +206,10 @@ function editor_tools_handle_url()
     {
         // Read input.
         url = prompt(editor_tools_translate("enter url"), url);
-        if (url == '' || url == null) return; // Cancel clicked.
+        // Cancel clicked? Empty string is also handled as cancel here,
+        // because Safari returns an empty string for cancel. Without this
+        // check, this loop would never end.
+        if (url == '' || url == null) return;
         url = editor_tools_strip_whitespace(url);
 
         // Check the URL scheme (http, https, ftp and mailto are allowed).
@@ -233,7 +236,8 @@ function editor_tools_handle_url()
 
 function editor_tools_handle_color()
 {
-    editor_tools_store_range(); 
+    editor_tools_store_range();
+
     // Display the color picker.
     var img_obj = document.getElementById('editor-tools-img-color');
     showColorPicker(img_obj);
@@ -309,7 +313,10 @@ function editor_tools_handle_img()
     {
         // Read input.
         url = prompt(editor_tools_translate("enter image url"), url);
-        if (url == '' || url == null) return; // Cancel clicked.
+        // Cancel clicked? Empty string is also handled as cancel here,
+        // because Safari returns an empty string for cancel. Without this
+        // check, this loop would never end.
+        if (url == '' || url == null) return;
         url = editor_tools_strip_whitespace(url);
 
         // Check the URL scheme (http, https, ftp and mailto are allowed).
@@ -337,7 +344,7 @@ function editor_tools_handle_quote()
 {
     // Read input.
     var who = prompt(editor_tools_translate("enter who you quote"), '');
-    if (who == '' || who == null) return;
+    if (who == null) return;
     who = editor_tools_strip_whitespace(who);
 
     if (who == '') {
@@ -432,7 +439,7 @@ function editor_tools_handle_list_select(type)
     for (;;)
     {
         var item = prompt(editor_tools_translate('enter new list item'), '');
-        if (item == '' || item == null) return;
+        if (item == null) return;
         item = editor_tools_strip_whitespace(item);
         if (item == '') break;
         items[idx++] = item;
