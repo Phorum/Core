@@ -422,8 +422,7 @@ if (!empty($action))
                  *     Right before the default handling of adding recipients to a pm is done
                  *
                  * [input]
-                 *     An array containing the current user (which is an array of its own),
-                 *     the action requested and the page.
+                 *     An array containing the action requested, the page and previously found errors.
                  *     More input data can be found from the request in $_POST
                  *
                  * [output]
@@ -432,8 +431,8 @@ if (!empty($action))
                  */
 
                 if (isset($PHORUM["hooks"]["pm_recipient_add"]))
-                    list($user,$action,$page) =
-                            phorum_api_hook("pm_recipient_add", array($user,$action,$page));
+                    list($action,$page,$error) =
+                            phorum_api_hook("pm_recipient_add", array($action,$page,$error));
 
                 // Convert adding a recipient by name to adding by user id.
                 if (isset($_POST["to_name"])) {
