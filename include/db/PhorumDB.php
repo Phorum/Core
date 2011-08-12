@@ -803,6 +803,10 @@ abstract class PhorumDB
         // then return an empty array.
         if (empty($allowed_forums)) return array();
 
+        // Keep track of the database index that we want to force
+        // in order to optimize the query.
+        $use_key = NULL;
+
         // We need to differentiate on which key to use.
         // If selecting on a specific thread, then the best index
         // to use would be the thread_message index.
@@ -845,6 +849,10 @@ abstract class PhorumDB
         // Build the SQL query.
         $sql = "SELECT msg.* FROM {$this->message_table} msg";
 
+        if ($this->_can_USE_INDEX && $use_key !== NULL) {
+            $sql .= " USE INDEX ($use_key)";
+        }
+
         if ($list_type == LIST_UNREAD_MESSAGES) {
             $sql .=
                 " LEFT JOIN {$this->user_newflags_min_id_table} min
@@ -857,6 +865,38 @@ abstract class PhorumDB
         }
 
         $sql .= " WHERE msg.status = ".PHORUM_STATUS_APPROVED;
+
+        // When we are retrieving unread messages, we need to find out
+        // how many new messages we have and what forums contain those
+        // new messages. This is a relatively light query, which' output
+        // can be used to greatly improve the query that we need to
+        // run here.
+        if ($list_type == LIST_UNREAD_MESSAGES)
+        {
+            $tmp = $this->get_forums(
+                $allowed_forums, NULL, NULL, NULL, NULL, 2);
+            $tmp = phorum_api_newflags_apply_to_forums(
+                $tmp, PHORUM_NEWFLAGS_COUNT);
+
+            $unread_count = 0;
+            $unread_forums = array();
+            foreach ($tmp as $f) {
+                if (!empty($f['new_messages'])) {
+                    $unread_count += $f['new_messages']; 
+                    $unread_forums[$f['forum_id']] =  $f['forum_id'];
+                }
+            }   
+
+            // No new messages? Then we're done here.
+            if ($unread_count == 0) {
+                return array();
+            }
+
+            // Otherwise, update the query parameters to improve
+            // the unread messages query.
+            if ($unread_count < $limit) $limit = $unread_count;
+            $allowed_forums = $unread_forums;
+        }
 
         if (count($allowed_forums) == 1) {
             $sql .= " AND msg.forum_id = " . array_shift($allowed_forums);
@@ -4504,7 +4544,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: user_delete
+    // {{{ Method: user_delete()
     /**
      * Delete a user completely. Messages that were posted by the user in the
      * forums, will be changed into anonymous messages (user_id = 0). If the
@@ -4608,7 +4648,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: delete_custom_fields
+    // {{{ Method: delete_custom_fields()
     public function delete_custom_fields($type,$relation_id)
     {
         if (is_array($relation_id)) {
@@ -5922,7 +5962,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: get_banitem
+    // {{{ Method: get_banitem()
     /**
      * Retrieve a single ban item from the ban lists.
      *
@@ -5962,7 +6002,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: del_banitem
+    // {{{ Method: del_banitem()
     /**
      * Delete a single ban item from the ban lists.
      *
@@ -6316,6 +6356,8 @@ abstract class PhorumDB
             NULL,
             DB_MASTERQUERY
         );
+
+        $this->pm_update_user_info($user_id);
     }
     // }}}
 
@@ -6420,7 +6462,7 @@ abstract class PhorumDB
     }
     // }}}
 
-    // {{{ Method: pm_messagecount
+    // {{{ Method: pm_messagecount()
     /**
      * Compute the total number of private messages a user has and return
      * both the total number of messages and the number of unread messages.
@@ -6478,15 +6520,16 @@ abstract class PhorumDB
 
     // {{{ Method: pm_checknew()
     /**
-     * Check if the user has any new private messages. This is useful in case
-     * you only want to know whether the user has new messages or not and when
-     * you are not interested in the exact amount of new messages.
+     * Check if the user has new private messages.
      *
      * @param mixed $user_id
-     *     The user to check for or NULL to use the active Phorum user (default).
+     *     The user to check for or NULL to use the active Phorum user's id
+     *     (default, but note that directly checking the "pm_new_count"
+     *     field for that user is more efficient).
      *
-     * @return boolean
-     *     TRUE in case there are new messages, FALSE otherwise.
+     * @return integer
+     *     The number of new private messages for the user,
+     *     zero when there are none.
      */
     public function pm_checknew($user_id = NULL)
     {
@@ -6497,18 +6540,17 @@ abstract class PhorumDB
 
         $new = $this->interact(
             DB_RETURN_VALUE,
-            "SELECT user_id
-             FROM   {$this->pm_xref_table}
-             WHERE  user_id   = $user_id AND
-                    read_flag = 0",
+            "SELECT pm_new_count
+             FROM   {$this->user_table}
+             WHERE  user_id   = $user_id",
             NULL, NULL, 1
         );
 
-        return (bool)$new;
+        return $new;
     }
     // }}}
 
-    // {{{ Method: pm_send
+    // {{{ Method: pm_send()
     /**
      * Send a private message.
      *
@@ -6533,7 +6575,8 @@ abstract class PhorumDB
      * @return integer
      *     The id that was assigned to the new message.
      */
-    public function pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
+    public function pm_send(
+        $subject, $message, $to, $from = NULL, $keepcopy = FALSE)
     {
         global $PHORUM;
 
@@ -6618,6 +6661,8 @@ abstract class PhorumDB
             );
         }
 
+        $this->pm_update_user_info($to);
+
         return $pm_id;
     }
     // }}}
@@ -6672,6 +6717,7 @@ abstract class PhorumDB
         // Update message counters.
         if ($flag == PHORUM_PM_READ_FLAG) {
             $this->pm_update_message_info($pm_id);
+            $this->pm_update_user_info($user_id);
         }
     }
     // }}}
@@ -6723,6 +6769,7 @@ abstract class PhorumDB
 
         // Update message counters.
         $this->pm_update_message_info($pm_id);
+        $this->pm_update_user_info($user_id);
     }
     // }}}
 
@@ -6794,6 +6841,38 @@ abstract class PhorumDB
     }
     // }}}
 
+    // {{{ Method: pm_update_user_info()
+    /**
+     * Update the pm_new_count field for one or more users.
+     *
+     * @param mixed $user_id
+     *   One user_id or an array of user_ids.
+     */
+    public function pm_update_user_info($user_id)
+    {
+        if (!is_array($user_id)) {
+            $user_id = array($user_id);
+        }
+        $user_ids = array();
+        foreach ($user_id as $id) {
+            $user_ids[] = (int) $id;
+        }
+
+        if (empty($user_ids)) return;
+
+        $this->interact(
+            DB_RETURN_RES,
+            "UPDATE $this->user_table u
+             SET pm_new_count = (
+                 SELECT count(*)
+                 FROM   $this->pm_xref_table x
+                 WHERE  read_flag = 0 AND u.user_id = x.user_id
+             )
+             WHERE u.user_id IN (" . implode(', ', $user_ids) . ")"
+        );
+    }
+    // }}}
+
     // {{{ Method: pm_update_message_info()
     /**
      * Update the meta information for a message.
@@ -6803,11 +6882,11 @@ abstract class PhorumDB
      * message anymore, the message will be deleted from the database.
      *
      * @param integer $pm_id
-     *     The id of the private message for which to update the meta information.
+     *     The id of the private message for which to update the
+     *     meta information.
      */
     public function pm_update_message_info($pm_id)
     {
-
         settype($pm_id, 'int');
 
         // Retrieve the meta data for the private message.
@@ -7220,13 +7299,40 @@ abstract class PhorumDB
     }
     // }}}
 
+    // {{{ Method: rebuild_pm_new_counts()
+    /**
+     * Rebuild the user pm new counts from scratch.
+     */
+    public function rebuild_pm_new_counts()
+    {
+        // Clear the existing PM counts.
+        $this->interact(
+            DB_RETURN_RES,
+            "UPDATE {$this->user_table}
+             SET pm_new_count = 0",
+            NULL,
+            DB_GLOBALQUERY | DB_MASTERQUERY
+        );
+
+        // Set the new PM counts for the users to their correct values.
+        $this->interact(
+            DB_RETURN_RES,
+            "UPDATE $this->user_table u
+             SET pm_new_count = (
+                 SELECT count(*)
+                 FROM   $this->pm_xref_table x
+                 WHERE  read_flag = 0 AND u.user_id = x.user_id
+             )"
+        );
+    }
+    // }}}
+
     // {{{ Method: rebuild_user_posts()
     /**
      * Rebuild the user post counts from scratch.
      */
     public function rebuild_user_posts()
     {
-
         // Reset the post count for all users.
         $this->interact(
             DB_RETURN_RES,

@@ -95,7 +95,7 @@ if (count($_POST))
         $okmsg = "Folder \"{$folder['name']}\" was successfully saved";
 
         // The URL to redirect to.
-        $url = phorum_api_admin_url(array('module=default',"parent_id=".$folder['parent_id'],'okmsg='.rawurlencode($okmsg)));
+        $url = phorum_admin_build_url(array('module=default',"parent_id=".$folder['parent_id'],'okmsg='.rawurlencode($okmsg)));
 
         phorum_api_redirect($url);
         exit;
@@ -119,11 +119,17 @@ elseif (defined("PHORUM_EDIT_FOLDER"))
 // Initialize the form for creating a new folder.
 else
 {
+    $parent_id = $PHORUM['vroot'];
+    if (!empty($_GET['parent_id'])) {
+        $parent_id = (int) $_GET['parent_id'];
+    }
+
     // Prepare a folder data array for initializing the form.
     $folder = phorum_api_forums_save(array(
         'forum_id'    => NULL,
         'folder_flag' => 1,
         'inherit_id'  => 0,
+        'parent_id'   => $parent_id,
         'name'        => ''
     ), PHORUM_FLAG_PREPARE);
 }
@@ -228,3 +234,80 @@ phorum_api_hook("admin_editfolder_form", $frm, $forum_settings);
 $frm->show();
 
 ?>
+
+<script type="text/javascript">
+//<![CDATA[
+
+// Handle changes to the setting inheritance select list.
+$PJ('select[name=inherit_id]').change(function updateInheritedFields()
+{
+    var inherit = $PJ('select[name=inherit_id]').val();
+
+    // No inheritance. All fields will be made read/write.
+    if (inherit == -1) {
+        updateInheritedSettings(null);
+    }
+    // An inheritance option is selected. Retrieve the settings for
+    // the selection option and update the form with those. All
+    // inherited settings are made read only.
+    else {
+        Phorum.call({
+            call: 'getforumsettings',
+            forum_id: inherit,
+            cache_id: 'forum_settings_' + inherit,
+            onSuccess: function (data) {
+                updateInheritedSettings(data);
+            },
+            onFailure: function (err) {
+                alert("Could not retrieve inherited settings: " + err);
+            }
+        });
+    }
+});
+
+function updateInheritedSettings(data)
+{
+    // Find the settings form.
+    $PJ('input.input-form-submit').parents('form').each(function (idx, frm) {
+        // Loop over all form fields.
+        $PJ(frm).find('input[type!=hidden],textarea,select')
+            .each(function (idx, f) {
+
+                $f = $PJ(f);
+
+                // Skip the form submit button.
+                if ($f.hasClass('input-form-submit')) return;
+
+                // SKip fields that are not inherited.
+                if (f.name == 'name' ||
+                    f.name == 'description' ||
+                    f.name == 'parent_id' ||
+                    f.name == 'active' ||
+                    f.name == 'vroot' ||
+                    f.name == 'inherit_id') return;
+
+                // When no data is provided, then we make the field read/write.
+                if (!data)
+                {
+                    $PJ(f).removeAttr('disabled');
+                }
+                // Data is provided. Fill the default value and make the
+                // field read only.
+                else
+                {
+                    // Some browsers will not update the field when it
+                    // is disabled. Therefor, we temporarily enable it here.
+                    $PJ(f).removeAttr('disabled');
+
+                    if (data[f.name] !== undefined) {
+                        $f.val(data[f.name]);
+                    }
+
+                    $PJ(f).attr('disabled', 'disabled');
+                }
+            });
+        });
+}
+// ]]>
+</script>
+

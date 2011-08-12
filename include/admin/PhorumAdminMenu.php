@@ -37,12 +37,20 @@ class PhorumAdminMenu
         $this->_links=array();
     }
 
-    function add($title, $module, $description)
+    function add($title, $module, $description, $parameters = NULL)
     {
+        if ($parameters !== NULL)
+        {
+            if (!is_array($parameters)) {
+                $parameters = array($parameters);
+            }
+        }
+
         $this->_links[] = array(
             "title"       => $title,
             "module"      => $module,
-            "description" => $description
+            "description" => $description,
+            "parameters"  => $parameters
         );
     }
 
@@ -60,10 +68,13 @@ class PhorumAdminMenu
             $desc = htmlspecialchars($link["description"]);
             $href = htmlspecialchars($_SERVER["PHP_SELF"]);
             $title = htmlspecialchars($link["title"]);
-            
+
             $input_args = array();
             if(!empty($link["module"])) $input_args[]="module=$link[module]";
-            $url = phorum_api_admin_url($input_args);
+            if (!empty($link["parameters"])) {
+                $input_args = array_merge($input_args, $link["parameters"]);
+            }
+            $url = phorum_admin_build_url($input_args);
             $html ="<a title=\"$desc\" href=\"$url";
             $html .= "\">$title</a><br />";
             echo $html;

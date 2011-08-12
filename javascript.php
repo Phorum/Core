@@ -62,12 +62,19 @@ if (!$no_jquery) {
     );
 }
 
-
 // Add the jQuery bgiframe plugin.
 $module_registrations[] = array(
     'module'    => 'core',
     'source'    => 'file(include/javascript/jquery.bgiframe-2.1.2.min.js)',
     'cache_key' => '2.1.2.min'
+);
+
+// Add Douglas Crockford's json2 library for supporting JSON.encode and
+// JSON.stringify in browsers that do not support these.
+$module_registrations[] = array(
+    'module'    => 'core',
+    'source'    => 'file(include/javascript/json2.js)',
+    'cache_key' => '2011-02-23'
 );
 
 // Add the Phorum JavaScript library.

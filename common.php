@@ -234,11 +234,11 @@ if (!defined( "PHORUM_ADMIN" ))
         $PHORUM["threaded_list"] = $modes['list'];
         $PHORUM["threaded_read"] = $modes['read'];
 
-        // check if the user has new private messages
-        if (!empty($PHORUM["enable_new_pm_count"]) &&
-            !empty($PHORUM["enable_pm"])) {
+        // Provide the number of new private messages for the user in the
+        // "new_private_messages" field. 
+        if (!empty($PHORUM["enable_pm"])) {
             $PHORUM['user']['new_private_messages'] =
-                $PHORUM['DB']->pm_checknew($PHORUM['user']['user_id']);
+                $PHORUM['user']['pm_new_count'];
         }
     }
 

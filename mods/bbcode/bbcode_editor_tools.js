@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2009  Phorum Development Team                              //
+//   Copyright (C) 2011  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -206,7 +206,10 @@ function editor_tools_handle_url()
     {
         // Read input.
         url = prompt(editor_tools_translate("enter url"), url);
-        if (url == null) return; // Cancel clicked.
+        // Cancel clicked? Empty string is also handled as cancel here,
+        // because Safari returns an empty string for cancel. Without this
+        // check, this loop would never end.
+        if (url == '' || url == null) return;
         url = editor_tools_strip_whitespace(url);
 
         // Check the URL scheme (http, https, ftp and mailto are allowed).
@@ -233,7 +236,8 @@ function editor_tools_handle_url()
 
 function editor_tools_handle_color()
 {
-    editor_tools_store_range(); 
+    editor_tools_store_range();
+
     // Display the color picker.
     var img_obj = document.getElementById('editor-tools-img-color');
     showColorPicker(img_obj);
@@ -309,7 +313,10 @@ function editor_tools_handle_img()
     {
         // Read input.
         url = prompt(editor_tools_translate("enter image url"), url);
-        if (url == null) return; // Cancel clicked.
+        // Cancel clicked? Empty string is also handled as cancel here,
+        // because Safari returns an empty string for cancel. Without this
+        // check, this loop would never end.
+        if (url == '' || url == null) return;
         url = editor_tools_strip_whitespace(url);
 
         // Check the URL scheme (http, https, ftp and mailto are allowed).

@@ -134,9 +134,9 @@ if ( count( $_POST ) )
         
 
         if ( $PHORUM['DB']->update_settings( $_POST ) ) {
-            $redir = phorum_api_admin_url(array('module=settings','message=success'));
+            $redir = phorum_admin_build_url(array('module=settings','message=success'));
             if ($need_display_name_updates) {
-                $redir = phorum_api_admin_url(array('module=update_display_names'));
+                $redir = phorum_admin_build_url(array('module=update_display_names'));
             }
             phorum_api_redirect($redir);
             exit();
@@ -400,9 +400,6 @@ $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Max File Size (KB)", $frm->text_box( "max_
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;File Space Quota (KB)", $frm->text_box( "file_space_quota", $PHORUM["file_space_quota"], 30 ) );
 
 $row=$frm->addrow( "Private Messaging (PM):", $frm->select_tag( "enable_pm", array( "Off", "On" ), $PHORUM["enable_pm"] ) );
-
-$row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Check For New PM", $frm->select_tag( "enable_new_pm_count", array( "No", "Yes" ), $PHORUM["enable_new_pm_count"] ) );
-$frm->addhelp($row, "Check For Private Messages", "By setting this to Yes, Phorum will check if a user has new private messages, and display an indicator. On a Phorum with a lot of users and private messages, this may hurt performance. This option has no effect if Private Messaging is disabled." );
 
 $row=$frm->addrow( "&nbsp;&nbsp;&nbsp;Max number of stored messages", $frm->text_box( "max_pm_messagecount", $PHORUM["max_pm_messagecount"], 30 ) );
 $frm->addhelp($row, "Max number of stored messages", "This is the maximum number of private messages that a user may store on the server. The number of private messages is the total of all messages in all PM folders together. Setting this value to zero will allow for unlimited messages.");

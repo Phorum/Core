@@ -181,7 +181,7 @@ if ($notification !== NULL) {
 
     <div id="phorum-status">
 <?php if($module!="login" && $module!="install" && $module!="upgrade"){ ?>
-<form id="status-form" action="<?php echo phorum_api_admin_url(); ?>" method="post">
+<form id="status-form" action="<?php echo phorum_admin_build_url(); ?>" method="post">
 <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
 <input type="hidden" name="module" value="status" />
 Phorum Status:
@@ -233,8 +233,13 @@ Phorum Status:
 
         $menu->add("Manage Forums", "", "Takes you to the default Admin page.");
         $menu->add("Default Settings", "forum_defaults", "Allows you to set defaults settings that can be inherited by forums.");
-        $menu->add("Create Forum", "newforum", "Creates a new area for your users to post messages.");
-        $menu->add("Create Folder", "newfolder", "Creates a folder which can contain other folders of forums.");
+        $parent_folder_params = array();
+        if (!empty($_GET['parent_id'])) {
+            $parent_folder_params[] =
+                "parent_id=" . (int) $_GET['parent_id'];
+        }
+        $menu->add("Create Forum", "newforum", "Creates a new area for your users to post messages.", $parent_folder_params);
+        $menu->add("Create Folder", "newfolder", "Creates a folder which can contain other folders of forums.", $parent_folder_params);
 
         $menu->show();
 

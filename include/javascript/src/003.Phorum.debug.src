@@ -40,7 +40,7 @@ Phorum.debug = function (message, level, data)
         console !== undefined && console.debug instanceof Function)
     {
         if (data !== undefined) {
-            data = ': ' + $PJ.toJSON(data);
+            data = ': ' + JSON.stringify(data);
         } else {
             data = '';
         }

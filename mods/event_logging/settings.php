@@ -39,7 +39,7 @@ foreach ($menu as $act => $itm) {
     if ($act == $action) {
         print "<span style=\"margin-right: 5px; padding: 3px 10px\" class=\"input-form-td-break\">$itm</span>";
     } else {
-        $link = phorum_api_admin_url(array(
+        $link = phorum_admin_build_url(array(
             'module=modsettings',
             'mod=event_logging',
             'el_action='.$act
