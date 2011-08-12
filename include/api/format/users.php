@@ -48,9 +48,13 @@ function phorum_api_format_users($users)
             'email', 'signature'
         ) as $field) {
             if (isset($user[$field])) {
-                $users[$id][$field] = htmlspecialchars(
-                    $user[$field], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]
-                );
+                if($field == 'display_name' && !empty($PHORUM['custom_display_name'])) {
+                      $users[$id][$field] = $user[$field];
+                } else {
+                    $users[$id][$field] = htmlspecialchars(
+                        $user[$field], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]
+                    );
+                }
             }
         }
     }
