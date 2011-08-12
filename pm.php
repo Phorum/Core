@@ -408,6 +408,33 @@ if (!empty($action))
             // Adding a recipient.
             if ($action == "rcpt_add" || $action == "preview" || $action == "post") {
 
+                /**
+                 * [hook]
+                 *     pm_recipient_add
+                 *
+                 * [description]
+                 *     This hook can be used to handle adding recipients differently
+                 *
+                 * [category]
+                 *     Private message system
+                 *
+                 * [when]
+                 *     Right before the default handling of adding recipients to a pm is done
+                 *
+                 * [input]
+                 *     An array containing the current user (which is an array of its own),
+                 *     the action requested and the page.
+                 *     More input data can be found from the request in $_POST
+                 *
+                 * [output]
+                 *     The same array as the one that was used for the hook call
+                 *     argument.
+                 */
+
+                if (isset($PHORUM["hooks"]["pm_recipient_add"]))
+                    list($user,$action,$page) =
+                            phorum_api_hook("pm_recipient_add", array($user,$action,$page));
+
                 // Convert adding a recipient by name to adding by user id.
                 if (isset($_POST["to_name"])) {
                     $to_name = trim($_POST["to_name"]);
