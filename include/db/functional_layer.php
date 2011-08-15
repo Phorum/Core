@@ -46,29 +46,27 @@
 // We keep these here for backward compatibility with the functional layer.
 // ----------------------------------------------------------------------
 
-$prefix = $PHORUM['DB']->prefix;
-
-$PHORUM['message_table']              = $prefix . '_messages';
-$PHORUM['user_newflags_table']        = $prefix . '_user_newflags';
-$PHORUM['user_newflags_min_id_table'] = $prefix . '_user_min_id';
-$PHORUM['subscribers_table']          = $prefix . '_subscribers';
-$PHORUM['files_table']                = $prefix . '_files';
-$PHORUM['search_table']               = $prefix . '_search';
-$PHORUM['settings_table']             = $prefix . '_settings';
-$PHORUM['forums_table']               = $prefix . '_forums';
-$PHORUM['user_table']                 = $prefix . '_users';
-$PHORUM['user_permissions_table']     = $prefix . '_user_permissions';
-$PHORUM['groups_table']               = $prefix . '_groups';
-$PHORUM['forum_group_xref_table']     = $prefix . '_forum_group_xref';
-$PHORUM['user_group_xref_table']      = $prefix . '_user_group_xref';
-$PHORUM['custom_fields_config_table'] = $prefix . '_custom_fields_config';
-$PHORUM['custom_fields_table']        = $prefix . '_custom_fields';
-$PHORUM['banlist_table']              = $prefix . '_banlists';
-$PHORUM['pm_messages_table']          = $prefix . '_pm_messages';
-$PHORUM['pm_folders_table']           = $prefix . '_pm_folders';
-$PHORUM['pm_xref_table']              = $prefix . '_pm_xref';
-$PHORUM['pm_buddies_table']           = $prefix . '_pm_buddies';
-$PHORUM['message_tracking_table']     = $prefix . '_messages_edittrack';
+$PHORUM['message_table']              = $PHORUM['DB']->message_table;
+$PHORUM['user_newflags_table']        = $PHORUM['DB']->user_newflags_table;
+$PHORUM['user_newflags_min_id_table'] = $PHORUM['DB']->user_newflags_min_id_table;
+$PHORUM['subscribers_table']          = $PHORUM['DB']->subscribers_table;
+$PHORUM['files_table']                = $PHORUM['DB']->files_table;
+$PHORUM['search_table']               = $PHORUM['DB']->search_table;
+$PHORUM['settings_table']             = $PHORUM['DB']->settings_table;
+$PHORUM['forums_table']               = $PHORUM['DB']->forums_table;
+$PHORUM['user_table']                 = $PHORUM['DB']->user_table;
+$PHORUM['user_permissions_table']     = $PHORUM['DB']->user_permissions_table;
+$PHORUM['groups_table']               = $PHORUM['DB']->groups_table;
+$PHORUM['forum_group_xref_table']     = $PHORUM['DB']->forum_group_xref_table;
+$PHORUM['user_group_xref_table']      = $PHORUM['DB']->user_group_xref_table;
+$PHORUM['custom_fields_config_table'] = $PHORUM['DB']->custom_fields_config_table;
+$PHORUM['custom_fields_table']        = $PHORUM['DB']->custom_fields_table;
+$PHORUM['banlist_table']              = $PHORUM['DB']->banlist_table;
+$PHORUM['pm_messages_table']          = $PHORUM['DB']->pm_messages_table;
+$PHORUM['pm_folders_table']           = $PHORUM['DB']->pm_folders_table;
+$PHORUM['pm_xref_table']              = $PHORUM['DB']->pm_xref_table;
+$PHORUM['pm_buddies_table']           = $PHORUM['DB']->pm_buddies_table;
+$PHORUM['message_tracking_table']     = $PHORUM['DB']->message_tracking_table;
 
 // ----------------------------------------------------------------------
 // Functions
@@ -99,6 +97,13 @@ function phorum_db_interact() {
     $args = func_get_args();
     return call_user_func_array(
         array($GLOBALS['PHORUM']['DB'], 'interact'), $args
+    );
+}
+
+function phorum_db_fetch_row() {
+    $args = func_get_args();
+    return call_user_func_array(
+        array($GLOBALS['PHORUM']['DB'], 'fetch_row'), $args
     );
 }
 
