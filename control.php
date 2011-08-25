@@ -286,7 +286,8 @@ phorum_output($template);
  */
 function phorum_controlcenter_user_save($panel)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
+
     $error = "";
     $okmsg = "";
 
@@ -422,22 +423,41 @@ function phorum_controlcenter_user_save($panel)
         }
 
         // Copy data from the updated user back into the user template data.
-        $formatted = phorum_api_user_format(array($GLOBALS['PHORUM']['user']));
+        $formatted = phorum_api_user_format(array($PHORUM['user']));
         foreach ($formatted[0] as $key => $val) {
-            $GLOBALS['PHORUM']['DATA']['USER'][$key] = $val;
+            $PHORUM['DATA']['USER'][$key] = $val;
         }
 
         // Copy data from the updated user back into the template data.
         // Leave PANEL and forum_id alone (these are injected into the
         // userdata in the template from this script).
-        foreach ($GLOBALS["PHORUM"]["DATA"]["PROFILE"] as $key => $val) {
+        foreach ($PHORUM["DATA"]["PROFILE"] as $key => $val) {
             if ($key == "PANEL" || $key == "forum_id") continue;
-            if (isset($GLOBALS["PHORUM"]["user"][$key])) {
-                $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key] = $GLOBALS["PHORUM"]["user"][$key];
+            if (isset($PHORUM["user"][$key])) {
+                 if (is_array($val)) {
+                    // array-data would be (most often) broken when html encoded
+                    $PHORUM["DATA"]["PROFILE"][$key] = $PHORUM["user"][$key];
+                 } elseif(substr($key, 0, 9) == 'signature') {
+                    // the signature needs special care - e.g. for the formatted sig
+
+                    // Fake a message here so we can run the sig through format_message.
+                    $fake_messages = array(array("author"=>"", "email"=>"", "subject"=>"", "body"=>$PHORUM["user"]["signature"]));
+                    $fake_messages = phorum_format_messages( $fake_messages );
+                    $PHORUM["DATA"]["PROFILE"]["signature_formatted"] = $fake_messages[0]["body"];
+
+                    // Format the user signature using standard message body formatting
+                    // or  HTML escape it
+                    $PHORUM["DATA"]["PROFILE"]["signature"] = htmlspecialchars($PHORUM["user"]["signature"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                 } else {
+                    // same handling as when loading the page for the first time
+                    $PHORUM["DATA"]["PROFILE"][$key] = htmlspecialchars($PHORUM["user"][$key], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+                 }
             } else {
-                $GLOBALS["PHORUM"]["DATA"]["PROFILE"][$key] = "";
+                $PHORUM["DATA"]["PROFILE"][$key] = "";
             }
         }
+
+
     }
 
     return array($error, $okmsg);
