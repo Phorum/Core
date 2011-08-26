@@ -55,6 +55,7 @@ foreach ( explode("\n", $files) as $file) {
                         "when"        => NULL,
                         "input"       => NULL,
                         "output"      => NULL,
+                        "example"     => NULL
                     );
                     $section = NULL;
                 }
