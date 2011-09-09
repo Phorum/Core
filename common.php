@@ -26,7 +26,7 @@ if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 // ----------------------------------------------------------------------
 
 // the Phorum version
-define( "PHORUM", "5.2.17" );
+define( "PHORUM", "5.2.18" );
 
 // our database schema version in format of year-month-day-serial
 define( "PHORUM_SCHEMA_VERSION", "2010101500" );
@@ -289,7 +289,7 @@ if (isset($_SERVER['QUERY_STRING']) &&
                 }
             }
             // Handle standard GET arguments.
-            else 
+            else
             {
                 $_GET[$key] = $val;
                 $_REQUEST[$key] = $val;
@@ -360,16 +360,16 @@ if ( isset( $_REQUEST["forum_id"] ) && is_numeric( $_REQUEST["forum_id"] ) ) {
 // will have to use $_GET or $_POST.
 if (!defined("PHORUM_ADMIN") && (isset($_SERVER["QUERY_STRING"]) || isset($GLOBALS["PHORUM_CUSTOM_QUERY_STRING"]))) {
 
-	$Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] )
-	         ? $_SERVER["QUERY_STRING"]
-	         : $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
-               
+    $Q_STR = empty( $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] )
+             ? $_SERVER["QUERY_STRING"]
+             : $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"];
+
     if(strpos($Q_STR, "&")!==false){
 
         $PHORUM["args"] = $_GET;
 
     } else {
-    	
+
         // ignore stuff past a #
         if ( strstr( $Q_STR, "#" ) ) list( $Q_STR, $other ) = explode( "#", $Q_STR, 2 );
 
@@ -1076,7 +1076,7 @@ function phorum_require_login()
 /**
  * Check if the active user has read permission for a forum page.
  * * If the user does not have read permission for the currently active
- * forum, then an error message is shown. What message to show depends 
+ * forum, then an error message is shown. What message to show depends
  * on the exact case. Possible cases are:
  *
  * - The user is logged in: final missing read permission message;
@@ -1084,10 +1084,10 @@ function phorum_require_login()
  *   forum, even if he were logged in: final missing read permission message;
  * - The user is not logged in, but could be allowed to read the
  *   forum if he were logged in: please login message.
- * 
+ *
  * @return boolean
- *     TRUE in case the active user is allowed to read the forum, 
- *     FALSE otherwise. 
+ *     TRUE in case the active user is allowed to read the forum,
+ *     FALSE otherwise.
  */
 function phorum_check_read_common()
 {
@@ -1341,7 +1341,7 @@ function phorum_get_template_file( $page )
         }
     }
 
-    // Build the compiled template and template input file names. 
+    // Build the compiled template and template input file names.
     $tplfile = "$tplbase.tpl";
     $safetemplate = str_replace(array("-",":"), array("_","_"), $template);
     if (isset($module)) $page = "$module::$page";
@@ -1411,7 +1411,7 @@ function phorum_output($templates) {
         phorum_hook("start_output");
     }
 
-    /* 
+    /*
      * [availability]
      *     Phorum 5 >= 5.2.16
      *
@@ -1493,7 +1493,7 @@ function phorum_output($templates) {
         phorum_hook("after_header");
     }
 
-    /* 
+    /*
      * [availability]
      *     Phorum 5 >= 5.2.16
      *
@@ -1562,7 +1562,7 @@ function phorum_output($templates) {
         $templates = phorum_hook('output_templates', $templates);
     }
 
-    /* 
+    /*
      * [availability]
      *     Phorum 5 >= 5.2.16
      *
@@ -1599,7 +1599,7 @@ function phorum_output($templates) {
         include phorum_get_template($template);
     }
 
-    /* 
+    /*
      * [availability]
      *     Phorum 5 >= 5.2.16
      *
@@ -1706,7 +1706,7 @@ function phorum_output($templates) {
         phorum_hook("end_output");
     }
 
-    /* 
+    /*
      * [availability]
      *     Phorum 5 >= 5.2.16
      *
@@ -2055,7 +2055,7 @@ function phorum_check_data_signature($data, $signature)
  *
  * For protecting forms against CSRF attacks, a signed posting token
  * is utilized. This posting token must be included in the POST request.
- * Without the token, Phorum will not accept the POST data. 
+ * Without the token, Phorum will not accept the POST data.
  *
  * This function will check whether we are handling a POST request.
  * If yes, then check if an anti-CSRF token is provided in the POST data.
@@ -2088,7 +2088,7 @@ function phorum_check_posting_token($target_page = NULL)
           ? $PHORUM['user']['password'].'/'.$PHORUM['user']['sessid_lt']
           : (
               isset($_SERVER['HTTP_USER_AGENT'])
-              ? $_SERVER['HTTP_USER_AGENT'] 
+              ? $_SERVER['HTTP_USER_AGENT']
               : 'unknown'
             )
         ) . '/' .
@@ -2099,7 +2099,7 @@ function phorum_check_posting_token($target_page = NULL)
     $PHORUM['DATA']['POST_VARS'] .=
         "<input type=\"hidden\" name=\"posting_token:$target_page\" " .
         "value=\"$posting_token\"/>\n";
-    
+
     // Check the posting token if a form post is done.
     if (!empty($_POST))
     {
