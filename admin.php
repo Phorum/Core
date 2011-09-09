@@ -28,7 +28,7 @@
 
     include_once "./common.php";
     include_once "./include/admin_functions.php";
-    
+
     // initialized as empty
     $PHORUM['admin_token']="";
     if(!empty($_GET['phorum_admin_token'])) {
@@ -81,15 +81,15 @@
                 $module = "default";
             }
             // check the admin token
-            if(!empty($GLOBALS["PHORUM"]["user"]['settings_data']['admin_token']) && 
-               $PHORUM['admin_token'] != $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] || 
+            if(!empty($GLOBALS["PHORUM"]["user"]['settings_data']['admin_token']) &&
+               $PHORUM['admin_token'] != $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] ||
                $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'] <= (time()-PHORUM_ADMIN_TOKEN_TIMEOUT)) {
                 // 900 = timeout after 15 minutes of inactivity
                // echo "invalid token or timeout ...";
                // var_dump($PHORUM['admin_token'],$GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'],$GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'],(time()-PHORUM_ADMIN_TOKEN_TIMEOUT));
                 $PHORUM['admin_token']="";
             }
-            
+
             if(empty($PHORUM['admin_token'])) {
                 $module = "tokenmissing";
             } else {
