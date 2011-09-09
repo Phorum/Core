@@ -39,14 +39,14 @@ if(isset($_POST["username"]) && isset($_POST["password"]))
             $sig_data = $GLOBALS["PHORUM"]["user"]['user_id'].time().$GLOBALS["PHORUM"]["user"]['username'];
             $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] = phorum_api_sign($sig_data);
             $GLOBALS["PHORUM"]['admin_token']=$GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'];
-            
+
             $tmp_user = array(
                         'user_id'=>$GLOBALS["PHORUM"]["user"]['user_id'],
                         'settings_data'=>$GLOBALS["PHORUM"]["user"]['settings_data']
             );
             phorum_api_user_save($tmp_user);
-                
-                
+
+
             if(!empty($_POST["target"])){
                 $target_url = phorum_admin_build_url($_POST['target']);
                 phorum_api_redirect($target_url);
@@ -72,10 +72,10 @@ require_once './include/admin/PhorumInputForm.php';
 
 $frm = new PhorumInputForm ("", "post");
 
-if(count($_REQUEST)){
+if(!empty($_SERVER["QUERY_STRING"])){
 
-        $frm->hidden("target", $_SERVER["QUERY_STRING"]);
-        
+    $frm->hidden("target", htmlspecialchars($_SERVER["QUERY_STRING"], ENT_COMPAT, $PHORUM["DATA"]['CHARSET']));
+
 }
 
 $frm->addrow("Username", $frm->text_box("username", "", 30));

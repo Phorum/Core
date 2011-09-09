@@ -224,11 +224,11 @@ class PhorumInputForm {
             echo " $event=\"".htmlspecialchars($code)."\"";
         }
         echo ">\n";
-        
+
         // add the admin token if we are in the admin and the token is available
         if(defined('PHORUM_ADMIN') && !empty($PHORUM['admin_token'])) {
-            echo "<input type=\"hidden\" name=\"phorum_admin_token\" value=\"{$PHORUM['admin_token']}\">\n";
-        } 
+            echo "<input type=\"hidden\" name=\"phorum_admin_token\" value=\"".htmlspecialchars($PHORUM['admin_token'])."\">\n";
+        }
 
         if ( is_array( $this->_hiddens ) ) foreach( $this->_hiddens as $name => $value ) {
             echo "<input type=\"hidden\" name=\"$name\" value=\"".htmlspecialchars($value)."\">\n";
