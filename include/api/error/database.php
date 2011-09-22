@@ -192,13 +192,13 @@ function phorum_api_error_database($error)
         // Send a mail to the administrator about the database error.
         case "mail":
         default:
-
+            require_once PHORUM_PATH.'/include/api/mail.php';
             $data = array(
               'mailmessage' =>
                   "A database error occured in your Phorum installation\n" .
                   htmlspecialchars($PHORUM['http_path']) . ":\n" .
                   "\n" .
-                  "Error message:\n" .
+                  "Error message:\n" .require_once
                   "--------------\n" .
                   "\n" .
                   "$error\n".
