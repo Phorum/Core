@@ -91,9 +91,9 @@ if (isset($PHORUM["DATA"]['CHARSET'])) {
 
 ?>
 
-<script src="<?php print dirname($PHORUM['admin_http_path']) . "/javascript." . PHORUM_FILE_EXTENSION ?>?admin=1" type="text/javascript"></script>
+<script src="<?php print htmlspecialchars(dirname($PHORUM['admin_http_path']) . "/javascript." . PHORUM_FILE_EXTENSION) ?>?admin=1" type="text/javascript"></script>
 
-<link rel="stylesheet" type="text/css" href="<?php echo $admin_css_path; ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo htmlspecialchars($admin_css_path); ?>" />
 
 <script type="text/javascript">
 //<![CDATA[

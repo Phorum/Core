@@ -378,10 +378,10 @@ foreach ($logs as $loginfo)
           phorum_api_format_date($PHORUM['short_time'], $loginfo["datestamp"]).
        '</td>
         <td valign="middle" style="white-space:nowrap; font-size: 10px">
-          <a title="Extend filter using this source" href="'.$filter_base.'&source='.urlencode($loginfo["source"]).'">'.htmlspecialchars($loginfo["source"]).'</a>
+          <a title="Extend filter using this source" href="'.htmlspecialchars($filter_base.'&source='.urlencode($loginfo["source"])).'">'.htmlspecialchars($loginfo["source"]).'</a>
         </td>
         <td valign="middle" style="font-size: 10px">
-          <a title="Extend filter using this category" href="'.$filter_base.'&show_category['.urlencode($loginfo["category"]).']=1">'.$cat.'</a>
+          <a title="Extend filter using this category" href="'.htmlspecialchars($filter_base.'&show_category['.urlencode($loginfo["category"]).']=1').'">'.$cat.'</a>
         </td>
         <td valign="middle" style="font-size: 12px">'.
           htmlspecialchars($message).
@@ -398,13 +398,13 @@ foreach ($logs as $loginfo)
             <b>User info:</b><br/><br/>' .
 
             ($loginfo["user_id"]
-             ? "User ID = <a title=\"Extend filter using this User ID\" href=\"$filter_base&user_id=".urlencode($loginfo["user_id"])."\">{$loginfo["user_id"]}</a>" .
+             ? "User ID = <a title=\"Extend filter using this User ID\" href=\"".htmlspecialchars("$filter_base&user_id=".urlencode($loginfo["user_id"]))."\">{$loginfo["user_id"]}</a>" .
                 ($loginfo["username"] !== NULL
                  ? ', username = ' . htmlspecialchars($loginfo["username"])
                  : '') .
                 '&nbsp;[&nbsp;<a target="_new" href="'.phorum_api_url(PHORUM_PROFILE_URL, $loginfo["user_id"]).'">view user\'s profile</a>&nbsp]'
              : "Anonymous user") . '<br/>' .
-            'User IP address = <a title="Extend filter using this IP address" href="'.$filter_base.'&ip='.urlencode($loginfo["ip"]).'">'. $loginfo["ip"] . '</a>' .
+            'User IP address = <a title="Extend filter using this IP address" href="'.htmlspecialchars($filter_base.'&ip='.urlencode($loginfo["ip"])).'">'. $loginfo["ip"] . '</a>' .
             ($loginfo["hostname"] !== NULL
              ? ', hostname = ' . htmlspecialchars($loginfo["hostname"])
              : '') . '<br/>' .

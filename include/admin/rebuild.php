@@ -183,7 +183,7 @@ if (count($_POST))
     {
         $redir_url = phorum_admin_build_url(array(
             'module=update_display_names', 'request=integrity'
-        ));
+        ), TRUE);
         phorum_api_redirect($redir_url);
         exit();
     }

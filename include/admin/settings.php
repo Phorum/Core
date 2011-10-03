@@ -134,9 +134,9 @@ if ( count( $_POST ) )
         
 
         if ( $PHORUM['DB']->update_settings( $_POST ) ) {
-            $redir = phorum_admin_build_url(array('module=settings','message=success'));
+            $redir = phorum_admin_build_url(array('module=settings','message=success'), TRUE);
             if ($need_display_name_updates) {
-                $redir = phorum_admin_build_url(array('module=update_display_names'));
+                $redir = phorum_admin_build_url(array('module=update_display_names'), TRUE);
             }
             phorum_api_redirect($redir);
             exit();

@@ -122,7 +122,7 @@ if (count($_POST))
             // Store the default settings in the database.
             phorum_api_forums_save($forum, PHORUM_FLAG_DEFAULTS);
 
-            $url = phorum_admin_build_url(array('module=forum_defaults','okmsg='.rawurlencode('The default settings were successfully saved')));
+            $url = phorum_admin_build_url(array('module=forum_defaults','okmsg='.rawurlencode('The default settings were successfully saved')), TRUE);
                    
         }
         // Create or update a forum.
@@ -142,7 +142,7 @@ if (count($_POST))
             $okmsg = "Forum \"{$forum['name']}\" was successfully saved";
 
             // The URL to redirect to.
-            $url = phorum_admin_build_url(array('module=default',"parent_id=$forum[parent_id]", 'okmsg='.rawurlencode($okmsg)));
+            $url = phorum_admin_build_url(array('module=default',"parent_id=$forum[parent_id]", 'okmsg='.rawurlencode($okmsg)), TRUE);
         }
 
         phorum_api_redirect($url);

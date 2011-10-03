@@ -41,7 +41,7 @@ if(!empty($_GET['phorum_admin_token'])) {
 }
 
 // determine absolute URI for the admin
-$PHORUM["admin_http_path"] = phorum_get_current_url(false);
+$PHORUM["admin_http_path"] = phorum_api_url_current(false);
 
 // determine http_path (at install time; after that it's in the settings)
 if(!isset($PHORUM["http_path"])){

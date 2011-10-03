@@ -55,10 +55,14 @@ function phorum_admin_okmsg($error)
  *   Otherwise a single query parameter string or an array of query parameters
  *   to add to the URL. Note that urlencoding must be handled by the caller.
  *
+ * @param boolean $return_raw
+ *   When FALSE (the default), then the returned URL is HTML encoded.
+ *   When TRUE, then the raw URL is returned.
+ *
  * @return string
  *   The URL for the admin interface.
  */
-function phorum_admin_build_url($input_args = NULL)
+function phorum_admin_build_url($input_args = NULL, $return_raw = FALSE)
 {
     global $PHORUM;
 
@@ -66,7 +70,7 @@ function phorum_admin_build_url($input_args = NULL)
 
     // The base URL was requested. 
     if ($input_args === NULL || $input_args === '') {
-        return $url;
+        return $return_raw ? $url : htmlspecialchars($url);
     }
 
     // Add a set of request parameters.
@@ -91,7 +95,7 @@ function phorum_admin_build_url($input_args = NULL)
         $url .= $separator . "phorum_admin_token=" . $PHORUM['admin_token'];
     }
 
-    return $url;
+    return $return_raw ? $url : htmlspecialchars($url);
 }
 
 /**
