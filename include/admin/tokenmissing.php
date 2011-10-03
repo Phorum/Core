@@ -41,9 +41,9 @@
                } elseif(!empty($_POST['continue'])) {
                    
                    if(!empty($_POST['target'])) {
-                       $url = phorum_admin_build_url($_POST['target']);
+                       $url = phorum_admin_build_url($_POST['target'], TRUE);
                    } else {
-                       $url = phorum_admin_build_url('');
+                       $url = phorum_admin_build_url('', TRUE);
                    }
                 
                    phorum_redirect_by_url($url);
@@ -80,7 +80,7 @@
         } elseif (isset($_GET['module'])) {
             $module = basename($_GET['module']);
         }
-        $url = phorum_admin_build_url('module='.urlencode($module));
+        $url = phorum_admin_build_url('module='.urlencode($module), TRUE);
         phorum_redirect_by_url($url);
     }
 

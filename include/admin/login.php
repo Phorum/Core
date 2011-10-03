@@ -48,10 +48,10 @@
 
 
             if(!empty($_POST["target"])){
-                $target_url = phorum_admin_build_url($_POST['target']);
+                $target_url = phorum_admin_build_url($_POST['target'], TRUE);
                 phorum_redirect_by_url($target_url);
             } else {
-                $redir_url = phorum_admin_build_url('');
+                $redir_url = phorum_admin_build_url('', TRUE);
                 phorum_redirect_by_url($redir_url);
             }
             exit();
