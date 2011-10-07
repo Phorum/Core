@@ -377,9 +377,9 @@ if(count($_POST)){
         if($res){
 
             if($reload){
-                $url = phorum_admin_build_url(array('module=editforum','forum_id='.$_POST['forum_id']));
+                $url = phorum_admin_build_url(array('module=editforum','forum_id='.$_POST['forum_id']), TRUE);
             } else {
-                $url = phorum_admin_build_url(array('module=default','parent_id='.$_POST['parent_id']));
+                $url = phorum_admin_build_url(array('module=default','parent_id='.$_POST['parent_id']), TRUE);
             }
 
             phorum_redirect_by_url($url);
