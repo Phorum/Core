@@ -331,6 +331,7 @@ switch ($mod_step) {
         $message = phorum_db_get_message($msgthd_id);
 
         $nummsgs = 0;
+        $msg_ids = array();
 
         // A hook to allow modules to implement extra or different
         // delete functionality.
