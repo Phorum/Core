@@ -396,7 +396,7 @@ foreach ($logs as $loginfo)
             <b>User info:</b><br/><br/>' .
 
             ($loginfo["user_id"]
-             ? "User ID = <a title=\"Extend filter using this User ID\" href=\"".htmlspecialchars($filter_base&user_id=".urlencode($loginfo["user_id"]))."\">{$loginfo["user_id"]}</a>" .
+             ? "User ID = <a title=\"Extend filter using this User ID\" href=\"".htmlspecialchars("$filter_base&user_id=".urlencode($loginfo["user_id"]))."\">{$loginfo["user_id"]}</a>" .
                 ($loginfo["username"] !== NULL
                  ? ', username = ' . htmlspecialchars($loginfo["username"])
                  : '') .
