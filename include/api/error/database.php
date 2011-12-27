@@ -198,7 +198,7 @@ function phorum_api_error_database($error)
                   "A database error occured in your Phorum installation\n" .
                   htmlspecialchars($PHORUM['http_path']) . ":\n" .
                   "\n" .
-                  "Error message:\n" .require_once
+                  "Error message:\n" .
                   "--------------\n" .
                   "\n" .
                   "$error\n".
