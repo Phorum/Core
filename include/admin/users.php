@@ -943,122 +943,128 @@ if (isset($_REQUEST["user_id"]))
 
         $frm->show();
 
-        echo "<br /><hr class=\"PhorumAdminHR\" /><br /><a name=\"forums\"></a>";
+        if(!$large_userbase) {
 
-        $frm = new PhorumInputForm ("", "post", "Update");
+            echo "<br /><hr class=\"PhorumAdminHR\" /><br /><a name=\"forums\"></a>";
 
-        $frm->hidden("user_id", $_REQUEST["user_id"]);
+            $frm = new PhorumInputForm ("", "post", "Update");
 
-        $frm->hidden("module", "users");
+            $frm->hidden("user_id", $_REQUEST["user_id"]);
 
-        $frm->hidden("section", "forums");
+            $frm->hidden("module", "users");
 
-        $frm->hidden("referrer", $referrer);
+            $frm->hidden("section", "forums");
 
-        $row=$frm->addbreak("Edit Forum Permissions");
+            $frm->hidden("referrer", $referrer);
 
-        $frm->addhelp($row, "Forum Permissions", "These are permissions set exclusively for this user.  You need to grant all permisssions you want the user to have for a forum here.  No permissions from groups or a forum's properties will be used once the user has specific permissions for a forum.");
+            $row=$frm->addbreak("Edit Forum Permissions");
 
-        /**
-         * @todo This would need PHORUM_FLAG_FORUMS too, but care has to
-         *       be taken about the code below too then. I'll postpone
-         *       adding this, until the phorum_get_forum_info() call is
-         *       API-fied as well.
-         */
-        $forums = phorum_api_forums_get(
-            NULL, NULL, NULL, NULL,
-            PHORUM_FLAG_INCLUDE_INACTIVE
-        );
+            $frm->addhelp($row, "Forum Permissions", "These are permissions set exclusively for this user.  You need to grant all permisssions you want the user to have for a forum here.  No permissions from groups or a forum's properties will be used once the user has specific permissions for a forum.");
 
-        $forumpaths = phorum_get_forum_info(1);
+            /**
+             * @todo This would need PHORUM_FLAG_FORUMS too, but care has to
+             *       be taken about the code below too then. I'll postpone
+             *       adding this, until the phorum_get_forum_info() call is
+             *       API-fied as well.
+             */
+            $forums = phorum_api_forums_get(
+                NULL, NULL, NULL, NULL,
+                PHORUM_FLAG_INCLUDE_INACTIVE
+            );
 
-        $perm_frm = $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_READ."]", 1, "Read")."&nbsp;&nbsp;".
-                    $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply")."&nbsp;&nbsp;".
-                    $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics")."&nbsp;&nbsp;".
-                    $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_EDIT."]", 1, "Edit&nbsp;Their&nbsp;Posts")."<br />".
-                    $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files")."<br />".
-                    $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_MODERATE_MESSAGES."]", 1, "Moderate Messages")."&nbsp;&nbsp;".
-                    $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_MODERATE_USERS."]", 1, "Moderate Users")."&nbsp;&nbsp;";
+            $forumpaths = phorum_get_forum_info(1);
 
-        $arr[]="Add A Forum...";
+            $perm_frm = $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_READ."]", 1, "Read")."&nbsp;&nbsp;".
+                        $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply")."&nbsp;&nbsp;".
+                        $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics")."&nbsp;&nbsp;".
+                        $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_EDIT."]", 1, "Edit&nbsp;Their&nbsp;Posts")."<br />".
+                        $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files")."<br />".
+                        $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_MODERATE_MESSAGES."]", 1, "Moderate Messages")."&nbsp;&nbsp;".
+                        $frm->checkbox("new_forum_permissions[".PHORUM_USER_ALLOW_MODERATE_USERS."]", 1, "Moderate Users")."&nbsp;&nbsp;";
 
-        foreach($forumpaths as $forum_id=>$forumname){
-            if(!isset($user["forum_permissions"][$forum_id]) && $forums[$forum_id]['folder_flag'] == 0)
-                $arr[$forum_id]=$forumname;
-        }
+            $arr[]="Add A Forum...";
 
-        if(count($arr)>1)
-            $frm->addrow($frm->select_tag("new_forum", $arr), $perm_frm);
-
-
-        if(is_array($user["forum_permissions"])){
-            foreach($user["forum_permissions"] as $forum_id=>$perms){
-                $perm_frm = $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_READ."]", 1, "Read", ($perms & PHORUM_USER_ALLOW_READ))."&nbsp;&nbsp;".
-                            $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply", ($perms & PHORUM_USER_ALLOW_REPLY))."&nbsp;&nbsp;".
-                            $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics", ($perms & PHORUM_USER_ALLOW_NEW_TOPIC))."&nbsp;&nbsp;".
-                            $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_EDIT."]", 1, "Edit&nbsp;Their&nbsp;Posts", ($perms & PHORUM_USER_ALLOW_EDIT))."<br />".
-                            $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files", ($perms & PHORUM_USER_ALLOW_ATTACH))."<br />".
-                            $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_MODERATE_MESSAGES."]", 1, "Moderate Messages", ($perms & PHORUM_USER_ALLOW_MODERATE_MESSAGES))."&nbsp;&nbsp;".
-                            $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_MODERATE_USERS."]", 1, "Moderate Users", ($perms & PHORUM_USER_ALLOW_MODERATE_USERS))."&nbsp;&nbsp;".
-
-                $frm->hidden("forums[$forum_id]", $forum_id);
-
-                $row=$frm->addrow($forumpaths[$forum_id]."<br />".$frm->checkbox("delforum[$forum_id]", 1, "Delete"), $perm_frm);
-
+            foreach($forumpaths as $forum_id=>$forumname){
+                if(!isset($user["forum_permissions"][$forum_id]) && $forums[$forum_id]['folder_flag'] == 0)
+                    $arr[$forum_id]=$forumname;
             }
-        }
 
-        $frm->show();
+            if(count($arr)>1)
+                $frm->addrow($frm->select_tag("new_forum", $arr), $perm_frm);
 
-        echo "<br /><hr class=\"PhorumAdminHR\" /><br /><a name=\"groups\"></a>";
 
-        $frm = new PhorumInputForm ("", "post", "Update");
+            if(is_array($user["forum_permissions"])){
+                foreach($user["forum_permissions"] as $forum_id=>$perms){
+                    $perm_frm = $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_READ."]", 1, "Read", ($perms & PHORUM_USER_ALLOW_READ))."&nbsp;&nbsp;".
+                                $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply", ($perms & PHORUM_USER_ALLOW_REPLY))."&nbsp;&nbsp;".
+                                $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_NEW_TOPIC."]", 1, "Create&nbsp;New&nbsp;Topics", ($perms & PHORUM_USER_ALLOW_NEW_TOPIC))."&nbsp;&nbsp;".
+                                $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_EDIT."]", 1, "Edit&nbsp;Their&nbsp;Posts", ($perms & PHORUM_USER_ALLOW_EDIT))."<br />".
+                                $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_ATTACH."]", 1, "Attach&nbsp;Files", ($perms & PHORUM_USER_ALLOW_ATTACH))."<br />".
+                                $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_MODERATE_MESSAGES."]", 1, "Moderate Messages", ($perms & PHORUM_USER_ALLOW_MODERATE_MESSAGES))."&nbsp;&nbsp;".
+                                $frm->checkbox("forum_permissions[$forum_id][".PHORUM_USER_ALLOW_MODERATE_USERS."]", 1, "Moderate Users", ($perms & PHORUM_USER_ALLOW_MODERATE_USERS))."&nbsp;&nbsp;".
 
-        $frm->hidden("user_id", $_REQUEST["user_id"]);
+                    $frm->hidden("forums[$forum_id]", $forum_id);
 
-        $frm->hidden("module", "users");
+                    $row=$frm->addrow($forumpaths[$forum_id]."<br />".$frm->checkbox("delforum[$forum_id]", 1, "Delete"), $perm_frm);
 
-        $frm->hidden("referrer", $referrer);
-
-        $frm->hidden("section", "groups");
-
-        $extra_opts = "";
-        // if its an admin, let the user know that the admin will be able to act as a moderator no matter what
-        if ($user["admin"]){
-            $row=$frm->addbreak("Edit Groups (Admins can act as a moderator of every group, regardless of these values)");
-        }
-        else{
-            $row=$frm->addbreak("Edit Groups");
-        }
-
-        $groups= $PHORUM['DB']->get_groups(0, TRUE);
-        $usergroups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST, $_REQUEST["user_id"]);
-
-        $arr=array("Add A Group...");
-        foreach($groups as $group_id=>$group){
-            if(!isset($usergroups[$group_id]))
-                $arr[$group_id]=$group["name"];
-        }
-
-        if(count($arr)>1)
-            $frm->addrow("Add A Group", $frm->select_tag("new_group", $arr));
-
-        if(is_array($usergroups)){
-            $group_options = array(
-                    "remove" => "< Remove User From Group >",
-                    PHORUM_USER_GROUP_SUSPENDED => "Suspended",
-                    PHORUM_USER_GROUP_UNAPPROVED => "Unapproved",
-                    PHORUM_USER_GROUP_APPROVED => "Approved",
-                    PHORUM_USER_GROUP_MODERATOR => "Group Moderator");
-            foreach($usergroups as $group_id => $group){
-                $group_perm = $group['user_status'];
-                $group_info = $PHORUM['DB']->get_groups($group_id);
-                $frm->hidden("groups[$group_id]", "$group_id");
-                $frm->addrow($group_info[$group_id]["name"], $frm->select_tag("group_perm[$group_id]", $group_options, $group_perm, $extra_opts));
+                }
             }
-        }
 
-        $frm->show();
+            $frm->show();
+
+
+
+            echo "<br /><hr class=\"PhorumAdminHR\" /><br /><a name=\"groups\"></a>";
+
+            $frm = new PhorumInputForm ("", "post", "Update");
+
+            $frm->hidden("user_id", $_REQUEST["user_id"]);
+
+            $frm->hidden("module", "users");
+
+            $frm->hidden("referrer", $referrer);
+
+            $frm->hidden("section", "groups");
+
+            $extra_opts = "";
+            // if its an admin, let the user know that the admin will be able to act as a moderator no matter what
+            if ($user["admin"]){
+                $row=$frm->addbreak("Edit Groups (Admins can act as a moderator of every group, regardless of these values)");
+            }
+            else{
+                $row=$frm->addbreak("Edit Groups");
+            }
+
+            $groups= $PHORUM['DB']->get_groups(0, TRUE);
+            $usergroups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST, $_REQUEST["user_id"]);
+
+            $arr=array("Add A Group...");
+            foreach($groups as $group_id=>$group){
+                if(!isset($usergroups[$group_id]))
+                    $arr[$group_id]=$group["name"];
+            }
+
+            if(count($arr)>1)
+                $frm->addrow("Add A Group", $frm->select_tag("new_group", $arr));
+
+            if(is_array($usergroups)){
+                $group_options = array(
+                        "remove" => "< Remove User From Group >",
+                        PHORUM_USER_GROUP_SUSPENDED => "Suspended",
+                        PHORUM_USER_GROUP_UNAPPROVED => "Unapproved",
+                        PHORUM_USER_GROUP_APPROVED => "Approved",
+                        PHORUM_USER_GROUP_MODERATOR => "Group Moderator");
+                foreach($usergroups as $group_id => $group){
+                    $group_perm = $group['user_status'];
+                    $group_info = $PHORUM['DB']->get_groups($group_id);
+                    $frm->hidden("groups[$group_id]", "$group_id");
+                    $frm->addrow($group_info[$group_id]["name"], $frm->select_tag("group_perm[$group_id]", $group_options, $group_perm, $extra_opts));
+                }
+            }
+
+            $frm->show();
+
+        }
 
     } else {
 
