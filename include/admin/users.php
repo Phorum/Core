@@ -664,9 +664,9 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
     }
 
     // Find a list of all matching user_ids.
-    $all_user_ids = phorum_api_user_search(
+    $total = phorum_api_user_search(
         $search_fields, $search_values, $search_operators,
-        TRUE, 'AND'
+        TRUE, 'AND',null,0,0,true
     );
 
     $default_pagelength=30;
@@ -690,8 +690,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
 
     if (!isset($pagelengths[$pagelength])) $pagelength = $default_pagelength;
     
-    $total = empty($all_user_ids) ? 0 : count($all_user_ids);
-    
+
     $totalpages = ceil($total/$pagelength);
     if ($totalpages <= 0) $totalpages = 1;
     

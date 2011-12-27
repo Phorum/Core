@@ -1273,7 +1273,7 @@ abstract class PhorumDB
                     }
                 }
                 else {
-                    $customfields[$key] = $value;
+                    $customfields[$field] = $value;
                 }
             }
         }
@@ -3862,6 +3862,10 @@ abstract class PhorumDB
      *     The result page limit (nr. of results per page)
      *     or 0 (zero, the default) to return all results.
      *
+     * @param boolean $count_only
+     *     Tells the function to just return the count of results for this
+     *     search query.
+     *
      * @return mixed
      *     An array of matching user_ids or a single user_id (based on the
      *     $return_array parameter). If no user_ids can be found at all,
@@ -3869,7 +3873,7 @@ abstract class PhorumDB
      */
     public function user_search(
         $field, $value, $operator = '=', $return_array = FALSE,
-        $type = 'AND', $sort = NULL, $offset = 0, $limit = 0)
+        $type = 'AND', $sort = NULL, $offset = 0, $limit = 0, $count_only = false)
     {
 
         settype($return_array, 'bool');
@@ -3959,28 +3963,52 @@ abstract class PhorumDB
         // query results to only one record.
         $limit = $return_array ? $limit : 1;
 
-        // Retrieve the matching user_ids from the database.
-        $user_ids = $this->interact(
-            DB_RETURN_ROWS,
-            "SELECT user_id
-             FROM   {$this->user_table}
-             $where $order",
-            0, // keyfield 0 is the user_id
-            0, $limit
-        );
+        $ret = null;
 
-        // No user_ids found at all?
-        if (count($user_ids) == 0) return 0;
+        if($count_only) {
+    	    // Retrieve the number of matching user_ids from the database.
+    	    $user_count = $this->interact(
+    	        DB_RETURN_VALUE,
+    	        "SELECT count(*)
+    	         FROM   {$this->user_table}
+    	         $where $order",
+    	        0, // keyfield 0 is the user_id
+                0,
+                $limit,
+                $offset
+    	    );
 
-        // Return an array of user_ids.
-        if ($return_array) {
-            foreach ($user_ids as $id => $user_id) $user_ids[$id] = $user_id[0];
-            return $user_ids;
+    	    $ret = $user_count;
+
+        } else {
+
+            // Retrieve the matching user_ids from the database.
+            $user_ids = $this->interact(
+                DB_RETURN_ROWS,
+                "SELECT user_id
+                 FROM   {$this->user_table}
+                 $where $order",
+                0, // keyfield 0 is the user_id
+                0, // no flags
+                $limit,
+                $offset
+            );
+
+            // No user_ids found at all?
+            if (count($user_ids) == 0) return 0;
+
+            // Return an array of user_ids.
+            if ($return_array) {
+                foreach ($user_ids as $id => $user_id) $user_ids[$id] = $user_id[0];
+                $ret = $user_ids;
+            } else {
+                // Return a single user_id.
+                list ($user_id, $dummy) = each($user_ids);
+                $ret = $user_id;
+            }
         }
 
-        // Return a single user_id.
-        list ($user_id, $dummy) = each($user_ids);
-        return $user_id;
+        return $ret;
     }
     // }}}
 
