@@ -19,6 +19,12 @@
 
 if (!defined("PHORUM_ADMIN")) return;
 
+if(defined('PHORUM_LARGE_USERBASE')) {
+    $large_userbase = 1;
+} else {
+    $large_userbase = 0;
+}
+
 require_once './include/api/forums.php';
 require_once PHORUM_PATH.'/include/api/mail.php';
 
@@ -326,68 +332,70 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
             $frm->select_tag("registered_op", array("lt" => "Longer ago than", "gte" => "Within the last"), $_REQUEST["registered_op"]) . " " .
             $frm->text_box("registered", empty($_REQUEST["registered"]) ? "" : (int) $_REQUEST["registered"], 5) . " days"
             );
-        
-        $forum_permissions_forums_list = array();
+        // skip this part for large user bases
+        if(!$large_userbase) {
+            $forum_permissions_forums_list = array();
 
-        $forum_permissions_forums = $PHORUM['DB']->get_forums();
+            $forum_permissions_forums = $PHORUM['DB']->get_forums();
 
-        $forum_permissions_forumpaths = phorum_get_forum_info(1);
-        foreach($forum_permissions_forumpaths as $forum_id => $forumname) {
-            if($forum_permissions_forums[$forum_id]['folder_flag'] == 0)
-                $forum_permissions_forums_list[$forum_id]=$forumname;
-        }
-        
-        if(count($forum_permissions_forums_list)) {
-            $forum_permissions_forums_select = "<select name=\"forum_permissions_forums[]\" multiple=\"multiple\" size=\"2\">\n";
-            if(!empty($_REQUEST['forum_permissions_forums'])) {
-                if (is_array($_REQUEST['forum_permissions_forums'])) {
-                    foreach ($_REQUEST['forum_permissions_forums'] as $forum_permissions_forum) {
-                        $selected_forum_permissions_forums[$forum_permissions_forum] = $forum_permissions_forum;
+            $forum_permissions_forumpaths = phorum_get_forum_info(1);
+            foreach($forum_permissions_forumpaths as $forum_id => $forumname) {
+                if($forum_permissions_forums[$forum_id]['folder_flag'] == 0)
+                    $forum_permissions_forums_list[$forum_id]=$forumname;
+            }
+
+            if(count($forum_permissions_forums_list)) {
+                $forum_permissions_forums_select = "<select name=\"forum_permissions_forums[]\" multiple=\"multiple\" size=\"2\">\n";
+                if(!empty($_REQUEST['forum_permissions_forums'])) {
+                    if (is_array($_REQUEST['forum_permissions_forums'])) {
+                        foreach ($_REQUEST['forum_permissions_forums'] as $forum_permissions_forum) {
+                            $selected_forum_permissions_forums[$forum_permissions_forum] = $forum_permissions_forum;
+                        }
+                    } else {
+                        $selected_forum_permissions_forums[(int)$_REQUEST['forum_permissions_forums']] = (int)$_REQUEST['forum_permissions_forums'];
                     }
-                } else {
-                    $selected_forum_permissions_forums[(int)$_REQUEST['forum_permissions_forums']] = (int)$_REQUEST['forum_permissions_forums'];
                 }
-            }
-            foreach ($forum_permissions_forums_list as $forum_id => $forumname) {
-                $forum_permissions_forums_select .= "<option value=\"$forum_id\"";
-                if (isset($selected_forum_permissions_forums[$forum_id]))
-                    $forum_permissions_forums_select .= " selected='selected'";
-                $forum_permissions_forums_select .= ">$forumname</option>";
-            }        
-            $forum_permissions_forums_select .= "</select>";
-            
-            $forum_permissions = array(
-                PHORUM_USER_ALLOW_READ => "Read",
-                PHORUM_USER_ALLOW_REPLY => "Reply",
-                PHORUM_USER_ALLOW_NEW_TOPIC => "Create New Topics",
-                PHORUM_USER_ALLOW_EDIT => "Edit Their Posts",
-                PHORUM_USER_ALLOW_ATTACH => "Attach Files",
-                PHORUM_USER_ALLOW_MODERATE_MESSAGES => "Moderate Messages",
-                PHORUM_USER_ALLOW_MODERATE_USERS => "Moderate Users"
-                );
-            
-            $forum_permissions_select = "<select name=\"forum_permissions[]\" multiple=\"multiple\" size=\"2\">\n";
-            if(!empty($_REQUEST['forum_permissions'])) {
-                if (is_array($_REQUEST['forum_permissions'])) {
-                    foreach ($_REQUEST['forum_permissions'] as $forum_permission) {
-                        $selected_forum_permissions[$forum_permission] = $forum_permission;
+                foreach ($forum_permissions_forums_list as $forum_id => $forumname) {
+                    $forum_permissions_forums_select .= "<option value=\"$forum_id\"";
+                    if (isset($selected_forum_permissions_forums[$forum_id]))
+                        $forum_permissions_forums_select .= " selected='selected'";
+                    $forum_permissions_forums_select .= ">$forumname</option>";
+                }
+                $forum_permissions_forums_select .= "</select>";
+
+                $forum_permissions = array(
+                    PHORUM_USER_ALLOW_READ => "Read",
+                    PHORUM_USER_ALLOW_REPLY => "Reply",
+                    PHORUM_USER_ALLOW_NEW_TOPIC => "Create New Topics",
+                    PHORUM_USER_ALLOW_EDIT => "Edit Their Posts",
+                    PHORUM_USER_ALLOW_ATTACH => "Attach Files",
+                    PHORUM_USER_ALLOW_MODERATE_MESSAGES => "Moderate Messages",
+                    PHORUM_USER_ALLOW_MODERATE_USERS => "Moderate Users"
+                    );
+
+                $forum_permissions_select = "<select name=\"forum_permissions[]\" multiple=\"multiple\" size=\"2\">\n";
+                if(!empty($_REQUEST['forum_permissions'])) {
+                    if (is_array($_REQUEST['forum_permissions'])) {
+                        foreach ($_REQUEST['forum_permissions'] as $forum_permission) {
+                            $selected_forum_permissions[$forum_permission] = $forum_permission;
+                        }
+                    } else {
+                        $selected_forum_permissions[(int)$_REQUEST['forum_permissions']] = (int)$_REQUEST['forum_permissions'];
                     }
-                } else {
-                    $selected_forum_permissions[(int)$_REQUEST['forum_permissions']] = (int)$_REQUEST['forum_permissions'];
                 }
+
+                foreach($forum_permissions as $forum_permission => $forum_permission_description) {
+
+                    $forum_permissions_select .= "<option value=\"".$forum_permission."\"";
+                    if (isset($selected_forum_permissions[$forum_permission]))
+                        $forum_permissions_select .= " selected=\"selected\"";
+                    $forum_permissions_select .= ">".$forum_permission_description."</option>\n";
+                }
+
+                $forum_permissions_select .= "</select>\n";
+
+                $frm->addrow("Personal permission to", $forum_permissions_select . "&nbsp;in&nbsp;" . $forum_permissions_forums_select);
             }
-            
-            foreach($forum_permissions as $forum_permission => $forum_permission_description) {
-                
-                $forum_permissions_select .= "<option value=\"".$forum_permission."\"";
-                if (isset($selected_forum_permissions[$forum_permission]))
-                    $forum_permissions_select .= " selected=\"selected\"";
-                $forum_permissions_select .= ">".$forum_permission_description."</option>\n";
-            }
-            
-            $forum_permissions_select .= "</select>\n";
-            
-            $frm->addrow("Personal permission to", $forum_permissions_select . "&nbsp;in&nbsp;" . $forum_permissions_forums_select);
         }
         
         $active_profile_fields = 0;
@@ -426,30 +434,33 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
                 . $frm->select_tag("profile_field_search_loc", $field_search_loc_array, $_REQUEST["profile_field_search_loc"])
                 . "&nbsp;in&nbsp;" . $profile_field_select);
         }
-        $db_groups = $PHORUM['DB']->get_groups(0,true);
-        if (count($db_groups)) {
-            $multiple = (count($db_groups) > 1) ? "multiple=\"multiple\" size=\"2\"" : "";
-            $group_select = "<select name=\"member_of_group[]\" $multiple>\n";
-            if (!$multiple) {
-               $group_select .= '<option value="">Any group</option>';
-            }
-            $selected_groups = array();
-            if(!empty($_REQUEST['member_of_group'])) {
-                if (is_array($_REQUEST['member_of_group'])) {
-                    foreach ($_REQUEST['member_of_group'] as $group_id) {
-                        $selected_groups[$group_id] = $group_id;
-                    }
-                } else {
-                    $selected_groups[(int)$_REQUEST['member_of_group']] = (int)$_REQUEST['member_of_group'];
+        // skip this part for large user bases
+        if(!$large_userbase) {
+            $db_groups = $PHORUM['DB']->get_groups(0,true);
+            if (count($db_groups)) {
+                $multiple = (count($db_groups) > 1) ? "multiple=\"multiple\" size=\"2\"" : "";
+                $group_select = "<select name=\"member_of_group[]\" $multiple>\n";
+                if (!$multiple) {
+                   $group_select .= '<option value="">Any group</option>';
                 }
+                $selected_groups = array();
+                if(!empty($_REQUEST['member_of_group'])) {
+                    if (is_array($_REQUEST['member_of_group'])) {
+                        foreach ($_REQUEST['member_of_group'] as $group_id) {
+                            $selected_groups[$group_id] = $group_id;
+                        }
+                    } else {
+                        $selected_groups[(int)$_REQUEST['member_of_group']] = (int)$_REQUEST['member_of_group'];
+                    }
+                }
+                foreach ($db_groups as $group_id => $group) {
+                    $group_select .= "<option value=\"$group_id\"";
+                    if (isset($selected_groups[$group_id])) $group_select .= " selected=\"selected\"";
+                    $group_select .= ">".$group["name"]."</option>\n";
+                }
+                $group_select .= "</select>\n";
+                $frm->addrow("Member of group", $group_select);
             }
-            foreach ($db_groups as $group_id => $group) {
-                $group_select .= "<option value=\"$group_id\"";
-                if (isset($selected_groups[$group_id])) $group_select .= " selected=\"selected\"";
-                $group_select .= ">".$group["name"]."</option>\n";
-            }
-            $group_select .= "</select>\n";
-            $frm->addrow("Member of group", $group_select);
         }
         
         $frm->show();
