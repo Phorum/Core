@@ -2,6 +2,10 @@
 
 if (!defined('PHORUM')) return;
 
+$GLOBALS['PHORUM']['compat_mbstring']['encoding'] =
+    isset($GLOBALS['PHORUM']['DATA']['CHARSET'])
+    ? $GLOBALS['PHORUM']['DATA']['CHARSET'] : 'UTF-8';
+
 if (!function_exists('mb_substr'))
 {
     function mb_substr($str, $offset, $length = NULL, $encoding = NULL)
@@ -11,9 +15,7 @@ if (!function_exists('mb_substr'))
         if ($length !== NULL) settype($length, 'int');
 
         if ($encoding === NULL) {
-            global $PHORUM;
-            $encoding = isset($PHORUM['DATA']['CHARSET'])
-                      ? $PHORUM['DATA']['CHARSET'] : 'utf-8';
+            $encoding = $GLOBALS['PHORUM']['compat_mbstring']['encoding'];
         }
 
         // For non-UTF-8 data, we fallback to substr().
@@ -102,6 +104,14 @@ if (!function_exists('mb_substr'))
         } else {
             return '';
         } 
+    }
+}
+
+if (!function_exists('mb_internal_encoding'))
+{
+    function mb_internal_encoding($encoding)
+    {
+        $GLOBALS['PHORUM']['compat_mbstring']['encoding'] = $encoding;
     }
 }
 

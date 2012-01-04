@@ -515,29 +515,33 @@ function phorum_api_mail_encode_header($string)
             }
         }
 
-        // No more characters left? Then we are done.
-        if ($len == 0) break;
-
-        // Check how many unsafe chars in a row we can find in the string
-        // from the current cursor position on.
-        $count = strcspn($string, $safe_chars, $cursor);
-
-        // From the RFC:
-        // "(General 8bit representation) Any octet, except a CR or LF that
-        //  is part of a CRLF line break of the canonical (standard) form
-        //  of the data being encoded, may be represented by an "=" followed
-        //  by a two digit hexadecimal representation of the octet's value.
-        //  The digits of the hexadecimal alphabet, for this purpose, are
-        //  "0123456789ABCDEF".  Uppercase letters must be used; lowercase
-        //  letters are not allowed."
-        while ($count > 0)
+        // Encode unsafe chars.
+        while ($len > 0 && strcspn($string, $safe_chars, $cursor) > 0)
         {
+            // Check how many bytes long the following character is.
+            //
+            // We found that mail clients do not handle multibyte characters
+            // correctly when its bytes are split over wrapped encoding
+            // lines. The clients do not put the separated bytes back
+            // together, resulting in broken characters in the output.
+            $mb_char = mb_substr(substr($string, $cursor), 0, 1);
+            $mb_len  = strlen($mb_char);
+
+            // From the RFC:
+            // "(General 8bit representation) Any octet, except a CR or LF that
+            //  is part of a CRLF line break of the canonical (standard) form
+            //  of the data being encoded, may be represented by an "=" followed
+            //  by a two digit hexadecimal representation of the octet's value.
+            //  The digits of the hexadecimal alphabet, for this purpose, are
+            //  "0123456789ABCDEF".  Uppercase letters must be used; lowercase
+            //  letters are not allowed."
+
             // From the RFC:
             // "(Line Breaks) A line break in a text body, represented
             //  as a CRLF sequence in the text canonical form, must be
             //  represented by a (RFC 822) line break, which is also a
             //  CRLF sequence"
-            if ($string[$cursor] == "\r" &&
+            if ($mb_char == "\r" &&
                 isset($string[$cursor+1]) &&
                 $string[$cursor + 1] == "\n") {
                 $res .= "\r\n\t";
@@ -550,24 +554,24 @@ function phorum_api_mail_encode_header($string)
             else
             {
                 // If we are at the end of the line, then wrap around with
-                // a soft break. We take 3 characters into account to
+                // a soft break. We take 3 characters into account per byte to
                 // take care of the "=XX" encoding.
-                if (($linecursor + 3) >= RFC2045_WRAPLEN) {
+                if (($linecursor + $mb_len * 3) >= RFC2045_WRAPLEN) {
                     $res .= "$postfix\r\n\t$prefix";
                     $linecursor = $prefixlen;
                 }
 
                 // Add the escaped character.
-                $res .= sprintf('=%02X', ord($string[$cursor]));
-                $cursor ++;
-                $linecursor += 3;
-                $count--;
-                $len--;
+                for ($pos = 0; $pos < $mb_len; $pos++) {
+                    $res .= sprintf('=%02X', ord($mb_char[$pos]));
+                }
+
+                // Update counters.
+                $cursor += $mb_len;
+                $linecursor += $mb_len * 3;
+                $len -= $mb_len;
             }
         }
-
-        // No more characters left? Then we are done.
-        if ($len == 0) break;
     }
 
     // Add the closing postfix.

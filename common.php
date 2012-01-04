@@ -422,6 +422,9 @@ if (!defined( "PHORUM_ADMIN" ))
         $PHORUM["DATA"]["HCHARSET"] = $PHORUM["DATA"]["CHARSET"];
     }
 
+    // Set the internal encoding for mbstring functions.
+    mb_internal_encoding($PHORUM['DATA']['CHARSET']);
+
     // HTML titles can't contain HTML code, so we strip HTML tags
     // and HTML escape the title.
     $PHORUM["DATA"]["HTML_TITLE"] = htmlspecialchars(strip_tags($PHORUM["DATA"]["HTML_TITLE"]), ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
