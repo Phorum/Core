@@ -547,7 +547,6 @@ function phorum_api_mail_encode_header($string)
                 $res .= "\r\n\t";
                 $cursor += 2;
                 $linecursor = 0;
-                $count -= 2;
                 $len -= 2;
             }
             // No CRLF break. Handle character escaping.
