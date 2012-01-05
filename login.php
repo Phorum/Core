@@ -32,6 +32,10 @@ $okmsg    = '';         // success message to show
 $focus    = 'username'; // id of the field to focus to after loading the page
 $heading  = $PHORUM['DATA']['LANG']['LogIn']; // The page heading
 
+// init for later use
+$redir = phorum_api_url(PHORUM_LIST_URL);
+
+
 // Determine to what URL the user must be redirected after login.
 if (!empty($PHORUM['args']['redir'])) {
     $redir = urldecode($PHORUM['args']['redir']);
@@ -45,8 +49,6 @@ if (!empty($PHORUM['args']['redir'])) {
     if (strtolower(substr($_SERVER['HTTP_REFERER'], 0, $len)) == $base) {
         $redir = $_SERVER['HTTP_REFERER'];
     }
-} else {
-    $redir = phorum_api_url(PHORUM_LIST_URL);
 }
 
 // ----------------------------------------------------------------------------
@@ -578,7 +580,7 @@ if (!$hook_info['handled'] && isset($_POST['lostpass']))
                 'status' => 'new_verification',
                 'email'  => $_POST['lostpass'],
                 'user'   => $user,
-                'secret' => $tmp_user['password_temp']
+                'secret' => $regcode
             );
         }
 
