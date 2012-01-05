@@ -1193,6 +1193,7 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
         this.className = 'Phorum.UI.Editor';
 
         this.selectors = [
+            'div.PDDiv #phorum-post-form', // classic template
             '#phorum #post'   // Phorum 5.2+, no need to support older versions
         ];
 
