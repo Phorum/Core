@@ -649,7 +649,7 @@ class Phorum
      *
      * @return Phorum
      */
-    public function API ()
+    public static function API ()
     {
         if (!isset(Phorum::$instance)) Phorum::$instance = new Phorum();
         return Phorum::$instance;
