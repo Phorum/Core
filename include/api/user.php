@@ -1260,8 +1260,12 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
  *
  * @param mixed $operator
  *     The operator (string) or operators (array) to use. Valid operators are
- *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*". The
- *     "*" operator is for executing a "LIKE '%value%'" matching query.
+ *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*", "?*", "*?", "()". The
+ *     "*" operator is for executing a "LIKE '%value%'" matching query. The
+ *     "?*" and "*?" operators are for executing a "LIKE 'value%'" or a
+ *     "LIKE '%value' matching query. The "()" operator is for executing a
+ *     "IN ('value[0]',value[1]')" matching query.  The "()" operator requires
+ *     its $value to be an array.
  *
  * @param boolean $return_array
  *     If this parameter has a true value, then an array of all matching
