@@ -232,6 +232,11 @@ function phorum_api_tree_build(
       {
         $children =& $structure[$cursor]['children'];
 
+        // handle reverse threading
+        if(!empty($reverse_from_indent_level) && $stack_lvl >= $reverse_from_indent_level) {
+            $children = array_reverse($children,true);
+        }
+
         // Remember the current cursor + node in the stack.
         $stack[$stack_lvl++] = array($cursor, $node);
 

@@ -651,7 +651,8 @@ abstract class PhorumDB
                     // with replies.
                     if (! count($replymsgids)) break;
 
-                    $sortorder = "sort, $sortfield DESC, message_id";
+                    // replies are always sorted by datestamp and ascending by default
+                    $sortorder = "sort, datestamp ASC, message_id";
 
                     $sql = "SELECT $messagefields
                             FROM   {$this->message_table}
