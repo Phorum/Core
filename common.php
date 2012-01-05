@@ -101,13 +101,6 @@ if (!defined( "PHORUM_ADMIN" ))
 
     $PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"]; 
 
-    // Do not try to restore a session for CSS and JavaScript.
-    // We do not need user authentication for those.
-    $skipsession = FALSE;
-    if(phorum_page == 'css' || phorum_page == 'javascript') {
-        $skipsession = TRUE;
-    }
-
     // If the Phorum is disabled, display a message.
     if (isset($PHORUM["status"]) &&
         $PHORUM["status"] == PHORUM_MASTER_STATUS_DISABLED) {
@@ -227,7 +220,7 @@ if (!defined( "PHORUM_ADMIN" ))
     $PHORUM["DATA"]["HTML_TITLE"] .= $PHORUM["DATA"]["NAME"];
 
     // Try to restore a user session.
-    if (!$skipsession && phorum_api_user_session_restore(PHORUM_FORUM_SESSION))
+    if (phorum_api_user_session_restore(PHORUM_FORUM_SESSION))
     {
         // If the user has overridden thread settings, change them here.
         $modes = phorum_api_forums_get_display_modes($PHORUM);
