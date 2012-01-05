@@ -316,7 +316,7 @@ function editor_tools_register_tool($tool_id, $description, $icon=NULL, $jsactio
 
     if ($PHORUM["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
         "Internal error for the editor_tools module: " .
-        "tool ".htmlspecialchars($toold_id)." was registered " .
+        "tool ".htmlspecialchars($tool_id)." was registered " .
         "after the editor_tools were started up. Tools must " .
         "be registered within or before the \"editor_tool_plugin\" hook.",
         E_USER_ERROR
