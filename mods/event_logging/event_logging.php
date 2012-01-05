@@ -323,8 +323,7 @@ function phorum_mod_event_logging_failed_login($data)
         return $data;
     }
 
-    if (!$PHORUM["mod_event_logging"]["do_log_login_failure"] ||
-        ($data["location"] == "forum" && !$PHORUM["mod_event_logging"]["do_log_login_failure_forum"]) ||
+    if (($data["location"] == "forum" && !$PHORUM["mod_event_logging"]["do_log_login_failure_forum"]) ||
         ($data["location"] == "admin" && !$PHORUM["mod_event_logging"]["do_log_login_failure_admin"])
        )
         return $data;
