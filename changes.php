@@ -69,6 +69,8 @@ array_push($diffs, array());
 $prev_body = -1;
 $prev_subject = -1;
 
+$message_hist = array();
+
 foreach($diffs as $diff_info){
 
     if(!isset($diff_info["user_id"])){

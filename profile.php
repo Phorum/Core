@@ -27,6 +27,7 @@ $template = "profile";
 $error = "";
 
 // redirect if no profile id passed
+$profile_id=0;
 if(!empty($PHORUM["args"][1])){
     $profile_id = (int)$PHORUM["args"][1];
 }

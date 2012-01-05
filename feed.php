@@ -41,6 +41,8 @@ elseif (!$PHORUM['folder_flag']) {
     $which = $PHORUM['forum_id'];
 }
 else {
+    $what = "";
+    $which= "";
     trigger_error(
         "The feed script was called with a folder id as the " .
         "forum_id argument. This is not supported.",

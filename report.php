@@ -35,10 +35,13 @@ $report = false;
 $template = "report";
 
 $message=array();
+$message_id = 0;
 // get the message
 if (isset($PHORUM["args"][1]) && is_numeric($PHORUM["args"][1])) {
     $message_id = $PHORUM["args"][1];
     $message = $PHORUM['DB']->get_message($message_id);
+} else {
+    phorum_api_redirect(PHORUM_LIST_URL);
 }
 
 if (is_array($message) && count($message))
