@@ -257,7 +257,7 @@ $cache_key .= '|' . (PHORUM_COMPRESS_CSS ? 'compress' : 'nocompress');
 $cache_key = md5($cache_key);
 
 if (!empty($PHORUM['cache_css'])) {
-    $cache_data = phorum_cache_get('css', $cache_key);
+    $cache_data = phorum_api_cache_get('css', $cache_key);
     if ($cache_data !== null) {
         list ($cache_time, $content) = $cache_data;
     }
@@ -343,7 +343,7 @@ if ($content === null)
 
     if (!empty($PHORUM['cache_css'])) {
         $cache_time = time();
-        phorum_cache_put('css',$cache_key,array($cache_time,$content),86400);
+        phorum_api_cache_put('css',$cache_key,array($cache_time,$content),86400);
     }
 }
 
