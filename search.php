@@ -209,6 +209,17 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 
     settype($PHORUM["args"]["match_dates"], "int");
 
+    $urlargs = array(
+        PHORUM_SEARCH_URL,
+        "search=" . urlencode($phorum_search),
+        "author=" . urlencode($phorum_author),
+        "page=%page_num%",
+        "match_type={$PHORUM['args']['match_type']}",
+        "match_dates={$PHORUM['args']['match_dates']}",
+        "match_forum=".urlencode($PHORUM['args']['match_forum']),
+        "match_threads=".urlencode($PHORUM["args"]["match_threads"])
+    );
+
     // setup the needed data for an alternate search backend
     // needs to get fed by posted messages
     $search_request_data = array(
@@ -223,7 +234,8 @@ if(!empty($phorum_search) || !empty($phorum_author)){
         'results' => array(),
         'raw_body' => 0,
         'totals' => 0,
-        'continue' => 1
+        'continue' => 1,
+        'urlargs' => $urlargs
     );
 
     if (isset($PHORUM["hooks"]["search_action"]))
@@ -295,36 +307,38 @@ if(!empty($phorum_search) || !empty($phorum_author)){
         } else {
             $page_start = $page - floor($pages_shown/2);
         }
-        
+
+        $PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"] =  call_user_func_array('phorum_api_url', $search_request_data['urlargs']);
+
 
         $pageno = 1;
         for($x = 0;$x < $pages_shown && $x < $pages;$x++){
             $pageno = $x + $page_start;
             $PHORUM["DATA"]["PAGES"][] = array("pageno" => $pageno,
-                "url" => phorum_api_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "author=" . urlencode($phorum_author), "page=$pageno", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum=".urlencode($PHORUM['args']['match_forum']), "match_threads=".urlencode($PHORUM["args"]["match_threads"]))
+                "url" => str_replace('%page_num%',$pageno,$PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"]),
                 );
         }
 
         $PHORUM["DATA"]["CURRENTPAGE"] = $page;
         $PHORUM["DATA"]["TOTALPAGES"] = $pages;
-        $PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"] = phorum_api_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "author=" . urlencode($phorum_author), "page=%page_num%", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum=".urlencode($PHORUM['args']['match_forum']), "match_threads=".urlencode($PHORUM["args"]["match_threads"]));
+
 
         if ($page_start > 1){
-            $PHORUM["DATA"]["URL"]["FIRSTPAGE"] = phorum_api_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "author=" . urlencode($phorum_author), "page=1", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum=".urlencode($PHORUM['args']['match_forum']), "match_threads=".urlencode($PHORUM["args"]["match_threads"]));
+            $PHORUM["DATA"]["URL"]["FIRSTPAGE"] = str_replace('%page_num%',1,$PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"]);
         }
 
         if ($pageno < $pages){
-            $PHORUM["DATA"]["URL"]["LASTPAGE"] = phorum_api_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "author=" . urlencode($phorum_author), "page=$pages", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum=".urlencode($PHORUM['args']['match_forum']), "match_threads=".urlencode($PHORUM["args"]["match_threads"]));
+            $PHORUM["DATA"]["URL"]["LASTPAGE"] = str_replace('%page_num%',$pages,$PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"]);
         }
 
         if ($pages > $page){
             $nextpage = $page + 1;
-            $PHORUM["DATA"]["URL"]["NEXTPAGE"] = phorum_api_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "author=" . urlencode($phorum_author), "page=$nextpage", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum=".urlencode($PHORUM['args']['match_forum']), "match_threads=".urlencode($PHORUM["args"]["match_threads"]));
+            $PHORUM["DATA"]["URL"]["NEXTPAGE"] = str_replace('%page_num%',$nextpage,$PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"]);
             $PHORUM["DATA"]["NEXTPAGE"] = $nextpage;
         }
         if ($page > 1){
             $prevpage = $page-1;
-            $PHORUM["DATA"]["URL"]["PREVPAGE"] = phorum_api_url(PHORUM_SEARCH_URL, "search=" . urlencode($phorum_search), "author=" . urlencode($phorum_author), "page=$prevpage", "match_type={$PHORUM['args']['match_type']}", "match_dates={$PHORUM['args']['match_dates']}", "match_forum=".urlencode($PHORUM['args']['match_forum']), "match_threads=".urlencode($PHORUM["args"]["match_threads"]));
+            $PHORUM["DATA"]["URL"]["PREVPAGE"] = str_replace('%page_num%',$prevpage,$PHORUM["DATA"]["URL"]["PAGING_TEMPLATE"]);
             $PHORUM["DATA"]["PREVPAGE"] = $prevpage;
         }
 
