@@ -266,6 +266,7 @@ function phorum_email_user($addresses, $data) {
  * @deprecated Replaced by {@link phorum_api_sign()}.
  */
 function phorum_generate_data_signature($data) {
+    require_once PHORUM_PATH.'/include/api/sign.php';
     return phorum_api_sign($data);
 }
 
