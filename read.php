@@ -354,8 +354,8 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
         $PHORUM["DATA"]["URL"]["OLDERTHREAD"] = phorum_api_url(PHORUM_READ_URL, $data[$thread]["modifystamp"], "older");
         $PHORUM["DATA"]["URL"]["NEWERTHREAD"] = phorum_api_url(PHORUM_READ_URL, $data[$thread]["modifystamp"], "newer");
     } else{
-        $PHORUM["DATA"]["URL"]["OLDERTHREAD"] = phorum_api_url(PHORUM_READ_URL, $thread, "older");
-        $PHORUM["DATA"]["URL"]["NEWERTHREAD"] = phorum_api_url(PHORUM_READ_URL, $thread, "newer");
+        $PHORUM["DATA"]["URL"]["OLDERTHREAD"] = phorum_api_url(PHORUM_READ_URL, $data[$thread]["datestamp"], "older");
+        $PHORUM["DATA"]["URL"]["NEWERTHREAD"] = phorum_api_url(PHORUM_READ_URL, $data[$thread]["datestamp"], "newer");
     }
 
     if ($PHORUM["DATA"]["LOGGEDIN"]) {
