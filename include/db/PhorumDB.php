@@ -3356,26 +3356,35 @@ abstract class PhorumDB
         settype($exclude_admin, 'bool');
         settype($for_email, 'bool');
 
-        // Exclude admins from the list, if requested.
-        $or_where_admin = $exclude_admin ? '' : 'OR u.admin=1';
-
         // If we are gathering email addresses for mailing the moderators,
         // then honour the moderation_email setting for the user.
         $where_moderation_mail = $for_email ? 'AND u.moderation_email = 1' : '';
 
+        // Exclude admins from the list, if requested.
+        $admin = $exclude_admin ? '' : 
+                    "SELECT DISTINCT u.user_id AS user_id,
+                u.email AS email
+         FROM   {$this->user_table} AS u
+         WHERE  u.active=1 AND u.admin=1
+                $where_moderation_mail
+         UNION
+        ";
+
+        
         $moderators = array();
 
         // Look up moderators which are configured through user permissions.
         $usermods = $this->interact(
             DB_RETURN_ROWS,
+            $admin . 
             "SELECT DISTINCT u.user_id AS user_id,
                     u.email AS email
-             FROM   {$this->user_table} AS u
-                    LEFT JOIN {$this->user_permissions_table} AS perm
+             FROM   {$this->user_permissions_table} AS perm
+                    INNER JOIN {$this->user_table} AS u
                     ON perm.user_id = u.user_id
-             WHERE  ((perm.permission>=".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND
-                      (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES.">0)
-                      AND perm.forum_id = $forum_id) $or_where_admin)
+             WHERE  perm.forum_id = $forum_id AND u.active = 1
+                    (perm.permission>=".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND
+                    (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES.">0)
                     $where_moderation_mail"
         );
 
