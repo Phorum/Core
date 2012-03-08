@@ -3362,8 +3362,8 @@ abstract class PhorumDB
 
         // Exclude admins from the list, if requested.
         $admin = $exclude_admin ? '' : 
-                    "SELECT DISTINCT user.user_id AS user_id,
-                user.email AS email
+                    "SELECT DISTINCT u.user_id AS user_id,
+                u.email AS email
          FROM   {$this->user_table} AS u
          WHERE  u.active=1 AND u.admin=1
                 $where_moderation_mail
