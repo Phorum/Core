@@ -3376,6 +3376,7 @@ abstract class PhorumDB
         // Look up moderators which are configured through user permissions.
         $usermods = $this->interact(
             DB_RETURN_ROWS,
+            $admin . 
             "SELECT DISTINCT u.user_id AS user_id,
                     u.email AS email
              FROM   {$this->user_permissions_table} AS perm
