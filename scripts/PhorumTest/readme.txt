@@ -9,13 +9,13 @@ to see and check the output.
  * install Phorum >= 5.2.x as usual with going through full installation
  * (optional) install xdebug extension for php (for codecoverage report)
  * (optional) install graphviz (for codecoverage report)
- * 
+ *
  * run with:
  * phpunit PhorumTestSuite
- * 
+ *
  * or for html/coverage reports:
  * phpunit --report ./report PhorumTestSuite
  * (this needs graphviz and xdebug installed!)
  * (report is put into report-directory in the phorum-directory then!)
- * 
+ *
  */
