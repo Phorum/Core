@@ -1,4 +1,4 @@
-#!/usr/local/bin/php
+#!/usr/bin/php
 <?php
 if ('cli' != php_sapi_name()) {
     echo "This script cannot be run from a browser.";

@@ -12,7 +12,7 @@
   <!ENTITY www.phorum.org '<ulink url="http://www.phorum.org/">http://www.phorum.org</ulink>'>
 ]>
 
-<book lang="en"> &bookinfo; &part_preface; 
+<book lang="en"> &bookinfo; &part_preface;
   <chapter id="user.help">
     <title>Help us to improve the documentation!</title>
     <para>As you can see this book is still empty. If you want to help with
