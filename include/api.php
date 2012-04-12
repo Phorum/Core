@@ -214,15 +214,17 @@ if (empty($GLOBALS['PHORUM_ALT_DBCONFIG']) ||
             // Unable to read the configuration file.
             if (!$fp) { ?>
                 A database configuration file was found in
-                {phorum dir}/include/config/database.php,<br/>but Phorum was
-                unable to read it. Please check the file permissions<br/>
+                {phorum dir}/include/config/database.php,<br/>
+                but Phorum was unable to read it. Please check the
+                file permissions<br/>
                 for this file. <?php
             // Unknown error.
             } else {
                 fclose($fp); ?>
                 A database configuration file was found in
-                {phorum dir}/include/config/database.php,<br/>but it could not be
-                loaded. It possibly contains one or more syntax errors.<br/>
+                {phorum dir}/include/config/database.php,<br/>
+                but it could not be loaded. It possibly contains
+                one or more syntax errors.<br/>
                 Please check your configuration file. <?php
             }
         }
@@ -389,11 +391,14 @@ if (!defined('PHORUM_ADMIN'))
     if (!isset($PHORUM['internal_version']))
     {
         echo "<html><head><title>Phorum error</title></head><body>
-              No Phorum settings were found. Either this is a brand new
-              installation of Phorum or there is a problem with your
-              database server. If this is a new install, please
+              <h2>No Phorum settings were found</h2>
+              Either this is a brand new installation of Phorum<br/>
+              or there is a problem with your database server.<br/>
+              <br/>
+              If this is a new install, please
               <a href=\"admin.php\">go to the admin page</a> to complete
-              the installation. If not, then check your database server.
+              the installation.<br/>
+              If not, then check your database server.
               </body></html>";
         exit();
     } elseif ($PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
@@ -403,9 +408,9 @@ if (!defined('PHORUM_ADMIN'))
             phorum_api_redirect($PHORUM["DBCONFIG"]["upgrade_page"]);
         } else {
             echo "<html><head><title>Upgrade notification</title></head><body>
-                  It looks like you have installed a new version of
-                  Phorum.<br/>Please visit the admin page to complete
-                  the upgrade!
+                  <h2>Phorum upgrade</h2>
+                  It looks like you have installed a new version of Phorum.<br/>
+                  Please visit the admin page to complete the upgrade!
                   </body></html>";
             exit();
         }
@@ -441,9 +446,9 @@ if (extension_loaded('phorum')) {
         <html><head>
         <title>The Phorum PHP Extension is deprecated</title></head>
         <body>
-        <h1>Phorum Error</h1>
-        The Phorum PHP extension was loaded, but this extension has
-        been deprecated. Please make sure that the extension is not
+        <h2>Phorum Error</h2>
+        The Phorum PHP extension was loaded, but this extension has<br/>
+        been deprecated. Please make sure that the extension is not<br/>
         loaded from your PHP configuration anymore.
         </body>
         </html>";
