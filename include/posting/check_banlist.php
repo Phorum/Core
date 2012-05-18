@@ -27,6 +27,7 @@ $bans = array();
 // Add checks for registered users.
 if ($PHORUM["DATA"]["LOGGEDIN"]) {
     $bans[] = array($PHORUM["user"]["username"], PHORUM_BAD_NAMES);
+    $bans[] = array($message["author"], PHORUM_BAD_NAMES);
     $bans[] = array($PHORUM["user"]["email"], PHORUM_BAD_EMAILS);
     $bans[] = array($PHORUM["user"]["user_id"], PHORUM_BAD_USERID);
 }
