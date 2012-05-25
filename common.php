@@ -32,7 +32,7 @@ define( "PHORUM", "5.2.18" );
 define( "PHORUM_SCHEMA_VERSION", "2010101500" );
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2008091900" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2012030800" );
 
 // Initialize the global $PHORUM variable, which holds all Phorum data.
 global $PHORUM;

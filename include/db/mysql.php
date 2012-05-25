@@ -3077,7 +3077,7 @@ function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_ema
                 INNER JOIN {$PHORUM['user_table']} AS user
                 ON perm.user_id = user.user_id
          WHERE  perm.forum_id = $forum_id AND user.active=1 AND
-                (perm.permission>=".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND
+                perm.permission>=".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND
                 (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES.">0)
                 $where_moderation_mail"
     );
