@@ -3383,7 +3383,7 @@ abstract class PhorumDB
                     INNER JOIN {$this->user_table} AS u
                     ON perm.user_id = u.user_id
              WHERE  perm.forum_id = $forum_id AND u.active = 1
-                    (perm.permission>=".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND
+                    perm.permission>=".PHORUM_USER_ALLOW_MODERATE_MESSAGES." AND
                     (perm.permission & ".PHORUM_USER_ALLOW_MODERATE_MESSAGES.">0)
                     $where_moderation_mail"
         );
