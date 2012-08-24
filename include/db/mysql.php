@@ -1777,8 +1777,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
                      $tokens[$tid] = phorum_db_interact(DB_RETURN_QUOTED, $token);
                 }
 
-                $match_str = "search_text LIKE " .
-                             "('%".implode("%' $condition '%", $tokens)."%')";
+                $match_str = "('%".implode("%' $condition '%", $tokens)."%')";
             }
 
             $table_name = $PHORUM['search_table']."_like_".md5(microtime());
@@ -1790,7 +1789,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
                  ) ENGINE=HEAP
                    SELECT message_id
                    FROM   {$PHORUM['search_table']}
-                   WHERE  $match_str"
+                   WHERE  search_text LIKE $match_str"
             );
 
             $tables[] = $table_name;
@@ -3053,9 +3052,9 @@ function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_ema
     // If we are gathering email addresses for mailing the moderators,
     // then honour the moderation_email setting for the user.
     $where_moderation_mail = $for_email ? 'AND user.moderation_email = 1' : '';
-    
+
     // Exclude admins from the list, if requested.
-    $admin = $exclude_admin ? '' : 
+    $admin = $exclude_admin ? '' :
         "SELECT DISTINCT user.user_id AS user_id,
                 user.email AS email
          FROM   {$PHORUM['user_table']} AS user
@@ -3508,7 +3507,7 @@ function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
  * @param mixed $operator
  *     The operator (string) or operators (array) to use. Valid operators are
  *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*", "?*", "*?", "()". The
- *     "*" operator is for executing a "LIKE '%value%'" matching query. The 
+ *     "*" operator is for executing a "LIKE '%value%'" matching query. The
  *     "?*" and "*?" operators are for executing a "LIKE 'value%'" or a
  *     "LIKE '%value' matching query. The "()" operator is for executing a
  *     "IN ('value[0]',value[1]')" matching query.  The "()" operator requires
@@ -3537,12 +3536,12 @@ function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
  *     or 0 (zero, the default) to return all results.
  *
  * @param boolean $count_only
- *     Tells the function to just return the count of results for this 
+ *     Tells the function to just return the count of results for this
  *     search query.
  *
  * @return mixed
  *     An array of matching user_ids or a single user_id (based on the
- *     $return_array parameter) or a count of results (based on $count_only). 
+ *     $return_array parameter) or a count of results (based on $count_only).
  *     If no user_ids can be found at all, then 0 (zero) will be returned.
  */
 function phorum_db_user_search($field, $value, $operator='=', $return_array=FALSE, $type='AND', $sort=NULL, $offset=0, $length=0, $count_only = false)
@@ -3651,9 +3650,9 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
 	         $where $order $limit",
 	        0 // keyfield 0 is the user_id
 	    );
-	    
+
 	    $ret = $user_count;
-	    
+
     } else {
 	    // Retrieve the matching user_ids from the database.
 	    $user_ids = phorum_db_interact(
@@ -3663,10 +3662,10 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
 	         $where $order $limit",
 	        0 // keyfield 0 is the user_id
 	    );
-	
+
 	    // No user_ids found at all?
 	    if (count($user_ids) == 0) return 0;
-	
+
 	    // Return an array of user_ids.
 	    if ($return_array) {
 	        foreach ($user_ids as $id => $user_id) $user_ids[$id] = $user_id[0];
@@ -3674,7 +3673,7 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
 	    } else {
 		    // Return a single user_id.
 		    list ($user_id, $dummy) = each($user_ids);
-		    
+
 		    $ret = $user_id;
 	    }
     }
@@ -5106,9 +5105,9 @@ function phorum_db_newflag_add_read($message_ids)
         $values = "($user_id,$forum_id,$message_id)";
 	$inserts[$values] = $values;
     }
-    
+
     if(count($inserts)) {
-    	
+
         $inserts_str = implode(",",$inserts);
 
         // Try to insert the values.
@@ -6815,7 +6814,7 @@ function phorum_db_rebuild_user_posts()
  * @param mixed $operator
  *     The operator (string) or operators (array) to use. Valid operators are
  *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*", '?*', '*?'. The
- *     "*" operator is for executing a "LIKE '%value%'" matching query. The 
+ *     "*" operator is for executing a "LIKE '%value%'" matching query. The
  *     "?*" and "*?" operators are for executing a "LIKE 'value%'" or a
  *     "LIKE '%value' matching query.
  *
