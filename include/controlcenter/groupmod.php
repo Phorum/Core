@@ -20,10 +20,10 @@
 if (!defined("PHORUM_CONTROL_CENTER")) return;
 
 if(isset($PHORUM['args']['group'])){
-    $group_id = $PHORUM['args']['group'];
+    $group_id = (int) $PHORUM['args']['group'];
 
-} elseif(isset($_POST["group"])){
-    $group_id = $_POST["group"];
+} else if(isset($_POST["group"])){
+    $group_id = (int) $_POST["group"];
 
 } else {
     $group_id = "";
@@ -31,12 +31,15 @@ if(isset($PHORUM['args']['group'])){
 
 if(isset($PHORUM['args']['filter'])){
     $filter = $PHORUM['args']['filter'];
-
-} elseif(isset($_POST["filter"])){
+} else if(isset($_POST["filter"])){
     $filter = $_POST["filter"];
-
 } else {
     $filter = "all";
+}
+
+// only allowed values are "all" or integers
+if($filter !== 'all') {
+    $filter = (int) $filter;
 }
 
 // If a specific group is requested, check if the user has moderation
@@ -219,7 +222,7 @@ else{
         // get the group members who are unapproved, so we can count them
         $members = $PHORUM['DB']->get_group_members($groupid, PHORUM_USER_GROUP_UNAPPROVED);
         $full_members = $PHORUM['DB']->get_group_members($groupid);
-        
+
         $PHORUM["DATA"]["GROUPS"][] = array(
             "id" => $groupid,
             "name" => $groupname,
