@@ -886,9 +886,7 @@ class PhorumMysqlDB extends PhorumDB
                             $this->interact(DB_RETURN_QUOTED, $token);
                     }
 
-                    $match_str =
-                        "search_text LIKE " .
-                        "('%".implode("%' $condition '%", $tokens)."%')";
+                    $match_str = "('%".implode("%' $condition '%", $tokens)."%')";
                 }
 
                 $table_name = $this->search_table . "_like_" . md5(microtime());
@@ -900,7 +898,7 @@ class PhorumMysqlDB extends PhorumDB
                      ) ENGINE=HEAP
                        SELECT message_id
                        FROM   {$this->search_table}
-                       WHERE  $match_str"
+                       WHERE search_text LIKE $match_str"
                 );
 
                 $tables[] = $table_name;
