@@ -171,7 +171,7 @@ function spamhurdles_api_init($form_id, $hurdles)
 
 /**
  * Each time that the form has to be displayed, this function can be used
- * to build the HTML code that needs to be added to the protected form. 
+ * to build the HTML code that needs to be added to the protected form.
  *
  * @param array $data
  *     An array containing the spam hurdles data for the form.
@@ -211,7 +211,7 @@ function spamhurdles_api_build_form($data)
 /**
  * Each time that the form has to be displayed, this function can be used
  * to build the HTML code that needs to be added to the page, somewhere
- * after the protected form. 
+ * after the protected form.
  *
  * @param array $data
  *     An array containing the spam hurdles data for the form.
@@ -252,7 +252,7 @@ function spamhurdles_api_build_after_form($data)
  */
 function spamhurdles_api_get_formdata($form_id)
 {
-    if (!isset($_POST['spamhurdles_'.$form_id])) return NULL; 
+    if (!isset($_POST['spamhurdles_'.$form_id])) return NULL;
     $data = spamhurdles_decrypt($_POST['spamhurdles_'.$form_id]);
     if (!is_array($data)) return NULL;
     return $data;
@@ -338,7 +338,7 @@ function spamhurdles_api_check_form($form_id)
     $data['error']  = NULL;
     $data['status'] = SPAMHURDLES_OK;
     $data['log']    = array();
-    $data = spamhurdles_hurdle_call('check_form', $data, $data['hurdles']);  
+    $data = spamhurdles_hurdle_call('check_form', $data, $data['hurdles']);
 
     $status = $data['status'];
     if ($status !== SPAMHURDLES_OK)
@@ -373,7 +373,7 @@ function spamhurdles_api_after_post($form_id)
     $data = spamhurdles_api_get_formdata($form_id);
 
     // Let the spam hurdles run after post tasks.
-    spamhurdles_hurdle_call('after_post', $data, $data['hurdles']);  
+    spamhurdles_hurdle_call('after_post', $data, $data['hurdles']);
 }
 
 // }}}
@@ -420,7 +420,7 @@ function spamhurdles_encrypt($data)
     return base64_encode($aes->encrypt(serialize($data)));
 }
 
-// }}} 
+// }}}
 // {{{ Function: spamhurdles_decrypt
 
 /**
@@ -449,12 +449,12 @@ function spamhurdles_decrypt($data)
         'Cannot decrypt the spam hurdles data. ' .
         'This probably means that somebody or something tampered with ' .
         'the crypted spam hurdles data string that was sent to the server.',
-        E_USER_ERROR 
+        E_USER_ERROR
     );
     return $unpacked;
 }
 
-// }}} 
+// }}}
 // {{{ Function: spamhurdles_hurdle_call
 
 /**
@@ -538,7 +538,7 @@ function spamhurdles_hurdle_call($call, $data, $hurdles = NULL)
     return $data;
 }
 
-// }}} 
+// }}}
 // {{{ Function: spamhurdles_generate_key
 
 function spamhurdles_generate_key()
@@ -596,7 +596,7 @@ function spamhurdles_get_hurdles_for_form($form_id)
     $enabled_hurdles = array();
 
     // Check if a configuration is available for the provided form_id.
-    // If not then we trigger an error. 
+    // If not then we trigger an error.
     if (!isset($PHORUM['mod_spamhurdles'][$form_id]['hurdles'])) {
         trigger_error(
             'spamhurdles_get_hurdles_for_form(): No configuration found for ' .
@@ -628,7 +628,7 @@ function spamhurdles_get_hurdles_for_form($form_id)
                 break;
 
             case "none":
-                $active = FALSE; 
+                $active = FALSE;
                 break;
 
             default:
@@ -768,7 +768,7 @@ function spamhurdles_iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>
     {
         for($j = 0; $j < $numberOfColumns; $j++ )
         {
-            $scrambled{(((int)$scramblePassword{$k}) * $numberOfRows) + $i} = $escaped{$k};
+            $scrambled{(int)(((int)$scramblePassword{$k}) * $numberOfRows) + $i} = $escaped{$k};
             $k++;
         }
     }
