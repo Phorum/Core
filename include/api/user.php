@@ -2890,7 +2890,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
     if (empty($user)) {
         $user = $PHORUM['user'];
     } elseif (!is_array($user)) {
-        $user = phorum_api_user_get($user);
+        $user = phorum_api_user_get($user, true);
     }
 
     // Inactive users have no permissions at all.
