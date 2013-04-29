@@ -142,6 +142,7 @@ if(!phorum_db_check_connection()){
         phorum_redirect_by_url($PHORUM["DBCONFIG"]["down_page"]);
         exit();
     } else {
+        header('HTTP/1.1 500 Internal Server Error');
         echo "The database connection failed. Please check your database configuration in include/db/config.php. If the configuration is okay, check if the database server is running.";
         exit();
     }
