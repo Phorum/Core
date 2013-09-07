@@ -57,7 +57,7 @@ $module_registrations = array();
 if (!$no_jquery) {
     $module_registrations[] = array(
         'module'    => 'core',
-        'source'    => 'file(include/javascript/jquery-1.6.2.min.js)',
+        'source'    => 'file(include/javascript/jquery-1.10.2.min.js)',
         'cache_key' => '1.4.4.min'
     );
 }
