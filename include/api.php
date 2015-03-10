@@ -185,7 +185,7 @@ require_once PHORUM_PATH.'/include/api/cache.php';
 // configuration wasn't passed as a request parameter (which could
 // set $PHORUM_ALT_DBCONFIG if register_globals is enabled for PHP).
 if (empty($GLOBALS['PHORUM_ALT_DBCONFIG']) ||
-    $GLOBALS['PHORUM_ALT_DBCONFIG'] == $_REQUEST['PHORUM_ALT_DBCONFIG'] ||
+    (isset($_REQUEST['PHORUM_ALT_DBCONFIG']) && $GLOBALS['PHORUM_ALT_DBCONFIG'] == $_REQUEST['PHORUM_ALT_DBCONFIG']) ||
     !defined('PHORUM_WRAPPER')) {
 
     // Backup display_errors setting.
