@@ -911,9 +911,9 @@ function PhorumFilter(conf)
             if (this.rules[i] == null) continue;
             var rule = this.rules[i];
             if (filterdesc != '') filterdesc += glue;
-            filterdesc += escape(rule.field) + "," +
-                          escape(rule.match) + "," +
-                          escape(rule.query);
+            filterdesc += encodeURIComponent(rule.field) + "," +
+                          encodeURIComponent(rule.match) + "," +
+                          encodeURIComponent(rule.query);
         }
 
         document.getElementById('filterdesc').value = filterdesc;
