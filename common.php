@@ -1988,6 +1988,7 @@ function phorum_redirect_by_url( $redir_url )
     }
 
     if ( stristr( $_SERVER['SERVER_SOFTWARE'], "Microsoft-IIS" ) ) {
+        $redir_url = htmlentities($redir_url);
         // the ugly IIS-hack to avoid crashing IIS
         print "<html><head>\n<title>Redirecting ...</title>\n";
         print "<meta http-equiv=\"refresh\" content=\"0; URL=$redir_url\">";
