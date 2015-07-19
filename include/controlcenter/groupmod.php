@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2010  Phorum Development Team                              //
+//   Copyright (C) 2012  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -20,10 +20,10 @@
 if(!defined("PHORUM_CONTROL_CENTER")) return;
 
 if(isset($PHORUM['args']['group'])){
-    $group_id = $PHORUM['args']['group'];
+    $group_id = (int)$PHORUM['args']['group'];
 
-} elseif(isset($_POST["group"])){
-    $group_id = $_POST["group"];
+} else if(isset($_POST["group"])){
+    $group_id = (int)$_POST["group"];
 
 } else {
     $group_id = "";
@@ -31,12 +31,15 @@ if(isset($PHORUM['args']['group'])){
 
 if(isset($PHORUM['args']['filter'])){
     $filter = $PHORUM['args']['filter'];
-
-} elseif(isset($_POST["filter"])){
+} else if(isset($_POST["filter"])){
     $filter = $_POST["filter"];
-
 } else {
     $filter = "all";
+}
+
+// only allowed values are "all" or integers
+if($filter !== 'all') {
+    $filter = (int) $filter;
 }
 
 // If a specific group is requested, check if the user has moderation
@@ -59,6 +62,8 @@ if (!$perm) {
 if (!empty($group_id)){
     // if adding a new user to the group
     if (isset($_REQUEST["adduser"])){
+
+        $userid=0;
 
         // Find the user_id for the user to add.
         if(is_numeric($_REQUEST["adduser"])){

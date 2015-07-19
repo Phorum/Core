@@ -131,9 +131,9 @@ if ( count( $_POST ) )
         unset($_POST["phorum_admin_token"]);
 
         if ( phorum_db_update_settings( $_POST ) ) {
-            $redir = phorum_admin_build_url(array('module=settings','message=success'));
+            $redir = phorum_admin_build_url(array('module=settings','message=success'), TRUE);
             if ($need_display_name_updates) {
-                $redir = phorum_admin_build_url(array('module=update_display_names'));
+                $redir = phorum_admin_build_url(array('module=update_display_names'), TRUE);
             }
             phorum_redirect_by_url($redir);
             exit();

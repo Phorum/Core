@@ -91,7 +91,7 @@ if (isset($_POST['referrer'])) {
 } else {
     $input_args = array('module=users');
     if(count($page_args_array)) $input_args = array_merge($input_args,$page_args_array);
-    $referrer = phorum_admin_build_url($input_args);
+    $referrer = phorum_admin_build_url($input_args, TRUE);
 }
 
 if(count($_POST))

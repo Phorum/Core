@@ -115,7 +115,7 @@ else
           $update_count = min(($batch+1)*$batchsize, $user_count);
           print "$update_count users of $user_count updated" ?>
     </td></tr></table> <?php
-    $redir = phorum_admin_build_url(array('module=update_display_names',"batch=".($batch+1),'step=2','user_count='.$user_count));
+    $redir = phorum_admin_build_url(array('module=update_display_names',"batch=".($batch+1),'step=2','user_count='.$user_count), TRUE);
     ?>
 
     <script type="text/javascript">

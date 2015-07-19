@@ -331,6 +331,7 @@ switch ($mod_step) {
         $message = phorum_db_get_message($msgthd_id);
 
         $nummsgs = 0;
+        $msg_ids = array();
 
         // A hook to allow modules to implement extra or different
         // delete functionality.
@@ -1051,8 +1052,9 @@ if ($PHORUM['cache_messages']) {
         phorum_cache_remove('message', $message["message_id"]);
         $invalidate_forums[$message['forum_id']]=$message['forum_id'];
     }
-    
+
     if(is_array($invalidate_forums) && count($invalidate_forums)) {
+        require_once './include/api/forums.php';
 	    // retrieve the data for all involved forums to get the correct cache version
 	    $forums_data = phorum_api_forums_get($invalidate_forums); 
 	    

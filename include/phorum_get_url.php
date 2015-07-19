@@ -237,7 +237,7 @@ function phorum_get_url_no_uri_auth()
     $uri_auth = NULL;
     if (isset($PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM])) {
         $uri_auth = $PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM];
-        unset($PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM]);       
+        unset($PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM]);
     }
 
     $argv = func_get_args();
@@ -276,7 +276,7 @@ function phorum_get_current_url($include_query_string=true) {
     // the SCRIPT_URI. Otherwise, we use the SCRIPT_URI as the current URL.
     if (isset($_SERVER["SCRIPT_URI"]) &&
         (!isset($_SERVER['HTTP_HOST']) ||
-         strpos($_SERVER['SCRIPT_URI'], $_SERVER['HTTP_HOST']) !== FALSE)) {
+         stripos($_SERVER['SCRIPT_URI'], "//$_SERVER[HTTP_HOST]/") !== FALSE)) {
 
         $url = $_SERVER["SCRIPT_URI"];
 
@@ -294,6 +294,10 @@ function phorum_get_current_url($include_query_string=true) {
         $protocol = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"]!="off") ? "https" : "http";
         $port = ($_SERVER["SERVER_PORT"]!=443 && $_SERVER["SERVER_PORT"]!=80) ? ':'.$_SERVER["SERVER_PORT"] : "";
         $url = $protocol.'://'.$host.$port.$_SERVER['PHP_SELF'];
+    }
+
+    if(!empty($_SERVER["PATH_INFO"]) && strpos($url, $_SERVER["PATH_INFO"]) !== false){
+        $url = substr($url, 0, strlen($url) - strlen($_SERVER["PATH_INFO"]));
     }
 
     if($include_query_string && !empty($_SERVER["QUERY_STRING"])){
