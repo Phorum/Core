@@ -118,7 +118,7 @@ class PhorumMysqlDB_mysqli extends PhorumDB
         // available yet.
         if (empty($conn))
         {
-            $PHORUM = $GLOBALS['PHORUM'];
+            global $PHORUM;
             // we suppress errors from the mysqli_connect command as errors
             // are catched differently.
             $conn = mysqli_connect(

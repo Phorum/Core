@@ -32,7 +32,7 @@ $PHORUM_ALT_DBCONFIG=array(
  */
 function phorum_custom_get_url ($page, $query_items, $suffix, $pathinfo)
 {
-    $PHORUM=$GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $url = "$PHORUM[http_path]/portable/phorum.php";
     if ($pathinfo !== NULL) $url .= $pathinfo;

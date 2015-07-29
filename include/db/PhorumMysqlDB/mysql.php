@@ -21,12 +21,12 @@ if (!defined('PHORUM')) return;
 
 /**
  * This script implements the mysql extension for the MySQL database layer.
- */ 
+ */
 
-/** 
- * The PhorumMysqlDB_mysql class, which implements the mysql extension 
- * for the MySQL database layer. 
- */ 
+/**
+ * The PhorumMysqlDB_mysql class, which implements the mysql extension
+ * for the MySQL database layer.
+ */
 class PhorumMysqlDB_mysql extends PhorumDB
 {
     /**
@@ -120,7 +120,7 @@ class PhorumMysqlDB_mysql extends PhorumDB
         // is available yet.
         if (empty($conn))
         {
-            $PHORUM = $GLOBALS['PHORUM'];
+            global $PHORUM;
 
             // we suppress errors from the mysql_connect command as errors
             // are catched differently.
@@ -280,7 +280,7 @@ class PhorumMysqlDB_mysql extends PhorumDB
                     {
                         $err = mysql_error($conn);
 
-                        // RETURN: error message. 
+                        // RETURN: error message.
                         if ($return === DB_RETURN_ERROR) return $err;
 
                         // Trigger an error.

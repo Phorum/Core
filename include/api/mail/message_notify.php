@@ -39,7 +39,7 @@ function phorum_api_mail_message_notify($message)
 {
     // Not "global $PHORUM", because we do not want the loading of language
     // files to override our already loaded language file.
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Check if email notifications are allowed for the current forum.
     if (empty($PHORUM['allow_email_notify'])) return;
@@ -49,7 +49,7 @@ function phorum_api_mail_message_notify($message)
         $message['thread'],
         PHORUM_SUBSCRIPTION_MESSAGE
     );
-    
+
     // No subscribers? Then we are done.
     if (empty($recipients)) return;
 

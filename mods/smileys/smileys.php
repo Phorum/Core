@@ -19,7 +19,7 @@ function phorum_mod_smileys_css_register($data)
 function phorum_mod_smileys_javascript_register($data)
 {
     // We only need javascript for Editor Tools support.
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
     if (empty($PHORUM['mod_smileys']['smileys_tool_enabled']) &&
         empty($PHORUM['mod_smileys']['subjectsmileys_tool_enabled']))
         return $data;
@@ -40,7 +40,7 @@ function phorum_mod_smileys_javascript_register($data)
 
 function phorum_mod_smileys_after_header()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Return immediately if we have no active smiley replacements.
     if (!isset($PHORUM["mod_smileys"])||!$PHORUM["mod_smileys"]["do_smileys"]){
@@ -53,7 +53,7 @@ function phorum_mod_smileys_format_fixup($data)
     // Do not format smileys for the feeds.
     if (phorum_page == "feed") return $data;
 
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Return immediately if we have no active smiley replacements.
     if (!isset($PHORUM["mod_smileys"])||!$PHORUM["mod_smileys"]["do_smileys"]){
@@ -86,7 +86,7 @@ function phorum_mod_smileys_format_fixup($data)
 // Add a smiley tool button to the Editor Tools module's tool bar.
 function phorum_mod_smileys_editor_tool_plugin()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $lang = $PHORUM["DATA"]["LANG"]["mod_smileys"];
 
@@ -131,7 +131,7 @@ function phorum_mod_smileys_editor_tool_plugin()
 // The addon hook is used for displaying a help info screen.
 function phorum_mod_smileys_addon()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if (empty($PHORUM["args"]["action"])) trigger_error(
         'Missing "action" argument for smileys module addon call',
@@ -172,7 +172,7 @@ function phorum_mod_smileys_tpl_editor_disable_smileys()
 // Process "Disable smileys" option from the message form.
 function phorum_mod_smileys_posting_custom_action($message)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
     if (empty($PHORUM["mod_smileys"]["allow_disable_per_post"])) {
         unset($message['meta']['disable_smileys']);
         return $message;
