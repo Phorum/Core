@@ -158,7 +158,7 @@ function phorum_mod_event_logging_resume() {
 
 function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Check for the use of the silence operator @, in which case
     // this module should not bother with logging the error message.
@@ -462,7 +462,7 @@ function phorum_mod_event_logging_after_post($data)
 
 function phorum_mod_event_logging_after_edit($data)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Check for suspended logging.
     if (!empty($GLOBALS["PHORUM"]["MOD_EVENT_LOGGING"]["SUSPEND"])) {
@@ -827,7 +827,7 @@ function phorum_mod_event_logging_before_footer()
 {
     $rand = rand(1,100);
     if ($rand <= EVENT_LOGGING_GC_SPLAY) {
-        $img_url = phorum_get_url(PHORUM_ADDON_URL, 'module=event_logging'); 
+        $img_url = phorum_get_url(PHORUM_ADDON_URL, 'module=event_logging');
         print '<img src="'.$img_url.'" width="1" height="1" />';
     }
 }

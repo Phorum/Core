@@ -7,12 +7,12 @@
 if(!defined("PHORUM")) return;
 
 function phorum_mod_example_settings_after_header () {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Apply default values for the settings.
-    if (empty($PHORUM["mod_example_settings"]["displaytext"])) 
+    if (empty($PHORUM["mod_example_settings"]["displaytext"]))
         $PHORUM["mod_example_settings"]["displaytext"] = "Hello, world!";
-    if (!isset($PHORUM["mod_example_settings"]["displaycount"])) 
+    if (!isset($PHORUM["mod_example_settings"]["displaycount"]))
         $PHORUM["mod_example_settings"]["displaytext"] = 1;
 
     for ($i = 0; $i < $PHORUM["mod_example_settings"]["displaycount"]; $i++) {

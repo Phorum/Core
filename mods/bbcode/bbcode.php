@@ -142,7 +142,7 @@ function phorum_mod_bbcode_quote ($data)
 // appropriate place for this to work.
 function phorum_mod_bbcode_tpl_editor_disable_bbcode()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
     if (empty($PHORUM["mod_bbcode"]["allow_disable_per_post"]))
         return;
 
@@ -152,7 +152,7 @@ function phorum_mod_bbcode_tpl_editor_disable_bbcode()
 // Process "Disable BBcode" option from the message form.
 function phorum_mod_bbcode_posting_custom_action($message)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
     if (empty($PHORUM["mod_bbcode"]["allow_disable_per_post"])) {
         unset($message['meta']['disable_bbcode']);
         return $message;
@@ -275,7 +275,7 @@ function phorum_mod_bbcode_javascript_register($data)
 // The addon hook is used for displaying a help info screen.
 function phorum_mod_bbcode_addon()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if (empty($PHORUM["args"]["action"])) trigger_error(
         'Missing "action" argument for bbcode module addon call',

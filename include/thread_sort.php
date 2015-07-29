@@ -31,8 +31,8 @@ if(!defined("PHORUM")) return;
 
 function phorum_sort_threads($rows)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
-    
+    global $PHORUM;
+
     if(count($rows) == 0) {
         return $rows;
     }

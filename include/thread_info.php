@@ -35,7 +35,7 @@ function phorum_remove_hidden($val)
  */
 function phorum_update_thread_info($thread)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $messages=phorum_db_get_messages($thread,0,1,1);
     //these are not needed here
@@ -65,18 +65,18 @@ function phorum_update_thread_info($thread)
         // find the latest post in the thread (aka recent_message)
         $last_message_id_by_time = 0;
         $last_post_time = 0;
-                
+
         foreach($filtered_messages as $message_id => $message_data) {
             if($message_data['datestamp'] > $last_post_time) {
                 $last_post_time          = $message_data['datestamp'];
                 $last_message_id_by_time = $message_id;
-            } elseif($message_data['datestamp'] == $last_post_time 
+            } elseif($message_data['datestamp'] == $last_post_time
                      && $message_id > $last_message_id_by_time) {
                 $last_post_time          = $message_data['datestamp'];
                 $last_message_id_by_time = $message_id;
             }
         }
-        
+
         $recent_message = $filtered_messages[$last_message_id_by_time];
 
         // prep the message to save

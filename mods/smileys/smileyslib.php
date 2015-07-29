@@ -53,7 +53,7 @@ $MOD_SMILEY_DEFAULT_SMILEYS = array(
  */
 function phorum_mod_smileys_initsettings()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
     global $MOD_SMILEY_DEFAULT_PREFIX;
     global $MOD_SMILEY_DEFAULT_SMILEYS;
     $modinfo = isset($PHORUM["mod_smileys"]) ? $PHORUM["mod_smileys"] : array();
@@ -125,7 +125,7 @@ function phorum_mod_smileys_initsettings()
  */
 function phorum_mod_smileys_available()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $available_smileys = array();
     if(file_exists($PHORUM['mod_smileys']['prefix'])){

@@ -127,7 +127,7 @@ function phorum_setup_announcements ()
 
     // format / clean etc. the messages found
     $PHORUM["DATA"]["ANNOUNCEMENTS"]= phorum_format_messages($PHORUM["DATA"]["ANNOUNCEMENTS"]);
-    
+
     // Build the announcements code.
     ob_start();
     include phorum_get_template("announcements::announcements");
@@ -148,7 +148,7 @@ function phorum_mod_announcements_css_register($data)
 
 function phorum_show_announcements ()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // No announcements setup or automatic displaying disabled?
     if (empty($PHORUM['DATA']['MOD_ANNOUNCEMENTS']) ||

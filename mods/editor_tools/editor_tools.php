@@ -138,11 +138,11 @@ function phorum_mod_editor_tools_before_editor($data)
  * only Javascript/DOM technology.
  */
 function phorum_mod_editor_tools_before_footer()
-{ 
-    $PHORUM = $GLOBALS["PHORUM"];
+{
+    global $PHORUM;
 
     $do_tools = false;
-    
+
     // Detect if we are handling a message editor.
     if (isset($PHORUM["MOD_EDITOR_TOOLS"]["DO_TOOLS"]) && $PHORUM["MOD_EDITOR_TOOLS"]["DO_TOOLS"]) $do_tools = true;
 
@@ -361,7 +361,7 @@ function editor_tools_register_jslib($jslib)
  *     the link to the help page.
  *
  * @param string $url
- *     The URL for the help page to display. 
+ *     The URL for the help page to display.
  */
 function editor_tools_register_help($title, $url)
 {

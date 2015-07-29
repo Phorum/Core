@@ -336,7 +336,7 @@ function phorum_dbupgrade_getupgrades()
  */
 function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
 {
-    $PHORUM      = $GLOBALS["PHORUM"];
+    global $PHORUM;
     $version     = $upgrade["version"];
     $type        = $upgrade["type"];
     $upgradefile = $upgrade["file"];

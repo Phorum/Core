@@ -6,9 +6,9 @@ class captcha_asciiart extends captcha_base
 {
     function generate_captcha_html($question)
     {
-        $PHORUM = $GLOBALS["PHORUM"];
+        global $PHORUM;
 
-        // We only have upper case chars in our banner class. 
+        // We only have upper case chars in our banner class.
         $question = strtoupper($question);
 
         // Create a bitmap for the generated question.

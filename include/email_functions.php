@@ -23,7 +23,7 @@ require_once("./include/api/base.php");
 require_once("./include/api/user.php");
 
 function phorum_valid_email($email){
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $ret = false;
 
@@ -65,7 +65,7 @@ function phorum_valid_email($email){
  */
 function phorum_email_user($addresses, $data)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
     require_once('./include/api/mail.php');
 
     // If we have no from_address in the message data, then generate
@@ -93,7 +93,7 @@ function phorum_email_user($addresses, $data)
      *     email_user_start
      *
      * [description]
-     *     This hook is put at the very beginning of 
+     *     This hook is put at the very beginning of
      *     <literal>phorum_email_user()</literal> and is therefore called for
      *     <emphasis>every</emphasis> email that is sent from Phorum. It is put
      *     before every replacement done in that function so that all data which
@@ -119,7 +119,7 @@ function phorum_email_user($addresses, $data)
      *
      * [example]
      *     <hookcode>
-     *     function phorum_mod_foo_email_user_start (list($addresses, $data)) 
+     *     function phorum_mod_foo_email_user_start (list($addresses, $data))
      *     {
      *         global $PHORUM;
      *
@@ -291,9 +291,9 @@ function phorum_email_pm_notice($message, $langusers)
 
     foreach ($langusers as $language => $users)
     {
-        $PHORUM = $GLOBALS["PHORUM"];
+        global $PHORUM;
 
-        $language = basename($language); 
+        $language = basename($language);
 
         if ( file_exists( "./include/lang/$language.php" ) ) {
             $mail_data['language'] = $language;
@@ -317,7 +317,7 @@ function phorum_email_pm_notice($message, $langusers)
 
 function phorum_email_notice($message)
 {
-    $PHORUM=$GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // do we allow email-notification for that forum?
     if(!$PHORUM['allow_email_notify']) {
@@ -335,7 +335,7 @@ function phorum_email_notice($message)
             "forumname"   => strip_tags($PHORUM["DATA"]["NAME"]),
             "forum_id"    => $PHORUM['forum_id'],
             "message_id"  => $message['message_id'],
-        	"thread_id"   => $message['thread'],
+          "thread_id"   => $message['thread'],
             "author"      => phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT),
             "subject"     => $message['subject'],
             "full_body"   => $message['body'],
@@ -372,7 +372,7 @@ function phorum_email_notice($message)
 
 function phorum_email_moderators($message)
 {
-    $PHORUM=$GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $mail_users = phorum_api_user_list_moderators($PHORUM['forum_id'], $PHORUM['email_ignore_admin'], TRUE);
 
