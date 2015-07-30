@@ -2174,7 +2174,7 @@ function phorum_ob_clean()
         $status = ob_get_status();
         if (!$status ||
             $status['name'] == 'ob_gzhandler' ||
-            !$status['del']) break;
+            !isset($status['del'])) break;
         ob_end_clean();
     }
 }
