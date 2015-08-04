@@ -48,7 +48,7 @@ function phorum_api_lang_list($include_hidden = FALSE)
     // To make some language-files happy which are using $PHORUM-variables.
     // We don't make this really global, otherwise the included language
     // file would override the active Phorum language.
-    global $PHORUM;
+    $PHORUM = $GLOBALS['PHORUM'];
 
     $languages = array();
 
