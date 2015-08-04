@@ -152,7 +152,7 @@ function phorum_mod_bbcode_tpl_editor_disable_bbcode()
 // Process "Disable BBcode" option from the message form.
 function phorum_mod_bbcode_posting_custom_action($message)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
     if (empty($PHORUM["mod_bbcode"]["allow_disable_per_post"])) {
         unset($message['meta']['disable_bbcode']);
         return $message;
@@ -196,7 +196,7 @@ function phorum_mod_bbcode_editor_tool_plugin()
              isset($builtin[$id]) &&
              $builtin[$id][BBCODE_INFO_DEFAULTSTATE] != 2)) {
              continue;
-        }    
+        }
 
         // Keep track of the number of enabled tags.
         $nr_of_enabled_tags ++;
@@ -275,7 +275,7 @@ function phorum_mod_bbcode_javascript_register($data)
 // The addon hook is used for displaying a help info screen.
 function phorum_mod_bbcode_addon()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if (empty($PHORUM["args"]["action"])) trigger_error(
         'Missing "action" argument for bbcode module addon call',

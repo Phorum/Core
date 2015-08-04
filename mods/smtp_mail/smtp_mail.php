@@ -21,7 +21,7 @@ if(!defined("PHORUM")) return;
 
 function phorum_smtp_send_messages ($data)
 {
-    $PHORUM=$GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $addresses = $data['addresses'];
     $subject   = $data['subject'];
@@ -35,19 +35,19 @@ function phorum_smtp_send_messages ($data)
 
         try {
 
-            require_once("./mods/smtp_mail/phpmailer/class.phpmailer.php");  
-              
-            $mail = new PHPMailer();  
+            require_once("./mods/smtp_mail/phpmailer/class.phpmailer.php");
+
+            $mail = new PHPMailer();
             $mail->PluginDir = "./mods/smtp_mail/phpmailer/";
-              
+
             $mail->CharSet  = $PHORUM["DATA"]["CHARSET"];
             $mail->Encoding = $PHORUM["DATA"]["MAILENCODING"];
-            $mail->Mailer   = "smtp";  
+            $mail->Mailer   = "smtp";
             $mail->IsHTML(false);
-            
+
             $mail->From     = $PHORUM['system_email_from_address'];
             $mail->Sender   = $PHORUM['system_email_from_address'];
-            $mail->FromName = $PHORUM['system_email_from_name'];            
+            $mail->FromName = $PHORUM['system_email_from_name'];
 
             if(!isset($settings['host']) || empty($settings['host'])) {
                 $settings['host'] = 'localhost';
@@ -57,30 +57,30 @@ function phorum_smtp_send_messages ($data)
                 $settings['port'] = '25';
             }
 
-            $mail->Host     = $settings['host'];  
+            $mail->Host     = $settings['host'];
             $mail->Port     = $settings['port'];
-            
+
             // set the connection type
             if($settings['conn'] == 'ssl') {
                 $mail->SMTPSecure   = "ssl";
             } elseif($settings['conn'] == 'tls') {
                 $mail->SMTPSecure   = "tls";
             }
-            
+
             // smtp-authentication
             if($settings['auth'] && !empty($settings['username'])) {
                 $mail->SMTPAuth=true;
                 $mail->Username = $settings['username'];
                 $mail->Password = $settings['password'];
             }
-            
+
             $mail->Body    = $message;
             $mail->Subject = $subject;
-            
+
             // add the newly created message-id
             // in phpmailer as a public var
             $mail->MessageID=$data['messageid'];
-            
+
             // add custom headers if defined
             if(!empty($data['custom_headers'])) {
                 // custom headers in phpmailer are added one by one
@@ -89,30 +89,30 @@ function phorum_smtp_send_messages ($data)
                     $mail->AddCustomHeader($cheader);
                 }
             }
-            
+
             // add attachments if provided
             if(isset($data['attachments']) && count($data['attachments'])) {
                 /*
                  * Expected input is an array of
-                 * 
+                 *
                  * array(
                  * 'filename'=>'name of the file including extension',
                  * 'filedata'=>'plain (not encoded) content of the file',
                  * 'mimetype'=>'mime type of the file', (optional)
                  * )
-                 * 
+                 *
                  */
-                
+
                 foreach($data['attachments'] as $att_id => $attachment) {
                     $att_type = (!empty($attachment['mimetype']))?$attachment['mimetype']:'application/octet-stream';
                     $mail->AddStringAttachment($attachment['filedata'],$attachment['filename'],'base64',$att_type);
-                    
+
                     // try to unset it in the original array to save memory
                     unset($data['attachments'][$att_id]);
                 }
-                
+
             }
-            
+
             if(!empty($settings['bcc']) && $num_addresses > 3){
                 $bcc = 1;
                 $mail->AddAddress("undisclosed-recipients:;");
@@ -121,7 +121,7 @@ function phorum_smtp_send_messages ($data)
                 // lets keep the connection alive - it could be multiple mails
                 $mail->SMTPKeepAlive = true;
             }
-            
+
             foreach ($addresses as $address) {
                 if($bcc){
                     $mail->addBCC($address);
@@ -130,7 +130,7 @@ function phorum_smtp_send_messages ($data)
                     if(!$mail->Send()) {
                         $error_msg  = "There was an error sending the message.";
                         $detail_msg = "Error returned was: ".$mail->ErrorInfo;
-                       
+
                         if (function_exists('event_logging_writelog')) {
                             event_logging_writelog(array(
                                "source"    => "smtp_mail",
@@ -139,10 +139,10 @@ function phorum_smtp_send_messages ($data)
                                "loglevel"  => EVENTLOG_LVL_ERROR,
                                "category"  => EVENTLOG_CAT_MODULE
                             ));
-                        }                       
+                        }
                         if(!isset($settings['show_errors']) || !empty($settings['show_errors'])) {
                             echo $error_msg."\n";
-                            echo $detail_msg;         
+                            echo $detail_msg;
                         }
                     } elseif(!empty($settings['log_successful'])) {
                           if (function_exists('event_logging_writelog')) {
@@ -153,19 +153,19 @@ function phorum_smtp_send_messages ($data)
                                "loglevel"  => EVENTLOG_LVL_INFO,
                                "category"  => EVENTLOG_CAT_MODULE
                           ));
-                        }     
-                    }   
-                    // Clear all addresses  for next loop  
-                    $mail->ClearAddresses(); 
+                        }
+                    }
+                    // Clear all addresses  for next loop
+                    $mail->ClearAddresses();
                 }
             }
-            
+
             // bcc needs just one send call
             if($bcc) {
                     if(!$mail->Send()) {
                        $error_msg  = "There was an error sending the bcc message.";
                        $detail_msg = "Error returned was: ".$mail->ErrorInfo;
-                       
+
                        if (function_exists('event_logging_writelog')) {
                             event_logging_writelog(array(
                                "source"    => "smtp_mail",
@@ -174,15 +174,15 @@ function phorum_smtp_send_messages ($data)
                                "loglevel"  => EVENTLOG_LVL_ERROR,
                                "category"  => EVENTLOG_CAT_MODULE
                             ));
-                       }                
-                       if(!isset($settings['show_errors']) || !empty($settings['show_errors'])) {       
+                       }
+                       if(!isset($settings['show_errors']) || !empty($settings['show_errors'])) {
                            echo $error_msg."\n";
                            echo $detail_msg;
                        }
                     } elseif(!empty($settings['log_successful'])) {
                           if (function_exists('event_logging_writelog')) {
                             $address_join = implode(",",$addresses);
-                              
+
                             event_logging_writelog(array(
                                "source"    => "smtp_mail",
                                "message"   => "BCC-Email successfully sent",
@@ -190,21 +190,21 @@ function phorum_smtp_send_messages ($data)
                                "loglevel"  => EVENTLOG_LVL_INFO,
                                "category"  => EVENTLOG_CAT_MODULE
                           ));
-                        }     
+                        }
                     }
             }
-            
+
             // we have to close the connection with pipelining
             // which is only used in non-bcc mode
             if(!$bcc) {
                 $mail->SmtpClose();
             }
-            
-            
+
+
         } catch (Exception $e) {
             $error_msg  = "There was a problem communicating with SMTP";
             $detail_msg = "The error returned was: ".$e->getMessage();
-            
+
             if (function_exists('event_logging_writelog')) {
                 event_logging_writelog(array(
                       "source"    => "smtp_mail",
@@ -216,10 +216,10 @@ function phorum_smtp_send_messages ($data)
             }
             if(!isset($settings['show_errors']) || !empty($settings['show_errors'])) {
                 echo $error_msg."\n";
-                echo $detail_msg;            
+                echo $detail_msg;
             }
             exit();
-        } 
+        }
     }
 
     unset($message);

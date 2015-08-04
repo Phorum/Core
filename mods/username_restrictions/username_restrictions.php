@@ -8,7 +8,7 @@ function phorum_mod_username_restrictions_before_register($data)
     // our checks right now.
     if (isset($data["error"])) return $data;
 
-    $PHORUM   = $GLOBALS['PHORUM'];
+    global $PHORUM;
     $settings = $PHORUM['mod_username_restrictions'];
     $lang     = $PHORUM['DATA']['LANG']['mod_username_restrictions'];
     $username = $data['username'];
@@ -24,7 +24,7 @@ function phorum_mod_username_restrictions_before_register($data)
         if (strlen($username) < $settings['min_length']) {
             $str = $lang['min_length'];
             $str = str_replace('%length%', $settings['min_length'], $str);
-            $data['error'] = $str; 
+            $data['error'] = $str;
         }
     }
 
@@ -36,7 +36,7 @@ function phorum_mod_username_restrictions_before_register($data)
         if (strlen($username) > $settings['max_length']) {
             $str = $lang['max_length'];
             $str = str_replace('%length%', $settings['max_length'], $str);
-            $data['error'] = $str; 
+            $data['error'] = $str;
         }
     }
 
@@ -84,7 +84,7 @@ function phorum_mod_username_restrictions_before_register($data)
         $stripped_username = preg_replace($strip, '', $username);
 
         // If the username changed, then unwanted characters were used.
-        // Notify the user and update the username with the stripped 
+        // Notify the user and update the username with the stripped
         // version of the username.
         if ($stripped_username != $username)
         {
@@ -115,7 +115,7 @@ function phorum_mod_username_restrictions_before_register($data)
         $lowercase_username = strtolower($username);
 
         // If the username changed, then upper case characters were used.
-        // Notify the user and update the username with the lower case 
+        // Notify the user and update the username with the lower case
         // version of the username.
         if ($lowercase_username != $username)
         {

@@ -287,7 +287,7 @@ class captcha_base
      */
     function check_answer($info)
     {
-        $PHORUM = $GLOBALS["PHORUM"];
+        global $PHORUM;
 
         // Retrieve the posted answer.
         $fn = $info["input_fieldname"];
