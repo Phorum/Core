@@ -322,7 +322,7 @@ function phorum_db_close_connection()
  */
 function phorum_db_run_queries($queries)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $error = NULL;
 
@@ -471,7 +471,7 @@ function phorum_db_update_settings($settings)
  */
 function phorum_db_get_thread_list($page, $include_bodies=FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($page, 'int');
 
@@ -635,7 +635,7 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
  */
 function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thread = 0, $list_type = LIST_RECENT_MESSAGES)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Backward compatibility for the old $threads_only parameter.
     if (is_bool($list_type)) {
@@ -798,7 +798,7 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
  */
 function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $moddays=0, $countonly = FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($on_hold_only, 'bool');
     settype($moddays, 'int');
@@ -885,7 +885,7 @@ function phorum_db_get_unapproved_list($forum_id = NULL, $on_hold_only=FALSE, $m
  */
 function phorum_db_post_message(&$message, $convert=FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($convert, 'bool');
 
@@ -1035,7 +1035,7 @@ function phorum_db_post_message(&$message, $convert=FALSE)
  */
 function phorum_db_update_message($message_id, $message)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($message_id, 'int');
 
@@ -1112,7 +1112,7 @@ function phorum_db_update_message($message_id, $message)
  */
 function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($message_id, 'int');
     settype($mode, 'int');
@@ -1242,7 +1242,7 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
  */
 function phorum_db_get_messagetree($message_id, $forum_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($message_id, 'int');
     settype($forum_id, 'int');
@@ -1301,7 +1301,7 @@ function phorum_db_get_messagetree($message_id, $forum_id)
  */
 function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FALSE, $write_server=FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     phorum_db_sanitize_mixed($value, 'string');
     settype($ignore_forum_id, 'bool');
@@ -1387,7 +1387,7 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
  */
 function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $write_server = FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($thread, 'int');
     settype($page, 'int');
@@ -1501,7 +1501,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $writ
  */
 function phorum_db_get_message_index($thread=0, $message_id=0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // check for valid values
     if (empty($thread) || empty($message_id)) {
@@ -1582,7 +1582,7 @@ function phorum_db_get_message_index($thread=0, $message_id=0)
  */
 function phorum_db_search($search, $author, $return_threads, $offset, $length, $match_type, $days, $match_forum)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $fulltext_mode = isset($PHORUM['DBCONFIG']['mysql_use_ft']) &&
                      $PHORUM['DBCONFIG']['mysql_use_ft'];
@@ -1928,7 +1928,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
  */
 function phorum_db_get_neighbour_thread($key, $direction)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($key, 'int');
 
@@ -1999,7 +1999,7 @@ function phorum_db_get_neighbour_thread($key, $direction)
  */
 function phorum_db_get_forums($forum_ids = 0, $parent_id = NULL, $vroot = NULL, $inherit_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     phorum_db_sanitize_mixed($forum_ids, 'int');
     if ($parent_id  !== NULL) settype($parent_id, 'int');
@@ -2076,7 +2076,7 @@ function phorum_db_get_forums($forum_ids = 0, $parent_id = NULL, $vroot = NULL, 
  */
 function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $timestamp=0, $thread_count_change=0, $sticky_count_change=0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($refresh, 'bool');
     settype($msg_count_change, 'int');
@@ -2179,7 +2179,7 @@ function phorum_db_update_forum_stats($refresh=FALSE, $msg_count_change=0, $time
  */
 function phorum_db_move_thread($thread_id, $toforum)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($thread_id, 'int');
     settype($toforum, 'int');
@@ -2306,7 +2306,7 @@ function phorum_db_move_thread($thread_id, $toforum)
  */
 function phorum_db_close_thread($thread_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($thread_id, 'int');
 
@@ -2332,7 +2332,7 @@ function phorum_db_close_thread($thread_id)
  */
 function phorum_db_reopen_thread($thread_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($thread_id, 'int');
 
@@ -2366,7 +2366,7 @@ function phorum_db_reopen_thread($thread_id)
  */
 function phorum_db_add_forum($forum)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // check for fields that must be set for mysql strict mode
     if(empty($forum["description"])) $forum["description"] = "";
@@ -2425,7 +2425,7 @@ function phorum_db_add_forum($forum)
  */
 function phorum_db_add_message_edit($edit_data)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
 
     foreach ($edit_data as $key => $value) {
@@ -2475,7 +2475,7 @@ function phorum_db_add_message_edit($edit_data)
  */
 function phorum_db_get_message_edits($message_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($message_id, 'int');
 
@@ -2520,7 +2520,7 @@ function phorum_db_get_message_edits($message_id)
  */
 function phorum_db_drop_forum($forum_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($forum_id, 'int');
 
@@ -2588,7 +2588,7 @@ function phorum_db_drop_forum($forum_id)
  */
 function phorum_db_drop_folder($forum_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($forum_id, 'int');
 
@@ -2646,7 +2646,7 @@ function phorum_db_drop_folder($forum_id)
  */
 function phorum_db_update_forum($forum)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Check if the forum_id is set.
     if (!isset($forum['forum_id']) || empty($forum['forum_id'])) trigger_error(
@@ -2721,7 +2721,7 @@ function phorum_db_update_forum($forum)
  */
 function phorum_db_get_groups($group_id = 0, $sorted = FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
 
     phorum_db_sanitize_mixed($group_id,"int");
@@ -2809,7 +2809,7 @@ function phorum_db_sort_groups($a,$b) {
  */
 function phorum_db_get_group_members($group_id, $status = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     phorum_db_sanitize_mixed($group_id, 'int');
     if ($status !== NULL) settype($status, 'int');
@@ -2867,7 +2867,7 @@ function phorum_db_get_group_members($group_id, $status = NULL)
  */
 function phorum_db_add_group($group_name, $group_id=0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($group_id, 'int');
     $group_name = phorum_db_interact(DB_RETURN_QUOTED, $group_name);
@@ -2921,7 +2921,7 @@ function phorum_db_add_group($group_name, $group_id=0)
  */
 function phorum_db_update_group($group)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Check if the group_id is set.
     if (!isset($group['group_id']) || empty($group['group_id'])) trigger_error(
@@ -2996,7 +2996,7 @@ function phorum_db_update_group($group)
  */
 function phorum_db_delete_group($group_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($group_id, 'int');
 
@@ -3043,7 +3043,7 @@ function phorum_db_delete_group($group_id)
  */
 function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_email=FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($forum_id, 'int');
     settype($exclude_admin, 'bool');
@@ -3120,7 +3120,7 @@ function phorum_db_user_get_moderators($forum_id, $exclude_admin=FALSE, $for_ema
  */
 function phorum_db_user_count()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     return phorum_db_interact(
         DB_RETURN_VALUE,
@@ -3149,7 +3149,7 @@ function phorum_db_user_count()
  */
 function phorum_db_user_get_all($offset = 0, $length = 0)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     settype($offset, 'int');
     settype($length, 'int');
@@ -3194,7 +3194,7 @@ function phorum_db_user_get_all($offset = 0, $length = 0)
  */
 function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE, $raw_data = FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     phorum_db_sanitize_mixed($user_id, 'int');
 
@@ -3371,7 +3371,7 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE, 
  */
 function phorum_db_user_get_fields($user_id, $fields)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     phorum_db_sanitize_mixed($user_id, 'int');
 
@@ -3425,7 +3425,7 @@ function phorum_db_user_get_fields($user_id, $fields)
  */
 function phorum_db_user_get_list($type = 0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($type, 'int');
 
@@ -3468,7 +3468,7 @@ function phorum_db_user_get_list($type = 0)
  */
 function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($temp_password, 'bool');
     $username = phorum_db_interact(DB_RETURN_QUOTED, $username);
@@ -3546,7 +3546,7 @@ function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
  */
 function phorum_db_user_search($field, $value, $operator='=', $return_array=FALSE, $type='AND', $sort=NULL, $offset=0, $length=0, $count_only = false)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($return_array, 'bool');
     settype($offset, 'int');
@@ -3642,40 +3642,40 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
     }
 
     if($count_only) {
-	    // Retrieve the number of matching user_ids from the database.
-	    $user_count = phorum_db_interact(
-	        DB_RETURN_VALUE,
-	        "SELECT count(*)
-	         FROM   {$PHORUM['user_table']}
-	         $where $order $limit",
-	        0 // keyfield 0 is the user_id
-	    );
+      // Retrieve the number of matching user_ids from the database.
+      $user_count = phorum_db_interact(
+          DB_RETURN_VALUE,
+          "SELECT count(*)
+           FROM   {$PHORUM['user_table']}
+           $where $order $limit",
+          0 // keyfield 0 is the user_id
+      );
 
-	    $ret = $user_count;
+      $ret = $user_count;
 
     } else {
-	    // Retrieve the matching user_ids from the database.
-	    $user_ids = phorum_db_interact(
-	        DB_RETURN_ROWS,
-	        "SELECT user_id
-	         FROM   {$PHORUM['user_table']}
-	         $where $order $limit",
-	        0 // keyfield 0 is the user_id
-	    );
+      // Retrieve the matching user_ids from the database.
+      $user_ids = phorum_db_interact(
+          DB_RETURN_ROWS,
+          "SELECT user_id
+           FROM   {$PHORUM['user_table']}
+           $where $order $limit",
+          0 // keyfield 0 is the user_id
+      );
 
-	    // No user_ids found at all?
-	    if (count($user_ids) == 0) return 0;
+      // No user_ids found at all?
+      if (count($user_ids) == 0) return 0;
 
-	    // Return an array of user_ids.
-	    if ($return_array) {
-	        foreach ($user_ids as $id => $user_id) $user_ids[$id] = $user_id[0];
-	        $ret = $user_ids;
-	    } else {
-		    // Return a single user_id.
-		    list ($user_id, $dummy) = each($user_ids);
+      // Return an array of user_ids.
+      if ($return_array) {
+          foreach ($user_ids as $id => $user_id) $user_ids[$id] = $user_id[0];
+          $ret = $user_ids;
+      } else {
+        // Return a single user_id.
+        list ($user_id, $dummy) = each($user_ids);
 
-		    $ret = $user_id;
-	    }
+        $ret = $user_id;
+      }
     }
     return $ret;
 }
@@ -3696,7 +3696,7 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
  */
 function phorum_db_user_add($userdata)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // We need at least the username for the user.
     if (! isset($userdata['username'])) trigger_error(
@@ -3757,7 +3757,7 @@ function phorum_db_user_add($userdata)
  */
 function phorum_db_user_save($userdata)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Pull some non user table fields from the userdata. These can be
     // set in case the $userdata parameter that is used is coming from
@@ -3915,7 +3915,7 @@ function phorum_db_user_save($userdata)
  */
 function phorum_db_user_display_name_updates($userdata)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
     if (!isset($userdata['user_id'])) trigger_error(
         'phorum_db_user_display_name_updates(): Missing user_id field in ' .
         'the $userdata parameter',
@@ -4006,7 +4006,7 @@ function phorum_db_user_display_name_updates($userdata)
  */
 function phorum_db_user_save_groups($user_id, $groups)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($user_id, 'int');
 
@@ -4069,7 +4069,7 @@ function phorum_db_user_save_groups($user_id, $groups)
  */
 function phorum_db_user_subscribe($user_id, $thread, $forum_id, $type)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($user_id, 'int');
     settype($forum_id, 'int');
@@ -4124,7 +4124,7 @@ function phorum_db_user_subscribe($user_id, $thread, $forum_id, $type)
  */
 function phorum_db_user_unsubscribe($user_id, $thread, $forum_id=0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($user_id, 'int');
     settype($forum_id, 'int');
@@ -4183,7 +4183,7 @@ function phorum_db_user_increment_posts($user_id)
  */
 function phorum_db_user_get_groups($user_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($user_id, 'int');
 
@@ -4219,7 +4219,7 @@ function phorum_db_user_get_groups($user_id)
  */
 function phorum_db_user_get_unapproved()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $users = phorum_db_interact(
         DB_RETURN_ASSOCS,
@@ -4253,7 +4253,7 @@ function phorum_db_user_get_unapproved()
  */
 function phorum_db_user_delete($user_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($user_id, 'int');
 
@@ -4363,7 +4363,7 @@ function phorum_db_user_delete($user_id)
  */
 function phorum_db_get_file_list($link_type = NULL, $user_id = NULL, $message_id = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $where = '';
     $clauses = array();
@@ -4449,7 +4449,7 @@ function phorum_db_get_message_file_list($message_id)
  */
 function phorum_db_file_get($file_id, $include_file_data = TRUE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($file_id, 'int');
 
@@ -4530,7 +4530,7 @@ function phorum_db_file_get($file_id, $include_file_data = TRUE)
  */
 function phorum_db_file_save($file)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // If a link type is not provided, we'll guess for the type of link.
     // This is done to provide some backward compatibility.
@@ -4602,7 +4602,7 @@ function phorum_db_file_save($file)
  */
 function phorum_db_file_delete($file_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($file_id, 'int');
 
@@ -4639,7 +4639,7 @@ function phorum_db_file_delete($file_id)
  */
 function phorum_db_file_link($file_id, $message_id, $link = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($file_id, 'int');
     settype($message_id, 'int');
@@ -4674,7 +4674,7 @@ function phorum_db_file_link($file_id, $message_id, $link = NULL)
  */
 function phorum_db_get_user_filesize_total($user_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($user_id, 'int');
 
@@ -4710,7 +4710,7 @@ function phorum_db_get_user_filesize_total($user_id)
  */
 function phorum_db_list_stale_files()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Select orphin editor files.
     // These are files that are linked to the editor and that were added
@@ -4743,7 +4743,7 @@ function phorum_db_list_stale_files()
  */
 function phorum_db_newflag_allread($forum_id=0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
     settype($forum_id, 'int');
@@ -4787,7 +4787,7 @@ function phorum_db_newflag_allread($forum_id=0)
  */
 function phorum_db_newflag_get_flags($forum_id=NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($forum_id === NULL) $forum_id = $PHORUM['forum_id'];
     settype($forum_id, 'int');
@@ -4829,7 +4829,7 @@ function phorum_db_newflag_get_flags($forum_id=NULL)
  */
 function phorum_db_newflag_check($forum_ids)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     phorum_db_sanitize_mixed($forum_ids, 'int');
 
@@ -4889,7 +4889,7 @@ function phorum_db_newflag_check($forum_ids)
  */
 function phorum_db_newflag_count($forum_ids)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     phorum_db_sanitize_mixed($forum_ids, 'int');
 
@@ -4999,7 +4999,7 @@ function phorum_db_newflag_count($forum_ids)
  */
 function phorum_db_newflag_get_unread_count($forum_id=NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($forum_id === NULL) $forum_id = $PHORUM['forum_id'];
     settype($forum_id, 'int');
@@ -5073,7 +5073,7 @@ function phorum_db_newflag_get_unread_count($forum_id=NULL)
  */
 function phorum_db_newflag_add_read($message_ids)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Find the number of newflags for the user
     $num_newflags = phorum_db_newflag_get_count();
@@ -5103,7 +5103,7 @@ function phorum_db_newflag_add_read($message_ids)
             $message_id = (int)$data;
         }
         $values = "($user_id,$forum_id,$message_id)";
-	$inserts[$values] = $values;
+  $inserts[$values] = $values;
     }
 
     if(count($inserts)) {
@@ -5120,14 +5120,14 @@ function phorum_db_newflag_add_read($message_ids)
             DB_DUPKEYOK | DB_MASTERQUERY
         );
 
-	// If inserting the values failed, then this most probably means
-	// that one of the values already existed in the database, causing
-	// a duplicate key error. In this case, fallback to one-by-one
-	// insertion, so the other records in the list will be created.
-	if (!$res && count($inserts) > 1)
-	{
-	    foreach ($inserts as $values)
-	    {
+  // If inserting the values failed, then this most probably means
+  // that one of the values already existed in the database, causing
+  // a duplicate key error. In this case, fallback to one-by-one
+  // insertion, so the other records in the list will be created.
+  if (!$res && count($inserts) > 1)
+  {
+      foreach ($inserts as $values)
+      {
                 $res = phorum_db_interact(
                     DB_RETURN_RES,
                     "INSERT INTO {$PHORUM['user_newflags_table']}
@@ -5136,8 +5136,8 @@ function phorum_db_newflag_add_read($message_ids)
                     NULL,
                     DB_DUPKEYOK | DB_MASTERQUERY
                 );
-	    }
-	}
+      }
+  }
     }
 }
 // }}}
@@ -5156,7 +5156,7 @@ function phorum_db_newflag_add_read($message_ids)
  */
 function phorum_db_newflag_get_count($forum_id=0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
     settype($forum_id, 'int');
@@ -5186,7 +5186,7 @@ function phorum_db_newflag_get_count($forum_id=0)
 */
 function phorum_db_newflag_delete($numdelete=0,$forum_id=0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
     settype($numdelete, 'int');
@@ -5261,7 +5261,7 @@ function phorum_db_newflag_update_forum($message_ids)
  */
 function phorum_db_user_list_subscribers($forum_id, $thread, $type, $ignore_active_user=TRUE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($forum_id, 'int');
     settype($thread, 'int');
@@ -5333,7 +5333,7 @@ function phorum_db_user_list_subscribers($forum_id, $thread, $type, $ignore_acti
  */
 function phorum_db_user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($user_id, 'int');
     settype($days, 'int');
@@ -5414,7 +5414,7 @@ function phorum_db_user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
  */
 function phorum_db_user_get_subscription($user_id, $forum_id, $thread)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($user_id, 'int');
     settype($forum_id, 'int');
@@ -5451,7 +5451,7 @@ function phorum_db_user_get_subscription($user_id, $forum_id, $thread)
  */
 function phorum_db_get_banlists($ordered=FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($ordered, 'bool');
 
@@ -5507,7 +5507,7 @@ function phorum_db_get_banlists($ordered=FALSE)
  */
 function phorum_db_get_banitem($banid)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($banid, 'int');
 
@@ -5543,7 +5543,7 @@ function phorum_db_get_banitem($banid)
  */
 function phorum_db_del_banitem($banid)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($banid, 'int');
 
@@ -5595,7 +5595,7 @@ function phorum_db_del_banitem($banid)
  */
 function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $comments, $banid=0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $retarr = array();
 
@@ -5659,7 +5659,7 @@ function phorum_db_mod_banlists($type, $pcre, $string, $forum_id, $comments, $ba
  */
 function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, 'int');
@@ -5724,7 +5724,7 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
  */
 function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, 'int');
@@ -5797,7 +5797,7 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
  */
 function phorum_db_pm_create_folder($foldername, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, 'int');
@@ -5832,7 +5832,7 @@ function phorum_db_pm_create_folder($foldername, $user_id = NULL)
  */
 function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, 'int');
@@ -5865,7 +5865,7 @@ function phorum_db_pm_rename_folder($folder_id, $newname, $user_id = NULL)
  */
 function phorum_db_pm_delete_folder($folder_id, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, 'int');
@@ -5910,7 +5910,7 @@ function phorum_db_pm_delete_folder($folder_id, $user_id = NULL)
  */
 function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, 'int');
@@ -6009,7 +6009,7 @@ function phorum_db_pm_getfolders($user_id = NULL, $count = FALSE)
  */
 function phorum_db_pm_messagecount($folder, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, 'int');
@@ -6058,7 +6058,7 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
  */
 function phorum_db_pm_checknew($user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, 'int');
@@ -6102,7 +6102,7 @@ function phorum_db_pm_checknew($user_id = NULL)
  */
 function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Prepare the sender.
     if ($from === NULL) $from = $PHORUM['user']['user_id'];
@@ -6209,7 +6209,7 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
  */
 function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($pm_id, 'int');
 
@@ -6259,7 +6259,7 @@ function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
  */
 function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($pm_id, 'int');
 
@@ -6310,7 +6310,7 @@ function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
  */
 function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($pm_id, 'int');
 
@@ -6366,7 +6366,7 @@ function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
  */
 function phorum_db_pm_update_message_info($pm_id)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($pm_id, 'int');
 
@@ -6448,7 +6448,7 @@ function phorum_db_pm_update_message_info($pm_id)
  */
 function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($buddy_user_id, 'int');
 
@@ -6485,7 +6485,7 @@ function phorum_db_pm_is_buddy($buddy_user_id, $user_id = NULL)
  */
 function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($buddy_user_id, 'int');
 
@@ -6528,7 +6528,7 @@ function phorum_db_pm_buddy_add($buddy_user_id, $user_id = NULL)
  */
 function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($buddy_user_id, 'int');
 
@@ -6565,7 +6565,7 @@ function phorum_db_pm_buddy_delete($buddy_user_id, $user_id = NULL)
  */
 function phorum_db_pm_buddy_list($user_id = NULL, $find_mutual = FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($user_id === NULL) $user_id = $PHORUM['user']['user_id'];
     settype($user_id, 'int');
@@ -6665,7 +6665,7 @@ function phorum_db_split_thread($message_id, $forum_id)
  */
 function phorum_db_get_max_messageid()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $maxid = phorum_db_interact(
         DB_RETURN_VALUE,
@@ -6729,7 +6729,7 @@ function phorum_db_increment_viewcount($message_id, $thread_id = NULL)
  */
 function phorum_db_rebuild_search_data()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Delete all records from the search table.
     phorum_db_interact(
@@ -6760,7 +6760,7 @@ function phorum_db_rebuild_search_data()
  */
 function phorum_db_rebuild_user_posts()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Reset the post count for all users.
     phorum_db_interact(
@@ -6841,7 +6841,7 @@ function phorum_db_rebuild_user_posts()
  */
 function phorum_db_user_search_custom_profile_field($field_id, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $offset = 0, $length = 0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     settype($return_array, 'bool');
     settype($offset, 'int');
@@ -7153,7 +7153,7 @@ function phorum_db_metaquery_compile($metaquery)
  */
 function phorum_db_metaquery_messagesearch($metaquery)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Compile the metaquery into a where statement.
     list($success, $where) = phorum_db_metaquery_compile($metaquery);
@@ -7209,7 +7209,7 @@ function phorum_db_metaquery_messagesearch($metaquery)
  */
 function phorum_db_create_tables()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $lang = PHORUM_DEFAULT_LANGUAGE;
 
@@ -7714,15 +7714,15 @@ if (isset($PHORUM['DBCONFIG']['mysql_php_extension'])) {
    // MySQL extension is loaded. Here we'll try to dynamically load an
    // extension ourselves.
    if(function_exists('dl')) {
-	   @dl("mysqli.so");
-	   if (function_exists('mysqli_connect')) {
-	       $ext = "mysqli";
-	   } else {
-	       @dl("mysql.so");
-	       if (function_exists('mysql_connect')) {
-	           $ext = "mysql";
-	       }
-	   }
+     @dl("mysqli.so");
+     if (function_exists('mysqli_connect')) {
+         $ext = "mysqli";
+     } else {
+         @dl("mysql.so");
+         if (function_exists('mysql_connect')) {
+             $ext = "mysql";
+         }
+     }
    }
 }
 

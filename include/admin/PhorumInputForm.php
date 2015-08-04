@@ -206,7 +206,7 @@ class PhorumInputForm {
 
     function show()
     {
-        $PHORUM = $GLOBALS['PHORUM'];
+        global $PHORUM;
 
         if(count($this->_help)){
             echo "<script type=\"text/javascript\">\nvar help = Array;\n";

@@ -44,7 +44,7 @@ $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["PersProfile"];
 
 function phorum_readable_permissions()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
     $newperms = array();
 
     if (isset($PHORUM["user"]["permissions"])) {

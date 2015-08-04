@@ -47,7 +47,7 @@ $PHORUM["DATA"]["SEARCH"]["safe_search"] = "";
 $PHORUM["DATA"]["SEARCH"]["safe_author"] = "";
 
 function phorum_search_check_valid_vars() {
-    $PHORUM=$GLOBALS['PHORUM'];
+    global $PHORUM;
     $retval=true;
 
     // Check the match_type.
@@ -280,22 +280,22 @@ if(!empty($phorum_search) || !empty($phorum_author)){
         // figure out paging
         $pages = ceil($arr["count"] / $PHORUM["list_length"]);
         $page = $offset + 1;
-        
+
         $pages_shown = (isset($PHORUM["TMP"]["search_pages_shown"])) ? $PHORUM["TMP"]["search_pages_shown"] : 5;
-        
+
         // first $pages_shown pages
         if($page - floor($pages_shown/2) <= 0  || $page < $pages_shown){
-        	$page_start=1;
+          $page_start=1;
 
-        	// last $pages_shown pages
+          // last $pages_shown pages
         } elseif($page > $pages - floor($pages_shown/2)) {
-        	$page_start = $pages - $pages_shown + 1;
+          $page_start = $pages - $pages_shown + 1;
 
-        	// all others
+          // all others
         } else {
-        	$page_start = $page - floor($pages_shown/2);
+          $page_start = $page - floor($pages_shown/2);
         }
-        
+
 
         $pageno = 1;
         for($x = 0;$x < $pages_shown && $x < $pages;$x++){

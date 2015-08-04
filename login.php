@@ -358,8 +358,8 @@ if (count($_POST) > 0) {
             // Check if the login credentials are right.
             $user_id = phorum_api_user_authenticate(
                 PHORUM_FORUM_SESSION,
-                trim($_POST["username"]),
-                trim($_POST["password"])
+                trim(@$_POST["username"]),
+                trim(@$_POST["password"])
             );
 
             // They are. Setup the active user and start a Phorum session.

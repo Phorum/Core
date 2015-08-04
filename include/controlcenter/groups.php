@@ -63,7 +63,7 @@ $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["ViewJoinGroups"];
 
 function phorum_readable_groups()
 {
-    $PHORUM=$GLOBALS['PHORUM'];
+    global $PHORUM;
     $readablegroups = array();
 
     $groups = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST);
@@ -96,7 +96,7 @@ function phorum_readable_groups()
 
 function phorum_joinable_groups()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
     $joinablegroups = array();
     $groups = phorum_db_get_groups();
     $memberof = phorum_api_user_check_group_access(PHORUM_USER_GROUP_SUSPENDED, PHORUM_ACCESS_LIST);

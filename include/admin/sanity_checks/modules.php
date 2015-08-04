@@ -22,7 +22,7 @@
     $phorum_check = "Modules (hook collision checks)";
 
     function phorum_check_modules($is_install = false) {
-        $PHORUM = $GLOBALS["PHORUM"];
+        global $PHORUM;
 
         if ($is_install) {
             return array(PHORUM_SANITY_SKIP, NULL, NULL);
@@ -48,7 +48,7 @@
                      one module at a time. Keeping all modules
                      activated might lead to some unexpected results.
                      The colliding modules are: ".
-                     implode(" + ", $mods), 
+                     implode(" + ", $mods),
                     "You can ignore this message in case you
                      are sure that the modules can work together. Else,
                      make sure you have only one of these modules

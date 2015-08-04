@@ -64,7 +64,7 @@ function phorum_gen_password($charpart=4, $numpart=3)
  */
 function phorum_check_bans($bans)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // A mapping from bantype -> error message to return on match.
     $phorum_bantype2error = array (
@@ -159,7 +159,7 @@ function phorum_check_bans($bans)
  */
 function phorum_check_ban_lists($value, $type)
 {
-    $PHORUM=$GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Load the ban lists.
     if (! isset($GLOBALS["PHORUM"]["banlists"]))
@@ -217,7 +217,7 @@ function phorum_check_ban_lists($value, $type)
         // $PHORUM["PROFILE_FIELDS"][]=array("name"=>"sig", "type"=>"text", "length"=>0, "required"=>0);
 
 
-        $PHORUM=$GLOBALS["PHORUM"];
+        global $PHORUM;
 
         $html="";
 

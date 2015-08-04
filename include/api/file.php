@@ -167,7 +167,7 @@ function phorum_api_file_get_mimetype($filename)
  */
 function phorum_api_file_check_write_access($file)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Reset error storage.
     $GLOBALS["PHORUM"]["API"]["errno"] = NULL;
@@ -355,7 +355,7 @@ function phorum_api_file_check_write_access($file)
  */
 function phorum_api_file_store($file)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Check if we really got an array argument for $file.
     if (!is_array($file)) trigger_error(
@@ -748,7 +748,7 @@ function phorum_api_file_check_read_access($file_id, $flags = 0)
  */
 function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Reset error storage.
     $GLOBALS["PHORUM"]["API"]["errno"] = NULL;
@@ -1071,7 +1071,7 @@ function phorum_api_file_check_delete_access($file_id)
  */
 function phorum_api_file_delete($file)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Find the file_id parameter to use.
     if (is_array($file)) {

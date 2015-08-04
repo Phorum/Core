@@ -1064,7 +1064,7 @@ register_shutdown_function("phorum_shutdown");
  */
 function phorum_require_login()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
     if ( !$PHORUM["user"]["user_id"] ) {
         $url = phorum_get_url(
             PHORUM_LOGIN_URL, "redir=" . urlencode(phorum_get_current_url())
@@ -1092,7 +1092,7 @@ function phorum_require_login()
  */
 function phorum_check_read_common()
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $retval = true;
 
@@ -1787,7 +1787,7 @@ function phorum_get_template( $page )
 // creates URLs used on most pages
 function phorum_build_common_urls()
 {
-    $PHORUM=$GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $GLOBALS["PHORUM"]["DATA"]["URL"]["BASE"] = phorum_get_url( PHORUM_BASE_URL );
     $GLOBALS["PHORUM"]["DATA"]["URL"]["HTTP_PATH"] = $PHORUM['http_path'];
@@ -1851,7 +1851,7 @@ function phorum_build_common_urls()
 // calls phorum mod functions
 function phorum_hook( $hook )
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // get arguments passed to the function
     $args = func_get_args();
@@ -1950,7 +1950,8 @@ function phorum_get_template_info()
 function phorum_get_language_info()
 {
     // to make some language-files happy which are using $PHORUM-variables
-    $PHORUM = $GLOBALS['PHORUM'];
+    // we want to work with a copy of $GLOBALS['PHORUM']
+    $PHORUM = $GLOBALS['PHORUM']; // do not change this line to: global $PHORUM;
 
     $langs = array();
 
@@ -2174,7 +2175,7 @@ function phorum_ob_clean()
         $status = ob_get_status();
         if (!$status ||
             $status['name'] == 'ob_gzhandler' ||
-            !$status['del']) break;
+            !isset($status['del'])) break;
         ob_end_clean();
     }
 }
@@ -2186,7 +2187,7 @@ function phorum_ob_clean()
  */
 function phorum_database_error($error)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Flush output that we buffered so far (for displaying a
     // clean page in the admin interface).

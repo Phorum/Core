@@ -155,7 +155,7 @@
 
     function phorum_check_distro()
     {
-        $PHORUM = $GLOBALS["PHORUM"];
+        global $PHORUM;
 
         $errors = array();
 

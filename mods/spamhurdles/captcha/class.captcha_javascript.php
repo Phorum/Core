@@ -14,10 +14,10 @@ class captcha_javascript extends captcha_base
 
     function generate_captcha_html($question)
     {
-        $PHORUM = $GLOBALS["PHORUM"];
+        global $PHORUM;
         $lang = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_spamhurdles"];
 
-        // We only have upper case chars in our banner class. 
+        // We only have upper case chars in our banner class.
         $question = strtoupper($question);
 
         // Create a bitmap for the generated question.
@@ -35,7 +35,7 @@ class captcha_javascript extends captcha_base
                 }
             }
         }
-        
+
         // Pixelsize.
         $psx = 4;
         $psy = 3;
@@ -57,7 +57,7 @@ class captcha_javascript extends captcha_base
         function spamhurdles_captcha_add_pixel(x,y) {
             if (!document.getElementById) return;
 
-            var captcha = document.getElementById("spamhurdles_captcha_image"); 
+            var captcha = document.getElementById("spamhurdles_captcha_image");
             var pixel = document.createElement("div");
             pixel.innerHTML = "<span></span>";
             pixel.style.backgroundColor = randomcolor(20,130);
@@ -72,7 +72,7 @@ class captcha_javascript extends captcha_base
         function spamhurdles_captcha_background() {
             if (!document.getElementById) return;
 
-            var captcha = document.getElementById("spamhurdles_captcha_image"); 
+            var captcha = document.getElementById("spamhurdles_captcha_image");
             captcha.style.backgroundColor = randomcolor(150,200);
             var blockwidth = Math.ceil(<?php print ($cols+2) * $psx ?>/10);
             for (i=0; i<10; i++) {
@@ -96,10 +96,10 @@ class captcha_javascript extends captcha_base
         }
 
         spamhurdles_captcha_background();
-        <?php 
+        <?php
         shuffle($points);
         foreach ($points as $point) {
-            print "spamhurdles_captcha_add_pixel({$point[0]},{$point[1]});\n"; 
+            print "spamhurdles_captcha_add_pixel({$point[0]},{$point[1]});\n";
         }
         ?>
         </script>
@@ -108,7 +108,7 @@ class captcha_javascript extends captcha_base
         ob_end_clean();
 
         // Some extra scrambling to make things harder for spammers.
-        $form = spamhurdles_iScramble($form, false, false, 
+        $form = spamhurdles_iScramble($form, false, false,
             '<div id="spamhurdles_captcha_image">' .
             $lang["JavascriptCaptchaNoscript"] .
             '</div>'

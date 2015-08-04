@@ -882,7 +882,7 @@ function phorum_api_user_save_settings($settings)
  */
 function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FALSE, $raw_data = FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if (!is_array($user_id)) {
         $user_ids = array($user_id);
@@ -1060,7 +1060,7 @@ function phorum_api_user_get($user_id, $detailed = FALSE, $use_write_server = FA
  */
 function phorum_api_user_get_setting($name)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // No settings available at all?
     if (empty($PHORUM['user']['settings_data'])) return NULL;
@@ -1104,7 +1104,7 @@ function phorum_api_user_get_setting($name)
  */
 function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $flags = PHORUM_FLAG_HTML)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if ($fallback === NULL) {
         $fallback = $PHORUM['DATA']['LANG']['AnonymousUser'];
@@ -1227,12 +1227,12 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
  *     or 0 (zero, the default) to return all results.
  *
  * @param boolean $count_only
- *     Tells the function to just return the count of results for this 
+ *     Tells the function to just return the count of results for this
  *     search query.
  *
  * @return mixed
  *     An array of matching user_ids or a single user_id (based on the
- *     $return_array parameter) or a count of results (based on $count_only). 
+ *     $return_array parameter) or a count of results (based on $count_only).
  *     If no user_ids can be found at all, then 0 (zero) will be returned.
  */
 function phorum_api_user_search($field, $value, $operator = '=', $return_array = FALSE, $type = 'AND', $sort = NULL, $offset = 0, $length = 0,$count_only=false)
@@ -1530,7 +1530,7 @@ function phorum_api_user_format($users)
  */
 function phorum_api_user_authenticate($type, $username, $password)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     $user_id = NULL;
 
@@ -1859,12 +1859,12 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 
 // {{{ Function: phorum_api_user_get_active_user()
 /**
- * Retrieve the active Phorum user. 
+ * Retrieve the active Phorum user.
  *
  * This function was added in Phorum 5.2.16.
  *
  * @return NULL|array
- *   This method will return the data for the active Phorum user or 
+ *   This method will return the data for the active Phorum user or
  *   NULL when this user is an anonymous user (i.e. not logged in.)
  */
 function phorum_api_user_get_active_user()
@@ -2233,7 +2233,7 @@ function phorum_api_user_session_create($type, $reset = 0)
  */
 function phorum_api_user_session_restore($type)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // ----------------------------------------------------------------------
     // Determine which session cookie(s) to check.
@@ -2581,7 +2581,7 @@ function phorum_api_user_session_restore($type)
  */
 function phorum_api_user_session_destroy($type)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     /**
      * [hook]
@@ -2766,7 +2766,7 @@ function phorum_api_user_save_groups($user_id, $groups)
 
         $dbgroups[$id] = $perm;
     }
-    
+
     /**
      * [hook]
      *     user_save_groups
@@ -2798,7 +2798,7 @@ function phorum_api_user_save_groups($user_id, $groups)
      *         foreach($groups as $group_id => $group_permission) {
      *             // do something with the groups permissions
      *         }
-     *     
+     *
      *         return array($user_id,$groups);
      *     }
      *     </hookcode>
@@ -2806,7 +2806,7 @@ function phorum_api_user_save_groups($user_id, $groups)
     if (isset($GLOBALS['PHORUM']['hooks']['user_save_groups'])) {
         list($user_id,$dbgroups) = phorum_hook('user_save_groups', array($user_id,$dbgroups));
     }
-    
+
 
     return phorum_db_user_save_groups($user_id, $dbgroups);
 }
@@ -2856,7 +2856,7 @@ function phorum_api_user_save_groups($user_id, $groups)
  */
 function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Prepare the array of forum ids to check.
     $forum_access = array();
@@ -3017,7 +3017,7 @@ function phorum_api_user_check_access($permission, $forum_id = 0, $user = 0)
  */
 function phorum_api_user_check_group_access($permission, $group_id, $user = 0)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // Prepare the user to check the access for.
     if (empty($user)) {
@@ -3134,7 +3134,7 @@ function phorum_api_user_check_group_access($permission, $group_id, $user = 0)
  */
 function phorum_api_user_list_moderators($forum_id = 0, $exclude_admin = FALSE, $for_mail = FALSE)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     if (empty($forum_id)) $forum_id = $PHORUM['forum_id'];
 

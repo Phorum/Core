@@ -19,7 +19,7 @@ $GLOBALS["PHORUM"]["event_logging_table"] =
  */
 function event_logging_db_install()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $version = isset($PHORUM["mod_event_logging_installed"])
         ? $PHORUM["mod_event_logging_installed"] : 0;
@@ -139,7 +139,7 @@ function event_logging_db_install()
  */
 function event_logging_writelog($loginfo)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     // Check the minimum log level. Only write to the log if the
     // log level of the event is at or above the configured minimum.
@@ -243,9 +243,9 @@ function event_logging_writelog($loginfo)
         DB_RETURN_RES,
         "INSERT INTO {$PHORUM["event_logging_table"]}
                 (".implode(', ', array_keys($record)).")
-         VALUES (".implode(', ', $record).")", 
-        NULL, 
-        DB_MASTERQUERY 
+         VALUES (".implode(', ', $record).")",
+        NULL,
+        DB_MASTERQUERY
     );
 }
 
@@ -338,7 +338,7 @@ function event_logging_create_where($filter)
  */
 function event_logging_getsources()
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $rows = phorum_db_interact(
         DB_RETURN_ASSOCS,
@@ -365,7 +365,7 @@ function event_logging_getsources()
  */
 function event_logging_countlogs($filter = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $where = event_logging_create_where($filter);
 
@@ -399,9 +399,9 @@ function event_logging_countlogs($filter = NULL)
             phorum_db_interact(
                 DB_RETURN_RES,
                 "DELETE FROM {$PHORUM["event_logging_table"]}
-                 WHERE  log_id <= {$rows[0]["log_id"]}", 
-                NULL, 
-                DB_MASTERQUERY 
+                 WHERE  log_id <= {$rows[0]["log_id"]}",
+                NULL,
+                DB_MASTERQUERY
             );
         }
 
@@ -423,7 +423,7 @@ function event_logging_countlogs($filter = NULL)
  */
 function event_logging_getlogs($page = 1, $pagelength = 20, $filter = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     settype($page, "int");
     settype($pagelength, "int");
@@ -457,13 +457,13 @@ function event_logging_getlogs($page = 1, $pagelength = 20, $filter = NULL)
                    ON {$PHORUM["forums_table"]}.forum_id = {$PHORUM["event_logging_table"]}.forum_id
             $where
             ORDER  BY log_id DESC";
-     
+
     if ($pagelength > 0) {
         $sql .= "
             LIMIT  $pagelength
             OFFSET $offset";
     }
-            
+
 
     return phorum_db_interact(DB_RETURN_ASSOCS, $sql);
 }
@@ -476,15 +476,15 @@ function event_logging_getlogs($page = 1, $pagelength = 20, $filter = NULL)
  */
 function event_logging_clearlogs($filter = NULL)
 {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $where = event_logging_create_where($filter);
 
     phorum_db_interact(
         DB_RETURN_RES,
-        "DELETE FROM {$PHORUM["event_logging_table"]} $where", 
-        NULL, 
-        DB_MASTERQUERY 
+        "DELETE FROM {$PHORUM["event_logging_table"]} $where",
+        NULL,
+        DB_MASTERQUERY
     );
 }
 
@@ -492,16 +492,16 @@ function event_logging_clearlogs($filter = NULL)
  * Update the forum info for a certain message_id.
  */
 function event_logging_update_message_id_info($message_id, $forum_id, $thread_id) {
-    $PHORUM = $GLOBALS["PHORUM"];
+    global $PHORUM;
 
     phorum_db_interact(
         DB_RETURN_RES,
         "UPDATE {$PHORUM["event_logging_table"]}
          SET    forum_id = " . (int)$forum_id . ",
                 thread_id = " . (int)$thread_id . "
-         WHERE  message_id = " . (int)$message_id, 
-         NULL, 
-         DB_MASTERQUERY 
+         WHERE  message_id = " . (int)$message_id,
+         NULL,
+         DB_MASTERQUERY
     );
 }
 

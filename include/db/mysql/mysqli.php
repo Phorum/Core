@@ -84,7 +84,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     // Setup a database connection if no database connection is available yet.
     if (empty($conn))
     {
-        $PHORUM = $GLOBALS['PHORUM'];
+        global $PHORUM;
         // we suppress errors from the mysqli_connect command as errors
         // are catched differently.
         $conn = @mysqli_connect(

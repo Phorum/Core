@@ -20,7 +20,7 @@ $PHORUM_ALT_DBCONFIG=array(
 // We have to alter the urls a little
 function phorum_custom_get_url ($page, $query_items, $suffix, $pathinfo)
 {
-    $PHORUM=$GLOBALS["PHORUM"];
+    global $PHORUM;
 
     $url = "$PHORUM[http_path]/phorum.php";
     if ($pathinfo !== NULL) $url .= $pathinfo;

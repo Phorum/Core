@@ -423,7 +423,7 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
  *
  * [description]
  *     This hook can be used for setting up custom abilities and permissions for
- *     users, by updating the applicable fields in 
+ *     users, by updating the applicable fields in
  *     <literal>$GLOBALS["PHORUM"]["DATA"]</literal> (e.g. for giving certain
  *     users the right to make postings sticky, without having to make the full
  *     moderator for a forum).<sbr/>
@@ -763,7 +763,7 @@ if ($PHORUM["posting_template"] == 'posting')
      *     before_editor
      *
      * [description]
-     *     This hook can be used for changing message data, just before the 
+     *     This hook can be used for changing message data, just before the
      *     editor is displayed. This is done after escaping message data for XSS
      *     prevention is done. So in the hook, the module writer will have to be
      *     aware that data is escaped and that he has to escape data himself if
@@ -807,8 +807,8 @@ if ($PHORUM["posting_template"] == 'posting')
      *
      * [example]
      *     <hookcode>
-     *     // Using this, an example hook function that appends the string 
-     *     // "FOO!" to the subject when replying to a message (how useful ;-) 
+     *     // Using this, an example hook function that appends the string
+     *     // "FOO!" to the subject when replying to a message (how useful ;-)
      *     // could look like this:
      *     function phorum_mod_foo_before_editor ($data)
      *     {
@@ -852,7 +852,7 @@ if (isset($PHORUM["postingargs"]["as_include"]) && isset($templates)) {
 // only the fields which are flagged as read-only will be copied.
 function phorum_posting_merge_db2form($form, $db, $apply_readonly = false)
 {
-    $PHORUM = $GLOBALS['PHORUM'];
+    global $PHORUM;
 
     // If we have a user linked to the current message, then get the
     // user data from the database, if it has to be applied as
