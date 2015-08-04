@@ -1950,7 +1950,8 @@ function phorum_get_template_info()
 function phorum_get_language_info()
 {
     // to make some language-files happy which are using $PHORUM-variables
-    global $PHORUM;
+    // we want to work with a copy of $GLOBALS['PHORUM']
+    $PHORUM = $GLOBALS['PHORUM']; // do not change this line to: global $PHORUM;
 
     $langs = array();
 
