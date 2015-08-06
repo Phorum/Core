@@ -69,9 +69,12 @@ function phorum_api_buffer_clear()
     // Clear out all output that PHP buffered up to now.
     for(;;) {
         $status = ob_get_status();
-        if (!$status ||
-            $status['name'] == 'ob_gzhandler' ||
-            !$status['del']) break;
+        if (empty($status) || $status === FALSE || $status['name'] == 'ob_gzhandler') break;
+        if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
+          if (!($status['flags'] & PHP_OUTPUT_HANDLER_REMOVABLE)) break;
+        } else {
+          if (!$status['del']) break;
+        }
         ob_end_clean();
     }
 }
