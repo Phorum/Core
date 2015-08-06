@@ -186,7 +186,7 @@ function hide_help()
 <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
 <input type="hidden" name="module" value="status" />
 Phorum Status:
-<select name="status" onChange="this.form.submit();">
+<select name="status" onchange="this.form.submit();">
 <option value="normal" <?php if($PHORUM["status"]=="normal") echo "selected"; ?>>Normal</option>
 <option value="read-only"<?php if($PHORUM["status"]=="read-only") echo "selected"; ?>>Read Only</option>
 <option value="admin-only"<?php if($PHORUM["status"]=="admin-only") echo "selected"; ?>>Admin Only</option>
