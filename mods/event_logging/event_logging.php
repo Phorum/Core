@@ -874,7 +874,7 @@ function phorum_mod_event_logging_before_footer()
     $rand = rand(1,100);
     if ($rand <= EVENT_LOGGING_GC_SPLAY) {
         $img_url = phorum_get_url(PHORUM_ADDON_URL, 'module=event_logging');
-        print '<img src="'.$img_url.'" width="1" height="1" />';
+        print '<img src="'.$img_url.'" width="1" height="1" alt="" />';
     }
 }
 
