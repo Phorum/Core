@@ -343,7 +343,7 @@ $frm->hidden("smiley_id", $smiley_id);
 $frm->hidden("action", "edit_smiley");
 $frm->addbreak($title);
 $frm->addrow("Smiley string to match", $frm->text_box("search", $search, 20));
-$row = $frm->addrow("Image to replace the string with", $frm->select_tag("smiley", array_merge(array(''=>'Select smiley ...'),$available_smileys), $smiley, "onChange=\"change_image(this.options[this.selectedIndex].value);\"") . "&nbsp;&nbsp;<div style=\"display:none;margin-top:5px\" id=\"preview_div\"><strong>Preview: </strong><img src=\"images/trans.gif\" id=\"preview_image\" /></div>");
+$row = $frm->addrow("Image to replace the string with", $frm->select_tag("smiley", array_merge(array(''=>'Select smiley ...'),$available_smileys), $smiley, "onchange=\"change_image(this.options[this.selectedIndex].value);\"") . "&nbsp;&nbsp;<div style=\"display:none;margin-top:5px\" id=\"preview_div\"><strong>Preview: </strong><img src=\"images/trans.gif\" id=\"preview_image\" /></div>");
 $frm->addhelp($row,
     "Smiley replacement image",
     "The drop down list shows all images that were found in your
@@ -385,7 +385,7 @@ if ($smiley_id == "NEW")
             foreach ($item as $key => $val) {
                 $item[$key] = htmlspecialchars($val);
             }
-            
+
             $edit_url = phorum_admin_build_url(array(
                 'module=modsettings',
                 'mod=smileys',
