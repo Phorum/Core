@@ -16,7 +16,7 @@
                     {/IF}
                 {/LOOP FORUMS}
         </select></p>
-        <p><input type="checkbox" name="create_notification" id="create-notification" value="1" /><label for="create-notification">{LANG->MoveNotification}</label></p>
+        <p><input type="checkbox" id="create_notification" name="create_notification" value="1" /><label for="create_notification">{LANG->MoveNotification}</label></p>
         <input type="submit" name="move" value="{LANG->MoveThread}" />
     </form>
 </div>

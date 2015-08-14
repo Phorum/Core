@@ -17,7 +17,7 @@
                                 }
                             }
                         }
-                        document.write ( '<input type="checkbox" name="toggle" id="toggle" onclick="checkAll()" />' );
+                        document.write ( '<input type="checkbox" id="toggle" name="toggle" onclick="checkAll()" />' );
                     </script>
                     <noscript>&nbsp;</noscript>
                 </th>

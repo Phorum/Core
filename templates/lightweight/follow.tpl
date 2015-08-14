@@ -12,7 +12,7 @@
         <strong>{LANG->StartedBy} {AUTHOR}</strong><br/><br />
 
         {LANG->FollowExplanation}<br /><br />
-        <input type="checkbox" name="send_email" id="send-email" checked="checked" /><label for="send-email">&nbsp;{LANG->FollowWithEmail}</label><br /><br />
+        <input type="checkbox" id="send_email" name="send_email" checked="checked" /><label for="send_email">&nbsp;{LANG->FollowWithEmail}</label><br /><br />
         <input type="submit" value="{LANG->Submit}" />
     </div>
   </form>
