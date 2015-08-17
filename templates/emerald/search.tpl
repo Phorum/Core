@@ -59,7 +59,7 @@
         <form action="{URL->ACTION}" method="get">
             {POST_VARS}
             {LANG->SearchMessages}:<br />
-            <input type="text" name="search" id="phorum_search_message" size="30" maxlength="" value="{SEARCH->safe_search}" />
+            <input type="text" id="search" name="search" size="30" maxlength="" value="{SEARCH->safe_search}" />
             <select name="match_type">
                 <option value="ALL" {IF SEARCH->match_type "ALL"}selected="selected"{/IF}>{LANG->MatchAll}</option>
                 <option value="ANY" {IF SEARCH->match_type "ANY"}selected="selected"{/IF}>{LANG->MatchAny}</option>
@@ -68,7 +68,7 @@
             <input type="submit" value="{LANG->Search}" /><br />
             <br />
             {LANG->SearchAuthors}:<br />
-            <input type="text" id="phorum_search_author" name="author" size="30" maxlength="" value="{SEARCH->safe_author}" /><br />
+            <input type="text" id="author" name="author" size="30" maxlength="" value="{SEARCH->safe_author}" /><br />
             <br />
             {LANG->Forums}:<br />
             <select name="match_forum[]" size="{SEARCH->forum_list_length}" multiple="multiple">
