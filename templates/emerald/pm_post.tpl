@@ -79,7 +79,7 @@
 
             {LANG->Message}:
             <div id="post-body">
-                <textarea id="body" name="body" class="body" rows="15" cols="50">{MESSAGE->message}</textarea>
+                <textarea id="message" name="message" class="body" rows="15" cols="50">{MESSAGE->message}</textarea>
             </div>
 
         </small>
