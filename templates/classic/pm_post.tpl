@@ -34,14 +34,14 @@
           {IF SHOW_USERSELECTION}
             <div class="phorum-pmuserselection">
               {IF USERS}
-                <select id="userselection" name="to_id" size="1" align="middle">
+                <select id="to_id" name="to_id" size="1" align="middle">
                   <option value=""> {LANG->PMSelectARecipient}</option>
                   {LOOP USERS}
                     <option value="{USERS->user_id}" <?php if (isset($_POST['to_id']) && $_POST['to_id'] == $PHORUM['TMP']['USERS']['user_id']) echo 'selected="selected"'?>>{USERS->display_name}</option>
                   {/LOOP USERS}
                 </select>
               {ELSE}
-                <input type="text" id="userselection" name="to_name" value="<?php if (isset($_POST['to_name'])) echo htmlspecialchars($_POST['to_name'])?>" />
+                <input type="text" id="to_name" name="to_name" value="<?php if (isset($_POST['to_name'])) echo htmlspecialchars($_POST['to_name'])?>" />
               {/IF}
               <input type="submit" class="PhorumSubmit" style="font-size: {smallfontsize}" name="rcpt_add" value="{LANG->PMAddRecipient}" />
               {! Always show recipient list on a separate line}

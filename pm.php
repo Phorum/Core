@@ -259,7 +259,7 @@ if (!empty($action))
                 $folder_id = $_POST["delete_folder_target"];
                 if (!empty($folder_id)) {
                     $PHORUM['DB']->pm_delete_folder($folder_id);
-                    
+
                     /**
                      * [hook]
                      *     pm_delete_folder
@@ -353,9 +353,9 @@ if (!empty($action))
                          *         return $pm_id;
                          *     }
                          *     </hookcode>
-                         */                        
-                         if (isset($PHORUM['hooks']['pm_delete'])) { 
-                             phorum_api_hook('pm_delete', $pm_id);        
+                         */
+                         if (isset($PHORUM['hooks']['pm_delete'])) {
+                             phorum_api_hook('pm_delete', $pm_id);
                          }
                     }
                 }
@@ -1235,9 +1235,9 @@ switch ($page) {
         $PHORUM["DATA"]["SHOW_USERSELECTION"] = true;
 
         // Determine what input element gets the focus.
-        $focus_id = 'userselection';
+        $focus_id = 'to_id';
         if ($PHORUM["DATA"]["RECIPIENT_COUNT"]) $focus_id = 'subject';
-        if (!empty($msg["subject"])) $focus_id = 'body';
+        if (!empty($msg["subject"])) $focus_id = 'message';
         $PHORUM["DATA"]["FOCUS_TO_ID"] = $focus_id;
 
         // Create data for a user dropdown list, if configured.
@@ -1292,7 +1292,7 @@ switch ($page) {
         if (isset($PHORUM['hooks']['pm_before_editor'])) {
             $msg = phorum_api_hook('pm_before_editor', $msg, $action);
         }
-        
+
         $PHORUM["DATA"]["PMLOCATION"] = $PHORUM["DATA"]["LANG"]["SendPM"];
         $template = "pm_post";
         break;

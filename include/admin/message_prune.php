@@ -522,7 +522,7 @@ foreach($ruledefs as $filter => $def) {
         onsubmit="filter.getFilterDescription()">
   <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
   <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
-  <input type="hidden" name="filterdesc" id="filterdesc" value="" />
+  <input type="hidden" id="filterdesc" name="filterdesc" value="" />
   <div style="margin-bottom: 5px">
     <input id="filtermode_and" type="radio"
            <?php if ($filtermode=='and') { ?>checked="checked"<?php } ?>
@@ -998,7 +998,7 @@ if (isset($messages) && is_array($messages))
           action="<?php echo phorum_admin_build_url(); ?>">
     <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
     <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
-    <input type="hidden" name="filterdesc" id="filterdesc" value="<?php
+    <input type="hidden" id="filterdesc" name="filterdesc" value="<?php
         // Remember the filter description if one is available
         // (should be at this point).
         if (isset($_POST["filterdesc"])) {

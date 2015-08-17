@@ -32,7 +32,7 @@
                                 }
                             }
                         }
-                        document.write ( '<input type="checkbox" name="toggle" id="toggle" onclick="checkAll()" />' );
+                        document.write ( '<input type="checkbox" id="toggle" name="toggle" onclick="checkAll()" />' );
                     </script>
                     {LANG->Delete}
                 </th>
@@ -46,7 +46,7 @@
                     {VAR altclass "alt"}
                 {ELSE}
                     {VAR altclass ""}
-                {/IF}            
+                {/IF}
                 <tr>
                     <td width="5%"><input type="checkbox" name="delthreads[]" value="{TOPICS->thread}" /></td>
 
