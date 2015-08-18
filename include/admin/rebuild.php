@@ -117,13 +117,13 @@ if ( count( $_POST ) ) {
 
         if(empty($PHORUM['DBCONFIG']['empty_search_table'])) {
             $ret = phorum_db_rebuild_search_data();
-    
-    
+
+
             $okmsg .= "Searchdata successfully rebuilt.<br />";
         } else {
-            
+
             $okmsg .="<strong>Flag &quot;empty_search_table&quot; set in db configuration. Search table is not going to be rebuild with that.</strong>";
-            
+
         }
 
     }

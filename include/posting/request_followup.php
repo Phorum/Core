@@ -28,15 +28,15 @@ if (isset($_POST["sticky"])) {
     $_POST["special"] = "sticky";
 }
 
-// For setting up following threads, either a "subscription" field 
+// For setting up following threads, either a "subscription" field
 // (containing one "bookmark" or "message" if a subscription is needed)
 // or the checkboxes "subscription_follow" and "subscription_mail" can
-// be used. If the checkboxes are used, then map them into a 
+// be used. If the checkboxes are used, then map them into a
 // correct subscription value here.
 if (!isset($_POST["subscription"])) {
     $_POST["subscription"] = "";
     if (!empty($_POST["subscription_follow"])) {
-        $_POST["subscription"] = empty($_POST["subscription_mail"]) 
+        $_POST["subscription"] = empty($_POST["subscription_mail"])
                                ? "bookmark" : "message";
     }
 }
@@ -66,33 +66,33 @@ foreach ($PHORUM["post_fields"] as $var => $spec)
     // Format and store the data based on the configuration.
     switch ($spec[pf_TYPE])
     {
-    	case "boolean":
-    	    $message[$var] = isset($_POST[$var]) && $_POST[$var] ? 1 : 0;
-    	    break;
+        case "boolean":
+            $message[$var] = isset($_POST[$var]) && $_POST[$var] ? 1 : 0;
+            break;
 
-    	case "integer":
-    	    $message[$var] = isset($_POST[$var]) ? (int) $_POST[$var] : NULL;
-    	    break;
+        case "integer":
+            $message[$var] = isset($_POST[$var]) ? (int) $_POST[$var] : NULL;
+            break;
 
         case "array":
             // Serialized arrays are base64 encoded, to prevent special
             // character (especially newline) mangling by the browser.
-    	    $message[$var] = isset($_POST[$var])
-                           ? unserialize(base64_decode($_POST[$var])) 
+            $message[$var] = isset($_POST[$var])
+                           ? unserialize(base64_decode($_POST[$var]))
                            : array();
-    	    break;
+            break;
 
         case "string":
-    	    $message[$var] = isset($_POST[$var]) ? trim($_POST[$var]) : '';
+            $message[$var] = isset($_POST[$var]) ? trim($_POST[$var]) : '';
             // Prevent people from impersonating others by using
             // multiple spaces in the author name.
             if ($var == 'author') {
                 $message[$var] = preg_replace('/\s+/', ' ', $message[$var]);
             }
-    	    break;
+            break;
 
-    	default:
-    	    trigger_error(
+        default:
+            trigger_error(
                 "Illegal field type used for field $var: " . $spec[pf_TYPE],
                 E_USER_ERROR
             );

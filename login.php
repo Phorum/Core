@@ -33,7 +33,7 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
      *
      * [description]
      *     This hook can be used for performing tasks before a user logout. The
-     *     user data will still be availbale in 
+     *     user data will still be availbale in
      *     <literal>$PHORUM["user"]</literal> at this point.
      *
      * [category]
@@ -270,7 +270,7 @@ if (count($_POST) > 0) {
          * [input]
          *     An array containing four elements:
          *     <ul>
-         *         <li>status: the password reset status, which can be: 
+         *         <li>status: the password reset status, which can be:
          *             "new_password" (a new password was generated and
          *             sent for an active account),
          *             "new_verification" (a new account verification code
@@ -307,12 +307,12 @@ if (count($_POST) > 0) {
          *             case 'new_password':
          *                 $log = 'New password generated for ' .
          *                        $data['user']['username'] . ': ' .
-         *                        $data['secret']; 
+         *                        $data['secret'];
          *                 break;
          *             case 'new_verification':
          *                 $log = 'New verification code generated for ' .
          *                        $data['user']['username'] . ': ' .
-         *                        $data['secret']; 
+         *                        $data['secret'];
          *                 break;
          *             case 'user_unknown':
          *                 $log = 'Could not find a user for email ' .
@@ -394,18 +394,18 @@ if (count($_POST) > 0) {
                     } else {
                         $redir = phorum_get_url( PHORUM_LIST_URL );
                     }
-                    
-                    // checking for redirection url on the same domain, 
+
+                    // checking for redirection url on the same domain,
                     // localhost or domain defined through the settings
                     $redir_ok = false;
                     $check_urls = array();
                     if(!empty($PHORUM['login_redir_urls'])) {
-                        
+
                         $check_urls = explode(",",$PHORUM['login_redir_urls']);
                     }
                     $check_urls[]="http://localhost";
                     $check_urls[]=$PHORUM['http_path'];
-                                        
+
                     foreach($check_urls as $check_url) {
                          // the redir-url has to start with one of these URLs
                          if(stripos($redir,$check_url) === 0) {
@@ -415,7 +415,7 @@ if (count($_POST) > 0) {
                     }
                     if(!$redir_ok) {
                         $redir = phorum_get_url( PHORUM_LIST_URL );
-                    }                  
+                    }
 
                     /*
                      * [hook]
@@ -426,7 +426,7 @@ if (count($_POST) > 0) {
                      *     successful user login and for changing the page to
                      *     which the user will be redirected (by returning a
                      *     different redirection URL). If you need to access the
-                     *     user data, then you can do this through the global 
+                     *     user data, then you can do this through the global
                      *     <literal>$PHORUM</literal> variable. The user data
                      *     will be in <literal>$PHORUM["user"]</literal>.
                      *
@@ -487,15 +487,15 @@ if (count($_POST) > 0) {
              *     In <filename>login.php</filename>, when a user login fails.
              *
              * [input]
-             *     An array containing three fields (read-only): 
+             *     An array containing three fields (read-only):
              *     <ul>
              *         <li>username</li>
              *         <li>password</li>
              *         <li>location
              *         <ul>
-             *              <li>The location field specifies where the login 
-             *              failure occurred and its value can be either 
-             *              <literal>forum</literal> or 
+             *              <li>The location field specifies where the login
+             *              failure occurred and its value can be either
+             *              <literal>forum</literal> or
              *              <literal>admin</literal>.</li>
              *         </ul></li>
              *     </ul>

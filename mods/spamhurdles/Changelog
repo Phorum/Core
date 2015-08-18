@@ -4,7 +4,7 @@ Changelog:
 2010-11-02 v2.0.2
 
     - Updated the French language file with the new version as provided
-		  by phorum.org user cactux.
+      by phorum.org user cactux.
 
 v2.0.2
 
@@ -15,7 +15,7 @@ v2.0.2
       or disable the logging of form posts that are blocked by the
       Spam Hurdles module.
 
-    - Added code to the settings screen that will check if all templates 
+    - Added code to the settings screen that will check if all templates
       contain the required template hooks. If there are template files that
       do not contain the required hooks, then a warning message is printed
       in the settings screen, telling the admin what templates to update

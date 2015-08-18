@@ -16,7 +16,7 @@
 
     Op dit forum kan er gebruik worden gemaakt van smileys.
     Een smiley bestaat uit een reeks karakters, die bij het
-    lezen van een bericht getoond zal worden als 
+    lezen van een bericht getoond zal worden als
     afbeelding. Meestal worden smileys gebruikt om een
     stemming weer te geven. In de onderstaande tabel staan alle
     beschikbare smileys. De kolom "Waar" geeft aan waar in

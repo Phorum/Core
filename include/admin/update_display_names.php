@@ -40,7 +40,7 @@ if ($step == 0)
     } else {
         $frm->addbreak("Display name update");
         $frm->addmessage(
-            "A change was made to the display name configuration of 
+            "A change was made to the display name configuration of
              Phorum. This requires some updates in the database.
              Click \"Continue\" to start the updates."
         );
@@ -48,8 +48,8 @@ if ($step == 0)
     $frm->hidden("module", "update_display_names");
     $frm->hidden("step", "1");
     $frm->show();
-} 
-else 
+}
+else
 {
     // The number of users to process in a single batch.
     $batchsize = 100;
@@ -98,7 +98,7 @@ else
     }
 
     // Retrieve user count.
-    $user_count = isset($_REQUEST['user_count']) 
+    $user_count = isset($_REQUEST['user_count'])
                 ? (int) $_REQUEST['user_count']
                 : phorum_db_user_count();
 
@@ -111,7 +111,7 @@ else
     <div style="height:20px;width:300px; border:1px solid black">
     <div style="height:20px;width:<?php print $perc ?>%;background-color:green">
     </div></div></td><td style="padding-left:10px">
-      <?php 
+      <?php
           $update_count = min(($batch+1)*$batchsize, $user_count);
           print "$update_count users of $user_count updated" ?>
     </td></tr></table> <?php

@@ -33,7 +33,7 @@ function phorum_convert_check_users($link) {
 }
 
 function phorum_convert_getForums($link) {
-	global $CONVERT;
+    global $CONVERT;
 
     $sql="SELECT * FROM {$CONVERT['forumstable']} ORDER BY id ASC";
     $res=mysql_unbuffered_query($sql,$link);
@@ -47,12 +47,12 @@ function phorum_convert_getForums($link) {
        $forums[$row['id']]=$row;
     }
 
-	return $forums;
+    return $forums;
 }
 
 
 function phorum_convert_getGroups($link) {
-	global $CONVERT;
+    global $CONVERT;
 
     $sql="SELECT * FROM {$CONVERT['forumstable']}_groups ORDER BY id ASC";
     $res=mysql_unbuffered_query($sql,$link);
@@ -66,7 +66,7 @@ function phorum_convert_getGroups($link) {
 
     }
 
-	return $groups;
+    return $groups;
 }
 
 function phorum_convert_getForumGroups($forum_id) {
@@ -92,13 +92,13 @@ function phorum_convert_prepareForum($forumdata) {
          }
 
          $newforum = array(
-            		 'forum_id' => $forumdata['id'],
-            		 'name' => $forumdata['name'],
-            		 'active' => $forumdata['active'],
-            		 'description' => $forumdata['description'],
-            		 'template' => 'default',
-            		 'folder_flag' => $forumdata['folder'],
-            		 'parent_id' => $forumdata['parent'],
+                     'forum_id' => $forumdata['id'],
+                     'name' => $forumdata['name'],
+                     'active' => $forumdata['active'],
+                     'description' => $forumdata['description'],
+                     'template' => 'default',
+                     'folder_flag' => $forumdata['folder'],
+                     'parent_id' => $forumdata['parent'],
                      'pub_perms' => PHORUM_USER_ALLOW_READ,
                      'reg_perms' => PHORUM_USER_ALLOW_READ
                      );
@@ -165,13 +165,13 @@ function phorum_convert_prepareForum($forumdata) {
 
 
          $newforum = array(
-            		 'forum_id' => $forumdata['id'],
-            		 'name' => $forumdata['name'],
-            		 'active' => $forumdata['active'],
-            		 'description' => $forumdata['description'],
-            		 'template' => 'default',
-            		 'folder_flag' => $forumdata['folder'],
-            		 'parent_id' => $forumdata['parent'],
+                     'forum_id' => $forumdata['id'],
+                     'name' => $forumdata['name'],
+                     'active' => $forumdata['active'],
+                     'description' => $forumdata['description'],
+                     'template' => 'default',
+                     'folder_flag' => $forumdata['folder'],
+                     'parent_id' => $forumdata['parent'],
                      'list_length_flat' => $forumdata['display'],
                      'list_length_threaded' => $forumdata['display'],
                      'read_length' => 20,
@@ -251,8 +251,8 @@ function phorum_convert_getNextMessage($res,$table_name) {
 
       //find [%sig%] and cut it
       if (preg_match ("/\[%sig%\]/", $mdata['body'])) {
-      	$mdata['body'] = preg_replace ( "/\[%sig%\]/", "", $mdata['body']);
-      	$add_signature = true;
+          $mdata['body'] = preg_replace ( "/\[%sig%\]/", "", $mdata['body']);
+          $add_signature = true;
       } else {
         $add_signature = false;
       }
@@ -359,7 +359,7 @@ function phorum_convert_getNextUser($res) {
     if(isset($userdata['sess_id'])) {
         unset($userdata['sess_id']);
     }
-    
+
     $userdata['user_id']=$userdata['id'];
     unset($userdata['id']);
 

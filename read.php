@@ -791,7 +791,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM["DATA"]["DESCRIPTION"] = preg_replace('!\s+!s'," ", strip_tags($PHORUM["DATA"]["TOPIC"]["body"]));
     $PHORUM["DATA"]["DESCRIPTION"] = mb_substr($PHORUM["DATA"]["DESCRIPTION"], 0, 300, $PHORUM["DATA"]["HCHARSET"]);
     $PHORUM["DATA"]["DESCRIPTION"] = htmlspecialchars($PHORUM["DATA"]["DESCRIPTION"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-    
+
     // add feed url
     if(isset($PHORUM['use_rss']) && $PHORUM['use_rss']){
         // one for the page-links
@@ -836,29 +836,29 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
     $PHORUM["DATA"]["REPLY_ON_READ"] = !empty($PHORUM["reply_on_read_page"]);
 
     if (isset($PHORUM["reply_on_read_page"]) && $PHORUM["reply_on_read_page"]) {
-    
+
         // Never show the reply box if the message is closed.
         if($thread_is_closed) {
-    
+
             $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
             $templates[] = "message";
-    
+
         } else {
             // Prepare the arguments for the posting.php script.
             $goto_mode = "reply";
             if (isset($PHORUM["args"]["quote"]) && $PHORUM["args"]["quote"]) {
                 $goto_mode = "quote";
             }
-    
+
             $PHORUM["postingargs"] = array(
                 1 => $goto_mode,
                 2 => $message_id,
                 "as_include" => true
             );
-    
+
             include("./posting.php");
         }
-    }    
+    }
 
     phorum_output($templates);
 

@@ -73,7 +73,7 @@
         $title="Add A Bad Word";
         $submit="Add";
     }
-    
+
     settype($comments, "string");
     settype($forum_id,"int");
     settype($string, "string");
@@ -91,7 +91,7 @@
         <div class="PhorumInfoMessage">
             Are you sure you want to delete this entry?
             <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
-            	<input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
+                <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
                 <input type="hidden" name="module" value="<?php echo $module; ?>" />
                 <input type="hidden" name="curr" value="<?php echo htmlspecialchars($_GET['curr']) ?>" />
                 <input type="hidden" name="delete" value="1" />
@@ -139,7 +139,7 @@
              </ul>");
 
         $frm->addrow("Valid for Forum", $frm->select_tag("forum_id", $forum_list, $forum_id));
-        
+
         $row = $frm->addrow(
             'Comments',
             $frm->textarea('comments', $comments, 50, 7)
@@ -149,7 +149,7 @@
              created it, when you did this, when the ban can be deleted, etc.)
              These comments will only be shown on this page and are meant as
              a means for the administrator to do some bookkeeping."
-        );        
+        );
 
         $frm->show();
 
@@ -167,7 +167,7 @@
             foreach($bad_words as $key => $item){
                 $edit_url = phorum_admin_build_url(array('module=badwords','edit=1',"curr=$key"));
                 $delete_url = phorum_admin_build_url(array('module=badwords','delete=1',"curr=$key"));
-                                        
+
                 $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
                 echo "<tr>\n";
                 echo "    <td class=\"".$ta_class."\">".htmlspecialchars($item[string])."</td>\n";

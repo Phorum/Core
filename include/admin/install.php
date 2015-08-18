@@ -386,12 +386,12 @@ switch ($step){
             "mod_announcements" => array('module'=>'modsettings','mod'=>'announcements','forum_id'=>1,'pages'=>array('index'=>'1','list'=>'1'),'number_to_show'=>5,'only_show_unread'=>NULL,'days_to_show'=>0)
 
             );
-            
-            // check for the fileinfo extension 
+
+            // check for the fileinfo extension
             if(function_exists("finfo_open")) {
-            	$settings['file_fileinfo_ext']=1;
+                $settings['file_fileinfo_ext']=1;
             } else {
-            	$settings['file_fileinfo_ext']=0;
+                $settings['file_fileinfo_ext']=0;
             }
 
             phorum_db_update_settings($settings);
@@ -422,7 +422,7 @@ switch ($step){
             "pub_perms" =>  $default_forum_options['pub_perms'],
             "reg_perms" =>  $default_forum_options['reg_perms'],
             "template_settings" => "",
-            "inherit_id"=>0,            
+            "inherit_id"=>0,
             "forum_path" => 'a:2:{i:0;s:8:"Phorum 5";i:1;s:13:"Announcements";}'
             );
 
@@ -517,7 +517,7 @@ switch ($step){
 
     case "done":
 
-    	$cont_url = phorum_admin_build_url('');
+        $cont_url = phorum_admin_build_url('');
         phorum_db_update_settings( array("installed"=>1) );
         echo "The setup is complete.  You can now go to <a href=\"$cont_url\">the admin</a> and start making Phorum all your own.<br /><br /><strong>Here are some things you will want to look at:</strong><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=settings\">The General Settings page</a><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=mods\">Pre-installed modules</a><br /><br /><a href=\"docs/faq.txt\">The FAQ</a><br /><br /><a href=\"docs/performance.txt\">How to get peak performance from Phorum</a><br /><br /><strong>For developers:</strong><br /><br /><a href=\"docs/creating_mods.txt\">Module Creation</a><br /><br /><a href=\"docs/permissions.txt\">How Phorum permisssions work</a><br /><br /><a href=\"docs/CODING-STANDARDS\">The Phorum Team's codings standards</a>";
 

@@ -232,7 +232,7 @@
         $vroot=0;
         $active=1;
         $template=$PHORUM["default_forum_options"]["template"];
-        
+
     }
 
     $frm->hidden("folder_flag", "1");

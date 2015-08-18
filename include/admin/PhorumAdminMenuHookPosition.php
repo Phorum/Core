@@ -51,19 +51,19 @@
     class PhorumAdminMenuHookPosition {
         /**
          * The array with all positions and their HTML content.
-         * 
-         * @var array  Defaults to array(). 
+         *
+         * @var array  Defaults to array().
          */
         private $_aPos = array();
         /**
          * Special handling for the last position.
-         * 
-         * @var array  Defaults to array(). 
+         *
+         * @var array  Defaults to array().
          */
         private $_aLastPos = array();
         /**
          * Helper member to easily process all injects positions.
-         * 
+         *
          * @var int  Defaults to 0.
          * @see fetchAndRemoveNext()
          */
@@ -72,8 +72,8 @@
          * Append the HTML at this position.
          *
          * @param int    $iPos  0 is always before the Phorums "Main Menu"
-         * @param string $sHtml 
-         * 
+         * @param string $sHtml
+         *
          * @return PhorumAdminMenuHookPosition
          */
         public function appendAt($iPos, $sHtml) {
@@ -94,8 +94,8 @@
          * The last position is always after the last hardcoded Phorum admin
          * menus.
          *
-         * @param string $sHtml 
-         * 
+         * @param string $sHtml
+         *
          * @return PhorumAdminMenuHookPosition
          */
         public function appendLast($sHtml) {
@@ -106,9 +106,9 @@
         /**
          * Fetches the HTML from the requested positon and removes it from the
          * internal list (this means it can't be fetched twice).
-         * 
-         * @param int $iPos 
-         * 
+         *
+         * @param int $iPos
+         *
          * @return string   HTML (may be empty)
          */
         public function fetchAndRemoveAt($iPos) {
@@ -128,9 +128,9 @@
          * forget those and fetch them.
          *
          * This also returns the last position, always at the end.
-         * 
-         * @param int $iPos 
-         * 
+         *
+         * @param int $iPos
+         *
          * @return string   HTML (may be empty)
          */
         public function fetchAndRemoveRemaining() {
@@ -143,7 +143,7 @@
         /**
          * Fetches the HTML from the requested positon and removes it from the
          * internal list (this means it can't be fetched twice).
-         * 
+         *
          * @return string   HTML (may be empty)
          */
         public function fetchAndRemoveLast() {
@@ -156,7 +156,7 @@
          * The internal counter starts at 0 and is incremented everytime this
          * method is called, allowing to process all positions (except the
          * special 'last' ones)
-         * 
+         *
          * @return string   HTML (may be empty)
          */
         public function fetchAndRemoveNext() {

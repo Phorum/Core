@@ -25,4 +25,4 @@ hook: before_footer|phorum_mod_event_logging_before_footer
 hook: password_reset|phorum_mod_event_logging_password_reset
 hook: addon|phorum_mod_event_logging_addon
 hook: pm_sent|phorum_mod_event_logging_pm_sent
-hook: user_delete|phorum_mod_event_logging_user_delete 
+hook: user_delete|phorum_mod_event_logging_user_delete

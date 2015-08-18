@@ -18,7 +18,7 @@ Phorum.subject_ids = new Array(
 Phorum.textarea_obj = null;
 Phorum.subject_obj = null;
 
-// A variable for storing the current selection range of the 
+// A variable for storing the current selection range of the
 // textarea. Needed for working around an MSIE problem.
 Phorum.textarea_range = null;
 
@@ -105,7 +105,7 @@ Phorum.strip_whitespace = function(str, return_stripped)
     } else {
         return str;
     }
-} 
+}
 
 // Save the selection range of the textarea. This is needed because
 // sometimes clicking in a popup can clear the selection in MSIE.

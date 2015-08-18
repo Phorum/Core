@@ -1,38 +1,38 @@
 <chapter id="using.main">
  <title>Using Phorum</title>
- 
+
  <section>
   <title>Create a Profile</title>
    <para>
-   To post, reply and subscribe to topics, and to personalise user 
-   settings through the Control Panel, you have to create a user 
-   profile. The possible exception to this rule is if the forum 
-   administrator allows anonymous posting in certain forums, in which 
-   case you do not need to register to post topics or reply to them. 
-   However, in most cases at least the majority of forums require 
-   creating a user profile to perform these actions. 
+   To post, reply and subscribe to topics, and to personalise user
+   settings through the Control Panel, you have to create a user
+   profile. The possible exception to this rule is if the forum
+   administrator allows anonymous posting in certain forums, in which
+   case you do not need to register to post topics or reply to them.
+   However, in most cases at least the majority of forums require
+   creating a user profile to perform these actions.
    </para>
    <para>
    To create a profile, follow these steps:
    </para>
    <para>
-   1. Click on the 'Create A New Profile' button at the top right of the 
+   1. Click on the 'Create A New Profile' button at the top right of the
    forum page.
    </para>
    <para>
-   2. Fill out the form on the following page. Double check the email 
-   address you enter - it is important this is correct for validating 
-   your account and other functions. Also, make sure your password is 
-   strong by using an alphanumeric combination of characters at least 8 
+   2. Fill out the form on the following page. Double check the email
+   address you enter - it is important this is correct for validating
+   your account and other functions. Also, make sure your password is
+   strong by using an alphanumeric combination of characters at least 8
    characters long.
    </para>
    <para>
-   3. Once you have clicked the submit button, you will be informed as 
-   to whether you need to take any further action to active your 
-   account. On some forums you may need to click on a verification link 
-   which will be sent to the email address you provided, a moderator may 
+   3. Once you have clicked the submit button, you will be informed as
+   to whether you need to take any further action to active your
+   account. On some forums you may need to click on a verification link
+   which will be sent to the email address you provided, a moderator may
    need to approve your account, or both.
-   </para> 
+   </para>
  </section>
 
  <section>
@@ -42,62 +42,62 @@
  <section>
   <title>Creating topics, replying and editing posts</title>
    <para>
-   A topics is the starting point of any conversation on a forum. An 
-   initial poster creates a subject and a post, and then other users 
-   can reply to it. In this way users can converse about specific 
-   'topics' of conversation. 
+   A topics is the starting point of any conversation on a forum. An
+   initial poster creates a subject and a post, and then other users
+   can reply to it. In this way users can converse about specific
+   'topics' of conversation.
    </para>
    <para>
    To create a topic, follow these steps:
    </para>
    <para>
-   <emphasis role="bold">1.</emphasis> Browse to the forum you want to 
-   post a topic in, then click on the 'New Topic' link above the topic 
+   <emphasis role="bold">1.</emphasis> Browse to the forum you want to
+   post a topic in, then click on the 'New Topic' link above the topic
    list.
    </para>
    <para>
-   <emphasis role="bold">2.</emphasis> The posting interface will now be 
+   <emphasis role="bold">2.</emphasis> The posting interface will now be
    displayed. First, enter the subject of your topic, and then the message
-   section. You can add smilies, formatting, links, pictures and more to 
+   section. You can add smilies, formatting, links, pictures and more to
    your post by using the editor tools located above the message box, which
    is present on most Phorum installations. Hover over the buttons for a
    description of what they do, and for help with BBCode (Bulletin Board
-   Code) and smilies, click on the ? button on the right. 
+   Code) and smilies, click on the ? button on the right.
    <sbr />
    <sbr />
-   You can also choose to add your signature to the post, and to 
-   follow the topic. Additionally, you may post attachments by 
-   clicking on 'Attach a file...'. When you are finished, you can click 
-   on 'Preview' to look at your post before submitting it, or post it by 
-   clicking 'Post message'. 
+   You can also choose to add your signature to the post, and to
+   follow the topic. Additionally, you may post attachments by
+   clicking on 'Attach a file...'. When you are finished, you can click
+   on 'Preview' to look at your post before submitting it, or post it by
+   clicking 'Post message'.
    </para>
    <para>
-   To reply to topics, browse to the topic you want to reply to then 
-   click on the Reply link below a post, or fill out the posting form at 
-   the bottom of the topic. Then follow the same procedure described 
-   above.  
+   To reply to topics, browse to the topic you want to reply to then
+   click on the Reply link below a post, or fill out the posting form at
+   the bottom of the topic. Then follow the same procedure described
+   above.
    </para>
    <para>
-   You can also edit your posts after submitting them by clicking on the 
-   'Edit' link beneath your post. The administrator can set a specific 
+   You can also edit your posts after submitting them by clicking on the
+   'Edit' link beneath your post. The administrator can set a specific
    time limit within which you can edit your post.
    <important>
-   Some of the actions you can perform are limited by administrative 
-   settings. For example, an administrator can prevent users from 
-   starting new topics, replying to them, editing posts, adding 
-   attachments and following topics within specific forums. 
+   Some of the actions you can perform are limited by administrative
+   settings. For example, an administrator can prevent users from
+   starting new topics, replying to them, editing posts, adding
+   attachments and following topics within specific forums.
    </important>
-   <remark>TODO: Link certain features (e.g. topic follow) with 
+   <remark>TODO: Link certain features (e.g. topic follow) with
    appropriate sections when written</remark>
    </para>
   </section>
-  
+
   <section>
    <title>Searching forums</title>
   </section>
-  
+
   <section>
    <title>Private Messages</title>
   </section>
-    
+
 </chapter>

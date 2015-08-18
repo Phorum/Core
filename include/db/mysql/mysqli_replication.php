@@ -113,12 +113,12 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
             if (!empty($PHORUM['DBCONFIG']['masters']) &&
                 is_array($PHORUM['DBCONFIG']['masters'])) {
-                
+
                 $conn_write = phorum_db_get_random_connection($PHORUM['DBCONFIG']['masters']);
 
             } else {
                 // we suppress errors from the mysqli_connect command as errors
-                // are catched differently.            	
+                // are catched differently.
                 $conn_write = @mysqli_connect(
                     $PHORUM['DBCONFIG']['server'],
                     $PHORUM['DBCONFIG']['user'],
@@ -403,12 +403,12 @@ function phorum_db_get_random_connection(&$db_array)
     // loop the servers until we get a connect
     // this could slow you down if you have a lot of downed servers
     while(!$conn && count($db_array)){
-                    
+
         $rand_server = mt_rand(0, count($db_array));
-                    
+
         // just in case someone did non-contiguous keys
         if(!empty($db_array[$rand_server])) {
-                        
+
             $server_data = $db_array[$rand_server];
             // we suppress errors from the mysqli_connect command as errors
             // are catched differently.
@@ -424,7 +424,7 @@ function phorum_db_get_random_connection(&$db_array)
                 // if we could not connect, remove this server
                 // from the array for this request.
                 unset($db_array[$rand_server]);
-                            
+
                 // to get the keys renumbered
                 sort($db_array);
             }

@@ -1,5 +1,5 @@
 <?php
-    
+
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 //   Copyright (C) 2010  Phorum Development Team                              //
@@ -27,9 +27,9 @@
         print "<h2>Purging the cache now.<br/>One moment please...</h2>";
         ob_flush();
 
-        // The standard cache system that is in use should handle its own 
-        // cache cleanup if needed. It can do so by implementing the 
-        // phorum_cache_purge() function. If the required function is not 
+        // The standard cache system that is in use should handle its own
+        // cache cleanup if needed. It can do so by implementing the
+        // phorum_cache_purge() function. If the required function is not
         // available, then the caching layer purge will be ignored.
         if (function_exists("phorum_cache_purge")) {
             $full_purge = isset($_POST["purge_all"]) && $_POST["purge_all"];
@@ -46,7 +46,7 @@
                 $compiled_tpl = $PHORUM["cache"] . "/$entry";
                 $size = filesize($compiled_tpl);
                 if (@unlink($compiled_tpl)) {
-                    $purged += $size;        
+                    $purged += $size;
                 }
             }
         }

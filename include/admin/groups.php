@@ -104,17 +104,17 @@
                 unset($group["new_permissions"]);
 
                 if(phorum_db_update_group($group)){
-                	// clearing user-cache if needed
-                	if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
-	                	$group_members=phorum_db_get_group_members($_POST["group_id"]);
+                    // clearing user-cache if needed
+                    if(isset($PHORUM['cache_users']) && $PHORUM['cache_users']) {
+                        $group_members=phorum_db_get_group_members($_POST["group_id"]);
 
-	                	if(count($group_members)) {
-	                		foreach($group_members as $user_id => $user_status) {
-	                			phorum_cache_remove('user',$user_id);
-	                		}
-	                	}
+                        if(count($group_members)) {
+                            foreach($group_members as $user_id => $user_status) {
+                                phorum_cache_remove('user',$user_id);
+                            }
+                        }
 
-                	}
+                    }
 
 
                     echo "Group Forum Permissions Saved";
@@ -139,7 +139,7 @@
     $forums=phorum_db_get_forums();
 
     if(isset($_REQUEST["edit"]) && !empty($_REQUEST['group_id']) ){
-          
+
         $group_id_in = (empty($_POST['group_id']))?$_GET['group_id']:$_POST['group_id'];
         $_GET['group_id']=(int)$group_id_in;
 
@@ -152,9 +152,9 @@
         $frm->hidden("module", "groups");
 
         $frm->hidden("section", "edit");
-        
+
         // for getting back to the edit-page
-        $frm->hidden('edit','1');   
+        $frm->hidden('edit','1');
 
         $frm->hidden("group_id", $_GET["group_id"]);
 
@@ -173,9 +173,9 @@
         $frm->hidden("module", "groups");
 
         $frm->hidden("section", "forums");
-        
+
         // for getting back to the edit-page
-        $frm->hidden('edit','1');   
+        $frm->hidden('edit','1');
 
         $frm->hidden("group_id", $_GET["group_id"]);
 

@@ -53,7 +53,7 @@ if(is_array($message) && count($message)) {
             }
 
             $mail_users = phorum_api_user_list_moderators($PHORUM['forum_id'], $PHORUM['email_ignore_admin'], TRUE);
-            
+
             if(count($mail_users)){
                 $mail_data = array(
                 "mailmessage" => $PHORUM["DATA"]["LANG"]['ReportPostEmailBody'],
