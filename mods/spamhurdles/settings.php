@@ -63,7 +63,7 @@ if (count($_POST))
             ),
 
             // The version of the configuration format.
-            'config_version' => 2 
+            'config_version' => 2
         );
 
         phorum_db_update_settings(array(
@@ -222,7 +222,7 @@ create_spamhurdle_options(
 );
 
 // ----------------------------------------------------------------------
-// Configure spam hurdles for user registration 
+// Configure spam hurdles for user registration
 // ----------------------------------------------------------------------
 
 $frm->addbreak("Spam Hurdles for user registration");
@@ -238,7 +238,7 @@ create_spamhurdle_options(
 );
 
 // ----------------------------------------------------------------------
-// Configure spam hurdles for PM 
+// Configure spam hurdles for PM
 // ----------------------------------------------------------------------
 
 $frm->addbreak("Spam Hurdles for posting private messages (PM)");
@@ -254,7 +254,7 @@ create_spamhurdle_options(
 );
 
 // ----------------------------------------------------------------------
-// Utility function for generating spam hurdle configuration options 
+// Utility function for generating spam hurdle configuration options
 // ----------------------------------------------------------------------
 
 function create_spamhurdle_options($frm, $section, $tpl, $tplhook, $statusspec)
@@ -422,7 +422,7 @@ function create_spamhurdle_options($frm, $section, $tpl, $tplhook, $statusspec)
     }
     if (!empty($incompatibilities))
     {
-        $frm->addmessage(  
+        $frm->addmessage(
             "<b style=\"color:red\">" .
             "Warning: Incompatible template files detected" .
             "</b><br/><br/>" .

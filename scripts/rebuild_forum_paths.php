@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 // rebuild path info
-// this script rebuilds the path info data for all forums 
+// this script rebuilds the path info data for all forums
 
 // if we are running in the webserver, bail out
 if ('cli' != php_sapi_name()) {

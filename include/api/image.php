@@ -390,7 +390,7 @@ function phorum_api_image_supported()
         'PExcbHyMnFxWAAA7'
     );
 
-    // Try to create a thumbnail out of the image. 
+    // Try to create a thumbnail out of the image.
     $clipped = phorum_api_image_thumbnail($test_image, 100, 100);
     if ($clipped === FALSE) return FALSE;
 

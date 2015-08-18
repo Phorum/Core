@@ -92,7 +92,7 @@
         <div class="PhorumInfoMessage">
             Are you sure you want to delete this entry?
             <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
-            	<input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
+                <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
                 <input type="hidden" name="module" value="<?php echo $module; ?>" />
                 <input type="hidden" name="curr" value="<?php echo htmlspecialchars($_GET['curr']) ?>" />
                 <input type="hidden" name="delete" value="1" />

@@ -70,7 +70,7 @@ function test_user_session_destroy($type)
 {
     // Only do this for the forum session. We do not touch the admin session.
     if ($type == PHORUM_FORUM_SESSION) {
-        $_SESSION['loggedin_user'] = FALSE;        
+        $_SESSION['loggedin_user'] = FALSE;
         return NULL;
     } else {
         return $type;

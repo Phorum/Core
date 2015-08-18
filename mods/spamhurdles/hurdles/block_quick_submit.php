@@ -5,7 +5,7 @@
  * to post it. If a message is posted really quickly after showing
  * a posting form, then this hurdle concludes that it must be a bot that
  * is posting the message and the post is blocked.
- */ 
+ */
 
 function spamhurdle_block_quick_submit_javascript_register($data)
 {

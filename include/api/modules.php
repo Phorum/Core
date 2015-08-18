@@ -223,7 +223,7 @@ function phorum_api_modules_list()
                 ) == -1) {
                 $modules[$module]['url'] = $info['url'];
                 $problems[] = "The module \"{$modinfo['title']}\" is no longer included in the core Phorum distribution. A more recent version of this module (version {$info['version']} or higher) is available at the phorum.org website. Please download and install that version. For more information, visit <a href=\"{$info['url']}\" target=\"_new\">the module's page at phorum.org</a>.";
-            } 
+            }
         }
     }
 

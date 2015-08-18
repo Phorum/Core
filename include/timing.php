@@ -29,7 +29,7 @@
         $GLOBALS["_TIMING"][$key]["start"]=microtime();
         $GLOBALS["_MEMORY"][$key]["start"]=memory_get_usage();
     }
-    
+
     function timing_mark($mark, $key="default")
     {
         $GLOBALS["_TIMING"][$key][$mark]=microtime();
@@ -49,7 +49,7 @@
                 $currmem=$thismem-$lastmem;
                 $totalmem=$thismem-$startmem;
                 echo "<tr><td>$mark</td><td>$curr sec.</td><td>$elapsed sec.</td>";
-                echo "<td>$currmem</td><td>$totalmem</td></tr>"; 
+                echo "<td>$currmem</td><td>$totalmem</td></tr>";
 
 
             } else {

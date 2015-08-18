@@ -350,15 +350,14 @@ function phorum_relative_date($time)
  */
 function phorum_strip_body( $body, $strip_tags = true)
 {
-  if($strip_tags) {
-      // Strip HTML <tags>
-      $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $body);
-      // Strip BB Code [tags]
-      $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
-  } else {
-    $stripped = $body;
-  }
-
+    if($strip_tags) {
+        // Strip HTML <tags>
+        $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $body);
+        // Strip BB Code [tags]
+        $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
+    } else {
+        $stripped = $body;
+    }
 
     // do badwords check
     // Prepare the bad-words replacement code.

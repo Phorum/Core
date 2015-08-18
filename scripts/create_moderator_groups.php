@@ -68,7 +68,7 @@ foreach ($forums as $forum_id => $fdata)
                          PHORUM_USER_ALLOW_MODERATE_USERS
         )
     ));
-     
+
     print "[CREATED GROUP]\n";
 }
 

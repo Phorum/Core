@@ -523,7 +523,7 @@ foreach($ruledefs as $filter => $def) {
         action="<?php echo phorum_admin_build_url('base'); ?>"
         onsubmit="filter.getFilterDescription()">
   <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
-  
+
   <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
   <input type="hidden" id="filterdesc" name="filterdesc" value="" />
   <div style="margin-bottom: 5px">
@@ -1000,7 +1000,7 @@ if (isset($messages) && is_array($messages))
     <form id="selectform" method="post"
           action="<?php echo phorum_admin_build_url('base'); ?>">
     <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
-    
+
     <input type="hidden" name="module" value="<?php print ADMIN_MODULE ?>" />
     <input type="hidden" id="filterdesc" name="filterdesc" value="<?php
         // Remember the filter description if one is available

@@ -130,7 +130,7 @@ if (!isset($PHORUM['mod_spamhurdles']['config_version']) ||
     }
 
     // Keep track of our configuration upgrade.
-    $PHORUM['mod_spamhurdles']['config_version'] = 2; 
+    $PHORUM['mod_spamhurdles']['config_version'] = 2;
 
     // Some stale config options that are no longer in use.
     unset($PHORUM['mod_spamhurdles']['captcha_flite']);

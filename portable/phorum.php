@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 // THIS IS AN EXAMPLE OF HOW YOU WOULD WRAP PHORUM
 // IT IS NOT A DROP IN SOLUTION.
 
 // Phorum wrapper to create a portable, dynamic Phorum with a single code base
-// and to safely wrap Phorum to protect it from other applications. 
+// and to safely wrap Phorum to protect it from other applications.
 
 include_once "./phorum_settings.php";
 
@@ -16,7 +16,7 @@ chdir($PHORUM_DIR);
 // the servers QUERY_STRING.
 if(preg_match("/^([a-z]+)(,|$)/", $_SERVER["QUERY_STRING"], $match)){
     $GLOBALS["PHORUM_CUSTOM_QUERY_STRING"] = str_replace($match[0], "", $_SERVER["QUERY_STRING"]);
-	$page = basename($match[1]);
+    $page = basename($match[1]);
 } elseif(isset($_REQUEST["phorum_page"])){
     $page = basename($_REQUEST["phorum_page"]);
     $getparts = array();

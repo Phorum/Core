@@ -392,7 +392,7 @@ function phorum_controlcenter_user_save($panel)
      *     </hookcode>
      */
     if (isset($PHORUM["hooks"]["cc_save_user"])) {
-    	$userdata['panel']=$panel;
+        $userdata['panel']=$panel;
         $userdata = phorum_hook("cc_save_user", $userdata);
         unset($userdata['panel']);
     }

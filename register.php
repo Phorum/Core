@@ -171,15 +171,15 @@ if (count($_POST)) {
          *     before_register
          *
          * [description]
-         *     This hook can be used for performing tasks before user 
+         *     This hook can be used for performing tasks before user
          *     registration. This hook is useful if you want to add some data to
-         *     or change some data in the user data and to check if the user 
+         *     or change some data in the user data and to check if the user
          *     data is correct.<sbr/>
          *     <sbr/>
          *     When checking the registration data, the hook can set the "error"
-         *     field in the returned user data array. When this field is set 
+         *     field in the returned user data array. When this field is set
          *     after running the hook, the registration processed will be halted
-         *     and the error will be displayed. If you created a custom form 
+         *     and the error will be displayed. If you created a custom form
          *     field "foo" and you require that field to be filled in, you could
          *     create a hook function like the one in the example below.<sbr/>
          *     <sbr/>
