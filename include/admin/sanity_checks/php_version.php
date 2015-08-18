@@ -29,7 +29,7 @@ function phorum_check_php_version()
             PHORUM_SANITY_CRIT,
             "You server is running PHP version ".PHP_VERSION.", however
              PHP version 5 or higher is required for running Phorum.",
-            "Upgrade PHP to version 5. If you are hosting with a 
+            "Upgrade PHP to version 5. If you are hosting with a
              company, please contact them to do this for you. Sometimes,
              PHP5 can be enabled by placing an .htaccess file with some
              special directives in your web directory. Your hosting

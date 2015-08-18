@@ -82,7 +82,7 @@ function phorum_api_output($templates)
         $templates = phorum_api_hook('output_templates', $templates);
     }
 
-    /* 
+    /*
      * [availability]
      *     Phorum 5 >= 5.2.16
      *
@@ -160,7 +160,7 @@ function phorum_api_output($templates)
         phorum_api_hook('start_output');
     }
 
-    /* 
+    /*
      * [availability]
      *     Phorum 5 >= 5.2.16
      *
@@ -253,7 +253,7 @@ function phorum_api_output($templates)
         phorum_api_hook('after_header');
     }
 
-    /* 
+    /*
      * [availability]
      *     Phorum 5 >= 5.2.16
      *
@@ -288,7 +288,7 @@ function phorum_api_output($templates)
         include phorum_api_template($template);
     }
 
-    /* 
+    /*
      * [availability]
      *     Phorum 5 >= 5.2.16
      *
@@ -395,7 +395,7 @@ function phorum_api_output($templates)
         phorum_api_hook('end_output');
     }
 
-    /* 
+    /*
      * [availability]
      *     Phorum 5 >= 5.2.16
      *
@@ -444,7 +444,7 @@ function phorum_api_output($templates)
  */
 function phorum_api_output_last_modify_time($last_modified)
 {
-    if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) 
+    if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))
     {
         $header = preg_replace('/;.*$/','',$_SERVER['HTTP_IF_MODIFIED_SINCE']);
         $modified_since = strtotime($header);
@@ -475,7 +475,7 @@ function phorum_api_output_last_modify_time($last_modified)
  */
 function phorum_api_output_cache_max_age($max_age)
 {
-    settype($max_age, 'int');    
+    settype($max_age, 'int');
 
     header('Cache-Control: max-age='.$max_age);
     header('Expires: ' . gmdate(HTTPDATE, time()+$max_age));

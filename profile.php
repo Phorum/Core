@@ -79,7 +79,7 @@ if( (empty($PHORUM['hide_email_addr']) && !$user['hide_email']) ||
     $PHORUM["DATA"]["PROFILE"]["email"]=phorum_api_format_html_encode($user["email"]);
 } else {
     $PHORUM["DATA"]["PROFILE"]["email"] = $PHORUM["DATA"]["LANG"]["Hidden"];
-}   
+}
 
 if( $PHORUM["track_user_activity"] &&
     (!empty($PHORUM["user"]["admin"]) ||
@@ -123,7 +123,7 @@ if (isset($PHORUM["hooks"]["profile"])) {
 
 $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["UserProfile"];
 $PHORUM["DATA"]["DESCRIPTION"] = "";
-$PHORUM['DATA']['HTML_DESCRIPTION'] = ''; 
+$PHORUM['DATA']['HTML_DESCRIPTION'] = '';
 
 // fill the breadcrumbs-info.
 $PHORUM['DATA']['BREADCRUMBS'][]=array(

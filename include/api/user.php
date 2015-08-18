@@ -512,7 +512,7 @@ function phorum_api_user_save($user, $flags = 0)
                 break;
         }
     }
-    
+
 
     // At this point, we should have a couple of mandatory fields available
     // in our data. Without these fields, the user record is not sane
@@ -1897,12 +1897,12 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
 
 // {{{ Function: phorum_api_user_get_active_user()
 /**
- * Retrieve the active Phorum user. 
+ * Retrieve the active Phorum user.
  *
  * This function was added in Phorum 5.2.16.
  *
  * @return NULL|array
- *   This method will return the data for the active Phorum user or 
+ *   This method will return the data for the active Phorum user or
  *   NULL when this user is an anonymous user (i.e. not logged in.)
  */
 function phorum_api_user_get_active_user()
@@ -2843,7 +2843,7 @@ function phorum_api_user_save_groups($user_id, $groups)
      *         foreach($groups as $group_id => $group_permission) {
      *             // do something with the groups permissions
      *         }
-     *     
+     *
      *         return array($user_id,$groups);
      *     }
      *     </hookcode>

@@ -105,7 +105,7 @@ if ($gotforums && isset($_POST['deleteids']) && count($_POST['deleteids']))
             // Run a hook for performing custom actions after cleanup.
             if (isset($PHORUM["hooks"]["delete"])) {
                 phorum_api_hook("delete", array($msgthd_id));
-            } 
+            }
         }
 
     }

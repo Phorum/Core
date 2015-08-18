@@ -68,7 +68,7 @@ if (isset($PHORUM["args"]["approve"])) {
             // Save the new user active status.
             $moduser["user_id"] = $user_id;
             phorum_api_user_save($moduser);
-            
+
             /*
              * [hook]
              *     after_correct_validation
@@ -85,16 +85,16 @@ if (isset($PHORUM["args"]["approve"])) {
              *     activated user
              *
              * [input]
-             *     An associative array containing: 
+             *     An associative array containing:
              *     user_id, active, email of the currently activating user
              *
              * [output]
-             *     Same as input, with possibly changed contents  
+             *     Same as input, with possibly changed contents
              *
-             *     
-             */    
+             *
+             */
              $moduser['email'] = $user['email'];
-             $moduser = phorum_api_hook("after_correct_validation", $moduser);            
+             $moduser = phorum_api_hook("after_correct_validation", $moduser);
         }
 
     // Validation code incorrect.
@@ -130,7 +130,7 @@ if (count($_POST)) {
      * [description]
      *     This hook can be used for performing tasks before the checks on user
      *     registration. This hook is useful if you want to modify the data before
-     *     the unique checks on username or email address or if you want to skip specific 
+     *     the unique checks on username or email address or if you want to skip specific
      *     checks.<sbr/>
      *
      * [category]
@@ -141,7 +141,7 @@ if (count($_POST)) {
      *     for a new user are done.
      *
      * [input]
-     *     An array containing: 
+     *     An array containing:
      *     the $_POST array of user data of the soon-to-be-registered user
      *     an array telling which checks are going to be done after the hook is run
      *     and the error variable to allow the module to return errors
@@ -158,45 +158,45 @@ if (count($_POST)) {
      *         if($userdata['username'] == 'foo') {
      *              $userdata['username']= 'bar';
      *         }
-     *         
+     *
      *         // skip the email validity check
      *         $checks['email_valid']=0;
-     *         
+     *
      *         // return an error
      *         $error = "You can't continue as module is run! ;-)";
-     *         
+     *
      *         return array($userdata,$checks,$error);
      *     }
      *     </hookcode>
      */
     $todo_checks = array(
         'username_empty' => 1,
-        'username_unique'=> 1,    
+        'username_unique'=> 1,
         'email_valid'    => 1,
-        'email_unique'   => 1,    
-        'password'       => 1, 
-        'banlists'       => 1, 
+        'email_unique'   => 1,
+        'password'       => 1,
+        'banlists'       => 1,
     );
     if (isset($PHORUM["hooks"]["before_register_check"])) {
         list($_POST,$todo_checks,$error) = phorum_api_hook("before_register_check", array($_POST,$todo_checks,$error));
     }
-    
+
     // Check if all required fields are filled and valid.
-    if ($todo_checks['username_empty'] && 
+    if ($todo_checks['username_empty'] &&
         (!isset($_POST["username"]) || empty($_POST['username']))) {
         $error = $PHORUM["DATA"]["LANG"]["ErrUsername"];
     } elseif ($todo_checks['email_valid'] && !isset($_POST["email"]) ||
               !phorum_api_mail_check_address($_POST["email"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrEmail"];
-    } elseif ($todo_checks['password'] && 
+    } elseif ($todo_checks['password'] &&
              (empty($_POST["password"]) || $_POST["password"] != $_POST["password2"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
     }
     // Check if the username and email address don't already exist.
-    elseif($todo_checks['username_unique'] && 
+    elseif($todo_checks['username_unique'] &&
            phorum_api_user_search("username", $_POST["username"])) {
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdName"];
-    } elseif ($todo_checks['email_unique'] && 
+    } elseif ($todo_checks['email_unique'] &&
               phorum_api_user_search("email", $_POST["email"])){
         $error = $PHORUM["DATA"]["LANG"]["ErrRegisterdEmail"];
     }
@@ -262,15 +262,15 @@ if (count($_POST)) {
          *     before_register
          *
          * [description]
-         *     This hook can be used for performing tasks before user 
+         *     This hook can be used for performing tasks before user
          *     registration. This hook is useful if you want to add some data to
-         *     or change some data in the user data and to check if the user 
+         *     or change some data in the user data and to check if the user
          *     data is correct.<sbr/>
          *     <sbr/>
          *     When checking the registration data, the hook can set the "error"
-         *     field in the returned user data array. When this field is set 
+         *     field in the returned user data array. When this field is set
          *     after running the hook, the registration processed will be halted
-         *     and the error will be displayed. If you created a custom form 
+         *     and the error will be displayed. If you created a custom form
          *     field "foo" and you require that field to be filled in, you could
          *     create a hook function like the one in the example below.<sbr/>
          *     <sbr/>

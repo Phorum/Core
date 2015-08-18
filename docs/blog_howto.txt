@@ -36,7 +36,7 @@ This document describes how to create a forum which can be used as a blog.
    Somehow, you have to point people at the blog. You could make a redirect
    using any number of things to redirect your readers to the appropriate URL
    (list.php?1, where 1 is the forum id of the blog forum). However, I like
-   the following method. Let's asume you want the blog to be a page called 
+   the following method. Let's asume you want the blog to be a page called
    blog.php. Then create blog.php like this:
 
       <?php
@@ -50,7 +50,7 @@ This document describes how to create a forum which can be used as a blog.
 
       ?>
 
-   If you wanted your front page to be the blog, just create index.php and 
+   If you wanted your front page to be the blog, just create index.php and
    put this in it.
 
 

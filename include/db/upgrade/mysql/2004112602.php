@@ -17,9 +17,9 @@ create additional table for custom-fields
 if(!isset($PHORUM['PROFILE_FIELDS']['num_fields'])) {
     $new_profile_fields=array();
     foreach($PHORUM['PROFILE_FIELDS'] as $id => $name) {
-        $new_profile_fields[$id]=array('name'=>$name,'length'=>255,'html_disabled'=>0);   
+        $new_profile_fields[$id]=array('name'=>$name,'length'=>255,'html_disabled'=>0);
     }
-    
+
     $new_profile_fields['num_fields']=count($new_profile_fields);
     $PHORUM['PROFILE_FIELDS']=$new_profile_fields;
     // saving them

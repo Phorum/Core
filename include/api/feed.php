@@ -19,7 +19,7 @@
 
 /**
  * This script implements syndication feeds for Phorum.
- * There are multiple output adapters available for generating 
+ * There are multiple output adapters available for generating
  * various output formats (currently RSS, Atom, HTML en JavaScript).
  *
  * @package    PhorumAPI
@@ -33,20 +33,20 @@ require_once PHORUM_PATH.'/include/api/format/messages.php';
 // {{{ Constant definition
 
 /**
- * Function call flag, which tells {@link phorum_api_feed()} that 
+ * Function call flag, which tells {@link phorum_api_feed()} that
  * a feed has to be generated for all (readable) forums in the
  * current (v)root.
  */
 define('PHORUM_FEED_VROOT', 0);
 
 /**
- * Function call flag, which tells {@link phorum_api_feed()} that 
+ * Function call flag, which tells {@link phorum_api_feed()} that
  * a feed has to be generated for a single forum.
  */
 define('PHORUM_FEED_FORUM', 1);
 
 /**
- * Function call flag, which tells {@link phorum_api_feed()} that 
+ * Function call flag, which tells {@link phorum_api_feed()} that
  * a feed has to be generated for a single thread.
  */
 define('PHORUM_FEED_THREAD', 2);
@@ -253,7 +253,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
             // let's make sure that the caller is using the correct forum id
             // in the URL here (since the thread might have been moved to
             // a different forum).
-            $forum_id = $thread['forum_id']; 
+            $forum_id = $thread['forum_id'];
             if ($PHORUM['forum_id'] == $forum_id) {
                 $forum = $PHORUM; // contains all required data already
             } else {
@@ -323,7 +323,7 @@ function phorum_api_feed($adapter, $source_type, $id, $count, $replies)
      *
      * [example]
      *     <hookcode>
-     *     function phorum_mod_foo_feed_after () 
+     *     function phorum_mod_foo_feed_after ()
      *     {
      *       # E.g. do server side tracking
      *       @file_get_contents('your tracking service');

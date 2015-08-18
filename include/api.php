@@ -76,7 +76,7 @@ $PHORUM = array
     // Data for the active user.
     'user'     => array(),
 
-    // Storage space for internal API data. 
+    // Storage space for internal API data.
     'API' => array
     (
         // Initialize data for the ErrorHandling API.
@@ -96,7 +96,7 @@ require_once dirname(__FILE__).'/api/constants.php';
 defined('phorum_page') or define('phorum_page', 'unknown');
 
 // ----------------------------------------------------------------------
-// PHP extension compatibility 
+// PHP extension compatibility
 // ----------------------------------------------------------------------
 
 // For some functionality, we are depending on PHP extensions and
@@ -115,7 +115,7 @@ $compat_modules = array(
     'json_encode' => 'json',
     'json_decode' => 'json',
     'iconv'       => 'iconv',
-    'stripos'     => 'stripos'  
+    'stripos'     => 'stripos'
 );
 
 $missing_compat = array();
@@ -382,7 +382,7 @@ if (function_exists('phorum_api_cache_check'))
              "The error as returned by the cache layer is:<br/>" .
              "<b>" . htmlspecialchars($error) . "</b>";
         exit();
-    }   
+    }
 }
 
 // Check for an upgrade or a new install.
@@ -430,7 +430,7 @@ if (!isset($PHORUM["internal_patchlevel"])) {
 if (isset($PHORUM['internal_version']) &&
     $PHORUM['internal_version'] >= PHORUM_SCHEMA_VERSION &&
     empty($PHORUM['private_key'])) {
-    require_once PHORUM_PATH.'/include/api/generate.php'; 
+    require_once PHORUM_PATH.'/include/api/generate.php';
     $PHORUM['private_key'] = phorum_api_generate_key();
     $PHORUM['DB']->update_settings(array(
         'private_key' => $PHORUM['private_key']
@@ -556,7 +556,7 @@ class Phorum
         if ($func_prefix == 'phorum_api_') {
             $file = NULL;
         } else {
-            $file = $this->getPath($node_path.'.php'); 
+            $file = $this->getPath($node_path.'.php');
         }
 
         // Load the API layer file.
@@ -607,7 +607,7 @@ class Phorum
      *
      * @param array
      *     An array of arguments for the function call.
-     * 
+     *
      * @return mixed
      *     The return value of the function call.
      */

@@ -65,7 +65,7 @@
  * @param integer $min
  *     Optional: the minimum match length. When omitted, the default
  *     minimum match length will be 3.
- * 
+ *
  * @return array
  *     An array, describing the differences between the initial
  *     and the changed string.

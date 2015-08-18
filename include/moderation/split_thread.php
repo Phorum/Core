@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 

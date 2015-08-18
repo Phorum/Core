@@ -103,7 +103,7 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
             define('MODULE_DATABASE_UPGRADE', 1);
             $module = "upgrade";
         }
-        
+
         // check the admin token
         if(!empty($GLOBALS["PHORUM"]["user"]['settings_data']['admin_token']) &&
             $PHORUM['admin_token'] != $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] ||
@@ -121,8 +121,8 @@ if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHOR
             phorum_api_user_save_settings(array(
                 'admin_token_time' => time()
             ));
-        }        
-        
+        }
+
     }
 }
 

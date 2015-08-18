@@ -18,17 +18,17 @@
                 {LANG->ChangeBy}: {CHANGES->username}<br />
                 {LANG->ChangeDate}: {CHANGES->date}<br />
             {/IF}
-            
+
         <strong>
             <br />{CHANGES->colored_subject}<br />
-        </strong> 
-        
+        </strong>
 
-            
-            
+
+
+
         </div>
-       
-        
+
+
         <div class="message-body">
             {CHANGES->colored_body}
         </div>

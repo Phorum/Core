@@ -50,7 +50,7 @@ $error_flag = true;
  *     Message handling
  *
  * [when]
- *     In <filename>action_cancel.php</filename> at the end of the file when 
+ *     In <filename>action_cancel.php</filename> at the end of the file when
  *     everything has been done.
  *
  * [input]

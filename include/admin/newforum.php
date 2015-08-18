@@ -97,7 +97,7 @@ if (count($_POST))
          *
          * [example]
          *     <hookcode>
-         *     function phorum_mod_foo_admin_editforum_form_save_after_defaults ($error) 
+         *     function phorum_mod_foo_admin_editforum_form_save_after_defaults ($error)
          *     {
          *         # Early bail out in case another hook generated already an error
          *         if (strlen($error) > 0) {
@@ -111,8 +111,8 @@ if (count($_POST))
          *     </hookcode>
          */
         $error = phorum_api_hook("admin_editforum_form_save_after_defaults", $error);
-    }    
-    
+    }
+
     // If there were no errors, then store the data in the database.
     if (empty($errors))
     {
@@ -123,7 +123,7 @@ if (count($_POST))
             phorum_api_forums_save($forum, PHORUM_FLAG_DEFAULTS);
 
             $url = phorum_admin_build_url(array('module=forum_defaults','okmsg='.rawurlencode('The default settings were successfully saved')), TRUE);
-                   
+
         }
         // Create or update a forum.
         else

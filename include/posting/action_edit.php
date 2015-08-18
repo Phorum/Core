@@ -58,7 +58,7 @@ if ( $message["parent_id"]==0 ) {
     if($dbmessage['sort'] !== $origmessage['sort']) {
         // too much to calculate here to avoid the full refresh
         $PHORUM['DB']->update_forum_stats(true);
-    }    
+    }
 
 } else {
 
@@ -153,7 +153,7 @@ if (!count($dbmessage["meta"]["attachments"])) {
  *     storing an edited message in the database.
  *
  * [input]
- *     An array containing message data and an optional parameter 
+ *     An array containing message data and an optional parameter
  *     which holds the original message data (added in Phorum 5.2.15)
  *
  * [output]
@@ -196,7 +196,7 @@ $PHORUM['DB']->update_message($message["message_id"], $dbmessage);
  *     storing an edited message in the database.
  *
  * [input]
- *     An array containing message data (read-only)  and an optional parameter 
+ *     An array containing message data (read-only)  and an optional parameter
  *     which holds the original message data (added in Phorum 5.2.15)
  *
  * [output]
@@ -337,7 +337,7 @@ $PHORUM["DATA"]["URL"]["REDIRECT"] = phorum_api_url(
  *     Message handling
  *
  * [when]
- *     In <filename>action_edit.php</filename> at the end of the file when 
+ *     In <filename>action_edit.php</filename> at the end of the file when
  *     everything has been done.
  *
  * [input]

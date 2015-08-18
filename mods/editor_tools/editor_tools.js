@@ -175,7 +175,7 @@ function editor_tools_construct()
             // Add the button to the page.
             // target = subject is a feature that was added for supporting
             // the subjectsmiley tool. This one is added to the subject field
-            // instead of the textarea. 
+            // instead of the textarea.
             if (target === 'subject') {
                 if (!subject_element.$.is('[type=hidden]')) {
                   img_obj.style.verticalAlign = 'top';
@@ -264,7 +264,7 @@ function editor_tools_toggle_popup(popup_obj, button_obj, width, leftoffset)
     }
 }
 
-// Register an object as a popup, so editor_tools_hide_all_popups() 
+// Register an object as a popup, so editor_tools_hide_all_popups()
 // can hide it.
 function editor_tools_register_popup_object(object)
 {
@@ -311,7 +311,7 @@ function editor_tools_handle_help()
         var content_obj = popup[1];
 
         // Populate the new popup.
-        for (var i = 0; i < editor_tools_help_chapters.length; i++) 
+        for (var i = 0; i < editor_tools_help_chapters.length; i++)
         {
             var helpinfo = editor_tools_help_chapters[i];
             var a_obj = document.createElement('a');

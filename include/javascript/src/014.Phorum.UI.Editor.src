@@ -1,7 +1,7 @@
 /**
  * @class Phorum.UI.Editor
  * @extends Phorum.UI.Element
- * 
+ *
  * <p>
  *   This class can be used to access and manipulate the
  *   posting editor in Phorum.
@@ -54,7 +54,7 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
          * @property subject
          *
          * A reference to the subject element in the editor.
-         * 
+         *
          * @var Phorum.UI.TextElement
          */
         this.subject = this.getField('subject');
@@ -63,7 +63,7 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
          * @property body
          *
          * A reference to the body element in the editor.
-         * 
+         *
          * @var Phorum.UI.TextElement
          */
         this.body = this.getField('body');
@@ -122,7 +122,7 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
         /**
          * A cache that holds the Phorum.UI.Element objects that were
          * retrieved using getField().
-         * 
+         *
          * @private
          */
         fields: { },

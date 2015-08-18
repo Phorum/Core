@@ -11,7 +11,7 @@
 Phorum.markRead = Phorum.UI.NewFlags.markRead;
 
 /**
- * An alias for 
+ * An alias for
  * {@link Phorum.Ajax#call Phorum.Ajax.call()}.
  * See the documentation of that method for more information.
  *

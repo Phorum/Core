@@ -26,9 +26,9 @@ while (!$done) {
             DB_RETURN_RES,
             "DELETE
              FROM      {$PHORUM['user_newflags_table']}
-             WHERE     message_id in (".implode(",", $ids).")", 
-            NULL, 
-            DB_MASTERQUERY 
+             WHERE     message_id in (".implode(",", $ids).")",
+            NULL,
+            DB_MASTERQUERY
         );
         $ids = array();
     }

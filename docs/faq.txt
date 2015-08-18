@@ -21,14 +21,14 @@ Table of contents:
 -------------------------------------------------------------------------------
     In short, the people writing the code liked it better.  You can modify
     your template by putting this line inside your list.tpl file.
-	
+
        {MESSAGES->reply_count}
 
     Just put that in place of
-		
+
        {MESSAGES->thread_count}
 
-		
+
 2. Does Phorum have avatars or user rankings like (insert UBB clone)?
 -------------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ Table of contents:
 
     That depends on your environment and how the module is packaged.
     The basic requirement is that the module be inside a directory
-    which is inside /mods (in the phorum directory). So you could have 
+    which is inside /mods (in the phorum directory). So you could have
     something like /phorum5/mods/mymod
 
     Most mods come packaged in some form. For a .tar.gz file, in a Unix

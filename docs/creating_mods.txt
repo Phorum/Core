@@ -226,12 +226,12 @@ Table of contents:
    |                  | to use this module. Modules with a requirement    |
    |                  | above the current phorum version are              |
    |                  | automatically disabled when going to the modules  |
-   |                  | page.			                                        |
-   |            		  |                                                   |
-   |            		  | Example:                                          |
-   |            		  |                                                   |
-   |            		  | required_version: 5.2.0                           |
-   |				          | This will require the Phorum version at be at     |
+   |                  | page.                                             |
+   |                  |                                                   |
+   |                  | Example:                                          |
+   |                  |                                                   |
+   |                  | required_version: 5.2.0                           |
+   |                  | This will require the Phorum version at be at     |
    |                  | least 5.2.0                                       |
    +------------------+---------------------------------------------------+
 

@@ -1,6 +1,6 @@
 /**
  * @class Phorum.UI.Element
- * 
+ *
  * <p>
  *   This class is a base class that is used for building objects that
  *   can manage page elements.

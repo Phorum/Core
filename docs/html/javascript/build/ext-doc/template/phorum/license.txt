@@ -7,7 +7,7 @@ http://extjs.com/license
 
 Open Source License
 ------------------------------------------------------------------------------------------
-Ext is licensed under the terms of the Open Source GPL 3.0 license. 
+Ext is licensed under the terms of the Open Source GPL 3.0 license.
 
 http://www.gnu.org/licenses/gpl.html
 
@@ -25,8 +25,8 @@ open source applications that are distributed under a license other than the GPL
 
 Commercial License
 ------------------------------------------------------------------------------------------
-This is the appropriate option if you are creating proprietary applications and you are 
-not prepared to distribute and share the source code of your application under the 
+This is the appropriate option if you are creating proprietary applications and you are
+not prepared to distribute and share the source code of your application under the
 GPL v3 license. Please visit http://extjs.com/license for more details.
 
 
