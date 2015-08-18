@@ -26,7 +26,7 @@ if (!function_exists('json_decode'))
         return $json->decode($content);
     }
 }
- 
+
 if (!function_exists('json_encode'))
 {
     function json_encode($content)

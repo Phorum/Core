@@ -509,7 +509,7 @@ class PhorumSqliteDB extends PhorumDB
           "CREATE INDEX {$this->message_table}_forum_recent_messages
            ON {$this->message_table} (forum_id, status, datestamp)",
 
-          "CREATE INDEX {$this->message_table}_recent_threads 
+          "CREATE INDEX {$this->message_table}_recent_threads
            ON {$this->message_table} (status, parent_id, datestamp)",
 
           "CREATE INDEX {$this->message_table}_recent_messages

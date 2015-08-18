@@ -24,7 +24,7 @@ function helloworld() {
     "onSuccess"     : function (data) {
       viewer.innerHTML = 'Server returned: ' + data;
     },
-    "onFailure"     : function (error) { 
+    "onFailure"     : function (error) {
       alert("Error: " + error);
     }
   });

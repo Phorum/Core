@@ -174,7 +174,7 @@ if (!$only_core && isset($PHORUM['hooks']['javascript_register'])) {
 }
 
 // Generate the cache key. Include some variables that could influence
-// the final script code.  
+// the final script code.
 $cache_key =
     $PHORUM['template'] . ':' .
     $PHORUM['language'] . ':' .
@@ -268,7 +268,7 @@ if (!empty($PHORUM['cache_javascript'])) {
     if ($cache_data !== null) {
         list ($cache_time, $content) = $cache_data;
     }
-}              
+}
 
 // Create the cache file if it does not exist or if caching is disabled.
 if (isset($PHORUM['args']['refresh']) || $content === null)
@@ -337,7 +337,7 @@ if (isset($PHORUM['args']['refresh']) || $content === null)
     if (!empty($PHORUM['cache_javascript'])) {
         $cache_time = time();
         phorum_cache_put('js',$cache_key,array($cache_time,$content),86400);
-    }    
+    }
 
     // Send the JavaScript to the browser.
     header("Content-Type: text/javascript");

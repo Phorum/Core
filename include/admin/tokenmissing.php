@@ -21,31 +21,31 @@
     if(!defined("PHORUM_ADMIN")) exit();
 
     if(count($_POST)) {
-        if(!empty($_POST['phorum_admin_token']) && 
+        if(!empty($_POST['phorum_admin_token']) &&
             $_POST['phorum_admin_token'] == $PHORUM["user"]['settings_data']['admin_token'] &&
             time()-PHORUM_ADMIN_TOKEN_TIMEOUT < $PHORUM["user"]['settings_data']['admin_token_time']
            ) {
 
                if(!empty($_POST['cancel'])) {
-                    
+
                    $PHORUM["user"]['settings_data']['admin_token'] = "";
 
                    $tmp_user = array(
                        'user_id'=>$PHORUM["user"]['user_id'],
                        'settings_data'=>$PHORUM["user"]['settings_data']
                    );
-                   phorum_api_user_save($tmp_user);  
-                                    
+                   phorum_api_user_save($tmp_user);
+
                    phorum_api_redirect($PHORUM['http_path']);
-                   
+
                } elseif(!empty($_POST['continue'])) {
-                   
+
                    if(!empty($_POST['target'])) {
                        $url = phorum_admin_build_url($_POST['target'], TRUE);
                    } else {
                        $url = phorum_admin_build_url(NULL, TRUE);
                    }
-                
+
                    phorum_api_redirect($url);
                }
                exit();
@@ -90,7 +90,7 @@
     $post_url = phorum_admin_build_url();
 ?>
 You are accessing the admin after a security timeout.<br /><br />
-The requested URL was: 
+The requested URL was:
 <pre><?php echo $target_html;?></pre><br />
 <strong>Please make sure that you really want to access this URL and weren't tricked to go to the admin.</strong><br />
 Please click on <strong>continue</strong> to go to this URL or on <strong>cancel</strong> to go to the forum homepage.

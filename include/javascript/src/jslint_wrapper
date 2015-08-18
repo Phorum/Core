@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-# Note: this script needs "rhino" (a CLI javascript interpreter). 
+# Note: this script needs "rhino" (a CLI javascript interpreter).
 
 // ----------------------------------------------------------------------
 // Configuration
@@ -88,7 +88,7 @@ foreach ($jslint_options as $k => $v)
   elseif (is_numeric($v)) $value = (int)$v;
   else $value = $v;
 
-  $formatted_options[] .= $k . ': ' . $value; 
+  $formatted_options[] .= $k . ': ' . $value;
 }
 
 $jslint_options = '/*jslint ' . implode(', ', $formatted_options) . " */\n" .

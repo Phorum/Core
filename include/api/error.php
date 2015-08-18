@@ -109,7 +109,7 @@ $PHORUM["API"]["errormessages"] = array(
  *     This function will always use FALSE as its return value,
  *     so a construction like "return phorum_api_error(...)" can
  *     be used for setting an error and returning FALSE at the same time.
- */ 
+ */
 function phorum_api_error($errno, $error = NULL)
 {
     global $PHORUM;

@@ -22,7 +22,7 @@ Table of contents:
    2.4 Data types
        2.4.1 Integers
        2.4.2 Strings
-       2.4.3 PHP constants 
+       2.4.3 PHP constants
        2.4.4 Template variables
    2.5 Statements
        2.5.1 Display a value
@@ -61,37 +61,37 @@ Table of contents:
    1) Take the default template directory from {phorum dir}/templates/default
       and copy it over to another directory, for example
       {phorum dir}/templates/mytemplate.
-   
+
    2) Edit {phorum dir}/templates/mytemplate/info.php. In this file you
       have to edit at least the $name variable, e.g. to
       $name = "My very own template";
-   
+
       You can hide the template from the user's template selection box
       by setting $template_hide = 1. If you do this, you can only
       select this template through the admin interface (this makes
       most sense if you set the display-settings to fixed through
       the admin interface).
-   
+
    3) Open Phorum's admin page {phorum url}/admin.php and go to
       "General Settings". There you'll find the option "Default Template".
       Set that option to your own template. You also have to configure the
       template in the settings of each single forum.
-   
-   
+
+
    That's it. You are now using your own template. From here on you can start
    tweaking the template files in your {phorum dir}/templates/mytemplate
    directory. Phorum uses its own template language to allow for dynamic
    templates without using PHP. More information on this can be found in
    chapter 2.
-   
+
    For most installations, the following template files will be most
    interesting:
-   
+
    - header.tpl     The header which will be added before each page;
    - footer.tpl     The footer which will be added after each page;
    - settings.tpl   Here you can change colors and fonts;
    - css.tpl        This file holds all CSS definitions for Phorum.
-   
+
 
 2. The Phorum template language
 -------------------------------------------------------------------------------
@@ -116,14 +116,14 @@ Table of contents:
    this HTML code, there can be template language statements. All template
    statements in the templates are surrounded by "{" and "}" characters.
    Here's a simple example of what a template could look like:
-   
+
       <html>
        <head>
         <title>{HTML_TITLE}</title>
        </head>
        <body>
         Your username is: {USER->username}
- 
+
         {IF USER->username "george"}
           <b>Hello, George!</b>
         {/IF}
@@ -154,16 +154,16 @@ Table of contents:
    you now have to write:
 
       <?php if ($this = true) { print "It's true"; } ?>
-   
+
    This way you can mix PHP code with template code without running
    into problems.
 
-   
+
  2.4 Data types
  --------------
 
    The template language supports four data types to use in statements:
-   
+
    - Integers (see 2.4.1)
    - Strings (see 2.4.2)
    - PHP constants (see 2.4.3)
@@ -176,7 +176,7 @@ Table of contents:
    Integers are formatted as a sequence of numbers. Examples:
 
       403
-      90 
+      90
       4321
 
    Example of template code in which integers are used:
@@ -220,7 +220,7 @@ Table of contents:
       {/IF}
 
 
-  2.4.3 PHP constants 
+  2.4.3 PHP constants
   -------------------
 
    It's possible to define constants within PHP. This is done using
@@ -251,7 +251,7 @@ Table of contents:
    About the most important data type for the template language is the
    template variable. Template variables are used by Phorum to store
    dynamic data, which can be used by your templates. These variables
-   can contain both simple values and complex arrays of data. 
+   can contain both simple values and complex arrays of data.
 
    You can reference a template variable by using the variable's name,
    without any quotes. Note that this is the same notation that is used
@@ -260,7 +260,7 @@ Table of contents:
    take precedence over the template variable.
 
    Examples of variables:
-    
+
       NAME
       HTML_TITLE
 
@@ -292,12 +292,12 @@ Table of contents:
    Function:
       This is both the most simple and the most important template
       statement there is. Using this statement, you can display the
-      contents of a value. 
+      contents of a value.
 
    Syntax:
       {<VALUE>}
-   
-      The <VALUE> can be any of the data types that are supported by the 
+
+      The <VALUE> can be any of the data types that are supported by the
       template language (see 2.4). Of course, only the use of constants or
       template variables is useful (because in a template {"SOME STRING"} is
       equivalent to simply putting SOME STRING directly in the code).
@@ -308,9 +308,9 @@ Table of contents:
 
   2.5.2 Add comments
   ------------------
- 
+
    Function:
-      Sometimes, it's useful to explain what you are doing when writing 
+      Sometimes, it's useful to explain what you are doing when writing
       complicated templating code. In that case you can use comments to
       document what you are doing. You can also use comments to add
       general info to the template (like in the example below).
@@ -326,12 +326,12 @@ Table of contents:
 
   2.5.3 DEFINE
   ------------
- 
+
    Function:
       Using this statement, you can set variable definitions that can be used
       by the Phorum software. These are mainly used for doing settings from
-      the template file "settings.tpl" to tweak Phorum's internal behaviour. 
-      
+      the template file "settings.tpl" to tweak Phorum's internal behaviour.
+
       Variables that have been defined using this statement are not available
       from other template statements.
 
@@ -344,8 +344,8 @@ Table of contents:
 
    Example:
       {DEFINE list_pages_shown 5}
-    
- 
+
+
   2.5.4 VAR
   ---------
 
@@ -368,7 +368,7 @@ Table of contents:
       {VAR IS_COOL true}
       {IF IS_COOL}Yes, this is cool{/IF}
 
- 
+
   2.5.5 IF .. ELSEIF .. ELSE
   --------------------------
 
@@ -376,7 +376,7 @@ Table of contents:
       Using these statements, you can control if certain blocks of code in
       your template are processed or not, based on a given condition. This can for
       example be useful if you want certain parts of the page to be only
-      visible for registered users. 
+      visible for registered users.
 
    Syntax:
       {IF <CONDITION>}
@@ -393,10 +393,10 @@ Table of contents:
       variable name. The <VALUE> that is used in the CONDITION can be any
       of the data types that are supported by the template language
       (see 2.4).
-      
+
       If a <VALUE> is used, the <TEMPLATE VARIABLE> will be compared to the
       <VALUE>. If no <VALUE> is used, then the condition will check whether
-      the <TEMPLATE VARIABLE> is set and contains data. 
+      the <TEMPLATE VARIABLE> is set and contains data.
 
       A condition can be negated by prepending the keyword "NOT" to it.
 
@@ -418,21 +418,21 @@ Table of contents:
       {IF VARIABLE1 VARIABLE2}
          Variable 1 and 2 have the same value.
       {/IF}
- 
+
 
   2.5.6 LOOP
   ----------
 
    Function:
       The LOOP statement is used for looping through the elements of array
-      based template variables (for example arrays of forums, messages and 
+      based template variables (for example arrays of forums, messages and
       users).
 
    Syntax:
       {LOOP <ARRAY VARIABLE>}
          {<ARRAY VARIABLE>}
       {/LOOP <ARRAY VARIABLE>}
- 
+
    Example:
       <ul>
       {LOOP USERS}
@@ -447,7 +447,7 @@ Table of contents:
    records. Within the loop, USERS is no long the array of users itself, but
    the user data record for a single user instead.
 
- 
+
   2.5.7 INCLUDE
   -------------
 
@@ -494,7 +494,7 @@ Table of contents:
       from there, you'd see that it does not contain the active LOOP element,
       but the full array that you are looping over instead.
 
- 
+
   2.5.8 HOOK
   ----------
 
@@ -507,13 +507,13 @@ Table of contents:
 
    Syntax:
       {HOOK <HOOK NAME> [<ARG1> <ARG2> .. <ARGn>]}
-   
+
       Both the <HOOK NAME> and the arguments that are used in the HOOK
       statement can be any of the data types that are supported by the
       template language (see 2.4).
-   
+
    Examples:
-      {HOOK "template_hook"} 
+      {HOOK "template_hook"}
 
       {LOOP MESSAGES}
         {HOOK "show_message" MESSAGES}
@@ -548,9 +548,9 @@ variables and define statements that can be used in the templates.
 
 Additional variables in settings.tpl:
 {define bodies_in_list 1}
-set this to 1 to have the message-bodies loaded in the list if your 
+set this to 1 to have the message-bodies loaded in the list if your
 template needs them.
 
 {define all_bodies_in_threaded_read 0}
-set this to 1 to have all the message-bodies also loaded in 
+set this to 1 to have all the message-bodies also loaded in
 threaded-read-view if your template needs them

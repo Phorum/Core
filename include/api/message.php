@@ -57,7 +57,7 @@ $PHORUM['API']['message_fields'] = array
 
     // The date and time at which the message was posted.
     'datestamp'         => 'b:int',
- 
+
     // The position of the message in the forum.
     'forum_id'          => 'b:int',    // in which forum
     'thread'            => 'b:int',    // in which thread

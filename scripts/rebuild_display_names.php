@@ -36,7 +36,7 @@ while ($user = $PHORUM['DB']->fetch_row($res, DB_RETURN_ASSOC))
     // case the display name changed ...
     phorum_api_user_save(array("user_id" => $user["user_id"]));
 
-    // ... but still we run the name updates here, so inconsistencies 
+    // ... but still we run the name updates here, so inconsistencies
     // are flattened out.
     $user = phorum_api_user_get($user["user_id"]);
     $PHORUM['DB']->user_display_name_updates(array(

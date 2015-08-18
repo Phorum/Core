@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-$upgrade_queries[]= 
+$upgrade_queries[]=
     "INSERT INTO {$PHORUM["settings_table"]}
      SET name = 'display_name_source',
          type = 'V',

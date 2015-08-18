@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xsl:stylesheet [
   <!ENTITY nbsp "&#160;">
-]>        
+]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ext="http://www.extjs.com">
 <xsl:output method="html" indent="no"/>
-    <xsl:template match="/docClass">        
+    <xsl:template match="/docClass">
         <div class="body-wrap">
             <div class="top-tools">
                 <a class="inner-link" href="#{className}-props">
                 <img src="resources/images/default/s.gif" class="item-icon icon-prop"/>Properties</a><xsl:text>&#x0D;</xsl:text>
                 <a class="inner-link" href="#{className}-methods">
-			    <img src="resources/images/default/s.gif" class="item-icon icon-method"/>Methods</a><xsl:text>&#x0D;</xsl:text>
-		        <a class="inner-link" href="#{className}-events">
-			    <img src="resources/images/default/s.gif" class="item-icon icon-event"/>Events</a><xsl:text>&#x0D;</xsl:text>
+                <img src="resources/images/default/s.gif" class="item-icon icon-method"/>Methods</a><xsl:text>&#x0D;</xsl:text>
+                <a class="inner-link" href="#{className}-events">
+                <img src="resources/images/default/s.gif" class="item-icon icon-event"/>Events</a><xsl:text>&#x0D;</xsl:text>
                 <xsl:if test="cfgs">
                     <a class="inner-link" href="#{className}-configs">
                     <img src="resources/images/default/s.gif" class="item-icon icon-config"/>Config Options</a><xsl:text>&#x0D;</xsl:text>
                 </xsl:if>
                 <a class="bookmark" href="../docs/?class={className}">
-			    <img src="resources/images/default/s.gif" class="item-icon icon-fav"/>Direct Link</a><xsl:text>&#x0D;</xsl:text>
-	        </div>
+                <img src="resources/images/default/s.gif" class="item-icon icon-fav"/>Direct Link</a><xsl:text>&#x0D;</xsl:text>
+            </div>
             <xsl:if test="superClasses">
                 <xsl:call-template name="super-classes"/>
             </xsl:if>
@@ -49,7 +49,7 @@
                         </xsl:choose>
                     </td>
                 </tr>
-                <xsl:call-template name="class-custom-tags"/>    
+                <xsl:call-template name="class-custom-tags"/>
             </table>
             <div class="description">
                 <xsl:value-of select="description" disable-output-escaping="yes"/>
@@ -137,7 +137,7 @@
                                 </tr>
                             </xsl:for-each>
                         </tbody>
-                    </table>            
+                    </table>
                 </xsl:when>
                 <xsl:otherwise><div class="no-members">This class has no public properties.</div></xsl:otherwise>
             </xsl:choose>
@@ -155,7 +155,7 @@
                             </tr>
                             <xsl:if test="hasConstructor='true'">
                                 <xsl:call-template name="constructor"/>
-                            </xsl:if>                            
+                            </xsl:if>
                             <xsl:for-each select="methods">
                                 <xsl:variable name="inherited">
                                     <xsl:if test="/docClass/className!=className">inherited</xsl:if>
@@ -249,7 +249,7 @@
               </xsl:when>
                 <xsl:otherwise><div class="no-members">This class has no public events.</div></xsl:otherwise>
             </xsl:choose>
-            
+
         </div>
     </xsl:template>
 
@@ -335,7 +335,7 @@
 
     <!-- Shows <static> if item is static-->
     <xsl:template name="check-if-static">
-        <xsl:if test="isStatic='true'">&lt;static&gt;&nbsp;</xsl:if>    
+        <xsl:if test="isStatic='true'">&lt;static&gt;&nbsp;</xsl:if>
     </xsl:template>
 
     <!-- Shows inheritance tree in the right side -->
@@ -355,7 +355,7 @@
     </xsl:template>
 
     <!-- Recursive template generates "n" number of space elements -->
-    <xsl:template name="spacer">        
+    <xsl:template name="spacer">
         <xsl:param name="n"/>
         <xsl:if test="$n&gt;0">
             <xsl:text>&nbsp;&nbsp;</xsl:text>

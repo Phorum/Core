@@ -19,7 +19,7 @@
                     {ELSE}
                         <option value="{FORUMS->forum_id}"{IF FORUMS->selected} selected="selected"{/IF}>{FORUMS->indent_spaces}{FORUMS->name}</option>
                     {/IF}
-                {/LOOP FORUMS}          
+                {/LOOP FORUMS}
         </select><br /><br />
         <input type="checkbox" name="create_notification" value="1">{LANG->MoveNotification}<br /><br />
         <input type="submit" class="PhorumSubmit" name="move" value="{LANG->MoveThread}" />

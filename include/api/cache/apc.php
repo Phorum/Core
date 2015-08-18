@@ -35,7 +35,7 @@
 /**
  * Retrieve an object from the cache.
  *
- * @param string $type 
+ * @param string $type
  *     A name for the group of data that is being cached.
  *     Examples are "user" and "message".
  *
@@ -117,7 +117,7 @@ function phorum_api_cache_get($type, $key, $version = NULL)
 /**
  * Store an object in the cache.
  *
- * @param string $type 
+ * @param string $type
  *     A name for the group of data that is being cached.
  *     Examples are "user" and "message".
  *
@@ -134,7 +134,7 @@ function phorum_api_cache_get($type, $key, $version = NULL)
  *     The version to store along with the cached data. This version is
  *     used by the {@link phorum_api_cache_get()} function to check whether
  *     the cached data has expired or not.
- * 
+ *
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
@@ -154,7 +154,7 @@ function phorum_api_cache_put(
 /**
  * Remove an object from the cache
  *
- * @param string $type 
+ * @param string $type
  *     A name for the group of data that is being cached.
  *     Examples are "user" and "message".
  *

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
@@ -26,7 +26,7 @@ if (!empty($_POST['thread1']))
     // Check if we need to update the subjects of the merged messages.
     $new_subject = NULL;
     if (isset($_POST['update_subjects'])) {
-        $new_subject = 'Re: ' . $target['subject']; 
+        $new_subject = 'Re: ' . $target['subject'];
     }
 
     // Get all messages from the thread that we have to merge.

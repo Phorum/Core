@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // Find all private messages.
 $res = $PHORUM['DB']->interact(
@@ -11,7 +11,7 @@ $res = $PHORUM['DB']->interact(
 while ($row = $PHORUM['DB']->fetch_row($res, DB_RETURN_ASSOC))
 {
     // Update the PM author.
-    $m = $row["pm_message_id"]; 
+    $m = $row["pm_message_id"];
     $u = $row["user_id"];
     $user = $PHORUM['DB']->user_get($u);
     if ($user) {
@@ -20,9 +20,9 @@ while ($row = $PHORUM['DB']->fetch_row($res, DB_RETURN_ASSOC))
            DB_RETURN_RES,
            "UPDATE {$PHORUM["pm_messages_table"]}
             SET    author = '$author'
-            WHERE  user_id = $u", 
-           NULL, 
-           DB_MASTERQUERY 
+            WHERE  user_id = $u",
+           NULL,
+           DB_MASTERQUERY
         );
     }
 
@@ -40,9 +40,9 @@ while ($row = $PHORUM['DB']->fetch_row($res, DB_RETURN_ASSOC))
         DB_RETURN_RES,
         "UPDATE {$PHORUM["pm_messages_table"]}
          SET    meta = '$meta'
-         WHERE  pm_message_id = $m", 
-        NULL, 
-        DB_MASTERQUERY 
+         WHERE  pm_message_id = $m",
+        NULL,
+        DB_MASTERQUERY
     );
 }
 

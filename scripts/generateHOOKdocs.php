@@ -26,7 +26,7 @@ foreach ( explode("\n", $files) as $file) {
     if (!$fp) die("Reading file $file failed!\n");
 
     $hook    = NULL;
-    $doc     = NULL; 
+    $doc     = NULL;
     $section = NULL;
     while ($line = fgets($fp))
     {

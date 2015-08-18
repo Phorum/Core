@@ -49,7 +49,7 @@
                     {VAR altclass "alt"}
                 {ELSE}
                     {VAR altclass ""}
-                {/IF}            
+                {/IF}
                 <tr>
                     <td width="5%"><input type="checkbox" name="delthreads[]" value="{TOPICS->thread}" /></td>
 
@@ -70,7 +70,7 @@
                             <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_BOOKMARK}selected="selected"{/IF} value="{PHORUM_SUBSCRIPTION_BOOKMARK}">{LANG->No}</option>
                         </select>
                       {ELSE}
-                        {LANG->No} 
+                        {LANG->No}
                       {/IF}
                     </td>
                     {/IF}

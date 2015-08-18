@@ -148,8 +148,8 @@ if(count($_POST))
         unset($user_data["password2"]);
         unset($user_data["module"]);
         unset($user_data["addUser"]);
-        unset($user_data["phorum_admin_token"]); 
-        
+        unset($user_data["phorum_admin_token"]);
+
         if(empty($error)){
             $user_data["user_id"] = NULL;
             $user_data["active"] = PHORUM_USER_ACTIVE;
@@ -268,7 +268,7 @@ if(count($_POST))
         unset($user_data["password1"]);
         unset($user_data["password2"]);
         unset($user_data["submit"]);
-        unset($user_data["phorum_admin_token"]); 
+        unset($user_data["phorum_admin_token"]);
 
         if (empty($error)){
             $user_data = phorum_api_hook("admin_users_form_save", $user_data);
@@ -313,7 +313,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
         $frm->hidden("module", "users");
 
         $field_search_loc_array = array("any" => "Anywhere","start" => "Start of Field","end" => "End of Field");
-        
+
         $frm->addrow("Username contains", $frm->text_box("search_username", $_REQUEST["search_username"], 30) ."&nbsp;". $frm->select_tag("username_search_loc", $field_search_loc_array, $_REQUEST["username_search_loc"]));
         if ($PHORUM['display_name_source'] != 'username') {
             $frm->addrow("Display name contains", $frm->text_box("search_display_name", $_REQUEST["search_display_name"], 30) ."&nbsp;". $frm->select_tag("display_name_search_loc", $field_search_loc_array, $_REQUEST["display_name_search_loc"]));
@@ -397,18 +397,18 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
                 $frm->addrow("Personal permission to", $forum_permissions_select . "&nbsp;in&nbsp;" . $forum_permissions_forums_select);
             }
         }
-        
+
         $active_profile_fields = 0;
         foreach($PHORUM["CUSTOM_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $profile_field) {
             if (empty($profile_field['deleted']) && !empty($profile_field['show_in_admin'])) $active_profile_fields ++;
         }
-    
+
         if ($active_profile_fields > 0) {
             $profile_field_select = "<select name=\"profile_field[]\"";
-            if ($active_profile_fields > 1) 
+            if ($active_profile_fields > 1)
                 $profile_field_select .= " multiple=\"multiple\" size=\"2\"";
             $profile_field_select .= ">\n";
-            
+
             if(!empty($_REQUEST['profile_field'])) {
                 if (is_array($_REQUEST['profile_field'])) {
                     foreach ($_REQUEST['profile_field'] as $profile_field_id) {
@@ -418,17 +418,17 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
                     $selected_profile_fields[(int)$_REQUEST['profile_field']] = (int)$_REQUEST['profile_field'];
                 }
             }
-            
+
             foreach($PHORUM["CUSTOM_FIELDS"][PHORUM_CUSTOM_FIELD_USER] as $key => $profile_field) {
                 // Do not show deleted fields.
                 if (!empty($profile_field['deleted']) || empty($profile_field['show_in_admin'])) continue;
-                
+
                 $profile_field_select .= "<option value=\"".$profile_field["id"]."\"";
                 if (isset($selected_profile_fields[$profile_field["id"]]))
                     $profile_field_select .= " selected=\"selected\"";
                 $profile_field_select .= ">".$profile_field["name"]."</option>\n";
             }
-            
+
             $profile_field_select .= "</select>\n";
             $frm->addrow("Custom Profiles", $frm->text_box("search_profile_field", $_REQUEST["search_profile_field"], 30) ."&nbsp;"
                 . $frm->select_tag("profile_field_search_loc", $field_search_loc_array, $_REQUEST["profile_field_search_loc"])
@@ -462,7 +462,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
                 $frm->addrow("Member of group", $group_select);
             }
         }
-        
+
         $frm->show();
     }
 
@@ -492,7 +492,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
     if (!empty($_REQUEST["forum_permissions_forums"]) && is_array($_REQUEST["forum_permissions_forums"])) {
         $_REQUEST["forum_permissions_forums"] = implode(",",$_REQUEST["forum_permissions_forums"]);
     }
-    
+
     // Build the search parameters query string items.
     $url_safe_search_arr = array();
     foreach ($user_search_fields as $field) {
@@ -503,7 +503,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
 
     if (isset($_POST["sort"])) $_GET["sort"] = $_POST["sort"];
     $sort = isset($_GET["sort"]) ? $_GET["sort"] : "display_name";
-    
+
     if (isset($_POST["sort_dir"])) $_GET["sort_dir"] = $_POST["sort_dir"];
     $sort_dir = empty($_GET["sort_dir"]) ? "" : "-";
     $reverse_sort_dir = (empty($sort_dir)) ? "-" : "";
@@ -643,7 +643,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
         $search_values[] = $group_members;
         $search_operators[] = '()';
     }
-    
+
     if (!empty($_REQUEST["forum_permissions"]) && !empty($_REQUEST["forum_permissions_forums"])) {
         $forum_permissions = explode(",",$_REQUEST["forum_permissions"]);
         $or_forum_permissions = "";
@@ -681,10 +681,10 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
     );
 
     $default_pagelength=30;
-    
+
     settype($_REQUEST["page"], "integer");
     settype($_REQUEST["pagelength"], "integer");
-    
+
     // The available page lengths.
     $pagelengths = array(
         10   =>  "10 users per page",
@@ -694,17 +694,17 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
         100  => "100 users per page",
         250  => "250 users per page",
     );
-    
+
     // What page length to use?
     if (isset($_POST["pagelength"])) $_GET["pagelength"] = $_POST["pagelength"];
     $pagelength = isset($_GET["pagelength"]) ? (int)$_GET["pagelength"] : $default_pagelength;
 
     if (!isset($pagelengths[$pagelength])) $pagelength = $default_pagelength;
-    
+
 
     $totalpages = ceil($total/$pagelength);
     if ($totalpages <= 0) $totalpages = 1;
-    
+
     // Which page to show?
     if (isset($_POST["prevpage"])) {
         $page = (int)$_POST["curpage"] - 1;
@@ -714,12 +714,12 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
         if (isset($_POST["page"])) $_GET["page"] = $_POST["page"];
         $page = isset($_GET["page"]) ? (int)$_GET["page"] : 1;
     }
-    
+
     if ($page <= 0) $page = 1;
     if ($page > $totalpages) $page = $totalpages;
 
     $search_start = ($page-1)*$pagelength;
-    
+
     $db_sort = ($sort == "display_name") ? $sort_dir.$sort : array($sort_dir.$sort,"display_name");
 
     // Find a list of matching user_ids to display on the current page.
@@ -741,44 +741,44 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
         for($p=1; $p<=$totalpages; $p++) {
             $pagelist[$p] = $p;
         }
-        
+
         $cols = 6;
-        
+
         $input_args = array('module=users');
         $input_args = array_merge($input_args,$url_safe_search_arr);
-        
+
         $frm_url = phorum_admin_build_url($input_args);
-        
+
         $sort_input_args = array('page='.$page,'pagelength='.$pagelength);
         $sort_input_args = array_merge($sort_input_args,$input_args);
-        
+
         $display_name_sort_dir = ($sort == "display_name") ? $reverse_sort_dir : "";
         $display_name_sort_url_args = array_merge(array('sort=display_name','sort_dir='.$display_name_sort_dir),$sort_input_args);
         $display_name_sort_url = phorum_admin_build_url($display_name_sort_url_args);
-        
+
         $email_sort_dir = ($sort == "email") ? $reverse_sort_dir : "";
         $email_sort_url_args = array_merge(array('sort=email','sort_dir='.$email_sort_dir),$sort_input_args);
         $email_sort_url = phorum_admin_build_url($email_sort_url_args);
-        
+
         $status_sort_dir = ($sort == "active") ? $reverse_sort_dir : "";
         $status_sort_url_args = array_merge(array('sort=active','sort_dir='.$status_sort_dir),$sort_input_args);
         $status_sort_url = phorum_admin_build_url($status_sort_url_args);
-        
+
         $posts_sort_dir = ($sort == "posts") ? $reverse_sort_dir : "";
         $posts_sort_url_args = array_merge(array('sort=posts','sort_dir='.$posts_sort_dir),$sort_input_args);
         $posts_sort_url = phorum_admin_build_url($posts_sort_url_args);
-        
+
         $last_activity_sort_dir = ($sort == "date_last_active") ? $reverse_sort_dir : "";
         $last_activity_sort_url_args = array_merge(array('sort=date_last_active','sort_dir='.$last_activity_sort_dir),$sort_input_args);
         $last_activity_sort_url = phorum_admin_build_url($last_activity_sort_url_args);
-        
+
         if (!empty($_REQUEST["registered"])) {
             $cols++;
             $registered_sort_dir = ($sort == "date_added") ? $reverse_sort_dir : "";
             $registered_sort_url_args = array_merge(array('sort=date_added','sort_dir='.$registered_sort_dir),$sort_input_args);
             $registered_sort_url = phorum_admin_build_url($registered_sort_url_args);
         }
-        
+
         echo <<<EOT
         <form name="UsersForm" action="$frm_url" method="post">
         <input type="hidden" name="phorum_admin_token" value="{$PHORUM['admin_token']}">
@@ -837,7 +837,7 @@ EOT;
             $posts = intval($user['posts']);
 
             $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
-            
+
             $user_input_args = array('module=users','user_id='.$user['user_id'],'edit=1','page='.$page,'pagelength='.$pagelength,'sort='.$sort,'sort_dir='.$sort_dir);
             $user_input_args = array_merge($user_input_args,$url_safe_search_arr);
             $edit_url = phorum_admin_build_url($user_input_args);
