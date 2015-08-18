@@ -294,7 +294,7 @@ if(!empty($phorum_search) || !empty($phorum_author)){
         $page = $offset + 1;
 
         $pages_shown = (isset($PHORUM["TMP"]["search_pages_shown"])) ? $PHORUM["TMP"]["search_pages_shown"] : 5;
-        
+
         // first $pages_shown pages
         if($page - floor($pages_shown/2) <= 0  || $page < $pages_shown){
             $page_start=1;
@@ -349,12 +349,12 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 
     }else{
         $PHORUM["DATA"]["SEARCH"]["noresults"] = true;
-        $PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
+        $PHORUM["DATA"]["FOCUS_TO_ID"] = 'search';
     }
 
 } else {
     // Set cursor focus to message search entry.
-    $PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
+    $PHORUM["DATA"]["FOCUS_TO_ID"] = 'search';
 
     if (isset($PHORUM["hooks"]["search_start"]))
         $PHORUM['args'] = phorum_api_hook('search_start',$PHORUM['args']);

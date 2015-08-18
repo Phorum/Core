@@ -14,7 +14,7 @@
 
             {IF PROFILE->SIGSETTINGS}
                 <dt>{LANG->Signature}:&nbsp;</dt>
-                <dd><div id="post-body"><textarea name="signature" id="body" class="body" rows="15" cols="50">{PROFILE->signature}</textarea></div></dd>
+                <dd><div id="post-body"><textarea id="signature" name="signature" class="body" rows="15" cols="50">{PROFILE->signature}</textarea></div></dd>
             {/IF}
             {IF PROFILE->MAILSETTINGS}
                 <dt>{LANG->Email}:&nbsp;*&nbsp;</dt>
