@@ -5,7 +5,7 @@
     {INCLUDE "posting_preview"}
   {/IF}
   {IF NOT PRINTVIEW}
-  <form id="post_form" name="post" action="{URL->ACTION}" method="post" enctype="multipart/form-data">
+  <form id="post_form" name="post_form" action="{URL->ACTION}" method="post" enctype="multipart/form-data">
     {POST_VARS}
     {INCLUDE "posting_menu"}
     {INCLUDE "posting_messageform"}

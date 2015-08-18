@@ -48,7 +48,7 @@
 
 <div id="post">
 
-    <form id="post-form" name="post_form" action="{URL->ACTION}" method="post" enctype="multipart/form-data">
+    <form id="post_form" name="post_form" action="{URL->ACTION}" method="post" enctype="multipart/form-data">
 
         {POST_VARS}
 
@@ -60,14 +60,12 @@
                     {LANG->Special}:<br />
 
                     {IF OPTION_ALLOWED->sticky}
-                    <input type="checkbox" name="sticky"
-                     id="phorum_sticky" value="1"
-                     {IF POSTING->special "sticky"}checked="checked"{/IF} />
-                    <label for="phorum_sticky">{LANG->MakeSticky}</label>
+                    <input type="checkbox" id="sticky" name="sticky" value="1" {IF POSTING->special "sticky"}checked="checked"{/IF} />
+                    <label for="sticky">{LANG->MakeSticky}</label>
                     <br />
                     {/IF}
 
-                    <input type="checkbox" id="allow-reply" name="allow_reply" value="1" {IF POSTING->allow_reply} checked="checked"{/IF} /> <label for="allow-reply">{LANG->AllowReplies}</label>
+                    <input type="checkbox" id="allow_reply" name="allow_reply" value="1" {IF POSTING->allow_reply} checked="checked"{/IF} /> <label for="allow_reply">{LANG->AllowReplies}</label>
                     </small>
                   </div>
                 {/IF}
@@ -107,7 +105,7 @@
                 {/IF}
 
                 {LANG->Subject}:<br />
-                <input type="text" name="subject" id="subject" size="50" value="{POSTING->subject}" /><br />
+                <input type="text" id="subject" name="subject" size="50" value="{POSTING->subject}" /><br />
                 <br />
 
                 {HOOK "tpl_editor_after_subject"}
@@ -119,21 +117,21 @@
 
                     {IF OPTION_ALLOWED->subscribe}
 
-                        <input type="checkbox" id="subscription-follow" name="subscription_follow" value="1" {IF POSTING->subscription}checked="checked"{/IF} {IF OPTION_ALLOWED->subscribe_mail}onclick="phorum_subscription_displaystate()"{/IF} /> <label for="subscription-follow"><small>{LANG->FollowThread}</small></label><br />
+                        <input type="checkbox" id="subscription_follow" name="subscription_follow" value="1" {IF POSTING->subscription}checked="checked"{/IF} {IF OPTION_ALLOWED->subscribe_mail}onclick="phorum_subscription_displaystate()"{/IF} /> <label for="subscription_follow"><small>{LANG->FollowThread}</small></label><br />
 
                         {IF OPTION_ALLOWED->subscribe_mail}
-                          <div id="subscription-mail-div">
+                          <div id="subscription_mail_div">
                             <img src="{URL->TEMPLATE}/images/tree-L.gif" border="0" alt="tree-L" />
-                            <input type="checkbox" id="subscription-mail" name="subscription_mail" value="1" {IF POSTING->subscription "message"}checked="checked"{/IF} /> <label for="subscription-mail"><small>{LANG->EmailReplies}</small></label>
+                            <input type="checkbox" id="subscription_mail" name="subscription_mail" value="1" {IF POSTING->subscription "message"}checked="checked"{/IF} /> <label for="subscription_mail"><small>{LANG->EmailReplies}</small></label>
                           </div>
 
                           <script type="text/javascript">
                           // <![CDATA[
                           function phorum_subscription_displaystate() {
                             if (document.getElementById) {
-                              var f = document.getElementById('subscription-follow');
-                              var d = document.getElementById('subscription-mail-div');
-                              var e = document.getElementById('subscription-mail');
+                              var f = document.getElementById('subscription_follow');
+                              var d = document.getElementById('subscription_mail_div');
+                              var e = document.getElementById('subscription_mail');
                               d.style.display  = f.checked ? 'block' : 'none';
                             }
                           }
@@ -145,7 +143,7 @@
                         {/IF}
                     {/IF}
 
-                    <input type="checkbox" id="show-signature" name="show_signature" value="1" {IF POSTING->show_signature} checked="checked"{/IF} /> <label for="show-signature"><small>{LANG->AddSig}</small></label><br />
+                    <input type="checkbox" id="show_signature" name="show_signature" value="1" {IF POSTING->show_signature} checked="checked"{/IF} /> <label for="show_signature"><small>{LANG->AddSig}</small></label><br />
                     <br/>
 
                 {/IF}
@@ -209,7 +207,7 @@
             <div id="post-body">
               <!-- fieldset is a work around for an MSIE rendering bug -->
               <fieldset>
-                <textarea name="body" id="body" class="body" rows="15" cols="50">{POSTING->body}</textarea>
+                <textarea id="body" name="body" class="body" rows="15" cols="50">{POSTING->body}</textarea>
               </fieldset>
             </div>
 

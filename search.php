@@ -333,12 +333,12 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 
     }else{
         $PHORUM["DATA"]["SEARCH"]["noresults"] = true;
-        $PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
+        $PHORUM["DATA"]["FOCUS_TO_ID"] = 'search';
     }
 
 } else {
     // Set cursor focus to message search entry.
-    $PHORUM["DATA"]["FOCUS_TO_ID"] = 'phorum_search_message';
+    $PHORUM["DATA"]["FOCUS_TO_ID"] = 'search';
 
     if (isset($PHORUM["hooks"]["search_start"]))
         $PHORUM['args'] = phorum_hook('search_start',$PHORUM['args']);
