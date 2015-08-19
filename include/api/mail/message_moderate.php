@@ -40,7 +40,7 @@ function phorum_api_mail_message_moderate($message)
 {
     // Not "global $PHORUM", because we do not want the loading of language
     // files to override our already loaded language file.
-    global $PHORUM;
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Retrieve the list of moderators for the current forum.
     $moderators = phorum_api_user_list_moderators(

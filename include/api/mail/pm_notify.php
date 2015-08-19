@@ -42,7 +42,7 @@ function phorum_api_mail_pm_notify($message, $recipients)
 {
     // Not "global $PHORUM", because we do not want the loading of language
     // files to override our already loaded language file.
-    global $PHORUM;
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // Sort all recipients that want a notification by their preferred language.
     $recipients_by_lang = array();
