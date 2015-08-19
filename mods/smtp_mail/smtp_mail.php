@@ -43,7 +43,7 @@ function phorum_smtp_send_messages ($data)
             $mail->CharSet  = $PHORUM["DATA"]["CHARSET"];
             $mail->Encoding = $PHORUM["DATA"]["MAILENCODING"];
             $mail->Mailer   = "smtp";
-            $mail->IsHTML(false);
+            $mail->isHTML(false);
 
             $mail->From     = $PHORUM['system_email_from_address'];
             $mail->Sender   = $PHORUM['system_email_from_address'];
@@ -62,14 +62,14 @@ function phorum_smtp_send_messages ($data)
 
             // set the connection type
             if($settings['conn'] == 'ssl') {
-                $mail->SMTPSecure   = "ssl";
+                $mail->SMTPSecure = "ssl";
             } elseif($settings['conn'] == 'tls') {
-                $mail->SMTPSecure   = "tls";
+                $mail->SMTPSecure = "tls";
             }
 
             // smtp-authentication
             if($settings['auth'] && !empty($settings['username'])) {
-                $mail->SMTPAuth=true;
+                $mail->SMTPAuth = true;
                 $mail->Username = $settings['username'];
                 $mail->Password = $settings['password'];
             }
@@ -79,14 +79,14 @@ function phorum_smtp_send_messages ($data)
 
             // add the newly created message-id
             // in phpmailer as a public var
-            $mail->MessageID=$data['messageid'];
+            $mail->MessageID = $data['messageid'];
 
             // add custom headers if defined
             if(!empty($data['custom_headers'])) {
                 // custom headers in phpmailer are added one by one
                 $custom_headers = explode("\n",$data['custom_headers']);
                 foreach($custom_headers as $cheader) {
-                    $mail->AddCustomHeader($cheader);
+                    $mail->addCustomHeader($cheader);
                 }
             }
 
@@ -105,7 +105,7 @@ function phorum_smtp_send_messages ($data)
 
                 foreach($data['attachments'] as $att_id => $attachment) {
                     $att_type = (!empty($attachment['mimetype']))?$attachment['mimetype']:'application/octet-stream';
-                    $mail->AddStringAttachment($attachment['filedata'],$attachment['filename'],'base64',$att_type);
+                    $mail->addStringAttachment($attachment['filedata'],$attachment['filename'],'base64',$att_type);
 
                     // try to unset it in the original array to save memory
                     unset($data['attachments'][$att_id]);
@@ -115,7 +115,7 @@ function phorum_smtp_send_messages ($data)
 
             if(!empty($settings['bcc']) && $num_addresses > 3){
                 $bcc = 1;
-                $mail->AddAddress("undisclosed-recipients:;");
+                $mail->addAddress("undisclosed-recipients:;");
             } else {
                 $bcc = 0;
                 // lets keep the connection alive - it could be multiple mails
@@ -126,8 +126,8 @@ function phorum_smtp_send_messages ($data)
                 if($bcc){
                     $mail->addBCC($address);
                 } else {
-                    $mail->AddAddress($address);
-                    if(!$mail->Send()) {
+                    $mail->addAddress($address);
+                    if(!$mail->send()) {
                         $error_msg  = "There was an error sending the message.";
                         $detail_msg = "Error returned was: ".$mail->ErrorInfo;
 
@@ -156,13 +156,13 @@ function phorum_smtp_send_messages ($data)
                         }
                     }
                     // Clear all addresses  for next loop
-                    $mail->ClearAddresses();
+                    $mail->clearAddresses();
                 }
             }
 
             // bcc needs just one send call
             if($bcc) {
-                    if(!$mail->Send()) {
+                    if(!$mail->send()) {
                        $error_msg  = "There was an error sending the bcc message.";
                        $detail_msg = "Error returned was: ".$mail->ErrorInfo;
 
@@ -197,7 +197,7 @@ function phorum_smtp_send_messages ($data)
             // we have to close the connection with pipelining
             // which is only used in non-bcc mode
             if(!$bcc) {
-                $mail->SmtpClose();
+                $mail->smtpClose();
             }
 
 
