@@ -1949,9 +1949,10 @@ function phorum_get_template_info()
 // returns the available languages as an array
 function phorum_get_language_info()
 {
-    // to make some language-files happy which are using $PHORUM-variables
-    // we want to work with a copy of $GLOBALS['PHORUM']
-    $PHORUM = $GLOBALS['PHORUM']; // do not change this line to: global $PHORUM;
+    // To make some language-files happy which are using $PHORUM-variables.
+    // We don't make this really global, otherwise the included language
+    // file would override the active Phorum language.
+    $PHORUM = $GLOBALS['PHORUM'];
 
     $langs = array();
 
