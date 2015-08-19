@@ -275,6 +275,11 @@ function phorum_email_user($addresses, $data)
 
 function phorum_email_pm_notice($message, $langusers)
 {
+    // To make some language-files happy which are using $PHORUM-variables.
+    // We don't make this really global, otherwise the included language
+    // file would override the active Phorum language.
+    $PHORUM = $GLOBALS['PHORUM'];
+
     $mail_data = array(
         // Template variables.
         "pm_message_id"  => $message["pm_message_id"],
@@ -291,7 +296,6 @@ function phorum_email_pm_notice($message, $langusers)
 
     foreach ($langusers as $language => $users)
     {
-        global $PHORUM;
 
         $language = basename($language);
 
@@ -317,7 +321,10 @@ function phorum_email_pm_notice($message, $langusers)
 
 function phorum_email_notice($message)
 {
-    global $PHORUM;
+    // To make some language-files happy which are using $PHORUM-variables.
+    // We don't make this really global, otherwise the included language
+    // file would override the active Phorum language.
+    $PHORUM = $GLOBALS['PHORUM'];
 
     // do we allow email-notification for that forum?
     if(!$PHORUM['allow_email_notify']) {
@@ -335,7 +342,7 @@ function phorum_email_notice($message)
             "forumname"   => strip_tags($PHORUM["DATA"]["NAME"]),
             "forum_id"    => $PHORUM['forum_id'],
             "message_id"  => $message['message_id'],
-          "thread_id"   => $message['thread'],
+            "thread_id"   => $message['thread'],
             "author"      => phorum_api_user_get_display_name($message["user_id"], $message["author"], PHORUM_FLAG_PLAINTEXT),
             "subject"     => $message['subject'],
             "full_body"   => $message['body'],
