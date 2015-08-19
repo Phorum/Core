@@ -20,7 +20,7 @@ function phorum_markAllCheckboxes() {
 }
 </script>
 
-<form action="{URL->ACTION}" method="POST">
+<form action="{URL->ACTION}" method="post">
     {POST_VARS}
     <div class="generic">
         {LANG->ShowOnlyMessages}&nbsp;
@@ -45,7 +45,7 @@ function phorum_markAllCheckboxes() {
 {IF UNAPPROVEDMESSAGE}
     <div class="information">{UNAPPROVEDMESSAGE}</div>
 {ELSE}
-<form action="{URL->ACTION}" method="POST" id="fprepost">
+<form action="{URL->ACTION}" method="post" id="fprepost">
   {POST_VARS}
     <table cellspacing="0" class="list">
         {LOOP PREPOST}

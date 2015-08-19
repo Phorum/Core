@@ -1,4 +1,4 @@
-<form action="{URL->ACTION}" method="POST" enctype="multipart/form-data">
+<form action="{URL->ACTION}" method="post" enctype="multipart/form-data">
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->UploadFile}</div>
   {POST_VARS}
   <div class="PhorumStdBlock PhorumFloatingText" style="text-align: left;">
@@ -10,7 +10,7 @@
     <input class="PhorumSubmit" type="submit" value="{LANG->Submit}" />
   </div>
 </form>
-<form action="{URL->ACTION}" method="POST">
+<form action="{URL->ACTION}" method="post">
   {POST_VARS}
   <table border="0" cellspacing="0" class="PhorumStdTable">
     <tr>

@@ -1,4 +1,4 @@
-<form action="{URL->ACTION}" method="POST">
+<form action="{URL->ACTION}" method="post">
     {POST_VARS}
     <div class="generic">
         {LANG->Activity}&nbsp;
@@ -16,7 +16,7 @@
 </form>
 
 {IF TOPICS}
-    <form action="{URL->ACTION}" method="POST" id="phorum-sub-list">
+    <form action="{URL->ACTION}" method="post" id="phorum-sub-list">
         {POST_VARS}
         <input type="hidden" name="subdays" value="{SELECTED}" />
         <table cellspacing="0" class="list">
