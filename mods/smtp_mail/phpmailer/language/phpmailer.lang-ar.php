@@ -1,25 +1,27 @@
 <?php
 /**
- * PHPMailer language file.
- * Arabic Version
- * by : bahjat al mostafa <bahjat983@hotmail.com> */
+ * Arabic PHPMailer language file: refer to English translation for definitive list
+ * @package PHPMailer
+ * @author bahjat al mostafa <bahjat983@hotmail.com>
+ */
 
-$PHPMAILER_LANG = array();
-
-$PHPMAILER_LANG["provide_address"]      = ' ํฬศ รไ สึฺ ฺแ์ วแรÞแ ' .
-                                          'ฺไๆวไ ศัํฯ ลแ฿สัๆไํ ใำสÞศแ ๆวอฯ';
-$PHPMAILER_LANG["mailer_not_supported"] = ' ใัำแ วแศัํฯ Ûํั ใฯฺๆใ :';
-$PHPMAILER_LANG["execute"]              = 'แว ํใ฿ไ สไÝํะ : ';
-$PHPMAILER_LANG["instantiate"]          = 'แใ ํำสฺุ สๅํฦษ สวศฺ วแศัํฯ';
-$PHPMAILER_LANG["authenticate"]         = 'ฮุร STMP : แใ ํใแ฿ วแีแวอํษ';
-$PHPMAILER_LANG["from_failed"]          = 'วแฺไๆวไ วแใัำแ วแสวแํ Ýิแ : ';
-$PHPMAILER_LANG["recipients_failed"]    = 'ฮุร STMP : ' .
-                                          'ๅฤแวม วแใำสÞศแๆไ Ýิแๆว : ';
-$PHPMAILER_LANG["data_not_accepted"]    = 'ฮุร STMP : วแใฺุํวส แใ สÞศแ .';
-$PHPMAILER_LANG["connect_host"]         = 'ฮุร STMP : วแวสีวแ ศใำสึํÝ STMP แใ ํสใ';
-$PHPMAILER_LANG["file_access"]          = 'แว ํใ฿ไ วแๆีๆแ แใแÝ : ';
-$PHPMAILER_LANG["file_open"]            = 'ฮุร ใแÝ : แใ ํใ฿ไ Ýสอ ใแÝ :';
-$PHPMAILER_LANG["encoding"]             = 'สิÝํั Ûํั ใฺัๆÝ : ';
-$PHPMAILER_LANG["signing"]              = 'ฮุร สำฬํแ : ';
-
-?>
+$PHPMAILER_LANG['authenticate']         = 'ุฎุทุฃ SMTP : ูุง ูู…ูู ุชุฃููุฏ ุงููููุฉ.';
+$PHPMAILER_LANG['connect_host']         = 'ุฎุทุฃ SMTP: ูุง ูู…ูู ุงูุงุชุตุงู ุจุงูุฎุงุฏู… SMTP.';
+$PHPMAILER_LANG['data_not_accepted']    = 'ุฎุทุฃ SMTP: ูู… ูุชู… ูุจูู ุงูู…ุนููู…ุงุช .';
+$PHPMAILER_LANG['empty_message']        = 'ูุต ุงูุฑุณุงูุฉ ูุงุฑุบ';
+$PHPMAILER_LANG['encoding']             = 'ุชุฑู…ูุฒ ุบูุฑ ู…ุนุฑูู: ';
+$PHPMAILER_LANG['execute']              = 'ูุง ูู…ูู ุชูููุฐ : ';
+$PHPMAILER_LANG['file_access']          = 'ูุง ูู…ูู ุงููุตูู ููู…ูู: ';
+$PHPMAILER_LANG['file_open']            = 'ุฎุทุฃ ูู ุงูู…ูู: ูุง ูู…ูู ูุชุญู: ';
+$PHPMAILER_LANG['from_failed']          = 'ุฎุทุฃ ุนูู ู…ุณุชูู ุนููุงู ุงูู…ุฑุณู : ';
+$PHPMAILER_LANG['instantiate']          = 'ูุง ูู…ูู ุชูููุฑ ุฎุฏู…ุฉ ุงูุจุฑูุฏ.';
+$PHPMAILER_LANG['invalid_address']      = 'ุงูุฅุฑุณุงู ุบูุฑ ู…ู…ูู ูุฃู ุนููุงู ุงูุจุฑูุฏ ุงูุฅููุชุฑููู ุบูุฑ ุตุงูุญ.';
+$PHPMAILER_LANG['mailer_not_supported'] = ' ุจุฑูุงู…ุฌ ุงูุฅุฑุณุงู ุบูุฑ ู…ุฏุนูู….';
+$PHPMAILER_LANG['provide_address']      = 'ูุฌุจ ุชูููุฑ ุนููุงู ุงูุจุฑูุฏ ุงูุฅููุชุฑููู ูู…ุณุชูู… ูุงุญุฏ ุนูู ุงูุฃูู.';
+$PHPMAILER_LANG['recipients_failed']    = 'ุฎุทุฃ SMTP: ุงูุฃุฎุทุงุก ุงูุชุงููุฉ ' .
+                                          'ูุดู ูู ุงูุงุฑุณุงู ููู ู…ู : ';
+$PHPMAILER_LANG['signing']              = 'ุฎุทุฃ ูู ุงูุชูููุน: ';
+$PHPMAILER_LANG['smtp_connect_failed']  = 'SMTP Connect() ุบูุฑ ู…ู…ูู.';
+$PHPMAILER_LANG['smtp_error']           = 'ุฎุทุฃ ุนูู ู…ุณุชูู ุงูุฎุงุฏู… SMTP: ';
+$PHPMAILER_LANG['variable_set']         = 'ูุง ูู…ูู ุชุนููู ุฃู ุฅุนุงุฏุฉ ุชุนููู ู…ุชุบูุฑ: ';
+//$PHPMAILER_LANG['extension_missing']    = 'Extension missing: ';
