@@ -2,7 +2,7 @@
 {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
 {IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
 
-<form action="{URL->ACTION}" method="POST">
+<form action="{URL->ACTION}" method="post">
     {POST_VARS}
     <div class="generic">
 

@@ -24,7 +24,7 @@ function helloworld() {
     "onSuccess"     : function (data) {
       viewer.innerHTML = 'Server returned: ' + data;
     },
-    "onFailure"     : function (error) { 
+    "onFailure"     : function (error) {
       alert("Error: " + error);
     }
   });
@@ -51,7 +51,7 @@ Version:
 <br/>
 <br/>
 
-<form method="POST" action="" onsubmit="return false">
+<form method="post" action="" onsubmit="return false">
 
   <input type="button" style="background-color: red; color: white; font-weight: bold" value="PANIC" onclick="helloworld(); return false"/> &lt;-- do not press this button
 
