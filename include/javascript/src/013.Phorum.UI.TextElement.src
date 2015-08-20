@@ -1,11 +1,11 @@
 /**
  * @class Phorum.UI.TextElement
  * @extends Phorum.UI.Element
- * 
+ *
  * <p>
  *   This class can be used to access and manipulate text input fields
  *   (textarea, input type="text"). This class mainly serves as a
- *   base class. 
+ *   base class.
  * </p>
  * @constructor
  *   Create a new Phorum.UI.TextElement object.

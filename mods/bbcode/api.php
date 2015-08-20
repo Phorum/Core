@@ -43,14 +43,14 @@ if (!defined('PHORUM')) return;
  *       a bbcode argument is used, so that should still be allowed. Because
  *       this sounds terribly confusing, here are some examples for the
  *       distinct cases:
- * 
+ *
  *       [url]http://some.url[tag]nested data[/tag][/url]
  *       For this case, the parser would turn [tag]nested data[/tag] into
  *       <some>html tag</some>. Then, the parser would see:
  *       [url]http://some.url<some>html tag</some>[/url]
  *       When using this content for <a href="...">, this would introduce
  *       HTML code inside the href, possibly opening options for XSS.
- * 
+ *
  *       [url=http://some.url][tag]nested data[/tag][/url]
  *       This case is okay. The content here is put between <a href> and </a>
  *       in the rendered output. This case should still be valid after
@@ -1149,7 +1149,7 @@ function bbcode_email_handler($content, $args)
     if ($args['email'] == '') {
         if (strpos($content, '<') !== FALSE ||
             strpos($content, '"') !== FALSE ||
-            strpos($content, '>') !== FALSE) 
+            strpos($content, '>') !== FALSE)
             $content = preg_replace('/[<">].*[<">]/', '', $content);
         $args['email'] = $content;
     }
@@ -1195,7 +1195,7 @@ function bbcode_img_handler($content, $args)
     if ($args['img'] == '') {
         if (strpos($content, '<') !== FALSE ||
             strpos($content, '"') !== FALSE ||
-            strpos($content, '>') !== FALSE) 
+            strpos($content, '>') !== FALSE)
             $content = preg_replace('/[<">].*[<">]/', '', $content);
         $args['img'] = $content;
     }
@@ -1248,7 +1248,7 @@ function bbcode_url_handler($content, $args)
     if ($args['url'] == '') {
         if (strpos($content, '<') !== FALSE ||
             strpos($content, '"') !== FALSE ||
-            strpos($content, '>') !== FALSE) 
+            strpos($content, '>') !== FALSE)
             $content = preg_replace('/[<">].*[<">]/', '', $content);
         $args['url'] = $content;
         $strip_url = TRUE;

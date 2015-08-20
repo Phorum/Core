@@ -5,7 +5,7 @@
 /*
 CALL
 
-    getrecentmessages - retrieve the most recent messages 
+    getrecentmessages - retrieve the most recent messages
 
 ARGUMENTS
 
@@ -15,14 +15,14 @@ ARGUMENTS
 
     [forum_id]
 
-        A forum_id for which to retrieve the messages. 
+        A forum_id for which to retrieve the messages.
         If this parameter is not provided, then the messages will
         be retrieved for all forums for which the user has
         read permission.
 
     [thread_id]
 
-        A thread_id for which to retrieve the messages. 
+        A thread_id for which to retrieve the messages.
 
     [threads_only]
 

@@ -416,7 +416,7 @@ function phorum_check_distro()
         "One or more files in your Phorum tree are no longer part of
          the Phorum distribution. Please, remove the following file(s)
          from your Phorum installation" .
-        ($warning && $critical 
+        ($warning && $critical
          ? ' (the ones in red are highly recommended for removal)' : '') .
         ":<br/>" .
          "<ul><li>" . implode("</li>\n<li>", $errors) . "</li></ul>",

@@ -19,7 +19,7 @@
 
 /**
  * This script implements the caching functions for Phorum.
- * There are multiple caching backends available for using  
+ * There are multiple caching backends available for using
  * different applications like memcached, apc or the traditional
  * file based backend.
  *
@@ -55,14 +55,14 @@ if (file_exists($cacheconfig) && ! include_once $cacheconfig)
     if (!$fp) { ?>
         A cache configuration file was found in
         {phorum dir}/include/config/cache.php,<br />
-        but Phorum was unable to read it. Please check the file 
+        but Phorum was unable to read it. Please check the file
         permissions<br />for this file.
     <?php
     // Unknown error.
     } else {
         fclose($fp); ?>
-        A cache configuration file was found in 
-        {phorum dir}/include/config/cache.php,<br />but it could not be 
+        A cache configuration file was found in
+        {phorum dir}/include/config/cache.php,<br />but it could not be
         loaded. It possibly contains one or more syntax errors.<br />
         Please check your configuration file.
         <?php
@@ -110,7 +110,7 @@ $cacheapi_filename =
 if (file_exists($cacheapi_filename)) {
     require_once $cacheapi_filename;
 } else {
-    echo "The defined cache backend couldn't be found. Please check that you 
+    echo "The defined cache backend couldn't be found. Please check that you
           uploaded all files and your settings in include/config/cache.php.";
     exit();
 }

@@ -62,7 +62,7 @@ define('PHORUM_FILE_CACHE_DIRLEN', 6);
 /**
  * Retrieve an object from the cache.
  *
- * @param string $type 
+ * @param string $type
  *     A name for the group of data that is being cached.
  *     Examples are "user" and "message".
  *
@@ -142,7 +142,7 @@ function phorum_api_cache_get($type, $key, $version=NULL)
 /**
  * Store an object in the cache.
  *
- * @param string $type 
+ * @param string $type
  *     A name for the group of data that is being cached.
  *     Examples are "user" and "message".
  *
@@ -159,7 +159,7 @@ function phorum_api_cache_get($type, $key, $version=NULL)
  *     The version to store along with the cached data. This version is
  *     used by the {@link phorum_api_cache_get()} function to check whether
  *     the cached data has expired or not.
- * 
+ *
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
@@ -181,9 +181,9 @@ function phorum_api_cache_put(
 
     // Write the cache file.
     $ttl_time = time() + $ttl;
-    if (!($fp = @fopen("$path/$file", "w"))) { 
-        return FALSE; 
-    } 
+    if (!($fp = @fopen("$path/$file", "w"))) {
+        return FALSE;
+    }
     $ret = fwrite($fp, serialize(array($ttl_time, $data, $version)));
     if (!$ret || !fclose($fp)) {
       @unlink("$path/$file");
@@ -198,7 +198,7 @@ function phorum_api_cache_put(
 /**
  * Remove an object from the cache
  *
- * @param string $type 
+ * @param string $type
  *     A name for the group of data that is being cached.
  *     Examples are "user" and "message".
  *
@@ -351,7 +351,7 @@ function phorum_api_cache_mkpath($type = NULL, $key = NULL)
  * Recursively delete all files/dirs in a directory.
  *
  * This is a helper function of the file based caching backend.
- * 
+ *
  * @param string $dir
  *      A string holding the base directory.
  * @param string $subdir
@@ -361,7 +361,7 @@ function phorum_api_cache_mkpath($type = NULL, $key = NULL)
  * @param integer $purged
  *      A counter which stores how much data was deleted.
  * @param boolean $full
- *      A flag to tell that all contents not depending on if they are expired 
+ *      A flag to tell that all contents not depending on if they are expired
  *      or not are to be deleted.
  * @return array
  *     An array containing three elements:
@@ -402,7 +402,7 @@ function phorum_api_cache_purge_recursive(
             $total += strlen($contents);
             $data = unserialize($contents);
 
-            // check if the data is expired or everything is supposed to be 
+            // check if the data is expired or everything is supposed to be
             // deleted anyway
             if ( $full || ($data[0] < time()) ) {
                 @unlink("$dir/$subdir/$entry");
@@ -436,13 +436,13 @@ function phorum_api_cache_purge_recursive(
 // {{{ Function: phorum_api_cache_mkdir()
 /**
  * Recursively create a directory tree.
- * 
+ *
  * This is a helper function of the file based caching backend.
  *
  * @param string $path
  *          The path to create.
- *  
- * @return boolean 
+ *
+ * @return boolean
  *          A flag reporting success or failure of the mkdir
  */
 function phorum_api_cache_mkdir($path)
@@ -460,14 +460,14 @@ function phorum_api_cache_mkdir($path)
  * Recursively delete all files/dirs in a directory.
  *
  * This is a helper function of the file based caching backend.
- *      
+ *
  * We suspend the event logging module if it is enabled here,
  * because we might be trying to remove non empty directories,
- * resulting in harmless PHP warnings.*      
- *      
+ * resulting in harmless PHP warnings.*
+ *
  * @param string $path
  *          The path to remove.
- *          
+ *
  * @return boolean
  *          A flag currently reporting always TRUE.
  */

@@ -137,7 +137,7 @@ function phorum_api_mail($addresses, $data)
      *     mail_prepare
      *
      * [description]
-     *     This hook is run at the very beginning of the function 
+     *     This hook is run at the very beginning of the function
      *     <literal>phorum_api_mail()</literal> and is therefore called for
      *     <emphasis>every</emphasis> mail that is sent from Phorum.
      *     Modules can fully change the list of mail addresses and the
@@ -163,7 +163,7 @@ function phorum_api_mail($addresses, $data)
      *
      * [example]
      *     <hookcode>
-     *     function phorum_mod_foo_mail_prepare ($addresses, $data) 
+     *     function phorum_mod_foo_mail_prepare ($addresses, $data)
      *     {
      *         global $PHORUM;
      *
@@ -211,7 +211,7 @@ function phorum_api_mail($addresses, $data)
         $host = 'webserver';
     }
 
-    // Use a provided message id. 
+    // Use a provided message id.
     if (isset($data['msgid']))
     {
         $messageid = "<{$data['msgid']}@$host>";
@@ -307,7 +307,7 @@ function phorum_api_mail($addresses, $data)
      *     FALSE, the following module will get TRUE or FALSE as its
      *     input, instead of the original message data array).
      *     When implementing this hook in a module, it might be a
-     *     good idea to beware of this. 
+     *     good idea to beware of this.
      *
      * [category]
      *     Mail
@@ -335,12 +335,12 @@ function phorum_api_mail($addresses, $data)
      *
      * [example]
      *     <hookcode>
-     *     function phorum_mod_foo_mail_send ($addresses, $data) 
+     *     function phorum_mod_foo_mail_send ($addresses, $data)
      *     {
      *         global $PHORUM;
      *
      *         // In case another module already handled mail sending.
-     *         // (it's recommended to include this check for "mail_send"). 
+     *         // (it's recommended to include this check for "mail_send").
      *         if (!is_array($addresses)) return $addresses;
      *
      *         // ... custom code for
@@ -366,7 +366,7 @@ function phorum_api_mail($addresses, $data)
         if(isset($data['attachments'])) {
             $hook_data['attachments'] = $data['attachments'];
         }
-        
+
 
         $send_messages = phorum_api_hook('mail_send', $hook_data);
     }
@@ -393,7 +393,7 @@ function phorum_api_mail($addresses, $data)
     if (!empty($data['custom_headers'])) {
         $mailheader .= $data['custom_headers']."\n";
     }
-        
+
     // Send the mail using Bcc:
     if (!empty($PHORUM['use_bcc']) && count($addresses) > 3)
     {
@@ -598,7 +598,7 @@ function phorum_api_mail_encode_header($string)
  *     The email address to check.
  *
  * @return bool
- *     FALSE in case the email address is not valid, TRUE otherwise. 
+ *     FALSE in case the email address is not valid, TRUE otherwise.
  */
 function phorum_api_mail_check_address($address)
 {
@@ -619,7 +619,7 @@ function phorum_api_mail_check_address($address)
     {
         // If no DNS lookups are performed, the we are done. The
         // mail address is valid.
-        if (empty($PHORUM['dns_lookup'])) return TRUE; 
+        if (empty($PHORUM['dns_lookup'])) return TRUE;
 
         // If the PHP function checkdnsrr() is not available, then
         // we cannot run the DNS lookup. This might be the case

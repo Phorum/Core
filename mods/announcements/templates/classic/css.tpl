@@ -14,5 +14,5 @@
 }
 
 .phorum-announcements-table td {
-    padding-right: 20px; 
+    padding-right: 20px;
 }

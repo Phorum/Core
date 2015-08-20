@@ -98,7 +98,7 @@ Phorum.UI.BusyMarker =
                   'The decrement() method was called more often than the ' +
                   'decrement() method. This should not happen.';
         }
-        this.render(); 
+        this.render();
     },
 
     // Specific code for rendering the default busy marker ==================
@@ -154,13 +154,13 @@ Phorum.UI.BusyMarker =
             this.$box = $PJ('<div class="phorum_busy_marker"/>');
 
             // Add the box to the page. We add it to the #phorum wrapper and
-            // not to the page body to make it inherit CSS styles from #phorum. 
+            // not to the page body to make it inherit CSS styles from #phorum.
             $PJ('#phorum').prepend(this.$box);
         }
 
         // <?php $lang = $PHORUM['DATA']['LANG']; ?>
 
-        // Determine the message to show. 
+        // Determine the message to show.
         var message =
             this.count === 1 ?
             '<?php print addslashes($lang["ActionPending"]) ?>' :

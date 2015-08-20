@@ -1,6 +1,6 @@
 <?php
 /**
- * This function will feed the $say parameter to a speech 
+ * This function will feed the $say parameter to a speech
  * synthesizer and send the resulting audio file to the browser
  *
  * @param string $say
@@ -25,7 +25,7 @@ function spamhurdles_spoken_captcha($say)
         if (file_exists($tmpfile) and filesize($tmpfile) > 0) {
             header("Content-Type: audio/x-wav");
             header("Content-Disposition: attachment; filename=captchacode.wav");
-            header("Content-Length: " . filesize($tmpfile)); 
+            header("Content-Length: " . filesize($tmpfile));
             readfile($tmpfile);
             unlink($tmpfile);
             exit(0);

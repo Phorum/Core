@@ -226,7 +226,7 @@ $frm = new PhorumInputForm ("", "post", "");
 $frm_url = phorum_admin_build_url();
 $html = "<form id=\"modules_form\" " .
         "action=\"$frm_url\" method=\"post\">" .
-        "<input type=\"hidden\" name=\"phorum_admin_token\" 
+        "<input type=\"hidden\" name=\"phorum_admin_token\"
                 value=\"{$PHORUM['admin_token']}\" />".
         // Prevent the modules form from submitting when pressing enter
         // in the filter text box.

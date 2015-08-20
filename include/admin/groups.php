@@ -243,7 +243,7 @@ if(empty($_REQUEST["edit"])){
     $frm->show();
 
     $frm_url = phorum_admin_build_url();
-    
+
     echo "<hr class=\"PhorumAdminHR\" />";
     echo "<form action=\"$frm_url\" method=\"post\">\n";
     echo "<input type=\"hidden\" name=\"phorum_admin_token\" value=\"{$PHORUM['admin_token']}\">\n";

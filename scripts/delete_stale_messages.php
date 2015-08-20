@@ -61,7 +61,7 @@ foreach ($forums as $forum_id)
 {
     $PHORUM['forum_id'] = $forum_id;
     $PHORUM['DB']->update_forum_stats(true);
-}   
+}
 
 print "\n";
 

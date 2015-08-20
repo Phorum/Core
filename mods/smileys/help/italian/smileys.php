@@ -20,14 +20,14 @@
     principalmente utilizzate per esprimere l'umore dell'autore.
     Nel riquadro in basso si possono trovare tutte le icone
     disponibili.
-    
+
     Nella colonna denominata "Dove" viene indicato dove
     queste icone possono essere utilizzate.
-    
+
     <P>S  = Solo nel campo riservato al soggetto</P>
     <P>B  = Solo nello spazio riservato al testo</P>
     <P>BS = In tutti e due i campi</P>
-    
+
     <br/><br/>
     <table cellspacing="1" width="100%">
     <tr>

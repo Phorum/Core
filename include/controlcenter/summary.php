@@ -46,10 +46,10 @@ if (isset($PHORUM["hooks"]["profile"])) {
 function phorum_readable_permissions()
 {
     global $PHORUM;
-    
+
     $newperms = array();
 
-    if (isset($PHORUM["user"]["permissions"])) {        
+    if (isset($PHORUM["user"]["permissions"])) {
         $forums = phorum_api_forums_get(array_keys($PHORUM["user"]["permissions"]));
 
         foreach($PHORUM["user"]["permissions"] as $forum => $perms) {

@@ -157,7 +157,7 @@ function phorum_api_format_forums($forums, $flags = 0)
 
     // Add unread message information.
     if ($flags & PHORUM_FLAG_ADD_UNREAD_INFO &&
-        $PHORUM['show_new_on_index'] != PHORUM_NEWFLAGS_NOCOUNT && 
+        $PHORUM['show_new_on_index'] != PHORUM_NEWFLAGS_NOCOUNT &&
         $PHORUM['user']['user_id'] &&
         !empty($forums_to_check)) {
 

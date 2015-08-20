@@ -90,7 +90,7 @@ if (!defined( "PHORUM_ADMIN" ))
     $PHORUM["DATA"]["TITLE"] =
         isset($PHORUM["title"]) ? $PHORUM["title"] : "";
 
-    $PHORUM["DATA"]["DESCRIPTION"] =         
+    $PHORUM["DATA"]["DESCRIPTION"] =
         isset( $PHORUM["description"]) ? $PHORUM["description"] : "";
 
     $PHORUM["DATA"]["HTML_TITLE"] = !empty($PHORUM["html_title"])
@@ -99,7 +99,7 @@ if (!defined( "PHORUM_ADMIN" ))
     $PHORUM["DATA"]["HEAD_TAGS"] = isset($PHORUM["head_tags"])
         ? $PHORUM["head_tags"] : "";
 
-    $PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"]; 
+    $PHORUM["DATA"]["FORUM_ID"] = $PHORUM["forum_id"];
 
     // If the Phorum is disabled, display a message.
     if (isset($PHORUM["status"]) &&
@@ -228,7 +228,7 @@ if (!defined( "PHORUM_ADMIN" ))
         $PHORUM["threaded_read"] = $modes['read'];
 
         // Provide the number of new private messages for the user in the
-        // "new_private_messages" field. 
+        // "new_private_messages" field.
         if (!empty($PHORUM["enable_pm"])) {
             $PHORUM['user']['new_private_messages'] =
                 $PHORUM['user']['pm_new_count'];
@@ -362,7 +362,7 @@ if (!defined( "PHORUM_ADMIN" ))
     // not standardized, so some other formats might still be in use.
     // The included language file can fill this array with appropriate
     // language names when needed.
-    $PHORUM['compat_languages'] = array(); 
+    $PHORUM['compat_languages'] = array();
 
     // Load the main language file.
     $PHORUM['language'] = basename($PHORUM['language']);
@@ -721,7 +721,7 @@ else {
 
 /**
  * Check if the user has read permission for a forum page.
- * 
+ *
  * If the user does not have read permission for the currently active
  * forum, then an error message is shown. What message to show depends
  * on the exact case. Possible cases are:

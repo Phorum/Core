@@ -67,9 +67,9 @@
         </tr>
       </table>
     </form>
-{ELSE} 
-    {LANG->NoUserMatchFilter} 
-{/IF}    
+{ELSE}
+    {LANG->NoUserMatchFilter}
+{/IF}
   </div>
 {ELSE}
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->SelectGroupMod}</div>

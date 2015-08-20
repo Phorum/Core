@@ -186,7 +186,7 @@ Phorum.Ajax.call({
      * </p>
      * <p>
      *   This can be used to process javascript code that is embedded in
-     *   dynamically retrieved blocks of HTML code. Adding this data to 
+     *   dynamically retrieved blocks of HTML code. Adding this data to
      *   the page (e.g. by using document.write or innerHTML) would not
      *   evaluate the javascript code. Browsers only parse and evaluate
      *   javascript code that is retrieved at page load time.

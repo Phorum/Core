@@ -68,7 +68,7 @@ function phorum_admin_build_url($input_args = NULL, $return_raw = FALSE)
 
     $url = $PHORUM["admin_http_path"];
 
-    // The base URL was requested. 
+    // The base URL was requested.
     if ($input_args === NULL || $input_args === '') {
         return $return_raw ? $url : htmlspecialchars($url);
     }

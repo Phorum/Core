@@ -68,7 +68,7 @@ Phorum.UI.NewFlags.registerCallback(function (mode, item_id) {
   alert("Mark read was successful for " + mode + ", id " + item_id);
 });
      * </code></pre></p>
-     * 
+     *
      * @param {Function} callback
      *   The callback function to register.
      *
@@ -121,7 +121,7 @@ In template:
      * @param {String} action (optional)
      *   The action for which to register the callback. The action is defined
      *   in the special new-flag[&lt;action&gt;,...] CSS class (see
-     *   {@link #updateUI updateUI()} for more info). 
+     *   {@link #updateUI updateUI()} for more info).
      *
      * @param {Function} callback
      *   The callback function to register.

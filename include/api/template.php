@@ -52,7 +52,7 @@ function phorum_api_template_list($include_hidden = FALSE)
     $dh = opendir($PHORUM['template_path']);
     while ($entry = readdir($dh))
     {
-        if ($entry[0] !== '.' && 
+        if ($entry[0] !== '.' &&
             file_exists($PHORUM['template_path'].'/'.$entry.'/info.php')) {
 
             $template_hide = FALSE;
@@ -186,7 +186,7 @@ function phorum_api_template($page)
         exit(1);
     }
 
-    list ($page, $phpfile, $tplfile) = phorum_api_template_resolve($page); 
+    list ($page, $phpfile, $tplfile) = phorum_api_template_resolve($page);
 
     // No template to process. This will happen in case a .php file
     // is used for defining the template instead of a .tpl file.

@@ -318,7 +318,7 @@ function phorum_api_image_thumbnail(
 function phorum_api_image_clip(
     $image,
     $clip_x = 0,    $clip_y = 0,
-    $clip_w = NULL, $clip_h = NULL, 
+    $clip_w = NULL, $clip_h = NULL,
     $dst_w  = NULL, $dst_h  = NULL,
     $method = NULL)
 {
@@ -480,7 +480,7 @@ function phorum_api_image_clip(
                 imagecopyresampled(
                     $scaled,          // destination image
                     $original,        // source image
-                    0,       0,       // destination x + y 
+                    0,       0,       // destination x + y
                     $clip_x, $clip_y, // source x + y
                     $dst_w,  $dst_h,  // destination width + height
                     $clip_w, $clip_h  // source width + height
@@ -622,7 +622,7 @@ function phorum_api_image_supported()
         'PExcbHyMnFxWAAA7'
     );
 
-    // Try to create a thumbnail out of the image. 
+    // Try to create a thumbnail out of the image.
     $clipped = phorum_api_image_thumbnail($test_image, 100, 100);
     if ($clipped === FALSE) return FALSE;
 

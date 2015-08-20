@@ -75,7 +75,7 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
     list ($censor_search, $censor_replace) = phorum_api_format_censor_compile();
 
     // Prepare the profile URL template. This is used to prevent
-    // having to call the phorum_api_url() function over and over again. 
+    // having to call the phorum_api_url() function over and over again.
     $profile_url_template = phorum_api_url(PHORUM_PROFILE_URL, '%spec_data%');
 
     // A special <br> tag to keep track of breaks that are added by phorum.
@@ -90,7 +90,7 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
         // for formatting something else than a message.
         if (!isset($message['message_id'])) {
             $messages[$id]['message_id'] = $message['message_id'] = $id;
-        }   
+        }
 
         // -----------------------------------------------------------------
         // Message body
@@ -155,7 +155,7 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
             );
         }
 
-        // Escape special HTML characters. 
+        // Escape special HTML characters.
         if (isset($message['subject'])) {
             $messages[$id]['subject'] = htmlspecialchars($messages[$id]['subject'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
         }
@@ -164,7 +164,7 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
         // Message author
         // -----------------------------------------------------------------
 
-        // Escape special HTML characters in the email address. 
+        // Escape special HTML characters in the email address.
         if (isset($message['email'])) {
             $messages[$id]['email'] = htmlspecialchars($message['email'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
         }

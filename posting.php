@@ -31,7 +31,7 @@
 //    - quote       Reply to a message, with quoting of the original message
 //
 //    This parameter can also be numerical. In that case, we asume that it
-//    is a thread id and that the required posting mode is "reply". 
+//    is a thread id and that the required posting mode is "reply".
 //
 // 3) If edit, moderation or reply is used: the message id.
 //
@@ -436,7 +436,7 @@ if (!$PHORUM["post_fields"]["author"][pf_READONLY]) {
  *
  * [description]
  *     This hook can be used for setting up custom abilities and permissions for
- *     users, by updating the applicable fields in 
+ *     users, by updating the applicable fields in
  *     <literal>$GLOBALS["PHORUM"]["DATA"]["OPTION_ALLOWED"]</literal>
  *     (e.g. for giving certain users the right to make postings sticky, without
  *     having to make the full moderator for a forum).<sbr/>
@@ -788,7 +788,7 @@ if ($PHORUM["posting_template"] == 'posting')
      *     before_editor
      *
      * [description]
-     *     This hook can be used for changing message data, just before the 
+     *     This hook can be used for changing message data, just before the
      *     editor is displayed. This is done after escaping message data for XSS
      *     prevention is done. So in the hook, the module writer will have to be
      *     aware that data is escaped and that he has to escape data himself if
@@ -832,8 +832,8 @@ if ($PHORUM["posting_template"] == 'posting')
      *
      * [example]
      *     <hookcode>
-     *     // Using this, an example hook function that appends the string 
-     *     // "FOO!" to the subject when replying to a message (how useful ;-) 
+     *     // Using this, an example hook function that appends the string
+     *     // "FOO!" to the subject when replying to a message (how useful ;-)
      *     // could look like this:
      *     function phorum_mod_foo_before_editor ($data)
      *     {

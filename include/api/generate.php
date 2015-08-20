@@ -43,7 +43,7 @@
 function phorum_api_generate_password($charpart = 4, $numpart = 3)
 {
     $vowels = array("a", "e", "i", "o", "u");
-    $cons   = array("b", "c", "d", "g", "h", "j", "k", "l", "m", "n", 
+    $cons   = array("b", "c", "d", "g", "h", "j", "k", "l", "m", "n",
                     "p", "r", "s", "t", "u", "v", "w", "tr", "cr",
                     "br", "fr", "th", "dr", "ch", "ph", "wr", "st",
                     "sp", "sw", "pr", "sl", "cl");

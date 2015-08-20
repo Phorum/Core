@@ -63,7 +63,7 @@ require_once PHORUM_PATH.'/include/api/tree.php';
  *     drops below subject_cut_min, then subject_cut_min is used instead.
  * </li>
  * </ul>
- *    
+ *
  * @param array $messages
  *     An array of message data arrays.
  *
@@ -193,7 +193,7 @@ function phorum_api_thread_update_metadata($thread_id)
     $message_ids_moderator = array_keys($messages);
     sort($message_ids_moderator, SORT_NUMERIC);
     $save['meta']['message_ids_moderator'] = $message_ids_moderator;
-        
+
     // Find the most recent_message in the thread and keep track
     // of the time when that message was posted.
     $recent_message_id = 0;
@@ -210,9 +210,9 @@ function phorum_api_thread_update_metadata($thread_id)
     // Update the thread's modifystamp according to the most recent
     // message's post time.
     $save['modifystamp'] = $modifystamp;
-        
+
     // Retrieve the data for the most recent message.
-    // If we have no recent message (happens if all messages are hidden) 
+    // If we have no recent message (happens if all messages are hidden)
     // then we take the thread starter message as the most recent message.
     $recent_message = $recent_message_id
                     ? $visible_messages[$recent_message_id]

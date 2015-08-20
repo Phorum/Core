@@ -360,7 +360,7 @@ function phorum_convert_getNextUser($res) {
     if(isset($userdata['sess_id'])) {
         unset($userdata['sess_id']);
     }
-    
+
     $userdata['user_id']=$userdata['id'];
     unset($userdata['id']);
 

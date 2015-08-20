@@ -98,12 +98,12 @@ if ($mode == "post" || $mode == "reply")
 if ($finish && ($mode == 'edit' || $mode == 'reply'))
 {
     $id = $mode == "edit" ? "message_id" : "parent_id";
-    
+
     $origmessage = null;
     if($PHORUM['cache_messages']) {
         $origmessage = phorum_api_cache_get('message',$PHORUM["forum_id"]."-".$message[$id]);
     }
-    
+
     if($origmessage == null) {
         $origmessage = $PHORUM['DB']->get_message($message[$id]);
         if($PHORUM['cache_messages']) {
@@ -135,7 +135,7 @@ if ($mode == "reply" || $mode == "edit") {
     $top_parent = null;
     if($PHORUM['cache_messages']) {
         $top_parent = phorum_api_cache_get('message',$PHORUM["forum_id"]."-".$message["thread"]);
-    } 
+    }
     if($top_parent == null) {
         $top_parent = $PHORUM['DB']->get_message($message["thread"]);
         if($PHORUM['cache_messages']) {
@@ -152,8 +152,8 @@ if ($mode == "reply")
         $parent = null;
         if($PHORUM['cache_messages']) {
             $parent = phorum_api_cache_get('message',$PHORUM["forum_id"]."-".$message["parent_id"]);
-        }  
-        if($parent == null) {       
+        }
+        if($parent == null) {
             $parent = $PHORUM['DB']->get_message($message["parent_id"]);
             if($PHORUM['cache_messages']) {
                 phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$message["parent_id"],$parent);
@@ -186,7 +186,7 @@ if ($mode == "reply")
         // unapproved messages to the message list.
         phorum_api_redirect(PHORUM_LIST_URL);
     }
-    
+
     // closed topic, show a message
     if($top_parent["closed"]) {
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
