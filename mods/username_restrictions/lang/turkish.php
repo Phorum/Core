@@ -2,9 +2,9 @@
 
 $PHORUM['DATA']['LANG']['mod_username_restrictions'] = array(
     'min_length'     => 'Lütfen daha uzun bir kullanýcý adý seçiniz ' .
-                        '(Minimum uzunluk %length% karakterdir).', 
+                        '(Minimum uzunluk %length% karakterdir).',
     'max_length'     => 'Lütfen daha kýsa bir kullanýcý adý seçiniz' .
-                        '(Maksimum uzunluk %length% karakterdir).', 
+                        '(Maksimum uzunluk %length% karakterdir).',
     'valid_chars'    => 'Lütfen farklý bir kullanýcý adý seçiniz. ' .
                         '"%username%" kullanýcý adý bir veya daha fazla geçersiz karakter ' .
                         'içermektedir. Geçerli karakterler: %valid_chars%. ' .

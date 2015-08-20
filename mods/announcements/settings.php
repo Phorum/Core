@@ -64,19 +64,19 @@ $frm->addrow("Announcement Forum", $frm->select_tag("forum_id", $forum_list_glob
 $vroot_folders = phorum_get_forum_info(3,-1);
 
 if(count($vroot_folders)) {
-	$frm->addbreak("Announcement Forums for Virtual Root Folders");
+    $frm->addbreak("Announcement Forums for Virtual Root Folders");
 
-	foreach($vroot_folders as $vroot_folder_id => $vroot_path) {
+    foreach($vroot_folders as $vroot_folder_id => $vroot_path) {
 
-		$forum_list_vroot = phorum_get_forum_info(1,$vroot_folder_id);
+        $forum_list_vroot = phorum_get_forum_info(1,$vroot_folder_id);
 
-		$forum_list_vroot[0]='No Announcements for this Virtual Root';
+        $forum_list_vroot[0]='No Announcements for this Virtual Root';
 
-		asort($forum_list_vroot);
+        asort($forum_list_vroot);
 
-		$frm->addrow('VROOT "'.$vroot_path.'"', $frm->select_tag("vroot_forum_id[$vroot_folder_id]", $forum_list_vroot, (isset($PHORUM["mod_announcements"]["vroot"][$vroot_folder_id])?$PHORUM["mod_announcements"]["vroot"][$vroot_folder_id]:0)));
+        $frm->addrow('VROOT "'.$vroot_path.'"', $frm->select_tag("vroot_forum_id[$vroot_folder_id]", $forum_list_vroot, (isset($PHORUM["mod_announcements"]["vroot"][$vroot_folder_id])?$PHORUM["mod_announcements"]["vroot"][$vroot_folder_id]:0)));
 
-	}
+    }
 
 
 }

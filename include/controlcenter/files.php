@@ -77,7 +77,7 @@ elseif (!empty($_POST["delete"]))
         if (phorum_api_file_check_delete_access($file_id)) {
             phorum_api_file_delete($file_id);
         }
-    }                
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -96,7 +96,7 @@ foreach($files as $key => $file) {
     $files[$key]["url"]=phorum_get_url(PHORUM_FILE_URL, "file=$key", "filename=".urlencode($file['filename']));
 
     $total_size+=$file["filesize"];
-} 
+}
 
 $template = "cc_files";
 

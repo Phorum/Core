@@ -47,7 +47,7 @@
                 <dt>{LANG->DateActive}:&nbsp;</dt>
                 <dd>{PROFILE->date_last_active}</dd>
             {/IF}
-            {HOOK "tpl_profile" PROFILE} 
+            {HOOK "tpl_profile" PROFILE}
         </dl>
 
     </div>

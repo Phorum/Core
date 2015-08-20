@@ -13,10 +13,10 @@ $PHORUM["DATA"]["LANG"]["mod_spamhurdles"] = array
          another chance to enter it right.",
     "CaptchaSpoken" =>
         "Listen to this code in spoken form.",
-    "CaptchaFieldLabel" => 
+    "CaptchaFieldLabel" =>
         "Enter code: ",
     "CaptchaWrongCode" =>
-        "You did not provide the correct code for the spam prevention check. 
+        "You did not provide the correct code for the spam prevention check.
          Please try again.",
 
     // Mathematical CAPTCHA

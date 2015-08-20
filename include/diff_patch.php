@@ -65,8 +65,8 @@ function phorum_diff($a, $b, $min=3, $i=0) {
     $diff = array();
     if($a == "" && $b == "") return $diff;
 
-	$a=str_replace(array("\r\n", "\r"), "\n", $a);
-	$b=str_replace(array("\r\n", "\r"), "\n", $b);
+    $a=str_replace(array("\r\n", "\r"), "\n", $a);
+    $b=str_replace(array("\r\n", "\r"), "\n", $b);
 
     if($a == "") {
         array_push($diff, "$i+".$b);
@@ -204,7 +204,7 @@ function phorum_patch($text, $diff) {
 */
 function phorum_unpatch($text, $diff) {
 
-	$text=str_replace(array("\r\n", "\r"), "\n", $text);
+    $text=str_replace(array("\r\n", "\r"), "\n", $text);
 
     if(!is_array($diff)) {
         $n = 0;

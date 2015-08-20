@@ -41,7 +41,7 @@ if (!@$PHORUM['memcache_obj']->connect('127.0.0.1', 11211)) {
 /**
  * Retrieve an object from the cache.
  *
- * @param string $type 
+ * @param string $type
  *     A name for the group of data that is being cached.
  *     Examples are "user" and "message".
  *
@@ -104,7 +104,7 @@ function phorum_cache_get($type,$key,$version=NULL)
 /**
  * Puts some data into the cache.
  *
- * @param string $type 
+ * @param string $type
  *     A name for the group of data that is being cached.
  *     Examples are "user" and "message".
  *
@@ -121,7 +121,7 @@ function phorum_cache_get($type,$key,$version=NULL)
  *     The version to store along with the cached data. This version is
  *     used by the {@link phorum_cache_get()} function to check whether
  *     the cached data has expired or not.
- * 
+ *
  * @return boolean
  *     This function returns TRUE on success or FALSE on failure.
  */
@@ -136,7 +136,7 @@ function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$versio
 /**
  * Removes an object from the cache
  *
- * @param string $type 
+ * @param string $type
  *     A name for the group of data that is being cached.
  *     Examples are "user" and "message".
  *

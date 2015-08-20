@@ -134,7 +134,7 @@ if (!count($message["meta"]["attachments"])) {
  *
  *         // Add the disclaimer to the new message body
  *         $message["body"] .= "\n".$PHORUM["DATA"]["LANG"]["mod_foo"]["Disclaimer"];
- *         
+ *
  *         return $message;
  *     }
  *     </hookcode>
@@ -187,7 +187,7 @@ if ($success)
      * [description]
      *     This hook can be used for performing actions based on what the
      *     message contained or altering it before it is emailed to the
-     *     subscribed users. It is also useful for adding or removing 
+     *     subscribed users. It is also useful for adding or removing
      *     subscriptions.
      *
      * [category]
@@ -306,7 +306,7 @@ if ($success)
      *     Message handling
      *
      * [when]
-     *     In <filename>include/posting/action_post.php</filename>, after all 
+     *     In <filename>include/posting/action_post.php</filename>, after all
      *     the posting work is done and before executing the built-in
      *     redirect behavior.
      *
@@ -396,7 +396,7 @@ if ($success)
      *     Message handling
      *
      * [when]
-     *     In <filename>include/posting/action_post.php</filename>, after the 
+     *     In <filename>include/posting/action_post.php</filename>, after the
      *     redirect URL has been constructed and just before the user is
      *     redirected (back to the message list or read page.)
      *
@@ -423,21 +423,21 @@ if ($success)
     if ($message["status"] > 0) {
         phorum_redirect_by_url($redir_url);
     } else {
-    	// give a message about this being a moderated forum before redirecting
-    	$PHORUM['DATA']['OKMSG']=$PHORUM['DATA']['LANG']['ModeratedForum'];
-    	$PHORUM['DATA']["URL"]["REDIRECT"]=$redir_url;
+        // give a message about this being a moderated forum before redirecting
+        $PHORUM['DATA']['OKMSG']=$PHORUM['DATA']['LANG']['ModeratedForum'];
+        $PHORUM['DATA']["URL"]["REDIRECT"]=$redir_url;
 
-    	// BACKMSG is depending on the place we are returning to
-    	if ($PHORUM["redirect_after_post"] == "read") {
-    		$PHORUM['DATA']['BACKMSG'] = $PHORUM['DATA']['LANG']['BackToThread'];
-    	} else {
-    		$PHORUM['DATA']['BACKMSG'] = $PHORUM['DATA']['LANG']['BackToList'];
-    	}
+        // BACKMSG is depending on the place we are returning to
+        if ($PHORUM["redirect_after_post"] == "read") {
+            $PHORUM['DATA']['BACKMSG'] = $PHORUM['DATA']['LANG']['BackToThread'];
+        } else {
+            $PHORUM['DATA']['BACKMSG'] = $PHORUM['DATA']['LANG']['BackToList'];
+        }
 
-    	// make it a little bit more visible
-    	$PHORUM['DATA']["URL"]["REDIRECT_TIME"]=10;
-    	phorum_output('message');
-    	exit(0);
+        // make it a little bit more visible
+        $PHORUM['DATA']["URL"]["REDIRECT_TIME"]=10;
+        phorum_output('message');
+        exit(0);
     }
 
     return;

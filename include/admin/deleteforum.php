@@ -63,7 +63,7 @@
              *
              * [example]
              *     <hookcode>
-             *     function phorum_mod_foo_admin_forum_delete ($id) 
+             *     function phorum_mod_foo_admin_forum_delete ($id)
              *     {
              *         // E.g. Notify the external system that the forum has been deleted
              *

@@ -35,7 +35,7 @@ if(!empty($PHORUM["folder_flag"]) && $PHORUM["forum_id"] != $PHORUM["vroot"]){
 }
 
 // Get the forums that this user can read.
-// Check all forums below the current (v)root. 
+// Check all forums below the current (v)root.
 if ($PHORUM["forum_id"]==$PHORUM["vroot"]){
     $forums = phorum_db_get_forums(null, null, $PHORUM["forum_id"]);
 }
@@ -174,7 +174,7 @@ echo $data;
  *
  * [example]
  *     <hookcode>
- *     function phorum_mod_foo_feed_after () 
+ *     function phorum_mod_foo_feed_after ()
  *     {
  *       # E.g. do server side tracking
  *       @file_get_contents('your tracking service');

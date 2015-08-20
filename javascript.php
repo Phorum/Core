@@ -265,8 +265,8 @@ if (!empty($PHORUM['cache_javascript']))
     if ($cache_data !== null) {
         list($cache_time,$content) = $cache_data;
     }
-}              
-              
+}
+
 // Create the cache file if it does not exist or if caching is disabled.
 if (isset($PHORUM['args']['refresh']) ||
     $content === null)
@@ -337,7 +337,7 @@ if (isset($PHORUM['args']['refresh']) ||
     }
 
     if (!empty($PHORUM['cache_javascript'])) {
-    	$cache_time = time();
+        $cache_time = time();
         phorum_cache_put('js',$cache_key,array($cache_time,$content),86400);
     }
 

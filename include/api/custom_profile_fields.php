@@ -25,7 +25,7 @@
  * with additional fields.
  *
  * This API can be used for handling the configuration of these custom
- * profile fields. The actual use of the fields is fully integrated in the 
+ * profile fields. The actual use of the fields is fully integrated in the
  * Phorum user API.
  *
  * @package    PhorumAPI
@@ -57,13 +57,13 @@ define('PHORUM_MAX_CPLENGTH', 65000);
  *
  * @param array $field
  *     This parameter holds the field configuration to save. This array
- *     must contain the following fields: 
+ *     must contain the following fields:
  *
  *     - id: If a new field has to be created, then use NULL for this field.
- *           If a profile field has to be updated, then use the existing 
+ *           If a profile field has to be updated, then use the existing
  *           profile field's id.
  *
- *     - name: The name that has to be assigned to the custom profile field. 
+ *     - name: The name that has to be assigned to the custom profile field.
  *           This name can only contain letters, numbers and underscores
  *           (_) and it has to start with a letter.
  *
@@ -82,8 +82,8 @@ define('PHORUM_MAX_CPLENGTH', 65000);
  *           escape these characters. Only use a false value for this
  *           field if the data that will be saved in the field is really safe
  *           for direct use in a web page (to learn about the security risks
- *           involved, search for "XSS" and "cross site scripting" on 
- *           the internet). If this field is missing or set to NULL, then 
+ *           involved, search for "XSS" and "cross site scripting" on
+ *           the internet). If this field is missing or set to NULL, then
  *           the default setting TRUE will be used.
  *
  *     - show_in_admin: If this field is set to a true value, then the field
@@ -97,7 +97,7 @@ define('PHORUM_MAX_CPLENGTH', 65000);
  *     field was created, then the "file_id" field will be set to the new
  *     custom profile field id. The fields "length" and "html_disabled" will
  *     also be updated to their defaults if they were set to NULL in
- *     the $field argument. 
+ *     the $field argument.
  */
 function phorum_api_custom_profile_field_configure($field)
 {
@@ -133,14 +133,14 @@ function phorum_api_custom_profile_field_configure($field)
             E_USER_ERROR
         );
     }
- 
+
     $field['id'] = $field['id'] === NULL ? NULL : (int)$field['id'];
     $field['name'] = trim($field['name']);
     settype($field['length'], 'int');
     settype($field['html_disabled'], 'bool');
     settype($field['show_in_admin'], 'bool');
 
-    // Check the profile field name.    
+    // Check the profile field name.
     if (!preg_match('/^[a-z][\w_]*$/i', $field['name'])) {
         return phorum_api_error_set(
             PHORUM_ERRNO_INVALIDINPUT,
@@ -214,11 +214,11 @@ function phorum_api_custom_profile_field_configure($field)
         $high = isset($PHORUM['PROFILE_FIELDS']['num_fields'])
               ? (int) $PHORUM['PROFILE_FIELDS']['num_fields'] : 0;
         foreach ($PHORUM['PROFILE_FIELDS'] as $checkid => $profile_field) {
-            if ($checkid > $high) $high = $checkid;    
+            if ($checkid > $high) $high = $checkid;
         }
-        
+
         // Use the next available value as our id.
-        $field['id'] = $high + 1;  
+        $field['id'] = $high + 1;
 
         // Update the index.
         $PHORUM['PROFILE_FIELDS']['num_fields'] = $field['id'];
@@ -278,11 +278,11 @@ function phorum_api_custom_profile_field_byname($name)
  *
  * @param bool $hard_delete
  *     If this parameter is set to a false value (the default), then the
- *     profile field will only be marked as deleted. The configuration 
+ *     profile field will only be marked as deleted. The configuration
  *     will be kept intact in the database. This way, we can help admins
  *     in restoring fields that were deleted by accident.
  *
- *     If it is set to a true value, then the configuration will be 
+ *     If it is set to a true value, then the configuration will be
  *     fully deleted.
  */
 function phorum_api_custom_profile_field_delete($id, $hard_delete = FALSE)
@@ -374,7 +374,7 @@ function phorum_api_custom_profile_field_checkconfig()
         // field. If there is no name, then we don't bother at all.
         if (!isset($config['name']) || $config['name'] == '') continue;
 
-        // 5.2 includes the id in the field configuration. 
+        // 5.2 includes the id in the field configuration.
         if (empty($config['id'])) {
             $PHORUM['PROFILE_FIELDS'][$id]['id'] = $id;
         }

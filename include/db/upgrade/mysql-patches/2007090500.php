@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-$upgrade_queries[]= 
+$upgrade_queries[]=
     "CREATE INDEX user_id_link ON {$PHORUM['files_table']} (user_id, link)";
 
 ?>

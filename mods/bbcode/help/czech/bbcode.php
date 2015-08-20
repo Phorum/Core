@@ -7,7 +7,7 @@
     <h2>BBcode nápovìda</h2>
 
     BBcode je zkratka pro "Bulletin Board code". Jedná se o jazyk se znaky, který mùže být použit pro fórum
-		k formátování zpráv. Tato nápovìda popisuje, jak mùže být BBCode užíváno  v tomto fóru.
+        k formátování zpráv. Tato nápovìda popisuje, jak mùže být BBCode užíváno  v tomto fóru.
 
     <h3>Tuèný text: [b]...[/b]<br/>
         Podtržený text: [u]...[/u]<br/>
@@ -15,7 +15,7 @@
         Pøeškrtnutý text: [s]...[/s]<br/>
         </h3>
 
-		Tyto znaèky mùžete použít ke zmìne stylu èástí textu.
+        Tyto znaèky mùžete použít ke zmìne stylu èástí textu.
     Pøíklady:<br/><br/>
     <tt>
     [b]Tento text je tuèný[/b]<br/>
@@ -39,11 +39,11 @@
     [sup]Horní index[/sup] normální [sub]dolní index[/sub]
     </tt><br/><br/>
 
-		Pøíklad se zobrazí takto:<br/><br/>
+        Pøíklad se zobrazí takto:<br/><br/>
     <sup>Horní index</sup> normální <sub>dolní index</sub>
 
     <h3>Barva písma: [color=...]...[/color]</h3>
-		Tato znaèka se mùže použít pro barevné odlišení èástí textu.
+        Tato znaèka se mùže použít pro barevné odlišení èástí textu.
     Barva musí být ve tvaru platném pro jazyk HTML (napø. "blue", "red",
     "#ff0000", "#888", etc.). Pøíklad:<br/><br/>
     <tt>
@@ -52,14 +52,14 @@
     <nobr>[color=#eeaa00]žluté[/color]</nobr> a
     <nobr>[color=#30f]modré[/color]?</nobr>
     </tt><br/><br/>
-		Pøíklad se zobrazí takto:<br/><br/>
+        Pøíklad se zobrazí takto:<br/><br/>
     Kdo by se obával
     <span style="color: red">èervené</span>,
     <span style="color: #eeaa00">žluté</span> a
     <span style="color: #30F">modré</span>?
 
     <h3>Velikost písma: [size=...]...[/size]</h3>
-		Tato znaèka se mùže použít pro zmìnu velikosti písma èástí textu.
+        Tato znaèka se mùže použít pro zmìnu velikosti písma èástí textu.
     Velikost musí být ve tvaru platném pro jazyk HTML (napø. "12px",
     "small", "large", etc.). Pøíklad:<br/><br/>
     <tt>
@@ -78,7 +78,7 @@
 
     <h3>Centrovaný text: [center]...[/center]</h3>
     Znaèka se mùže použít pro vycentrování èástí textu.
-		Pøíklad:<br/><br/>
+        Pøíklad:<br/><br/>
     <tt>
     [center]Jsem rád uprostøed toho všeho[/center]
     </tt><br/><br/>
@@ -89,7 +89,7 @@
         Odkaz na stránku: [url]...[/url] or [url=...]...[/url]<br/>
         Odkaz na emailovou adresu [email]...[/email]</h3>
     Tytro znaèky jsou pro odkazy na zdroje z internetu.
-		Zde jsou nìjaké pøíklady:<br/><br/>
+        Zde jsou nìjaké pøíklady:<br/><br/>
     <tt>
     [img]http://www.somesite.com/cool/thumbsup.gif[/img]<br/>
     [url]http://www.phorum.org[/url]<br/>
@@ -104,8 +104,8 @@
 
     <h3>Formátovaný kód, písmo se stejnou rozteèí: [code]...[/code]</h3>
     V nìkterých pøípadech jako ASCII art, programový kód, tabulky akordù, atd.,
-		mùžete ve zprávì potøebovat text, který vyžaduje použití této znaèky.
-		Pøíklad:
+        mùžete ve zprávì potøebovat text, který vyžaduje použití této znaèky.
+        Pøíklad:
 <pre>
 [code]
  _____  _
@@ -138,17 +138,17 @@ Se znaèkou  [code] vypadá text takto:
 </pre>
 
     <h3>Uvozený text: [quote]...[/quote] or [quote=...]...[/quote]</h3>
-		Chcete-li pøidat uvozovky do své zprávy, mùžete použít tuto znaèku.
-		Mužete zvolit, zda chcete ke znaèce zahrnout napøíklad také jméno osoby nebo ne.
-		Pøíklad:<br/><br/>
+        Chcete-li pøidat uvozovky do své zprávy, mùžete použít tuto znaèku.
+        Mužete zvolit, zda chcete ke znaèce zahrnout napøíklad také jméno osoby nebo ne.
+        Pøíklad:<br/><br/>
     <tt>
     [quote]Phorum je nejlepší![/quote]<br/>
     [quote=Hamlet - William Shakespeare]<br/>
-		Být èi nebýt? To je otázka.<br/>
-		Je dùstojnìjší strpìt pomyšlení,<br/>
-		že násilnický osud do nás bije,<br/>
-		nebo vzít zbraò na moøe trápení,<br/>
-		a tak s tím skoncovat? Umøít - spát - a dost.<br/>
+        Být èi nebýt? To je otázka.<br/>
+        Je dùstojnìjší strpìt pomyšlení,<br/>
+        že násilnický osud do nás bije,<br/>
+        nebo vzít zbraò na moøe trápení,<br/>
+        a tak s tím skoncovat? Umøít - spát - a dost.<br/>
     [/quote]
     </tt><br/><br/>
     Takto se pøíklad zobrazí:<br/><br/>
@@ -169,7 +169,7 @@ Se znaèkou  [code] vypadá text takto:
     K vložení oddìlovací èáry do zprávy vložte znaèku [hr].
     Takto bude vypadat výsledek:
     <hr>
-		Tato znaèka je vhodná k rozdìlení struktury u dlouhých zpráv.
+        Tato znaèka je vhodná k rozdìlení struktury u dlouhých zpráv.
 
     <h3>Itemized list:<br/>[list]<br/>[*] item 1<br/>[*] item 2<br/>[/list]</h3>
 

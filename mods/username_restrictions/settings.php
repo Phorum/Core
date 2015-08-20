@@ -44,7 +44,7 @@
     include_once "./include/admin/PhorumInputForm.php";
     $frm = new PhorumInputForm ("", "post", "Save");
     $frm->hidden("module", "modsettings");
-    $frm->hidden("mod", "username_restrictions"); 
+    $frm->hidden("mod", "username_restrictions");
 
     $frm->addbreak("Edit settings for the username restrictions module");
 
@@ -54,8 +54,8 @@
 
     $checkboxes = '';
     foreach ($valid_chars_options as $k => $v) {
-        $enabled = strpos($PHORUM["mod_username_restrictions"]["valid_chars"], $k) === FALSE ? 0 : 1; 
-        $checkboxes .= $frm->checkbox("valid_chars[$k]", "1", "", $enabled) . " $v<br/>"; 
+        $enabled = strpos($PHORUM["mod_username_restrictions"]["valid_chars"], $k) === FALSE ? 0 : 1;
+        $checkboxes .= $frm->checkbox("valid_chars[$k]", "1", "", $enabled) . " $v<br/>";
     }
     $frm->addrow("Valid username characters (check none for no restrictions)", $checkboxes);
 

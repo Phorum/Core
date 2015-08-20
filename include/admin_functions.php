@@ -246,13 +246,13 @@ function phorum_admin_build_path_array($only_forum = NULL)
 
 function phorum_admin_build_url($input_args, $return_raw = FALSE) {
     global $PHORUM;
-    
+
     $url = $PHORUM["admin_http_path"];
- 
+
     if($input_args == 'base') {
         return $return_raw ? $url : htmlspecialchars($url);
     }
-    
+
     if(is_array($input_args) && count($input_args)) {
         $url .="?".implode("&",$input_args);
         $url = preg_replace("!&{0,1}phorum_admin_token=([A-Za-z0-9]*)!", "", $url);
@@ -267,7 +267,7 @@ function phorum_admin_build_url($input_args, $return_raw = FALSE) {
         }
     } else {
         if(!empty($PHORUM['admin_token'])) {
-        	$url = preg_replace("!\?{0,1}phorum_admin_token=([A-Za-z0-9]*)!", "", $url);
+            $url = preg_replace("!\?{0,1}phorum_admin_token=([A-Za-z0-9]*)!", "", $url);
             $url .="?phorum_admin_token=".$PHORUM['admin_token'];
         }
     }

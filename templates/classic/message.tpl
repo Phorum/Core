@@ -13,7 +13,7 @@
         {/IF}
         {IF URL->REDIRECT}
             <div  class="PhorumFloatingText"><a href="{URL->REDIRECT}">{BACKMSG}</a></div>
-        {/IF}    
+        {/IF}
     {/IF}
   </div>
 </div>

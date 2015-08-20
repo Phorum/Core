@@ -5,7 +5,7 @@
  * not capable of interpreting javascript code, so these bots would not
  * return the signed data. If no correctly signed data is in the form post,
  * then it is blocked.
- */ 
+ */
 
 function spamhurdle_javascript_signature_javascript_register($data)
 {

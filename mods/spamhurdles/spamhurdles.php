@@ -91,7 +91,7 @@ function phorum_mod_spamhurdles_addon()
  * Extend the message posting form with spam hurdles data.
  */
 function phorum_mod_spamhurdles_tpl_editor_before_textarea()
-{ 
+{
     global $PHORUM;
 
     if (phorum_page != "post" && phorum_page != "read") return;
@@ -123,10 +123,10 @@ function phorum_mod_spamhurdles_tpl_editor_before_textarea()
     {
         $data = spamhurdles_api_get_formdata('posting');
         if ($data === NULL) trigger_error(
-            'No "spamhurdles_posting" data field was found in the POST ' . 
+            'No "spamhurdles_posting" data field was found in the POST ' .
             'request. This should not happen.',
             E_USER_ERROR
-        );  
+        );
 
     }
 
@@ -137,7 +137,7 @@ function phorum_mod_spamhurdles_tpl_editor_before_textarea()
     // We will display it from the before_footer hook, but since
     // we have the spam hurdles data at hand here, it's easiest
     // to format the after form data here.
-    $PHORUM['DATA']['SPAMHURDLES_BEFORE_FOOTER'] .= 
+    $PHORUM['DATA']['SPAMHURDLES_BEFORE_FOOTER'] .=
         spamhurdles_api_build_after_form($data);
 }
 
@@ -170,7 +170,7 @@ function phorum_mod_spamhurdles_check_post($args)
         $block_action = $PHORUM['mod_spamhurdles']['posting']['block_action'];
         if ($block_action == 'unapprove') {
             // The pre_post hook will use this to make the message moderated.
-            $PHORUM['mod_spamhurdles_unapprove'] = TRUE; 
+            $PHORUM['mod_spamhurdles_unapprove'] = TRUE;
         } else {
             $error = $hurdle_error;
         }
@@ -242,7 +242,7 @@ function phorum_mod_spamhurdles_tpl_register_form()
             'No "spamhurdles_register" data field was found in the POST ' .
             'request. This should not happen.',
             E_USER_ERROR
-        );  
+        );
     }
 
     // Output the required form data.
@@ -252,7 +252,7 @@ function phorum_mod_spamhurdles_tpl_register_form()
     // We will display it from the before_footer hook, but since
     // we have the spam hurdles data at hand here, it's easiest
     // to format the after form data here.
-    $PHORUM['DATA']['SPAMHURDLES_BEFORE_FOOTER'] .= 
+    $PHORUM['DATA']['SPAMHURDLES_BEFORE_FOOTER'] .=
         spamhurdles_api_build_after_form($data);
 }
 
@@ -313,7 +313,7 @@ function phorum_mod_spamhurdles_tpl_pm_editor_before_textarea()
             'No "spamhurdles_pm" data field was found in the POST request. ' .
             'This should not happen.',
             E_USER_ERROR
-        );  
+        );
     }
 
     // Output the required form data.
@@ -323,7 +323,7 @@ function phorum_mod_spamhurdles_tpl_pm_editor_before_textarea()
     // We will display it from the before_footer hook, but since
     // we have the spam hurdles data at hand here, it's easiest
     // to format the after form data here.
-    $PHORUM['DATA']['SPAMHURDLES_BEFORE_FOOTER'] .= 
+    $PHORUM['DATA']['SPAMHURDLES_BEFORE_FOOTER'] .=
         spamhurdles_api_build_after_form($data);
 }
 

@@ -14,15 +14,15 @@
   <body>
     <h2>Ayuda para usar los smileys</h2>
 
-	En este foro puedes utilizar smileys.
-	Los smileys son cadenas de caracteres que aparecerán como
-	una imagen mientras leas el mensaje. Los smileys suelen ser 
-	usados para expresar sentimiento en el texto. En la tabla inferior
-	puedes ver todos los smileys que están disponibles. La columna 
-	"Dónde" indica dónde pueden ser utilizados los smileys (S = Asunto, 
-	B = Cuerpo del mensaje, BS = ambos). 
-	
-	<br/><br/>
+    En este foro puedes utilizar smileys.
+    Los smileys son cadenas de caracteres que aparecerán como
+    una imagen mientras leas el mensaje. Los smileys suelen ser
+    usados para expresar sentimiento en el texto. En la tabla inferior
+    puedes ver todos los smileys que están disponibles. La columna
+    "Dónde" indica dónde pueden ser utilizados los smileys (S = Asunto,
+    B = Cuerpo del mensaje, BS = ambos).
+
+    <br/><br/>
     <table cellspacing="1" width="100%">
     <tr>
       <th class="PhorumAdminTableHead">Smiley</th>

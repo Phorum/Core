@@ -88,7 +88,7 @@ foreach ($sanity_checks as $check)
     //     PHORUM_SANITY_OK      No problem found
     //     PHORUM_SANITY_WARN    Problem found, but no fatal one
     //     PHORUM_SANITY_CRIT    Critical problem found
-    //     PHORUM_SANITY_SKIP    No check was done 
+    //     PHORUM_SANITY_SKIP    No check was done
     //
     // [2] A description of the problem that was found or NULL.
     //
@@ -124,7 +124,7 @@ $frm->addbreak("Phorum System Sanity Checks");
 $frm->addmessage(
     "Below you will find the results for a number of sanity checks
      that have been performed on your system. If you see any
-     warnings or errors, then read the comments for them and 
+     warnings or errors, then read the comments for them and
      try to resolve the issues."
 );
 
@@ -144,7 +144,7 @@ foreach ($PHORUM["SANITY_CHECKS"]["CHECKS"] as $check)
         $row = $frm->addrow($check['description'], $block);
         if (! empty($check["error"])) {
             if (! empty($check["solution"]))
-                $check["error"] .= 
+                $check["error"] .=
                           "<br/><br/>" .
                           "<strong>Possible solution:</strong>" .
                           "<br/><br/>" .
