@@ -8,7 +8,7 @@ $upgrade_queries[]="alter table {$PHORUM['user_table']} add `hide_activity` tiny
 
 $upgrade_queries[]="alter table {$PHORUM['user_table']} add KEY `activity` (`date_last_active`,`hide_activity`)";
 $upgrade_queries[]="alter table {$PHORUM['user_table']} add KEY `date_added` (`date_added`)";
- 
+
 $upgrade_queries[]="update {$PHORUM['user_table']} set date_last_active=UNIX_TIMESTAMP(NOW()), date_added=UNIX_TIMESTAMP(NOW())";
 
 ?>

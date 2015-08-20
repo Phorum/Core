@@ -46,7 +46,7 @@
          * Adds a custom link to the menu.
          *
          * A custom links URL can link anywhere, not just into Phorum modules
-         * 
+         *
          * @param mixed  $title       Name of link
          * @param mixed  $url         Destination URL
          * @param double $description Optional, defaults to ''. "title"-Attribute of link

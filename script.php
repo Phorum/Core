@@ -124,8 +124,8 @@ if (count($modules))
  *
  * [description]
  *     The external hook functions are never called from any of the standard
- *     Phorum pages. These functions are called by invoking 
- *     <filename>script.php</filename> on the command line with the 
+ *     Phorum pages. These functions are called by invoking
+ *     <filename>script.php</filename> on the command line with the
  *     <literal>--module</literal> parameter. This can be used to pipe output
  *     from some arbitrary command to a specific module, which can do something
  *     with that input. If your module does not need any command line input and
@@ -133,7 +133,7 @@ if (count($modules))
  *     <hook>scheduled</hook> hook.<sbr/>
  *     <sbr/>
  *     Mind that for using an <hook>external</hook> hook, the module in which it
- *     is handled must be enabled in your admin interface. So if an 
+ *     is handled must be enabled in your admin interface. So if an
  *     <hook>external</hook> hook is not running, the containing module might be
  *     disabled.<sbr/>
  *     <sbr/>
@@ -207,7 +207,7 @@ if ($callhook == 'external')
  *     <li>forum statistics generation</li>
  *     </ul>
  *     Keep in mind that for using this hook, the module in which it is handled
- *     must be enabled in your admin interface. So if this hook is not running, 
+ *     must be enabled in your admin interface. So if this hook is not running,
  *     the containing module might be disabled.<sbr/>
  *     <sbr/>
  *     To run this hook from the command line or from a scheduling service, you

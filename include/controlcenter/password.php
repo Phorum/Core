@@ -50,7 +50,7 @@ if(count($_POST)) {
             PHORUM_CONTROLCENTER_URL,
             "panel=" . PHORUM_CC_PASSWORD,
             "okmsg=" . urlencode($okmsg)
-        )); 
+        ));
     }
 }
 

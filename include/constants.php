@@ -64,7 +64,7 @@
 
     // phorum's default language
     define('PHORUM_DEFAULT_LANGUAGE', 'english');
-    
+
     // time in seconds for the admin token to timeout
     // 30 minutes default
     define('PHORUM_ADMIN_TOKEN_TIMEOUT', 1800);
@@ -74,7 +74,7 @@
     // change the storage type of the body field in the messages
     // table from TEXT to MEDIUMTEXT.
     define('MAX_MESSAGE_LENGTH', 65000);
-    
+
     /////////////////////////////////////////
     //                                     //
     //     DO NOT EDIT BELOW THIS AREA     //

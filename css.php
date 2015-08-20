@@ -34,7 +34,7 @@ if(!empty($PHORUM["args"]["1"])){
 // let it only process css templates
 if(substr($css,0,3) != 'css') {
     trigger_error("Wrong template", E_USER_ERROR);
-    exit(1);	
+    exit(1);
 }
 
 // So we can use {URL->HTTP_PATH} in the templates.
@@ -342,7 +342,7 @@ if ($content === null)
     }
 
     if (!empty($PHORUM['cache_css'])) {
-    	$cache_time = time();
+        $cache_time = time();
         phorum_cache_put('css',$cache_key,array($cache_time,$content),86400);
     }
 }

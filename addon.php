@@ -30,16 +30,16 @@
 //
 // To implement an addon script, the following needs to be done:
 //
-// 1) Create a module, which contains a function that has to be 
+// 1) Create a module, which contains a function that has to be
 //    called for running the addon code. For example:
-//    
+//
 //    function phorum_mod_foo_youraddonfunction() {
 //      # Code for implementing the addon goes here.
 //      # This can of course also be an include of a script
 //      # to run, using include("./mods/foo/yourscript.php").
 //      # ...
 //    }
-// 
+//
 // 2) In the module information, register an addon hook for the function:
 //
 //    hook: addon|phorum_mod_foo_youraddonfunction
@@ -53,7 +53,7 @@
 // LINKING TO AN ADDON SCRIPT:
 // ---------------------------
 //
-// If you want to link to the addon script, then always use the 
+// If you want to link to the addon script, then always use the
 // phorum_get_url() function for generating the URL to link to.
 //
 //   $url = phorum_get_url(PHORUM_ADDON_URL, "module=foo");
@@ -61,8 +61,8 @@
 //
 // IMPLEMENTING MULTIPLE ADDON ACTIONS:
 // ------------------------------------
-// 
-// Only one addon hook is allowed per module. If your module needs to 
+//
+// Only one addon hook is allowed per module. If your module needs to
 // implement multiple addon script actions, then handle this by means
 // of extra custom parameters for the addon.php URL, for example:
 //
@@ -73,7 +73,7 @@
 // would look like this:
 //
 //   $url = phorum_get_url(PHORUM_ADDON_URL, "module=foo", "action=bar");
-// 
+//
 
 define('phorum_page','addon');
 

@@ -165,7 +165,7 @@ if ($mode == "reply")
         $PHORUM["DATA"]["OKMSG"] = $PHORUM["DATA"]["LANG"]["ThreadClosed"];
         $PHORUM["posting_template"] = "message";
         return;
-    }    
+    }
 }
 
 // Do permission checks for editing messages.

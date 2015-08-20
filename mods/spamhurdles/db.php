@@ -155,7 +155,7 @@ function spamhurdles_db_remove_expired()
     global $PHORUM;
 
     phorum_db_interact(
-        DB_RETURN_RES, 
+        DB_RETURN_RES,
         "DELETE FROM {$PHORUM['spamhurdles_table']}
          WHERE  expire_time < " . time(),
         NULL, DB_MASTERQUERY

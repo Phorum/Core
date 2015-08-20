@@ -3642,40 +3642,40 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
     }
 
     if($count_only) {
-      // Retrieve the number of matching user_ids from the database.
-      $user_count = phorum_db_interact(
-          DB_RETURN_VALUE,
-          "SELECT count(*)
-           FROM   {$PHORUM['user_table']}
-           $where $order $limit",
-          0 // keyfield 0 is the user_id
-      );
+        // Retrieve the number of matching user_ids from the database.
+        $user_count = phorum_db_interact(
+            DB_RETURN_VALUE,
+            "SELECT count(*)
+             FROM   {$PHORUM['user_table']}
+             $where $order $limit",
+            0 // keyfield 0 is the user_id
+        );
 
-      $ret = $user_count;
+        $ret = $user_count;
 
     } else {
-      // Retrieve the matching user_ids from the database.
-      $user_ids = phorum_db_interact(
-          DB_RETURN_ROWS,
-          "SELECT user_id
-           FROM   {$PHORUM['user_table']}
-           $where $order $limit",
-          0 // keyfield 0 is the user_id
-      );
+        // Retrieve the matching user_ids from the database.
+        $user_ids = phorum_db_interact(
+            DB_RETURN_ROWS,
+            "SELECT user_id
+             FROM   {$PHORUM['user_table']}
+             $where $order $limit",
+            0 // keyfield 0 is the user_id
+        );
 
-      // No user_ids found at all?
-      if (count($user_ids) == 0) return 0;
+        // No user_ids found at all?
+        if (count($user_ids) == 0) return 0;
 
-      // Return an array of user_ids.
-      if ($return_array) {
-          foreach ($user_ids as $id => $user_id) $user_ids[$id] = $user_id[0];
-          $ret = $user_ids;
-      } else {
-        // Return a single user_id.
-        list ($user_id, $dummy) = each($user_ids);
+        // Return an array of user_ids.
+        if ($return_array) {
+            foreach ($user_ids as $id => $user_id) $user_ids[$id] = $user_id[0];
+            $ret = $user_ids;
+        } else {
+            // Return a single user_id.
+            list ($user_id, $dummy) = each($user_ids);
 
-        $ret = $user_id;
-      }
+            $ret = $user_id;
+        }
     }
     return $ret;
 }
@@ -5103,7 +5103,7 @@ function phorum_db_newflag_add_read($message_ids)
             $message_id = (int)$data;
         }
         $values = "($user_id,$forum_id,$message_id)";
-  $inserts[$values] = $values;
+    $inserts[$values] = $values;
     }
 
     if(count($inserts)) {
@@ -5120,14 +5120,14 @@ function phorum_db_newflag_add_read($message_ids)
             DB_DUPKEYOK | DB_MASTERQUERY
         );
 
-  // If inserting the values failed, then this most probably means
-  // that one of the values already existed in the database, causing
-  // a duplicate key error. In this case, fallback to one-by-one
-  // insertion, so the other records in the list will be created.
-  if (!$res && count($inserts) > 1)
-  {
-      foreach ($inserts as $values)
-      {
+    // If inserting the values failed, then this most probably means
+    // that one of the values already existed in the database, causing
+    // a duplicate key error. In this case, fallback to one-by-one
+    // insertion, so the other records in the list will be created.
+    if (!$res && count($inserts) > 1)
+    {
+        foreach ($inserts as $values)
+        {
                 $res = phorum_db_interact(
                     DB_RETURN_RES,
                     "INSERT INTO {$PHORUM['user_newflags_table']}
@@ -5136,8 +5136,8 @@ function phorum_db_newflag_add_read($message_ids)
                     NULL,
                     DB_DUPKEYOK | DB_MASTERQUERY
                 );
-      }
-  }
+        }
+    }
     }
 }
 // }}}
@@ -7714,15 +7714,15 @@ if (isset($PHORUM['DBCONFIG']['mysql_php_extension'])) {
    // MySQL extension is loaded. Here we'll try to dynamically load an
    // extension ourselves.
    if(function_exists('dl')) {
-     @dl("mysqli.so");
-     if (function_exists('mysqli_connect')) {
-         $ext = "mysqli";
-     } else {
-         @dl("mysql.so");
-         if (function_exists('mysql_connect')) {
-             $ext = "mysql";
-         }
-     }
+       @dl("mysqli.so");
+       if (function_exists('mysqli_connect')) {
+           $ext = "mysqli";
+       } else {
+           @dl("mysql.so");
+           if (function_exists('mysql_connect')) {
+               $ext = "mysql";
+           }
+       }
    }
 }
 

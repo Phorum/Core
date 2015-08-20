@@ -8,7 +8,7 @@ Changelog:
 2010-02-12 v2.0.10
 
    - added left/right alignment tags
-   
+
 2008-10-06 v2.0.9
 
    - Fixed #806: possible XSS leak plugged. This was reported as a

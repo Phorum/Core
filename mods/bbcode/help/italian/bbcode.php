@@ -6,7 +6,7 @@
   <body>
     <h2>Assistenza su BBcode</h2>
 
-	BBcode é l'acronimo in inglese che sta per Bulletin Board code.
+    BBcode é l'acronimo in inglese che sta per Bulletin Board code.
     Sono dei codici che possono essere usati per formattare il
     testo. Questa pagina aiuta a capire come puó essere utilizzato
     il BBcode su questo forum.
@@ -16,8 +16,8 @@
         Testo italico: [i]...[/i]<br/>
         Linea sul testo: [s]...[/s]<br/>
         </h3>
-	Facendo uso di questi codici si possono applicare stili
-	diversi su parti del testo.
+    Facendo uso di questi codici si possono applicare stili
+    diversi su parti del testo.
     <p>Per esempio, se scriviamo le seguenti frasi nel modo seguente:</p>
 
     <tt>
@@ -113,7 +113,7 @@
     <h3>Codice formattato, monospazio: [code]...[/code]</h3>
     A volte si vuole utilizzare la codici di programmazione, arte ASCII,
     codici/segni di chitarra, eccetera, e si vogliono inserire nel messaggio.
-	In questi casi si usano i codici [tag]. Esempio:
+    In questi casi si usano i codici [tag]. Esempio:
 <pre>
 [code]
  _____  _

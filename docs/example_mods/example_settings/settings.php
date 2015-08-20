@@ -5,7 +5,7 @@ if(!defined("PHORUM_ADMIN")) return;
 
 // Save settings in case this script is run after posting
 // the settings form.
-if(count($_POST)) 
+if(count($_POST))
 {
     // Create the settings array for this module.
     $PHORUM["mod_example_settings"] = array(
@@ -13,7 +13,7 @@ if(count($_POST))
         "displaycount" => $_POST["displaycount"],
     );
 
-    // Force the displaycount to be an integer value. 
+    // Force the displaycount to be an integer value.
     settype($PHORUM["mod_example_settings"]["displaycount"], "int");
 
     if(! phorum_db_update_settings(array("mod_example_settings"=>$PHORUM["mod_example_settings"]))) {
@@ -35,9 +35,9 @@ if (!isset($PHORUM["mod_example_settings"]["displaycount"]))
 include_once "./include/admin/PhorumInputForm.php";
 $frm = new PhorumInputForm ("", "post", "Save");
 $frm->hidden("module", "modsettings");
-$frm->hidden("mod", "example_settings"); 
+$frm->hidden("mod", "example_settings");
 
-// Here we display an error in case one was set by saving 
+// Here we display an error in case one was set by saving
 // the settings before.
 if (!empty($error)) {
     echo "$error<br />";
@@ -47,7 +47,7 @@ if (!empty($error)) {
 // You can use this to separate your form into multiple sections.
 $frm->addbreak("Edit settings for the example_settings module");
 
-// This adds a text message to your form. You can use this to 
+// This adds a text message to your form. You can use this to
 // explain things to the user.
 $frm->addmessage("This is the settings screen for the example_settings module. This module is only written for demonstrating the use of a settings screen for you own modules. The module itself will display a configurable text for a configurable number of times on screen.");
 

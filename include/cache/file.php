@@ -107,9 +107,9 @@ function phorum_cache_put($type,$key,$data,$ttl=PHORUM_CACHE_DEFAULT_TTL,$versio
     }
     $file=$path."/data.php";
     $ttl_time=time()+$ttl;
-    if (!($fp=fopen($file,"w"))) { 
-        return false; 
-    } 
+    if (!($fp=fopen($file,"w"))) {
+        return false;
+    }
     $ret=fwrite($fp,serialize(array($ttl_time,$data,$version)));
     fclose($fp);
 

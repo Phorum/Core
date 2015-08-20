@@ -149,7 +149,7 @@ if(count($_POST)){
          *
          * [example]
          *     <hookcode>
-         *     function phorum_mod_foo_admin_editforum_form_save_after_defaults ($error) 
+         *     function phorum_mod_foo_admin_editforum_form_save_after_defaults ($error)
          *     {
          *         # Early bail out in case another hook generated already an error
          *         if (strlen($error) > 0) {
@@ -163,8 +163,8 @@ if(count($_POST)){
          *     </hookcode>
          */
         $error = phorum_hook("admin_editforum_form_save_after_defaults", $error);
-    }    
-    
+    }
+
     if(empty($error)){
         unset($_POST["module"]);
         unset($_POST["phorum_admin_token"]);
@@ -261,7 +261,7 @@ if(count($_POST)){
                  *
                  * [example]
                  *     <hookcode>
-                 *     function phorum_mod_foo_admin_editforum_form_save_inherit ($forum_settings_inherit) 
+                 *     function phorum_mod_foo_admin_editforum_form_save_inherit ($forum_settings_inherit)
                  *     {
                  *         return $forum_settings_inherit;
                  *
@@ -475,7 +475,7 @@ if(!defined("PHORUM_DEFAULT_OPTIONS")){
      *
      * [example]
      *     <hookcode>
-     *     function phorum_mod_foo_admin_editforum_section_edit_forum ($frm) 
+     *     function phorum_mod_foo_admin_editforum_section_edit_forum ($frm)
      *     {
      *     }
      *     </hookcode>

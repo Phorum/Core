@@ -12,7 +12,7 @@ Implemented features are:
 * Minimum username length;
 * Maximum username length;
 * Configuration of valid characters for usernames;
-* Only allow lower case characters for usernames. 
+* Only allow lower case characters for usernames.
 
 This module requires Phorum 5.1 or later.
 
@@ -28,10 +28,10 @@ Install:
 - Login as administrator in Phorum's administrative interface and
   go to the "Modules" section;
 
-- Enable the module "Username Restrictions". 
+- Enable the module "Username Restrictions".
 
 - Edit the settings for the module to setup the restrictions that
-  you want to use for your Phorum installation. 
+  you want to use for your Phorum installation.
 
 
 Customization:

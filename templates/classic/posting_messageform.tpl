@@ -58,20 +58,20 @@
     {/IF}
     {! Follow topic ============================================================= }
     {IF POSTING->user_id}
-  
+
       {IF OPTION_ALLOWED->subscribe}
-      
+
         <tr>
           <td colspan="2">
-  
+
           <input type="checkbox" id="subscription_follow" name="subscription_follow" value="1" {IF POSTING->subscription}checked="checked"{/IF} {IF OPTION_ALLOWED->subscribe_mail}onclick="phorum_subscription_displaystate()"{/IF} /> <label for="subscription_follow">{LANG->FollowThread}</label><br />
-  
+
           {IF OPTION_ALLOWED->subscribe_mail}
             <div id="subscription_mail_div">
               <img src="{URL->TEMPLATE}/images/tree-L.gif" border="0"/>
               <input type="checkbox" id="subscription_mail" name="subscription_mail" value="1" {IF POSTING->subscription "message"}checked="checked"{/IF} /> <label for="subscription_mail">{LANG->EmailReplies}</label>
             </div>
-  
+
             <script type="text/javascript">
             // <![CDATA[
             function phorum_subscription_displaystate() {
@@ -82,7 +82,7 @@
                 d.style.display  = f.checked ? 'block' : 'none';
               }
             }
-  
+
             // Setup initial display state for subscription options.
             phorum_subscription_displaystate();
             // ]]>

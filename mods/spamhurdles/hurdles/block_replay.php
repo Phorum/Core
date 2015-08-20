@@ -14,7 +14,7 @@
  * The advantage of the default TTL schema, is that no database storage
  * is needed to record what keys have been used. This hurdle does need
  * this storage, so it will result in extra database activity.
- */ 
+ */
 
 function spamhurdle_block_replay_init($data)
 {

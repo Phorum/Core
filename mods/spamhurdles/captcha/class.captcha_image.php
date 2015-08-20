@@ -8,7 +8,7 @@ class captcha_image extends captcha_base
     {
         $lang = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_spamhurdles"];
 
-        $captcha = 
+        $captcha =
             '<div id="spamhurdles_captcha_image">' .
             '<img class="captcha_image" src="{IMAGEURL}" alt="CAPTCHA" ' .
             'title="CAPTCHA"/></div>';
@@ -94,7 +94,7 @@ class captcha_image extends captcha_base
             }
 
             $chary = 5 + 0 - $t;
-            $chary_rand = rand(0,20); 
+            $chary_rand = rand(0,20);
             $charx = 5 + $boxwidth;
             imagettftext(
                 $img, $size, $angle, $charx, $chary+$chary_rand,

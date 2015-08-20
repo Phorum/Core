@@ -23,11 +23,11 @@
   <div class="PhorumStdBlock" style="text-align: left;">
 <form action="{URL->ACTION}" method="post">{POST_VARS}
 {LANG->Filter}:&nbsp; <select name="filter">
-	{LOOP FILTER}
-	<option value="{FILTER->id}" {IF FILTER->enable}selected="selected"{/IF}>
-	{FILTER->name}
-	</option>
-	{/LOOP FILTER}
+    {LOOP FILTER}
+    <option value="{FILTER->id}" {IF FILTER->enable}selected="selected"{/IF}>
+    {FILTER->name}
+    </option>
+    {/LOOP FILTER}
 </select> <input type="submit" value="{LANG->Go}" /></form>
 <br />
 {IF USERS}
@@ -67,8 +67,8 @@
         </tr>
       </table>
     </form>
-{ELSE} 
-    {LANG->NoUserMatchFilter} 
+{ELSE}
+    {LANG->NoUserMatchFilter}
 {/IF}
 </div>
 {ELSE}
