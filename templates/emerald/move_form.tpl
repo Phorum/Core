@@ -1,7 +1,7 @@
 <!-- BEGIN TEMPLATE move_form.tpl -->
 <div class="generic">
     <h4>{LANG->MoveThread}</h4>
-    <form method="POST" action="{URL->ACTION}">
+    <form method="post" action="{URL->ACTION}">
         {POST_VARS}
         <input type="hidden" name="thread" value="{FORM->thread_id}" />
         <input type="hidden" name="mod_step" value="{FORM->mod_step}" />

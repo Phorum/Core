@@ -19,7 +19,7 @@ function phorum_markAllCheckboxes() {
 }
 </script>
 
-<form action="{URL->ACTION}" method="POST">
+<form action="{URL->ACTION}" method="post">
   {POST_VARS}
   <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->UnapprovedMessages}</div>
   <div class="PhorumStdBlock PhorumFloatingText" style="text-align: left;">
@@ -41,7 +41,7 @@ function phorum_markAllCheckboxes() {
     <input type="submit" class="PhorumSubmit" value="{LANG->Go}" />
   </div>
 </form><br />
-<form action="{URL->ACTION}" method="POST" id="fprepost">
+<form action="{URL->ACTION}" method="post" id="fprepost">
   {POST_VARS}
 <table border="0" cellspacing="0" class="PhorumStdTable">
   {IF UNAPPROVEDMESSAGE}
