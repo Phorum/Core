@@ -29,10 +29,10 @@ function phorum_check_cache($is_install = FALSE)
     $dir = $PHORUM['CACHECONFIG']['directory'];
 
     // Some general solution descriptions.
-    $solution_1 = "Change the Cache Directory setting in 
+    $solution_1 = "Change the Cache Directory setting in
                    include/config/cache.php.";
     $solution_2 = "Change the Cache Directory setting in
-                   include/config/cache.php or give your webserver more 
+                   include/config/cache.php or give your webserver more
                    permissions for the current cache directory.";
 
     // Check if the cache directory exists.

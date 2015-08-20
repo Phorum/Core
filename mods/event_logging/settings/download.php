@@ -269,20 +269,20 @@ foreach ($logs as $loginfo)
                      $loginfo["loglevel"] . ".png";
             $title = $strings["LOGLEVELS"][$loginfo["loglevel"]];
             $cat   = $strings["CATEGORIES"][$loginfo["category"]];
-        
+
             // Find detailed info.
             $details = NULL;
             if ($loginfo["details"] !== NULL) {
                 $details = $loginfo["details"];
             }
-        
+
             // Adding whitespace if the message contains ridiculously long words,
             // so the interface layout won't be wrecked.
             $message = $loginfo["message"];
             while (preg_match('/(\S{40})\S/', $message, $m)) {
                 $message = str_replace($m[1], $m[1] . " ", $message);
             }
-        
+
             // If the event log is linked to a forum message, the generate
             // the URL that points to that message.
             $message_url = NULL;
@@ -294,13 +294,13 @@ foreach ($logs as $loginfo)
                     $loginfo["message_id"]
                 );
             }
-        
+
             if (!isset($PHORUM['short_time'])) {
                 $f = str_replace($PHORUM['short_date'],'',$PHORUM['short_date_time']);
                 $f = preg_replace('/^\s+|\s+$/', '', $f);
                 $PHORUM['short_time'] = $f;
             }
-        
+
             print "==========================\n".
                   "Log level: $title\n".
                   "Date: ".phorum_date($PHORUM['short_date'], $loginfo["datestamp"])."\n".
@@ -319,12 +319,12 @@ foreach ($logs as $loginfo)
                     ($loginfo["hostname"] !== NULL
                      ? ", hostname = " . $loginfo["hostname"]
                      : "") . "\n" .
-        
+
                     ($message_url !== NULL
                      ? "Related message: Forum = ".$loginfo["forum"].", Message ID = ".$loginfo["message_id"].
                         ", URL = ".$message_url."\n"
                      : "") .
-        
+
                     ($details !== NULL
                      ? "Additional details:\n" .
                        $details

@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 // rebuild thread info
-// this script rebuilds the thread info data for all threads 
+// this script rebuilds the thread info data for all threads
 
 // this needs some time, please make sure that its really needed
 // i.e. in case of errors, required updates etc.

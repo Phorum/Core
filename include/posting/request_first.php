@@ -47,10 +47,10 @@ if ($mode != "post")
     if($PHORUM['cache_messages']) {
         $dbmessage = phorum_api_cache_get('message',$PHORUM["forum_id"]."-".$message_id);
     }
-    
+
     if($dbmessage == null) {
         $dbmessage = $PHORUM['DB']->get_message($message_id);
-        
+
         if($PHORUM['cache_messages']) {
             phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$message_id,$dbmessage);
         }

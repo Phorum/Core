@@ -50,7 +50,7 @@ var Phorum = {
     /**
      * @property http_path
      *
-     * The base URL for the forum. JavaScript code can use this URL to build 
+     * The base URL for the forum. JavaScript code can use this URL to build
      * URLs for this forum.
      *
      * @var String

@@ -53,13 +53,13 @@ if ($do_detach)
              *     File storage
              *
              * [when]
-             *     In 
+             *     In
              *     <filename>include/posting/action_attachments.php</filename>,
              *     right after a file attachment is deleted from the database.
              *
              * [input]
              *     Two part array where the first element is the message array
-             *     and the second element is a file array that contains the 
+             *     and the second element is a file array that contains the
              *     name, size, and <literal>file_id</literal> of the deleted
              *     file.
              *
@@ -136,7 +136,7 @@ elseif ($do_attach && ! empty($_FILES))
         if (isset($file["error"]) && $file["error"]) {
             if ($file["error"] == UPLOAD_ERR_INI_SIZE ||
                 $file["error"] == UPLOAD_ERR_FORM_SIZE) {
-                // File too large. Tweak the file size to let the 
+                // File too large. Tweak the file size to let the
                 // file storage API return a file too large error.
                 $newfile["filesize"] = $PHORUM["max_attachment_size"] * 2;
             } else {
@@ -184,7 +184,7 @@ elseif ($do_attach && ! empty($_FILES))
          *
          * [description]
          *     The primary use of this hook would be for creating an
-         *     alternate storage system for attachments. You would need to use 
+         *     alternate storage system for attachments. You would need to use
          *     the <hook>after_attach</hook> hook to complete the process as you
          *     do not yet have the <literal>file_id</literal> for the file. You
          *     will need to use the <hook>file_retrieve</hook> hook to retreive
@@ -199,7 +199,7 @@ elseif ($do_attach && ! empty($_FILES))
          *
          * [input]
          *     Two part array where the first element is the message array
-         *     and the second element is a file array that contains the 
+         *     and the second element is a file array that contains the
          *     name, size, and file data.
          *
          * [output]
@@ -240,7 +240,7 @@ elseif ($do_attach && ! empty($_FILES))
             "user_id"    => 0,
             "message_id" => 0
         ));
-        
+
         if ($file !== FALSE)
         {
             // Create new attachment information.
@@ -268,13 +268,13 @@ elseif ($do_attach && ! empty($_FILES))
              *     File storage
              *
              * [when]
-             *     In 
+             *     In
              *     <filename>include/posting/action_attachments.php</filename>,
              *     right after a file attachment is saved in the database.
              *
              * [input]
              *     Two part array where the first element is the message array
-             *     and the second element is a file array that contains the 
+             *     and the second element is a file array that contains the
              *     name, size, and <literal>file_id</literal> of the newly saved
              *     file.
              *
@@ -287,7 +287,7 @@ elseif ($do_attach && ! empty($_FILES))
              *     {
              *         global $PHORUM;
              *
-             *         // Log the messages with attachments, including the 
+             *         // Log the messages with attachments, including the
              *         // attachment names.
              *         $PHORUM["mod_foo"]["messages_with_attachments"][$data[0]["message_id"]][$data[1]["file_id"]] = $data[1]["name"];
              *         $PHORUM['DB']->update_settings(array(

@@ -1,6 +1,6 @@
 all:
-	(cd build; ./build)
+    (cd build; ./build)
 
 clean:
-	/bin/rm -fR resources output source *.html
+    /bin/rm -fR resources output source *.html
 

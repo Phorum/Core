@@ -4,5 +4,5 @@
 
 .PhorumNavBlock,.PhorumReadNavBlock
 {
-	    display: none;
+        display: none;
 }

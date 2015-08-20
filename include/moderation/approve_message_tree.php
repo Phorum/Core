@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 if (!defined('PHORUM') || phorum_page !== 'moderation') return;
 
@@ -19,7 +19,7 @@ foreach($mids_arr as $key => $mid) {
         "message_id" => $mid,
         "forum_id"   => $PHORUM["forum_id"]
     );
-    
+
 }
 
 // updating the thread-info

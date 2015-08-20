@@ -41,7 +41,7 @@ $filter_base = phorum_admin_build_url(array(
     'module=modsettings',
     'mod=event_logging',
     'el_action=filter'
-)); 
+));
 
 $show_loglevel = array();
 $show_categories = array();
@@ -268,8 +268,8 @@ for (var i = 0; i < buttons.length; i++) {
         newdropdown.appendChild(newdropdown_opthead);
         newdropdown.appendChild(newdropdown_op1);
         newdropdown.appendChild(newdropdown_op2);
-        container.appendChild(newdropdown);        
-        
+        container.appendChild(newdropdown);
+
         break;
     }
 }

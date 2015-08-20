@@ -47,7 +47,7 @@ $frm->addmessage(
 $prev_reason = '';
 if (count($purge_files))
 {
-    $frm->addbreak("There are currently " . count($purge_files) . 
+    $frm->addbreak("There are currently " . count($purge_files) .
                    " stale files in the database");
 
     foreach($purge_files as $id => $file)

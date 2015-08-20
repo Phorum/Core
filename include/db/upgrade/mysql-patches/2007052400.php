@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-$upgrade_queries[]= 
+$upgrade_queries[]=
     "CREATE TABLE {$PHORUM['message_tracking_table']} (
          track_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
          message_id INT UNSIGNED NOT NULL DEFAULT '0',

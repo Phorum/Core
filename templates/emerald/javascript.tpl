@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------
 
 // Handle mark read functionality for the index and list page icons.
-// These icons are not CSS driven, therefore we cannot make use of the 
+// These icons are not CSS driven, therefore we cannot make use of the
 // built-in actions of Phorum.UI.NewFlags.
 Phorum.UI.NewFlags.registerActionCallback('icon', function (elt, $elt) {
 

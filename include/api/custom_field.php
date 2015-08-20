@@ -466,7 +466,7 @@ function phorum_api_custom_field_rebuild_cache()
  *
  * This function was implemented for fixing problems that
  * were introduced by modules that created custom fields on their own.
- * Besides that, it was also written to upgrade the PROFILE_FIELDS 
+ * Besides that, it was also written to upgrade the PROFILE_FIELDS
  * configuration. In Phorum 5.3 and up, this function is no longer
  * in active used, besides the use in the upgrade scripts.
  */

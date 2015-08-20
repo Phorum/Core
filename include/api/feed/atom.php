@@ -88,7 +88,7 @@ function phorum_api_feed_atom($messages, $forums, $url, $title, $description, $r
         if (!$replies)
         {
             $lang = $PHORUM['DATA']['LANG'];
-            switch ($message['thread_count']) 
+            switch ($message['thread_count'])
             {
                 case 1: $title .= " ({$lang['noreplies']})"; break;
                 case 2: $title .= " (1 {$lang['reply']})"; break;

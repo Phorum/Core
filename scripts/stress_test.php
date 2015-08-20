@@ -40,7 +40,7 @@ if(file_exists($PHORUM_DIRECTORY."/common.php")) {
         exit(1);
     }
 } else {
-    fprintf(STDERR, 
+    fprintf(STDERR,
         "Unable to find Phorum file \"common.php\".\n" .
         "Please check the \$PHORUM_DIRECTORY in " . basename(__FILE__) ."\n");
     exit(1);
@@ -100,8 +100,8 @@ if ($ucount > 0) {
     print "Creating $ucount random user(s):\n\n";
     for ($i = 0; $i < $ucount; $i++) {
         $name = $randomuserprefixes[array_rand($randomuserprefixes)];
-        $name .= rand(1, 9999999); 
-        $email = $name . '@example.com'; 
+        $name .= rand(1, 9999999);
+        $email = $name . '@example.com';
         $pass = "xxxxxxxx";
 
         $user = array(
@@ -121,7 +121,7 @@ if ($ucount > 0) {
 // Retrieve users which we can use to post with.
 $users = phorum_api_user_list(PHORUM_GET_ACTIVE);
 $user_ids = array_keys($users);
-if (!count($user_ids)) 
+if (!count($user_ids))
     die ("No users found that can be used for posting.\n");
 
 // Retrieve forums to post in.
@@ -131,7 +131,7 @@ foreach ($forums as $id => $forum) {
     if ($forum["folder_flag"]) continue;
     $forum_ids[] = $id;
 }
-if (!count($forum_ids)) 
+if (!count($forum_ids))
     die ("No users found that can be used for posting.\n");
 
 
@@ -198,7 +198,7 @@ if ($tcount)
     }
 }
 
-if ($ncount) 
+if ($ncount)
 {
     print "\nSetting $ncount newflags for " . count($users) . " users:\n\n";
 
@@ -214,9 +214,9 @@ if ($ncount)
             "id"    => $id,
             "forum" => $msg["forum_id"]
         );
-    }    
+    }
 
-    foreach ($users as $user_id => $stuff) 
+    foreach ($users as $user_id => $stuff)
     {
         print ".";
         $PHORUM["user"]["user_id"] = $user_id;

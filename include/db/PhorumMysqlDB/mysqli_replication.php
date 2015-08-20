@@ -22,12 +22,12 @@ if (!defined('PHORUM')) return;
 /**
  * This script implements the mysqli_replication extension for the
  * MySQL database layer.
- */ 
+ */
 
-/** 
+/**
  * The PhorumMysqlDB_mysqli_extension class, which implements the
- * mysqli_extension extension for the MySQL database layer. 
- */ 
+ * mysqli_extension extension for the MySQL database layer.
+ */
 class PhorumMysqlDB_mysqli_replication extends PhorumDB
 {
     /**
@@ -532,7 +532,7 @@ class PhorumMysqlDB_mysqli_replication extends PhorumDB
                 $server_data = $db_array[$rand_server];
 
                 // we suppress errors from the mysqli_connect command as errors
-                // are catched differently.                        
+                // are catched differently.
                 $conn = mysqli_connect(
                     $server_data['server'],
                     $server_data['user'],

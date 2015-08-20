@@ -16,7 +16,7 @@
 
     Na tomto fóru mùžete použít smajlíky. Smajlící jsou øetìzce znakù, které se ve zprávì zobrazují jako obrázky.
     Ty se používají pro vyjádøení nálady autora pøíspìvku. V tabulce dole jsou všechny dostupné smajlíky. Ve sloupci "Kde"
-    je popis, kde je možné smajlík použít (S = subjekt zprávy, B = tìlo zprávy, BS = všude). 
+    je popis, kde je možné smajlík použít (S = subjekt zprávy, B = tìlo zprávy, BS = všude).
     <br/><br/>
     <table cellspacing="1" width="100%">
     <tr>

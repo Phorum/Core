@@ -30,12 +30,12 @@
 /**
  * Parse a Phorum page request.
  *
- * This will handle a couple of tasks for parsing Phorum requests: 
+ * This will handle a couple of tasks for parsing Phorum requests:
  *
  * - When PHP magic quotes are enabled, the automatically added
  *   slashes are stripped from the request data.
  * - The "parse_request" hook is called.
- * - The $_SERVER["QUERY_STRING"] or $PHORUM_CUSTOM_QUERY_STRING 
+ * - The $_SERVER["QUERY_STRING"] or $PHORUM_CUSTOM_QUERY_STRING
  *   (a global variable that can be set to override the standard
  *   QUERY_STRING) is parsed. The request variables are stored
  *   in $PHORUM["args"].
@@ -80,7 +80,7 @@ function phorum_api_request_parse()
     // Also make sure that magic_quotes_runtime is disabled.
     if (function_exists('set_magic_quotes_runtime')) {
         @set_magic_quotes_runtime(FALSE);
-    }   
+    }
 
     // Thanks a lot for configurable argument separators :-/
     // In some cases we compose GET based URLs, with & and = as respectively
@@ -295,7 +295,7 @@ function phorum_api_request_parse()
 
 // {{{ Function: phorum_api_request_stripslashes()
 /**
- * Recursively remove slashes from array elements.  
+ * Recursively remove slashes from array elements.
  *
  * @param array $array
  *     The data array to modify.
@@ -326,7 +326,7 @@ function phorum_api_request_stripslashes($array)
  *
  * For protecting forms against CSRF attacks, a signed posting token
  * is utilized. This posting token must be included in the POST request.
- * Without the token, Phorum will not accept the POST data. 
+ * Without the token, Phorum will not accept the POST data.
  *
  * This function will check whether we are handling a POST request.
  * If yes, then check if an anti-CSRF token is provided in the POST data.
@@ -420,7 +420,7 @@ function phorum_api_request_require_login($tight_security = FALSE)
     }
 
     // Handle tight security.
-    if ($tight_security && !$PHORUM['DATA']['FULLY_LOGGEDIN']) { 
+    if ($tight_security && !$PHORUM['DATA']['FULLY_LOGGEDIN']) {
         phorum_api_redirect(
             PHORUM_LOGIN_URL,
             'redir=' . urlencode(phorum_api_url_current())

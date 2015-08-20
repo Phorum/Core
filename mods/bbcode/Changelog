@@ -4,7 +4,7 @@ Changelog:
 2010-10-09 v2.0.10
 
    - Improved the color picker code to make the placement of the picker
-	   work correctly in complex layouts.
+     work correctly in complex layouts.
 
    - Added left/right alignment tags.
 

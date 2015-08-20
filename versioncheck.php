@@ -39,7 +39,7 @@ if (isset($_COOKIE["phorum_upgrade_available"])) {
         $upgrade_available = 0;
     }
 }
-setcookie("phorum_upgrade_available", $upgrade_available, 0, 
+setcookie("phorum_upgrade_available", $upgrade_available, 0,
           $PHORUM["session_path"], $PHORUM["session_domain"]);
 
 ?>

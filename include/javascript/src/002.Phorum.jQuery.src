@@ -3,7 +3,7 @@
  *
  * <p>
  *   The jQuery object for the jQuery library that Phorum loads is
- *   stored in Phorum.jQuery. 
+ *   stored in Phorum.jQuery.
  * </p>
  * <p>
  *   A short length reference to the jQuery object is additionally stored
