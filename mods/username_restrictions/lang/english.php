@@ -2,9 +2,9 @@
 
 $PHORUM['DATA']['LANG']['mod_username_restrictions'] = array(
     'min_length'     => 'Please choose a longer username ' .
-                        '(the minimum length is %length% characters).', 
+                        '(the minimum length is %length% characters).',
     'max_length'     => 'Please choose a shorter username ' .
-                        '(the maximum length is %length% characters).', 
+                        '(the maximum length is %length% characters).',
     'valid_chars'    => 'Please choose a different username. The username ' .
                         '"%username%" contains one or more illegal ' .
                         'characters. Valid characters are: %valid_chars%. ' .

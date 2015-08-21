@@ -195,13 +195,13 @@
       <emphasis role="bold">HTTP Path:</emphasis> This is the base URL of your Phorum.
      </para>
      <para>
-      <emphasis role="bold">Disabled URL:</emphasis> This url will be redirected to 
-       when the Phorum status is disabled. If no URL is given, a message in English 
+      <emphasis role="bold">Disabled URL:</emphasis> This url will be redirected to
+       when the Phorum status is disabled. If no URL is given, a message in English
        will be displayed.
       </para>
       <para>
-      <emphasis role="bold">Time Zone Offset:</emphasis> If you and/or your users are 
-      in a different timezone than the server, you can have the default displayed time 
+      <emphasis role="bold">Time Zone Offset:</emphasis> If you and/or your users are
+      in a different timezone than the server, you can have the default displayed time
       adjusted by using this option.
      </para>
      <para>
@@ -209,11 +209,11 @@
      using cookies or session information on URLs.
      </para>
      <para>
-     <emphasis role="bold">Use No Cookies:</emphasis> The session information will 
+     <emphasis role="bold">Use No Cookies:</emphasis> The session information will
      always be included on the URL.
      </para>
      <para>
-     <emphasis role="bold">Allow Cookies:</emphasis> The session information will be 
+     <emphasis role="bold">Allow Cookies:</emphasis> The session information will be
      stored in cookies, if the user's browser supports it. Otherwise, the information
      is included in the URL.
      </para>
@@ -224,22 +224,22 @@
      </para>
      <para>
      <emphasis role="bold">Main Session Timeout (days):</emphasis> When users log in
-     to your Phorum, they are issued a cookie. You can set the timeout value to a 
-     number of days that you want the cookies to stay on the users computer. If you 
+     to your Phorum, they are issued a cookie. You can set the timeout value to a
+     number of days that you want the cookies to stay on the users computer. If you
      set it to 0, the cookie will only last as long as the user has the browser open.
      </para>
-     <para> 
-     <emphasis role="bold">Session Path (start with /):</emphasis>: When cookies are 
+     <para>
+     <emphasis role="bold">Session Path (start with /):</emphasis>: When cookies are
      sent to the client's browser, part of the cookies determines the path (URL) for
      which the cookies are valid. For example, if the URL is http://example.com/phorum,
-     you could set the path to /phorum. Then, the user's browser would only send the 
+     you could set the path to /phorum. Then, the user's browser would only send the
      cookie information when the user accessed the Phorum. You could also simply / and
-     the cookie info will be sent for any page on your site. This could be useful if 
+     the cookie info will be sent for any page on your site. This could be useful if
      you want to use Phorum's login system for other parts of your site.
      </para>
      <para>
      <emphasis role="bold">Session Domain:</emphasis> Usually you can leave this blank.
-     If you know you need to use a different domain (like if you use forums.example.com, 
+     If you know you need to use a different domain (like if you use forums.example.com,
      you may want to just use example.com as the domain) you may enter it here.
      </para>
      <para>
@@ -255,14 +255,14 @@
      The length of time is determined by Short Session Timeout.
      </para>
      <para>
-     <emphasis role="bold">Short Session Timeout:</emphasis> When tight security is 
+     <emphasis role="bold">Short Session Timeout:</emphasis> When tight security is
      enabled, the users will be issued a second cookie when they type in their login
      information. If the user does not use the site for the period of time you set here,
-     they will have to re-enter their login information before posting messages, 
+     they will have to re-enter their login information before posting messages,
      accessing private messages or using their Control Center. They will still be allowed
      to read the Phorum as long as their Main Session is still good. The time is in
-     minutes. The minimum is 5 minutes; otherwise, your users will be very angry at 
-     you. 
+     minutes. The minimum is 5 minutes; otherwise, your users will be very angry at
+     you.
      <sbr />
      P.S. 1 day = 1440 minutes
      </para>
@@ -278,9 +278,9 @@
      "Fixed Display Settings" enabled in the forum settings.
      </para>
      <para>
-      <emphasis role="bold">Registration Verification:</emphasis> This allows you to 
+      <emphasis role="bold">Registration Verification:</emphasis> This allows you to
      force users to follow a verification process after registration. You can have
-     them verify either: 
+     them verify either:
       <itemizedlist>
        <listitem><para>
      by email - a link is sent to the user's email address, which they have to click
@@ -296,20 +296,20 @@
      <para>
       <emphasis role="bold">Enable Drop-down user list:</emphasis> By setting this to
       Yes, Phorum will display a drop-down list of users instead of an empty text
-      box on pages where you can select a user. Two examples of such pages are when 
-      sending a private message, and when adding users to a group in the grou 
-      moderation page. This option should be disabled if you have a large number of 
-      users, as a list of thousands of users will slow performance dramatically. 
+      box on pages where you can select a user. Two examples of such pages are when
+      sending a private message, and when adding users to a group in the grou
+      moderation page. This option should be disabled if you have a large number of
+      users, as a list of thousands of users will slow performance dramatically.
      </para>
      <para>
       <emphasis role="bold">What to use as the display name:</emphasis> You can choose
       to use either the user's username of the real name (which can be edited by the
-      user from the Control Center) as the name which the user is referenced to 
+      user from the Control Center) as the name which the user is referenced to
       throughout all Phorum pages.
        <important>
        This is not an option that you normally would want to change on a live
-       system that has been running for a while. One reason is that all stored names 
-       will have to be updated in the database (e.g. the posting authors), which can 
+       system that has been running for a while. One reason is that all stored names
+       will have to be updated in the database (e.g. the posting authors), which can
        take quite a while on a big forum (it will work though). More important is that
        you might confuse your users by changing their display names.
        </important>
@@ -328,7 +328,7 @@
       the user can use as the avatar to show). Keep in mind that upload file size is
       also restricted by the upload size limit of php.ini.
         <sbr />
-      These settings do not control uploading of forum message attachments. For 
+      These settings do not control uploading of forum message attachments. For
       changing message attachment settings, you have to edit the settings of the forum
       for which you want to enable attachments.
      </para>
@@ -337,9 +337,9 @@
       allow users to access/use the private messaging system.
      </para>
      <para>
-      <emphasis role="bold">Check for new PM:</emphasis> By settings this to Yes, 
+      <emphasis role="bold">Check for new PM:</emphasis> By settings this to Yes,
       Phorum will check if a user has new private messages, and display an indicator.
-      On a Phorum with a lot of users and private messages, this may hurt 
+      On a Phorum with a lot of users and private messages, this may hurt
       performance. This option has no effect if Private Messaging is disabled.
      </para>
      <para>
@@ -363,7 +363,7 @@
       address system emails are sent from.
      </para>
      <para>
-      <emphasis role="bold">Use Bcc in emails:</emphasis> This prevents recipients seeing 
+      <emphasis role="bold">Use Bcc in emails:</emphasis> This prevents recipients seeing
       the complete list of recipient addresses. If this is disabled, the system will
       use CC (carbon copy), so each recipient can see all recipient email addresses.
      </para>
@@ -371,23 +371,23 @@
       <emphasis role="bold">Ignore admin for moderator emails:</emphasis> If you select
       Yes for this option, then the moderator notifications and report message emails
       will not be sent to the administrator, only to moderators.
-     </para> 
-          
+     </para>
+
  </section>
  <section id="features.settings.cache">
     <title>Cache Settings</title>
     <para>
-    <emphasis role="bold">Cache Directory:</emphasis> 
+    <emphasis role="bold">Cache Directory:</emphasis>
     Caching is used to take some load off the database and web server. The cache directory
-    is used for caching preprocessed Phorum templates and for caching data in case "file 
+    is used for caching preprocessed Phorum templates and for caching data in case "file
     system based" is selected as the cache layer below.
     </para>
     <para>
-    For most installations, it will be fine to set it to the default temp directory for the server 
+    For most installations, it will be fine to set it to the default temp directory for the server
     (/tmp on UNIX systems and C:\Windows\Temp for Windows system).
     </para>
     <para>
-    If your server has PHP Safe Mode enabled, you will need to create a directory under your 
+    If your server has PHP Safe Mode enabled, you will need to create a directory under your
     Phorum directory and make it writable by the web server (you can use the directory "./cache"
     which was included in the Phorum distribution for this purpose). Additionally, if you are
     running Phorum on a shared server, it is generally advantageous to use the "./cache" directory
@@ -395,27 +395,27 @@
     </para>
     <para>
     <emphasis role="bold">Enable Caching stylesheet data (CSS):</emphasis>
-    Phorum uses a system where modules can add data to the main stylesheet for the pages. 
-    By enabling this feature, Phorum can cache the dynamically generated data and improve 
-    caching of the stylesheet data in the browsers of your visitors. Enabling this 
+    Phorum uses a system where modules can add data to the main stylesheet for the pages.
+    By enabling this feature, Phorum can cache the dynamically generated data and improve
+    caching of the stylesheet data in the browsers of your visitors. Enabling this
     feature is highly recommended. Only disable it if you are having problems with it.
-    </para>   
+    </para>
     <para>
     <emphasis role="bold">Enable Caching JavaScript code:</emphasis>
-    Phorum uses a system where modules can provide JavaScript code for the pages. By enabling 
-    this feature, Phorum can cache the dynamically generated data and improve caching of the 
+    Phorum uses a system where modules can provide JavaScript code for the pages. By enabling
+    this feature, Phorum can cache the dynamically generated data and improve caching of the
     JavaScript data in the browsers of your visitors. Enabling this feature is highly recommended.
     Only disable it if you are having problems with it.
     </para>
     <para>
     <remark>TODO: which data to cache/cache layer</remark>
     </para>
-   </section> 
-   
+   </section>
+
    <section id="feautures.settings.banlists">
     <title>Ban Lists</title>
      <para>
-     Ban items can be used to deny new user registrations and posting of (private) messages, based on 
+     Ban items can be used to deny new user registrations and posting of (private) messages, based on
      various criteria. If a ban item applies to a user action, then this action will be fully blocked by
      Phorum. This can for example be used to block user registrations and postings from certain IP addresses
      or to prevent certain words from being used in forum messages.
@@ -424,7 +424,7 @@
      If you want to fully ban a user, then it's best to set "Active" to "No" for the user in the "Edit Users"
      interface.
      </para>
-   </section> 
+   </section>
   </section>
 
   <section id="features.vroots">

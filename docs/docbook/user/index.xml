@@ -11,15 +11,15 @@
   <!ENTITY part_intro SYSTEM "part_intro.xml">
   <!ENTITY part_using SYSTEM "part_using.xml">
   <!ENTITY part_control SYSTEM "part_control.xml">
-  
+
   <!ENTITY phorum.org '<ulink url="http://www.phorum.org/">Phorum.org</ulink>'>
   <!ENTITY www.phorum.org '<ulink url="http://www.phorum.org/">http://www.phorum.org</ulink>'>
 ]>
 
-<book lang="en"> 
-&bookinfo; 
+<book lang="en">
+&bookinfo;
 &part_preface;
-&part_intro; 
+&part_intro;
 &part_using;
 &part_control;
 </book>

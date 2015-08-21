@@ -261,85 +261,50 @@ function phorum_date( $picture, $ts )
  */
 function phorum_relative_date($time)
 {
-
     global $PHORUM;
-
     $today = strtotime(phorum_date('%Y-%m-%d', time()));
-
     $reldays = ($time - $today)/86400;
-
     if ($reldays >= 0 && $reldays < 1) {
-
         return $PHORUM["DATA"]["LANG"]["relative_today"];
-
     } else if ($reldays >= 1 && $reldays < 2) {
-
         return $PHORUM["DATA"]["LANG"]["relative_tomorrow"];
-
     } else if ($reldays >= -1 && $reldays < 0) {
-
         return $PHORUM["DATA"]["LANG"]["relative_yesterday"];
     }
 
-
     if (abs($reldays) < 30) {
-
         // less than a month
-
         $reldays = floor($reldays);
-
         if($reldays==1){
             $return = $PHORUM["DATA"]["LANG"]["relative_one_day"];
         } else {
             $return = abs($reldays)." ".$PHORUM["DATA"]["LANG"]["relative_days"];
         }
-
         $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
-
         return $return;
-
     } elseif (abs($reldays) < 60) {
-
         // weeks ago
-
         $relweeks = floor(abs($reldays/7));
-
         $return = $relweeks." ".$PHORUM["DATA"]["LANG"]["relative_weeks"];
-
         $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
-
         return $return;
-
     } elseif (abs($reldays) < 365) {
-
         // months ago
-
         $relmonths = floor(abs($reldays/30));
-
         $return = $relmonths." ".$PHORUM["DATA"]["LANG"]["relative_months"];
-
         $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
-
         return $return;
-
     } else {
-
         // years ago
-
         $relyears = floor(abs($reldays/365));
-
         if($relyears==1){
             $return = $PHORUM["DATA"]["LANG"]["relative_one_year"];
         } else {
             $return = $relyears." ".$PHORUM["DATA"]["LANG"]["relative_years"];
         }
-
         $return.= " ".$PHORUM["DATA"]["LANG"]["relative_ago"];
-
         return $return;
-
     }
-
 }
 
 /**
@@ -350,15 +315,14 @@ function phorum_relative_date($time)
  */
 function phorum_strip_body( $body, $strip_tags = true)
 {
-  if($strip_tags) {
-      // Strip HTML <tags>
-      $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $body);
-      // Strip BB Code [tags]
-      $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
-  } else {
-    $stripped = $body;
-  }
-
+    if($strip_tags) {
+        // Strip HTML <tags>
+        $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $body);
+        // Strip BB Code [tags]
+        $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
+    } else {
+        $stripped = $body;
+    }
 
     // do badwords check
     // Prepare the bad-words replacement code.

@@ -293,7 +293,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO 'myuser'@'localhost' IDENTIFIED BY '
                 <literal>3306</literal> which is the regular port for mysql.
               </para>
             </listitem>
-          </varlistentry>  
+          </varlistentry>
           <varlistentry>
             <term>socket</term>
             <listitem>
@@ -302,7 +302,7 @@ mysql&gt; <literal>GRANT ALL ON phorum.* TO 'myuser'@'localhost' IDENTIFIED BY '
                 Overrides the port if the hostname is localhost for mysql.
               </para>
             </listitem>
-          </varlistentry> 
+          </varlistentry>
           <varlistentry>
             <term>down_page</term>
             <listitem>

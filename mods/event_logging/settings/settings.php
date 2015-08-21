@@ -25,7 +25,7 @@ if (count($_POST))
 include_once "./include/admin/PhorumInputForm.php";
 $frm = new PhorumInputForm ("", "post", "Save settings");
 $frm->hidden("module", "modsettings");
-$frm->hidden("mod", "event_logging"); 
+$frm->hidden("mod", "event_logging");
 $frm->hidden("el_action", "settings");
 
 $frm->addbreak("General Settings");

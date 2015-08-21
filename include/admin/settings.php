@@ -146,7 +146,7 @@ if ( count( $_POST ) )
 if ( $error ) {
     phorum_admin_error( $error );
 } elseif( isset($_GET['message']) && $_GET['message'] == 'success' ) {
-	$okmsg = "Settings updated";
+    $okmsg = "Settings updated";
     phorum_admin_okmsg ( $okmsg);
 }
 // create the time zone drop down array
@@ -429,7 +429,7 @@ $frm->addhelp($row, "Ignore Admin for moderator-emails", "If you select yes for 
  *
  * [example]
  *     <hookcode>
- *     function phorum_mod_foo_admin_general ($frm) 
+ *     function phorum_mod_foo_admin_general ($frm)
  *     {
  *         // Add a section for the foo settings
  *         $frm->addbreak( "Foo Module Settings" );

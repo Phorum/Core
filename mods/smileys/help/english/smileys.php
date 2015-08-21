@@ -14,8 +14,8 @@
   <body>
     <h2>Smiley help information</h2>
 
-    On this forum, you can make use of smileys. Smileys are 
-    strings of characters that will be displayed as an 
+    On this forum, you can make use of smileys. Smileys are
+    strings of characters that will be displayed as an
     image when reading the message. Smileys are mostly used
     for expressing the author's mood. In the table below, you
     can find all smileys that are available. The "Where"

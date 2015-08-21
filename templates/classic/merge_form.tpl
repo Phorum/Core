@@ -6,7 +6,7 @@
       <div class="PhorumFloatingText">
         <p>{LANG->MergeThreadInfo1}</p>
         <strong>{FORM->merge_subject1}</strong>
-        <p>{LANG->MergeThreadInfo2}</p>   
+        <p>{LANG->MergeThreadInfo2}</p>
       </div>
     </div>
   {/IF}

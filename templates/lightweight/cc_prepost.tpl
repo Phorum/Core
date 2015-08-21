@@ -1,21 +1,21 @@
 <script type="text/javascript">
 var phorum_marked_all = false;
 function phorum_markAllCheckboxes() {
-	var pageform = document.getElementById('fprepost');
-	var elems = pageform.getElementsByTagName('input');
+    var pageform = document.getElementById('fprepost');
+    var elems = pageform.getElementsByTagName('input');
 
-	if(phorum_marked_all) {
-		newval = false;
-	} else {
-		newval = true;
-	}
-	for(i=0; i<elems.length; i++){
+    if(phorum_marked_all) {
+        newval = false;
+    } else {
+        newval = true;
+    }
+    for(i=0; i<elems.length; i++){
         if(elems[i].type == 'checkbox') {
-	   	   elems[i].checked=newval;
+            elems[i].checked=newval;
         }
 
-	}
-	phorum_marked_all = newval;
+    }
+    phorum_marked_all = newval;
 }
 </script>
 

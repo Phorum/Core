@@ -38,7 +38,7 @@
           <td>{PROFILE->date_last_active}</td>
         </tr>
       {/IF}
-      {HOOK "tpl_profile" PROFILE} 
+      {HOOK "tpl_profile" PROFILE}
     </table>
   </div>
   <div class="PhorumNavBlock PhorumNarrowBlock" style="text-align: left;">

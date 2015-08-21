@@ -4,7 +4,7 @@
  * adds a commented form field to the form. Spam bots sometimes make the
  * mistake of interpreting the commented form field as a real form field.
  * If this field is included in the post data, then the form post is blocked.
- */ 
+ */
 
 /**
  * build_form: Add a commented form field to the form.

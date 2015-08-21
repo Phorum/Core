@@ -3,20 +3,20 @@ $PHORUM["DATA"]["LANG"]["mod_spamhurdles"] = array
 (
     // Code CAPTCHA
     "CaptchaTitle" =>
-        "Prevenção de SPAM:", 
+        "Prevenção de SPAM:",
     "CaptchaExplain" =>
         "Por favor, digite o código que você visualiza no campo abaixo
          Este sistema é para bloquear robos que tentam usar este formulário automaticamente.",
     "CaptchaUnclearExplain" =>
-        "Se o código está dificil de ler, tente colocar o código que você achar. 
+        "Se o código está dificil de ler, tente colocar o código que você achar.
          Se você digitar o codigo errado, será gerado um novo código
          e outra chance de digitar o codigo correto.",
     "CaptchaSpoken" =>
         "Escute este código.",
-    "CaptchaFieldLabel" => 
+    "CaptchaFieldLabel" =>
         "Digite o Código: ",
     "CaptchaWrongCode" =>
-        "Você digitou o codigo incorreto. 
+        "Você digitou o codigo incorreto.
          Tente novamente.",
 
     // Mathematical CAPTCHA
@@ -31,9 +31,9 @@ $PHORUM["DATA"]["LANG"]["mod_spamhurdles"] = array
     "MaptchaFieldLabel" =>
         "Resposta: ",
     "MaptchaWrongAnswer" =>
-        "Você digitou o codigo incorreto. 
+        "Você digitou o codigo incorreto.
          Tente novamente.",
-    
+
     // Javascript CAPTCHA.
     "JavascriptCaptchaNoscript" =>
         "[Por favor, habilite o javascript para visualizar o código]",
@@ -58,8 +58,8 @@ $PHORUM["DATA"]["LANG"]["mod_spamhurdles"] = array
 
     // A message that tells the user to contact the site owner
     // if the problems persist.
-    "ContactSiteOwner" => 
-        "Se continuar tendo problemas com bloqueio de dados, 
+    "ContactSiteOwner" =>
+        "Se continuar tendo problemas com bloqueio de dados,
          então entre em contato com o proprietário do site para obter ajuda."
 );
 

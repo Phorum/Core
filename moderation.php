@@ -37,19 +37,19 @@ $PHORUM["DATA"]["MODERATOR"] =
     phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
 if(isset($_POST["thread"])) {
-	$msgthd_id = (int)$_POST["thread"];
+    $msgthd_id = (int)$_POST["thread"];
 } elseif(isset($PHORUM['args'][2])) {
-	$msgthd_id = (int)$PHORUM['args'][2];
+    $msgthd_id = (int)$PHORUM['args'][2];
 } else {
-	$msgthd_id = 0;
+    $msgthd_id = 0;
 }
 
 if(isset($_POST["mod_step"])) {
-	$mod_step = (int)$_POST["mod_step"];
+    $mod_step = (int)$_POST["mod_step"];
 } elseif(isset($PHORUM['args'][1])) {
-	$mod_step = (int)$PHORUM['args'][1];
+    $mod_step = (int)$PHORUM['args'][1];
 } else {
-	$mod_step = 0;
+    $mod_step = 0;
 }
 
 if(empty($msgthd_id) || !$PHORUM["DATA"]["MODERATOR"]) {
@@ -566,7 +566,7 @@ switch ($mod_step) {
          *         $PHORUM["mod_foo"]["closed_threads"][] = $msgthd_id;
          *         phorum_db_update_settings(array("mod_foo" => $PHORUM["mod_foo"]));
          *
-         *         return $msgthd_ids; 
+         *         return $msgthd_ids;
          *     }
          *     </hookcode>
          */
@@ -729,7 +729,7 @@ switch ($mod_step) {
             "message_id" => $msgthd_id,
             "forum_id"   => $PHORUM["forum_id"]
         );
-        
+
         break;
 
     case PHORUM_APPROVE_MESSAGE_TREE: // approve a message and all answers to it
@@ -746,11 +746,11 @@ switch ($mod_step) {
         foreach($mids_arr as $key => $mid) {
             // setting the new status
             phorum_db_update_message($mid, $newpost);
-            
-	        $invalidate_message_cache[] = array(
-	            "message_id" => $mid,
-	            "forum_id"   => $PHORUM["forum_id"]
-	        );
+
+            $invalidate_message_cache[] = array(
+                "message_id" => $mid,
+                "forum_id"   => $PHORUM["forum_id"]
+            );
 
         }
 
@@ -780,8 +780,8 @@ switch ($mod_step) {
         } else {
             $PHORUM['DATA']["URL"]["REDIRECT"]=$PHORUM["DATA"]["URL"]["LIST"];
         }
-        
-        
+
+
         break;
 
     case PHORUM_HIDE_POST: // hiding a message (and its replies)
@@ -1047,7 +1047,7 @@ switch ($mod_step) {
 
 // remove the affected messages from the cache if caching is enabled.
 if ($PHORUM['cache_messages']) {
-	$invalidate_forums = array();
+    $invalidate_forums = array();
     foreach($invalidate_message_cache as $message) {
         phorum_cache_remove('message', $message["message_id"]);
         $invalidate_forums[$message['forum_id']]=$message['forum_id'];
@@ -1055,13 +1055,13 @@ if ($PHORUM['cache_messages']) {
 
     if(is_array($invalidate_forums) && count($invalidate_forums)) {
         require_once './include/api/forums.php';
-	    // retrieve the data for all involved forums to get the correct cache version
-	    $forums_data = phorum_api_forums_get($invalidate_forums); 
-	    
-	    // increment the cache version for all involved forums once
-	    foreach($invalidate_forums as $forum_id) {
-	    	phorum_db_update_forum(array('forum_id'=>$forum_id,'cache_version'=>($forums_data[$forum_id]['cache_version']+1)));
-	    }
+        // retrieve the data for all involved forums to get the correct cache version
+        $forums_data = phorum_api_forums_get($invalidate_forums);
+
+        // increment the cache version for all involved forums once
+        foreach($invalidate_forums as $forum_id) {
+            phorum_db_update_forum(array('forum_id'=>$forum_id,'cache_version'=>($forums_data[$forum_id]['cache_version']+1)));
+        }
     }
 }
 

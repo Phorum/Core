@@ -14,10 +14,10 @@
   <body>
     <h2>Neuvoja hymiöiden käyttöön</h2>
 
-    Tämä forum mahdollistaa hymiöiden käytön. Tavallisista ascii 
+    Tämä forum mahdollistaa hymiöiden käytön. Tavallisista ascii
     merkeistä muodostetut merkkijonot näytetään viestiä luettaessa
-    kuvina. Allaoleva taulukko näyttää kaikki käytettävissä olevat 
-    hymiöt. "Käyttö" sarake ilmoittaa missä viestinosissa voit 
+    kuvina. Allaoleva taulukko näyttää kaikki käytettävissä olevat
+    hymiöt. "Käyttö" sarake ilmoittaa missä viestinosissa voit
     käyttää hymiötä (O = otsikko, V = viesti, VO = molemmissa).
     <br/><br/>
     <table cellspacing="1" width="100%">

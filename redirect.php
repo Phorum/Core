@@ -17,9 +17,9 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Redirect to another page. This is used for working around an MSIE bug 
-// where redirecting to an anchored URL loses the anchor if redirected 
-// directly from a script that acts on POST input coming from an 
+// Redirect to another page. This is used for working around an MSIE bug
+// where redirecting to an anchored URL loses the anchor if redirected
+// directly from a script that acts on POST input coming from an
 // enctype="multipart/mixed" form... *sigh*.
 
 define('phorum_page', 'redirect');

@@ -1,9 +1,9 @@
 Preliminary Upgrade-Instructions
 ================================
 
-This document describes the Phorum upgrading process. Please keep in mind, 
+This document describes the Phorum upgrading process. Please keep in mind,
 that these instructions are neither complete, nor final. If you find
-problems in upgrading which are not described here or if you have 
+problems in upgrading which are not described here or if you have
 useful additions, please let us know.
 
 Table of contents:
@@ -38,26 +38,26 @@ Table of contents:
 
    - Backup your existing Phorum5 installation.
      Before doing an upgrade, it is always wise to make a good backup
-     of your running system. Make a backup your Phorum install directory 
+     of your running system. Make a backup your Phorum install directory
      and the database in which your Phorum tables are stored;
 
    - Download a newer Phorum5 package;
-   
+
    - Extract the files and put them on top of the current installation;
-   
-   - Keep the database settings from {phorum dir}/include/db/config.php 
+
+   - Keep the database settings from {phorum dir}/include/db/config.php
      the same;
 
-   Now you can choose whether you want to upgrade from a webbrowser or 
-   from a console. 
+   Now you can choose whether you want to upgrade from a webbrowser or
+   from a console.
 
 
   1.1.2 From a webbrowser
   -----------------------
-   
-  Open your forum using your webbrowser. In case a database upgrade 
-  is needed, you will be prompted to go to the admin page. In that case 
-  open the {phorum url}/admin.php page, which will guide you through 
+
+  Open your forum using your webbrowser. In case a database upgrade
+  is needed, you will be prompted to go to the admin page. In that case
+  open the {phorum url}/admin.php page, which will guide you through
   the upgrade.
 
 
@@ -78,7 +78,7 @@ Table of contents:
 
  1.2 Upgrading templates and hacks
  ---------------------------------
-   
+
    For minor upgrades, the Phorum team has the policy that templates
    should not change. For example, if you are upgrading version 5.1.1
    to 5.1.2, you can simply keep the old templates.
@@ -89,38 +89,38 @@ Table of contents:
    you'll have to build new templates, based on the new default template
    that is included in the distribution. Simply copying the old template
    will most probably result in errors and missing functionality.
-   
+
    If you are doing a minor upgrade and you have to preserve changes that
    were made to the default template (which is not the recommended way
    of customizing Phorum, see creating_templates.txt), you can follow one
    of the following options:
-   
-   - Extract the new Phorum distribution to its own directory and reapply 
+
+   - Extract the new Phorum distribution to its own directory and reapply
      your changes before putting it over the existing installation;
-     
+
    - Create a backup of your existing installation. Install the new
-     distribution on top of the old one and reapply the changes to 
+     distribution on top of the old one and reapply the changes to
      the new version while it is "live".
-   
+
 
 2. Upgrading from Phorum 3.4.x to Phorum5
 -------------------------------------------------------------------------------
 
    - Download and unpack the Phorum5 package;
-   
-   - Follow the installation instructions in docs/install.txt. Install 
-     Phorum5 is a new directory. 
-   
+
+   - Follow the installation instructions in docs/install.txt. Install
+     Phorum5 is a new directory.
+
    - Convert the old forum data:
-   
+
      In the scripts directory of your Phorum5 distribution, you will find
      a script named phorum3to5convert.php. Instructions for using this
      script can be found at the top of this script itself. The script will
      convert your old forum to Phorum5. Everything, but permission levels,
      is converted.
-   
+
    - Update the posted message counters for the users:
-   
+
      In the scripts directory, you will also find a script named
      "rebuild_postcount.php". This script can be used to update the number
      of posts for users to the right value. So if you want correct numbers
@@ -134,7 +134,7 @@ Table of contents:
 3. Upgrading from Phorum 5.0 or 5.1 to Phorum 5.2
 -------------------------------------------------------------------------------
 
-   - The primary change for upgrading between 5.1 and 5.2 was the changes to 
+   - The primary change for upgrading between 5.1 and 5.2 was the changes to
      announcements.  Announcements in 5.2 are now assigned to a specific forum
      and via a module are displayed at the top of the pages.  To convert your
      announcements, you will need to run the convert_announcements.php script

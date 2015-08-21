@@ -61,7 +61,7 @@ foreach($forums as $forum_id => $forum)
         $type="forum";
         $forum_edit_url = phorum_admin_build_url(array('module=editforum',"forum_id=$forum_id"));
         $forum_delete_url = phorum_admin_build_url(array('module=deleteforum',"forum_id=$forum_id"));
-                
+
         $actions="<a href=\"$forum_edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$forum_delete_url\">Delete</a>";
         $mainurl=NULL;
     }
@@ -71,7 +71,7 @@ foreach($forums as $forum_id => $forum)
     $rows .= "<span class=\"icon-$type\"></span>";
     $rows .= '<strong>' . ($forum['vroot'] == $forum['forum_id'] ? 'Virtual root: ' : '') . $forum['name'] . '</strong>';
     if ($mainurl) $rows .= "</a>";
-    $mv_up_url = phorum_admin_build_url(array('module=default',"display_up=$forum_id","parent_id=$folder_id")); 
+    $mv_up_url = phorum_admin_build_url(array('module=default',"display_up=$forum_id","parent_id=$folder_id"));
     $mv_down_url = phorum_admin_build_url(array('module=default',"display_down=$forum_id","parent_id=$folder_id"));
     $rows .= "<p class=\"forum-description\">$forum[description]</p></th><td class=\"PhorumAdminTableRow\"><a href=\"$mv_up_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_up.png\" alt=\"Up\" title=\"Up\"/></a>&nbsp;<a href=\"$mv_down_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_down.png\" alt=\"Down\" title=\"Down\"/></a></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
 }

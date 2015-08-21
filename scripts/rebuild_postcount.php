@@ -33,7 +33,7 @@ if (! ini_get('safe_mode')) {
 print "\nCounting the posts for all users ...\n";
 $postcounts = phorum_db_interact(
     DB_RETURN_ROWS,
-    "SELECT user_id, count(*) 
+    "SELECT user_id, count(*)
      FROM   {$PHORUM["message_table"]}
      WHERE  user_id != 0
      GROUP  BY user_id"

@@ -71,7 +71,7 @@ if(count($_POST) && $_POST['name'] != '')
           data. You can also create a totally new field and ignore
           the deleted field. What do you want to do?<br/><br/>
           <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
-            <input type="hidden" name="phorum_admin_token" 
+            <input type="hidden" name="phorum_admin_token"
                 value="<?php echo $PHORUM['admin_token'];?>" />
             <input type="hidden" name="module"
                 value="<?php print $module; ?>" />
@@ -245,7 +245,7 @@ if ($curr == "NEW")
 
             $edit_url = phorum_admin_build_url(array('module=customprofile','edit=1',"curr=$key"));
             $delete_url = phorum_admin_build_url(array('module=customprofile','delete=1',"curr=$key"));
-            
+
             print "<tr>\n";
             print "  <td class=\"PhorumAdminTableRow\">".$item['name']."</td>\n";
             print "    <td class=\"PhorumAdminTableRow\">".$item['length']."</td>\n";

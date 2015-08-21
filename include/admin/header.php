@@ -204,7 +204,7 @@ Phorum Status:
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <?php
 
-    if($module!="login" && $module!="install" 
+    if($module!="login" && $module!="install"
     && $module!="upgrade" && $module !="tokenmissing" ){
 ?>
 <tr>
