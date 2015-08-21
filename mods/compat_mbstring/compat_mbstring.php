@@ -83,7 +83,7 @@ if (!function_exists('mb_substr'))
                 // a captured group of length characters
                 if ($Lx) $length_pattern = '(?:.{65535}){'.$Lx.'}';
                 $length_pattern = '('.$length_pattern.'.{'.$Ly.'})';
-            } 
+            }
             else if ($length < 0)
             {
                 if ($length < ($offset - $strlen)) return '';
@@ -103,7 +103,7 @@ if (!function_exists('mb_substr'))
             return $match[1];
         } else {
             return '';
-        } 
+        }
     }
 }
 

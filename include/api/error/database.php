@@ -233,6 +233,6 @@ function phorum_api_error_database($error)
 
     exit();
 }
-// }}} 
+// }}}
 
 ?>

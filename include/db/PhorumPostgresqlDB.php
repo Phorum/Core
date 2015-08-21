@@ -142,7 +142,7 @@ class PhorumPostgresqlDB extends PhorumDB
             if (!empty($PHORUM['DBCONFIG']['charset'])) {
                 $charset = $PHORUM['DBCONFIG']['charset'];
                 pg_query($conn, "SET CLIENT_ENCODING TO '$charset'");
-            }        
+            }
         }
 
         // RETURN: quoted parameter.
@@ -216,7 +216,7 @@ class PhorumPostgresqlDB extends PhorumDB
                 $errmsg = pg_result_error($res);
 
                 // RETURN: error message
-                if ($return === DB_RETURN_ERROR) return $errmsg;     
+                if ($return === DB_RETURN_ERROR) return $errmsg;
 
                 // Trigger an error.
                 phorum_api_error(
@@ -511,7 +511,7 @@ class PhorumPostgresqlDB extends PhorumDB
           "CREATE INDEX {$this->message_table}_forum_recent_messages
            ON {$this->message_table} (forum_id, status, datestamp)",
 
-          "CREATE INDEX {$this->message_table}_recent_threads 
+          "CREATE INDEX {$this->message_table}_recent_threads
            ON {$this->message_table} (status, parent_id, datestamp)",
 
           "CREATE INDEX {$this->message_table}_recent_messages

@@ -49,7 +49,7 @@ require_once PHORUM_PATH.'/include/api/ban.php';
 function phorum_api_format_censor_compile()
 {
     static $search = '';
-    
+
     // Load the badwords and compile the replacement regexp.
     if ($search === '') {
         $words = phorum_api_ban_list(PHORUM_BAD_WORDS);

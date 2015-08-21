@@ -1,11 +1,11 @@
 Phorum 5 performance notes
 ==========================
 
-Several of Phorum's options have a tradeoff effect: enabling more 
-features can slow Phorum down. This document describes which options 
+Several of Phorum's options have a tradeoff effect: enabling more
+features can slow Phorum down. This document describes which options
 these are and tries to explain the performance cost of each one.
 
-Which options you should turn off to improve performance depends 
+Which options you should turn off to improve performance depends
 on the way you use your Phorum installation.
 
 Table of contents:
@@ -133,19 +133,19 @@ Table of contents:
  2.2 Allow Email Notification
  ----------------------------
 
-    This option has similar issues to the Email Messages to Moderators 
+    This option has similar issues to the Email Messages to Moderators
     setting, except the recipients of the emails are users who have
     selected the option to have replies in a followed thread emailed to
     them.
 
     If a large number of users is using this feature in a busy thread, it
-    can affect performance. If only few users are using this feature, it 
+    can affect performance. If only few users are using this feature, it
     will not cause significant performance issues.
 
 
  2.3 Count Views
  ---------------
-    
+
     If enabled, this feature records the number of views each post gets.
     For every post read, the counter will be incremented in the database.
     On a busy forum, this will result in a tremendous number of database
@@ -161,9 +161,9 @@ Table of contents:
     If enabled, the count of new messages for each forum will appear in
     index.php. While quite handy, this has to run several queries per
     listed forum. If there are many forums on the index.php page, there
-    could be a significant performance hit.  
+    could be a significant performance hit.
 
-	
+
  2.5 Ban List
  ------------
 
@@ -195,7 +195,7 @@ Table of contents:
 
  2.8 Check for duplicates
  ------------------------
-   
+
     "Check for duplicates" runs one additional query while posting to check
     if that post has been made before. That query should be fast and just
     a small overhead.

@@ -3,7 +3,7 @@
  * This file implements the "captcha" spam hurdle. This hurdle adds a
  * CAPTCHA to a form. When the form is posted, the user must have solved
  * the CAPTCHA. Otherwise, the form post is blocked.
- */ 
+ */
 
 function spamhurdles_load_captcha_class($type)
 {

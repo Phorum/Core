@@ -341,7 +341,7 @@ function phorum_api_url_no_uri_auth()
     $uri_auth = NULL;
     if (isset($PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM])) {
         $uri_auth = $PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM];
-        unset($PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM]);        
+        unset($PHORUM['DATA']['GET_VARS'][PHORUM_SESSION_LONG_TERM]);
     }
 
     $argv = func_get_args();
@@ -391,7 +391,7 @@ function phorum_api_url_current($include_query_string = TRUE)
     // name than the one in HTTP_HOST (probably due to some mass virtual
     // hosting request rewriting). If that happens, we do not trust
     // the SCRIPT_URI. Otherwise, we use the SCRIPT_URI as the current URL.
-    if (isset($_SERVER["SCRIPT_URI"]) && 
+    if (isset($_SERVER["SCRIPT_URI"]) &&
         (!isset($_SERVER['HTTP_HOST']) ||
          strpos($_SERVER['SCRIPT_URI'], $_SERVER['HTTP_HOST']) !== FALSE)) {
 

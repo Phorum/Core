@@ -23,7 +23,7 @@
  * backward compatibility functions for module compatibility. Because
  * there are third party modules, we cannot control whether or not
  * they are brought up to speed with the Phorum API.
- * 
+ *
  * These deprecated functions might be removed from future versions
  * of Phorum.
  *
@@ -124,7 +124,7 @@ function phorum_ob_clean() {
  * @deprecated Replaced by {@link phorum_api_write_file()}.
  */
 function phorum_write_file($file, $data) {
-    require_once PHORUM_PATH.'/include/api/write_file.php'; 
+    require_once PHORUM_PATH.'/include/api/write_file.php';
     return phorum_api_write_file($file, $data);
 }
 
@@ -323,7 +323,7 @@ function phorum_cache_clear() {
  * @deprecated Replaced by {@link phorum_api_system_get_max_upload()}.
  */
 function phorum_get_system_max_upload() {
-    require_once PHORUM_PATH.'/include/api/system.php'; 
+    require_once PHORUM_PATH.'/include/api/system.php';
     return phorum_api_system_get_max_upload();
 }
 

@@ -35,7 +35,7 @@ Contents:
 
      PHP4 is over 5 years old. As of Phorum 5.2 there are some functions
      used in Phorum which *require* PHP5 as they didn't exist before.
-     Therefor PHP5 is a requirement now. 
+     Therefor PHP5 is a requirement now.
 
    * A MySQL server, version 5 or above.
 
@@ -43,7 +43,7 @@ Contents:
      Phorum teams uses 5.0 for all development. MySQL 5.0.15 was the first
      production release of the 5.0 branch.
      Since the first release of Phorum 5.2 we were only testing against MySQL-5
-     but weren explicitly using MySQL-4 incompatible queries. 
+     but weren explicitly using MySQL-4 incompatible queries.
      As of Phorum 5.2.14 there were changes needed to make Phorum work with more
      recent MySQL versions and therefore MySQL-5 or higher is a requirement now.
 

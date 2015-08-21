@@ -74,7 +74,7 @@ var Phorum = {
     /**
      * @property http_path
      *
-     * The base URL for the forum. JavaScript code can use this URL to build 
+     * The base URL for the forum. JavaScript code can use this URL to build
      * URLs for this forum.
      *
      * @var String
@@ -86,7 +86,7 @@ var Phorum = {
  *
  * <p>
  *   The jQuery object for the jQuery library that Phorum loads is
- *   stored in Phorum.jQuery. 
+ *   stored in Phorum.jQuery.
  * </p>
  * <p>
  *   A short length reference to the jQuery object is additionally stored
@@ -196,7 +196,7 @@ var Child = Phorum.extend(Parent, function (args) {
  * </code></pre></p>
  *
  * @param {Function} base
- *   The base constructor. 
+ *   The base constructor.
  *
  * @param {Object/Function} extension
  *   When this argument is an object, then all properties from the
@@ -499,7 +499,7 @@ Phorum.Ajax.call({
      * </p>
      * <p>
      *   This can be used to process javascript code that is embedded in
-     *   dynamically retrieved blocks of HTML code. Adding this data to 
+     *   dynamically retrieved blocks of HTML code. Adding this data to
      *   the page (e.g. by using document.write or innerHTML) would not
      *   evaluate the javascript code. Browsers only parse and evaluate
      *   javascript code that is retrieved at page load time.
@@ -735,7 +735,7 @@ Phorum.UI.scrollbarwidth = function (as_integer)
 
 /**
  * @class Phorum.UI.Element
- * 
+ *
  * <p>
  *   This class is a base class that is used for building objects that
  *   can manage page elements.
@@ -931,11 +931,11 @@ Phorum.UI.Element = Phorum.extend(
 /**
  * @class Phorum.UI.TextElement
  * @extends Phorum.UI.Element
- * 
+ *
  * <p>
  *   This class can be used to access and manipulate text input fields
  *   (textarea, input type="text"). This class mainly serves as a
- *   base class. 
+ *   base class.
  * </p>
  * @constructor
  *   Create a new Phorum.UI.TextElement object.
@@ -1150,7 +1150,7 @@ elt.addTags('[url]', '[/url]', 'Please, enter the URL');
 /**
  * @class Phorum.UI.Editor
  * @extends Phorum.UI.Element
- * 
+ *
  * <p>
  *   This class can be used to access and manipulate the
  *   posting editor in Phorum.
@@ -1203,7 +1203,7 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
          * @property subject
          *
          * A reference to the subject element in the editor.
-         * 
+         *
          * @var Phorum.UI.TextElement
          */
         this.subject = this.getField('subject');
@@ -1212,7 +1212,7 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
          * @property body
          *
          * A reference to the body element in the editor.
-         * 
+         *
          * @var Phorum.UI.TextElement
          */
         this.body = this.getField('body');
@@ -1271,7 +1271,7 @@ Phorum.UI.Editor = Phorum.extend(Phorum.UI.Element,
         /**
          * A cache that holds the Phorum.UI.Element objects that were
          * retrieved using getField().
-         * 
+         *
          * @private
          */
         fields: { },
@@ -1431,7 +1431,7 @@ Phorum.UI.BusyMarker =
                   'The decrement() method was called more often than the ' +
                   'decrement() method. This should not happen.';
         }
-        this.render(); 
+        this.render();
     },
 
     // Specific code for rendering the default busy marker ==================
@@ -1487,13 +1487,13 @@ Phorum.UI.BusyMarker =
             this.$box = $PJ('<div class="phorum_busy_marker"/>');
 
             // Add the box to the page. We add it to the #phorum wrapper and
-            // not to the page body to make it inherit CSS styles from #phorum. 
+            // not to the page body to make it inherit CSS styles from #phorum.
             $PJ('#phorum').prepend(this.$box);
         }
 
         // <?php $lang = $PHORUM['DATA']['LANG']; ?>
 
-        // Determine the message to show. 
+        // Determine the message to show.
         var message =
             this.count === 1 ?
             '<?php print addslashes($lang["ActionPending"]) ?>' :
@@ -1581,7 +1581,7 @@ Phorum.UI.NewFlags.registerCallback(function (mode, item_id) {
   alert("Mark read was successful for " + mode + ", id " + item_id);
 });
      * </code></pre></p>
-     * 
+     *
      * @param {Function} callback
      *   The callback function to register.
      *
@@ -1634,7 +1634,7 @@ In template:
      * @param {String} action (optional)
      *   The action for which to register the callback. The action is defined
      *   in the special new-flag[&lt;action&gt;,...] CSS class (see
-     *   {@link #updateUI updateUI()} for more info). 
+     *   {@link #updateUI updateUI()} for more info).
      *
      * @param {Function} callback
      *   The callback function to register.
@@ -1935,7 +1935,7 @@ For example:
 Phorum.markRead = Phorum.UI.NewFlags.markRead;
 
 /**
- * An alias for 
+ * An alias for
  * {@link Phorum.Ajax#call Phorum.Ajax.call()}.
  * See the documentation of that method for more information.
  *

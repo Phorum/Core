@@ -26,7 +26,7 @@ var Child = Phorum.extend(Parent, function (args) {
  * </code></pre></p>
  *
  * @param {Function} base
- *   The base constructor. 
+ *   The base constructor.
  *
  * @param {Object/Function} extension
  *   When this argument is an object, then all properties from the

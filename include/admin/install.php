@@ -439,13 +439,13 @@ switch ($step){
             "mods" => $mods_initial,
             "mod_announcements" => array('module'=>'modsettings','mod'=>'announcements','forum_id'=>1,'pages'=>array('index'=>'1','list'=>'1'),'number_to_show'=>5,'only_show_unread'=>NULL,'days_to_show'=>0)
             );
-            // check for the fileinfo extension 
+            // check for the fileinfo extension
             if(function_exists("finfo_open")) {
                 $settings['file_fileinfo_ext']=1;
             } else {
                 $settings['file_fileinfo_ext']=0;
             }
-            
+
             $PHORUM['DB']->update_settings($settings);
 
             // Generate the (at this point empty) cache data for the

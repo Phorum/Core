@@ -261,9 +261,9 @@ if($PHORUM['cache_messages'] &&
                 $msg_not_in_cache++;
             } else {
                 $data[$mid]=$cache_messages[$cache_id];
-                if ($data[$mid]['user_id'] > 0) { 
-                    $data['users'][] = $data[$mid]['user_id']; 
-                }                 
+                if ($data[$mid]['user_id'] > 0) {
+                    $data['users'][] = $data[$mid]['user_id'];
+                }
             }
         }
 
@@ -275,8 +275,8 @@ if($PHORUM['cache_messages'] &&
             foreach($db_messages as $mid => $message) {
                 phorum_api_cache_put('message',$PHORUM["forum_id"]."-".$mid,$message);
                 $data[$mid]=$message;
-                if ($data[$mid]['user_id'] > 0) { 
-                    $data['users'][] = $data[$mid]['user_id']; 
+                if ($data[$mid]['user_id'] > 0) {
+                    $data['users'][] = $data[$mid]['user_id'];
                 }
             }
 
@@ -770,7 +770,7 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
      *         return $messages;
      *     }
      *     </hookcode>
-     */    
+     */
     // run read mods
     if (isset($PHORUM["hooks"]["read"]))
         $messages = phorum_api_hook("read", $messages, $message_id);

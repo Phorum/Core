@@ -1272,7 +1272,7 @@ function phorum_api_forums_tree($vroot = NULL, $flags = 0)
         if ($forum["folder_flag"])
         {
             // Skip empty folders, if we didn't request them
-            if (empty($forums[$forum['forum_id']]['childcount']) && 
+            if (empty($forums[$forum['forum_id']]['childcount']) &&
                !($flags & PHORUM_FLAG_INCLUDE_EMPTY_FOLDERS)) continue;
 
             $url = phorum_api_url(PHORUM_INDEX_URL, $forum["forum_id"]);
@@ -1532,7 +1532,7 @@ function phorum_api_forums_increment_cache_version($forum_id)
  *
  * @return mixed
  *   An array containing the data for the deleted forum or folder.
- *   NULL in case no forum or folder exists for the provided forum id. 
+ *   NULL in case no forum or folder exists for the provided forum id.
  */
 function phorum_api_forums_delete($forum_id)
 {
@@ -1574,7 +1574,7 @@ function phorum_api_forums_delete($forum_id)
          *
          * [example]
          *     <hookcode>
-         *     function phorum_mod_foo_admin_folder_delete ($id) 
+         *     function phorum_mod_foo_admin_folder_delete ($id)
          *     {
          *         // E.g. Notify an external system that the folder has
          *         // been deleted.
@@ -1584,7 +1584,7 @@ function phorum_api_forums_delete($forum_id)
          *
          *     }
          *     </hookcode>
-         */  
+         */
         phorum_api_hook("admin_folder_delete", $forum_id);
 
         // When the folder is a vroot folder currently, then disable
@@ -1635,7 +1635,7 @@ function phorum_api_forums_delete($forum_id)
         *
         * [example]
         *     <hookcode>
-        *     function phorum_mod_foo_admin_forum_delete ($id) 
+        *     function phorum_mod_foo_admin_forum_delete ($id)
         *     {
         *         // E.g. Notify an external system that the forum has
         *         // been deleted.
@@ -1645,7 +1645,7 @@ function phorum_api_forums_delete($forum_id)
         *
         *     }
         *     </hookcode>
-        */  
+        */
         phorum_api_hook("admin_forum_delete", $forum_id);
 
         $PHORUM['DB']->drop_forum($forum_id);

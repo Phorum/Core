@@ -53,7 +53,7 @@ function phorum_api_format_number($number, $decimals = 0)
     return number_format(
         $number, $decimals,
         $PHORUM['dec_sep'], $PHORUM['thous_sep']
-    );  
+    );
 }
 // }}}
 

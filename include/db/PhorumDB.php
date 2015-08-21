@@ -883,10 +883,10 @@ abstract class PhorumDB
             $unread_forums = array();
             foreach ($tmp as $f) {
                 if (!empty($f['new_messages'])) {
-                    $unread_count += $f['new_messages']; 
+                    $unread_count += $f['new_messages'];
                     $unread_forums[$f['forum_id']] =  $f['forum_id'];
                 }
-            }   
+            }
 
             // No new messages? Then we're done here.
             if ($unread_count == 0) {
@@ -2145,7 +2145,7 @@ abstract class PhorumDB
                 $table = $threads_table;
             }
 
-            $from_and_where = 
+            $from_and_where =
                 "FROM   {$this->message_table}
                         INNER JOIN $table
                         ON {$this->message_table}.message_id = $table.message_id
@@ -2205,7 +2205,7 @@ abstract class PhorumDB
 
         $compare  = "";
         $orderdir = "";
-        
+
         switch ($direction) {
             case 'newer': $compare = '>'; $orderdir = 'ASC';  break;
             case 'older': $compare = '<'; $orderdir = 'DESC'; break;
@@ -2491,14 +2491,14 @@ abstract class PhorumDB
         if ($message['parent_id']) trigger_error(
             __METHOD__ . ": thread $thread_id does not exist",
             E_USER_ERROR
-        );  
+        );
 
         // Check if the target forum exists.
         $forums = $this->get_forums($toforum);
         if (empty($forums)) trigger_error(
             __METHOD__ . ": forum $toforum does not exist",
             E_USER_ERROR
-        );  
+        );
 
         if ($toforum > 0 && $thread_id > 0)
         {
@@ -3361,7 +3361,7 @@ abstract class PhorumDB
         $where_moderation_mail = $for_email ? 'AND u.moderation_email = 1' : '';
 
         // Exclude admins from the list, if requested.
-        $admin = $exclude_admin ? '' : 
+        $admin = $exclude_admin ? '' :
                     "SELECT DISTINCT u.user_id AS user_id,
                 u.email AS email
          FROM   {$this->user_table} AS u
@@ -3370,13 +3370,13 @@ abstract class PhorumDB
          UNION
         ";
 
-        
+
         $moderators = array();
 
         // Look up moderators which are configured through user permissions.
         $usermods = $this->interact(
             DB_RETURN_ROWS,
-            $admin . 
+            $admin .
             "SELECT DISTINCT u.user_id AS user_id,
                     u.email AS email
              FROM   {$this->user_permissions_table} AS perm
@@ -3844,7 +3844,7 @@ abstract class PhorumDB
      * @param mixed $operator
      *     The operator (string) or operators (array) to use. Valid operators are
      *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*", "?*", "*?", "()". The
-     *     "*" operator is for executing a "LIKE '%value%'" matching query. The 
+     *     "*" operator is for executing a "LIKE '%value%'" matching query. The
      *     "?*" and "*?" operators are for executing a "LIKE 'value%'" or a
      *     "LIKE '%value' matching query. The "()" operator is for executing a
      *     "IN ('value[0]',value[1]')" matching query.  The "()" operator requires
@@ -3976,19 +3976,19 @@ abstract class PhorumDB
         $ret = null;
 
         if($count_only) {
-    	    // Retrieve the number of matching user_ids from the database.
-    	    $user_count = $this->interact(
-    	        DB_RETURN_VALUE,
-    	        "SELECT count(*)
-    	         FROM   {$this->user_table}
-    	         $where $order",
-    	        0, // keyfield 0 is the user_id
+            // Retrieve the number of matching user_ids from the database.
+            $user_count = $this->interact(
+                DB_RETURN_VALUE,
+                "SELECT count(*)
+                 FROM   {$this->user_table}
+                 $where $order",
+                0, // keyfield 0 is the user_id
                 0,
                 $limit,
                 $offset
-    	    );
+            );
 
-    	    $ret = $user_count;
+            $ret = $user_count;
 
         } else {
 
@@ -4268,7 +4268,7 @@ abstract class PhorumDB
      */
     public function user_display_name_updates($userdata)
     {
-        
+
         if (!isset($userdata['user_id'])) trigger_error(
             __METHOD__ . ': Missing user_id field in ' .
             'the $userdata parameter',
@@ -7217,7 +7217,7 @@ abstract class PhorumDB
                 DB_RETURN_RES,
                 "UPDATE {$this->message_table}
                  SET    thread  = $message_id,
-                        subject = $reply_subject 
+                        subject = $reply_subject
                  WHERE  message_id IN ($tree)",
                 NULL,
                 DB_MASTERQUERY
@@ -7614,7 +7614,7 @@ abstract class PhorumDB
      * @param mixed $operator
      *     The operator (string) or operators (array) to use. Valid operators are
      *     "=", "!=", "<>", "<", ">", ">=" and "<=", "*", '?*', '*?'. The
-     *     "*" operator is for executing a "LIKE '%value%'" matching query. The 
+     *     "*" operator is for executing a "LIKE '%value%'" matching query. The
      *     "?*" and "*?" operators are for executing a "LIKE 'value%'" or a
      *     "LIKE '%value' matching query.
      *

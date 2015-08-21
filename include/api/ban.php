@@ -98,7 +98,7 @@ function phorum_api_ban_list($type = NULL)
 
             // Nothing in the db either? Then use an empty array.
             if (empty($banlists)) {
-                $banlists = array(); 
+                $banlists = array();
             }
 
             // Make sure that we have a ban list array for each type.
@@ -222,7 +222,7 @@ function phorum_api_ban_check($value, $type)
             }
         }
     }
-    
+
     if (!$match) return NULL;
 
     $langkey = $PHORUM['API']['ban']['type2error'][$type];
