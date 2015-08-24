@@ -1,6 +1,6 @@
 <div align="center">
   {INCLUDE "posting_menu"}
-  <form method="POST" action="{URL->ACTION}">
+  <form method="post" action="{URL->ACTION}">
     {POST_VARS}
     <input type="hidden" name="thread" value="{FORM->thread_id}" />
     <input type="hidden" name="message" value="{FORM->message_id}" />

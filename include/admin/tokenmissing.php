@@ -95,7 +95,7 @@ The requested URL was:
 <strong>Please make sure that you really want to access this URL and weren't tricked to go to the admin.</strong><br />
 Please click on <strong>continue</strong> to go to this URL or on <strong>cancel</strong> to go to the forum homepage.
 <br /><br />
-<form action="<?php echo $post_url;?>" method="POST">
+<form action="<?php echo $post_url;?>" method="post">
 <input type="hidden" name="module" value="tokenmissing" />
 <input type="hidden" name="phorum_admin_token" value="<?php echo $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'];?>" />
 <input type="hidden" name="target" value="<?php echo $targs_html;?>" />

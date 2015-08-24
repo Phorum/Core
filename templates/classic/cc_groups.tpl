@@ -4,7 +4,7 @@
 <div class="PhorumStdBlockHeader PhorumHeaderText" style="text-align: left;">{LANG->JoinAGroup}</div>
 <div class="PhorumStdBlock" style="text-align: left;">
   {LANG->JoinGroupDescription}
-  <form method="POST" action="{GROUP->url}">
+  <form method="post" action="{GROUP->url}">
   {POST_VARS}
     <select name="joingroup">
       <option value="0">&nbsp;</option>
