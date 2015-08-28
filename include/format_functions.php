@@ -256,7 +256,7 @@ function phorum_date( $picture, $ts )
 /**
  * Formats an epoch timestamp to a relative time phrase
  *
- * @param ts - The epoch timestamp to format
+ * @param time - The epoch timestamp to format
  * @return phrase - The formatted phrase
  */
 function phorum_relative_date($time)
@@ -308,18 +308,22 @@ function phorum_relative_date($time)
 }
 
 /**
- * Strips HTML <tags> and BBcode [tags] from the body.
+ * Strips HTML <tags> and BBcode [tags] and replaces bad-words from the body.
  *
  * @param body - The block of body text to strip
+ * @param strip_tags - Should tags be stripped?
+ * @param which_tags - Which tags should be stripped? 0=HTML and BBCode, 1=HTML
  * @return stripped - The stripped body
  */
-function phorum_strip_body( $body, $strip_tags = true)
+function phorum_strip_body( $body, $strip_tags = true, $which_tags = 0 )
 {
     if($strip_tags) {
         // Strip HTML <tags>
         $stripped = preg_replace("|</*[a-z][^>]*>|i", "", $body);
-        // Strip BB Code [tags]
-        $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
+        if(empty($which_tags)) {
+          // Strip BB Code [tags]
+          $stripped = preg_replace("|\[/*[a-z][^\]]*\]|i", "", $stripped);
+        }
     } else {
         $stripped = $body;
     }
@@ -363,7 +367,7 @@ function phorum_strip_body( $body, $strip_tags = true)
  * readable formats are MB (MegaByte), KB (KiloByte) and byte.
  *
  * @param bytes - The number of bytes
- * @param formatted - The formatted size
+ * @return formatted - The formatted size
  */
 function phorum_filesize( $bytes )
 {
