@@ -26,13 +26,13 @@ if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 // ----------------------------------------------------------------------
 
 // the Phorum version
-define( "PHORUM", "5.2.20" );
+define( "PHORUM", "5.2.21" );
 
 // our database schema version in format of year-month-day-serial
 define( "PHORUM_SCHEMA_VERSION", "2010101500" );
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2012030800" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2015082600" );
 
 // Initialize the global $PHORUM variable, which holds all Phorum data.
 global $PHORUM;

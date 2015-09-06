@@ -113,6 +113,7 @@ function phorum_mod_bbcode_format($data)
 // Quote hook, for overriding the default Phorum message quoting method.
 function phorum_mod_bbcode_quote ($data)
 {
+    global $PHORUM;
     // Some other hook already formatted the quote.
     if (!is_array($data)) return $data;
 
@@ -130,7 +131,7 @@ function phorum_mod_bbcode_quote ($data)
             $author = '"' . $author . '"';
         }
 
-        return "[quote=$author]\n$data[1][/quote]";
+        return "[quote=$author]\n".phorum_strip_body($data[1], true, $PHORUM["strip_quote_posting_form"]).'[/quote]';
     }
     else  {
         return $data;

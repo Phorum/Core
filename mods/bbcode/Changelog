@@ -1,6 +1,12 @@
 Changelog:
 ----------
 
+2015-08-28 v2.0.12
+
+   - Stripping message body (optional stripping HTML and BBCode <tags>,
+     replacing bad words) using corresponding core function when quoting
+     a message.
+
 2010-11-06 v2.0.11
 
    - added option to add the nofollow attribute only to external URLs

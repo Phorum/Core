@@ -237,6 +237,8 @@ $row=$frm->addrow( "After posting go to", $frm->select_tag( "redirect_after_post
 $row=$frm->addrow( "After submitting a search query", $frm->select_tag( "skip_intermediate_search_page", array( 0=>"show an intermediate page (\"search is running\")", 1=>"directly go to the search results" ), $PHORUM["skip_intermediate_search_page"] ) );
 $frm->addhelp($row, "After search action", "On large forums or slow servers, searching for messages might take a little while. To prevent users from submitting the same search query over and over again (in case they think the search didn't work, because they didn't get their results fast enough), you can show an intermediate page, telling the user that the search is running. If your system can deliver search results quickly enough, then you can skip the intermediate page and go directly to the search results page.");
 
+$row=$frm->addrow( "How to strip a quote on the posting form", $frm->select_tag( "strip_quote_posting_form", array( 0=>"Strip HTML and BBCode <tags>", 1=>"Strip HTML <tags>" ), $PHORUM["strip_quote_posting_form"] ) );
+
 $row=$frm->addrow( "Database error handling", $frm->select_tag( "error_logging", array( "screen"=>"Errors will be shown on the screen", "file"=>"Errors will go to a logfile (".$PHORUM['cache']."/phorum-sql-errors.log)", "mail"=> "Errors will be emailed to the system email address"), $PHORUM["error_logging"] ) );
 
 $row=$frm->addrow( "Secret private key for signing data", $frm->text_box("private_key", $PHORUM["private_key"], 50) );
@@ -403,6 +405,8 @@ $row=$frm->addrow( "System Emails From Name", $frm->text_box( "system_email_from
 $row=$frm->addrow( "System Emails From Address", $frm->text_box( "system_email_from_address", $PHORUM["system_email_from_address"], 30 ) );
 
 $row=$frm->addrow( "Use BCC in sending mails:", $frm->select_tag( "use_bcc", array( "No", "Yes" ), $PHORUM["use_bcc"] ) );
+
+$row=$frm->addrow( "How to strip quotes in mails", $frm->select_tag( "strip_quote_mail", array( 0=>"Strip HTML and BBCode <tags>", 1=>"Strip HTML <tags>" ), $PHORUM["strip_quote_mail"] ) );
 
 $row=$frm->addrow( "Ignore Admin for moderator-emails:", $frm->select_tag( "email_ignore_admin", array( "No", "Yes" ), $PHORUM["email_ignore_admin"] ) );
 $frm->addhelp($row, "Ignore Admin for moderator-emails", "If you select yes for this option, then the moderator-notifications and report-message emails will not be sent to the admininistrator, only to moderators" );
