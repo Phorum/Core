@@ -66,7 +66,7 @@ if ( count( $_POST ) ) {
             $_POST['email_temp']=$_POST['email']."|".$conf_code;
             // ... send email ... //
             $maildata=array(
-                'mailmessage'   => wordwrap($PHORUM['DATA']['LANG']['EmailVerifyBody'], 72),
+                'mailmessage'   => phorum_api_format_wordwrap($PHORUM['DATA']['LANG']['EmailVerifyBody'], 72),
                 'mailsubject'   => $PHORUM['DATA']['LANG']['EmailVerifySubject'],
                 # "uname" is for language file backward compatibility
                 'uname'         => $PHORUM['DATA']['PROFILE']['username'],

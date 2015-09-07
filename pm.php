@@ -1484,7 +1484,7 @@ function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreply
         // Build a quoted version of the message body.
         $quote = phorum_api_format_strip($message["message"]);
         $quote = str_replace("\n", "\n> ", $quote);
-        $quote = wordwrap(trim($quote), 50, "\n> ", true);
+        $quote = phorum_api_format_wordwrap(trim($quote), 50, "\n> ", true);
         $quote = "$author {$PHORUM['DATA']['LANG']['Wrote']}:\n" .
                  str_repeat("-", 55)."\n> {$quote}\n\n\n";
     }

@@ -543,7 +543,7 @@ if (!$hook_info['handled'] && isset($_POST['lostpass']))
             // In 5.3, we switched to a single variable VerifyRegEmailBody.
             if (isset($PHORUM['DATA']['LANG']['VerifyRegEmailBody']))
             {
-                $mail_data['mailmessage'] = wordwrap(str_replace(
+                $mail_data['mailmessage'] = phorum_api_format_wordwrap(str_replace(
                     array(
                         '%title%',
                         '%username%',
@@ -566,9 +566,9 @@ if (!$hook_info['handled'] && isset($_POST['lostpass']))
                 // for those.
                 $lang = $PHORUM['DATA']['LANG'];
                 $mail_data['mailmessage'] =
-                   wordwrap($lang['VerifyRegEmailBody1'], 72).
+                   phorum_api_format_wordwrap($lang['VerifyRegEmailBody1'], 72).
                    "\n\n$verify_url\n\n".
-                   wordwrap($lang['VerifyRegEmailBody2'], 72);
+                   phorum_api_format_wordwrap($lang['VerifyRegEmailBody2'], 72);
             }
 
             phorum_api_mail($user['email'], $mail_data);
@@ -608,7 +608,7 @@ if (!$hook_info['handled'] && isset($_POST['lostpass']))
             // by the mail API layer.
             if (isset($PHORUM['DATA']['LANG']['LostPassEmailBody']))
             {
-                $mail_data['mailmessage'] = wordwrap(str_replace(
+                $mail_data['mailmessage'] = phorum_api_format_wordwrap(str_replace(
                     array(
                         '%title%',
                         '%username%',
@@ -632,12 +632,12 @@ if (!$hook_info['handled'] && isset($_POST['lostpass']))
                 $lang = $PHORUM['DATA']['LANG'];
 
                 $mail_data['mailmessage'] =
-                   wordwrap($lang['LostPassEmailBody1'], 72) .
+                   phorum_api_format_wordwrap($lang['LostPassEmailBody1'], 72) .
                    "\n\n".
                    $lang['Username'] .": $user[username]\n".
                    $lang['Password'] .": $newpass" .
                    "\n\n".
-                   wordwrap($lang['LostPassEmailBody2'], 72);
+                   phorum_api_format_wordwrap($lang['LostPassEmailBody2'], 72);
             }
 
             $mail_data['mailsubject'] = $PHORUM['DATA']['LANG']['LostPassEmailSubject'];

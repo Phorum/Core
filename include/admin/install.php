@@ -605,7 +605,7 @@ switch ($step){
 
             $text = $info["title"];
             if(isset($info["desc"])){
-                $text.="<div class=\"small\">".wordwrap($info["desc"], 90, "<br />")."</div>";
+                $text.="<div class=\"small\">".phorum_api_format_wordwrap($info["desc"], 90, "<br />")."</div>";
             }
 
             $frm->addrow($text, $frm->select_tag(base64_encode("mods_$name"), array("Off", "On"), $info['enabled']));
