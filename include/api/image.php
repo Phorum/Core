@@ -238,7 +238,8 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
 
                 //Retain transparency.
                 $trans_idx = imagecolortransparent($original);
-                if ($trans_idx >= 0) {
+                $palletsize = imagecolorstotal($original);
+                if ($trans_idx >= 0 && $trans_idx < $palletsize) {
                     $trans = imagecolorsforindex($original, $trans_idx);
                     $idx = imagecolorallocate(
                         $scaled,
