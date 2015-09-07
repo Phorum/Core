@@ -21,6 +21,7 @@ define('phorum_page','register');
 include_once("./common.php");
 include_once("./include/profile_functions.php");
 include_once("./include/email_functions.php");
+include_once("./include/format_functions.php");
 
 // set all our URL's
 phorum_build_common_urls();
@@ -252,7 +253,7 @@ if (count($_POST)) {
                     }
                     $maildata = array();
                     $maildata["mailsubject"] = $PHORUM["DATA"]["LANG"]["VerifyRegEmailSubject"];
-                    $maildata["mailmessage"] = wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"], 72)."\n\n$verify_url\n\n".wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"], 72);
+                    $maildata["mailmessage"] = phorum_wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"], 72)."\n\n$verify_url\n\n".phorum_wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"], 72);
                     phorum_email_user(array($userdata["email"]), $maildata);
                 }
 

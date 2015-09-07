@@ -101,7 +101,7 @@ function phorum_sort_threads($rows)
                 $cut_len = $cut_max - $indent*$cut_indentfactor;
                 if ($cut_len < $cut_min) $cut_len = $cut_min;
                 $order[$curr_id]["subject"] =
-                    wordwrap($order[$curr_id]["subject"], $cut_len, " ", TRUE);
+                    phorum_wordwrap($order[$curr_id]["subject"], $cut_len, " ", TRUE);
             }
         }
         array_push($stack, $curr_id);

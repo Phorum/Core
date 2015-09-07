@@ -65,7 +65,7 @@ if ( count( $_POST ) ) {
             $_POST['email_temp']=$_POST['email']."|".$conf_code;
             // ... send email ... //
             $maildata=array(
-                'mailmessage'   => wordwrap($PHORUM['DATA']['LANG']['EmailVerifyBody'], 72),
+                'mailmessage'   => phorum_wordwrap($PHORUM['DATA']['LANG']['EmailVerifyBody'], 72),
                 'mailsubject'   => $PHORUM['DATA']['LANG']['EmailVerifySubject'],
                 'uname'         => $PHORUM['DATA']['PROFILE']['username'],
                 'newmail'       => $_POST['email'],

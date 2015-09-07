@@ -58,7 +58,7 @@ if ($mode == "reply" || $mode == "quote")
     $message["thread"] = $dbmessage["thread"];
 
     // Create Re: subject prefix.
-    if (substr($dbmessage["subject"], 0, 4) != "Re: ") {
+    if (mb_substr($dbmessage["subject"], 0, 4) != "Re: ") {
         $dbmessage["subject"] = "Re: " . $dbmessage["subject"];
     }
     $message["subject"] = $dbmessage["subject"];
@@ -83,7 +83,7 @@ if ($mode == "reply" || $mode == "quote")
         {
             $quoted = phorum_strip_body($dbmessage["body"], false);
             $quoted = str_replace("\n", "\n> ", $quoted);
-            $quoted = wordwrap(trim($quoted), 50, "\n> ", true);
+            $quoted = phorum_wordwrap(trim($quoted), 50, "\n> ", true);
             $quoted = "$author " .
                       "{$PHORUM["DATA"]["LANG"]["Wrote"]}:\n" .
                       str_repeat("-", 55) . "\n> $quoted\n\n\n";

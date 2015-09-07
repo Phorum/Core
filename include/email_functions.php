@@ -286,7 +286,7 @@ function phorum_email_pm_notice($message, $langusers)
         "author"         => phorum_api_user_get_display_name($message["user_id"], $message["from_username"], PHORUM_FLAG_PLAINTEXT),
         "subject"        => $message["subject"],
         "full_body"      => $message["message"],
-        "plain_body"     => wordwrap(phorum_strip_body($message["message"], true, $PHORUM["strip_quote_mail"]),72),
+        "plain_body"     => phorum_wordwrap(phorum_strip_body($message["message"], true, $PHORUM["strip_quote_mail"]),72),
         "read_url"       => phorum_get_url_no_uri_auth(PHORUM_PM_URL, "page=read", "pm_id=" . $message["pm_message_id"]),
 
         // For email_user_start.

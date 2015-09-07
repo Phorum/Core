@@ -20,6 +20,7 @@ define('phorum_page','login');
 
 include_once( "./common.php" );
 include_once( "./include/email_functions.php" );
+include_once( "./include/format_functions.php" );
 
 // ----------------------------------------------------------------------------
 // Handle logout
@@ -171,9 +172,9 @@ if (count($_POST) > 0) {
                 $verify_url = phorum_get_url(PHORUM_REGISTER_URL, "approve=".$tmp_user["password_temp"]."$uid");
                 $maildata["mailsubject"] = $PHORUM["DATA"]["LANG"]["VerifyRegEmailSubject"];
                 $maildata["mailmessage"] =
-                   wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"],72).
+                   phorum_wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody1"],72).
                    "\n\n$verify_url\n\n".
-                   wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"],72);
+                   phorum_wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"],72);
                 phorum_email_user(array($user["email"]), $maildata);
 
                 $okmsg = $PHORUM["DATA"]["LANG"]["RegVerifyEmail"];
@@ -200,12 +201,12 @@ if (count($_POST) > 0) {
                 $user = phorum_api_user_get($uid);
                 $maildata = array();
                 $maildata['mailmessage'] =
-                   wordwrap($PHORUM["DATA"]["LANG"]["LostPassEmailBody1"],72).
+                   phorum_wordwrap($PHORUM["DATA"]["LANG"]["LostPassEmailBody1"],72).
                    "\n\n".
                    $PHORUM["DATA"]["LANG"]["Username"] .": $user[username]\n".
                    $PHORUM["DATA"]["LANG"]["Password"] .": $newpass".
                    "\n\n".
-                   wordwrap($PHORUM["DATA"]["LANG"]["LostPassEmailBody2"],72);
+                   phorum_wordwrap($PHORUM["DATA"]["LANG"]["LostPassEmailBody2"],72);
                 $maildata['mailsubject'] = $PHORUM["DATA"]["LANG"]["LostPassEmailSubject"];
                 phorum_email_user(array( 0 => $user['email'] ), $maildata);
 

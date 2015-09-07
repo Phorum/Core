@@ -28,6 +28,7 @@
 
     include_once "./common.php";
     include_once "./include/admin_functions.php";
+    include_once "./include/format_functions.php";
 
     // initialized as empty
     $PHORUM['admin_token']="";
