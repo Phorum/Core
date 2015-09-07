@@ -355,7 +355,7 @@ if (count($_POST)) {
                     // handled by the mail API layer.
                     if (isset($PHORUM['DATA']['LANG']['VerifyRegEmailBody']))
                     {
-                        $maildata['mailmessage'] = wordwrap(str_replace(
+                        $maildata['mailmessage'] = phorum_api_format_wordwrap(str_replace(
                             array(
                                 '%title%',
                                 '%username%',
@@ -381,7 +381,7 @@ if (count($_POST)) {
                         $lang = $PHORUM['DATA']['LANG'];
 
                         $maildata["mailmessage"] =
-                           wordwrap(str_replace(
+                           phorum_api_format_wordwrap(str_replace(
                             array(
                                 '%title%',
                                 '%username%',
@@ -397,7 +397,7 @@ if (count($_POST)) {
                                 phorum_api_url(PHORUM_LOGIN_URL)
                             ),$lang['VerifyRegEmailBody1']), 72).
                            "\n\n$verify_url\n\n".
-                           wordwrap(str_replace(
+                           phorum_api_format_wordwrap(str_replace(
                             array(
                                 '%title%',
                                 '%username%',

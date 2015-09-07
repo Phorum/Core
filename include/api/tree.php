@@ -254,7 +254,7 @@ function phorum_api_tree_build(
             $cut_len =
                 $cut_max - ($stack_lvl + $stack_lvl_base) * $cut_indent_factor;
             if ($cut_len < $cut_min) $cut_len = $cut_min;
-            $node[$cut_fld] = wordwrap(
+            $node[$cut_fld] = phorum_api_format_wordwrap(
                 $node[$cut_fld], $cut_len, ' ', TRUE
             );
         }

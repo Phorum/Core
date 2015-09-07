@@ -292,6 +292,7 @@ require_once PHORUM_PATH . '/include/api/user.php';
 require_once PHORUM_PATH . '/include/api/forums.php';
 require_once PHORUM_PATH . '/include/api/format.php';
 require_once PHORUM_PATH . '/include/api/format/users.php';
+require_once PHORUM_PATH . '/include/api/format/wordwrap.php';
 require_once PHORUM_PATH . '/include/api/template.php';
 require_once PHORUM_PATH . '/include/api/output.php';
 require_once PHORUM_PATH . '/include/api/buffer.php';

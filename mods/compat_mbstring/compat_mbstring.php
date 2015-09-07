@@ -111,7 +111,17 @@ if (!function_exists('mb_internal_encoding'))
 {
     function mb_internal_encoding($encoding)
     {
-        $GLOBALS['PHORUM']['compat_mbstring']['encoding'] = $encoding;
+        if (empty($encoding))
+        {
+            // Get
+            return $GLOBALS['PHORUM']['compat_mbstring']['encoding'];
+        }
+        else
+        {
+            // Set
+            $GLOBALS['PHORUM']['compat_mbstring']['encoding'] = $encoding;
+            return true;
+        }
     }
 }
 

@@ -67,7 +67,7 @@ function phorum_api_mail_message_notify($message)
                          ),
         'subject'     => $message['subject'],
         'fully_body'  => $message['body'],
-        'plain_body'  => wordwrap(phorum_api_format_strip($message['body']), 72),
+        'plain_body'  => phorum_api_format_wordwrap(phorum_api_format_strip($message['body']), 72),
         'read_url'    => phorum_api_url_no_uri_auth(
                              PHORUM_READ_URL,
                              $message['thread'],
