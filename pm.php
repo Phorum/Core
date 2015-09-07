@@ -1467,7 +1467,7 @@ function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreply
     global $PHORUM;
 
     // Build the reply subject.
-    if (substr($message["subject"], 0, 3) != "Re:") {
+    if (mb_substr($message["subject"], 0, 3) != "Re:") {
         $message["subject"] = "Re: ".$message["subject"];
     }
 
@@ -1487,7 +1487,7 @@ function phorum_pm_quoteformat($orig_author, $orig_author_id, $message, $inreply
         // Build a quoted version of the message body.
         $quote = phorum_strip_body($message["message"], true, $PHORUM["strip_quote_posting_form"]);
         $quote = str_replace("\n", "\n> ", $quote);
-        $quote = wordwrap(trim($quote), 50, "\n> ", true);
+        $quote = phorum_wordwrap(trim($quote), 50, "\n> ", true);
         $quote = "$author {$PHORUM['DATA']['LANG']['Wrote']}:\n" .
                  str_repeat("-", 55)."\n> {$quote}\n\n\n";
     }

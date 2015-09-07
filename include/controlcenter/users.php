@@ -50,7 +50,7 @@ if(!empty($_POST["user_ids"])){
                 $userdata["active"]=PHORUM_USER_ACTIVE;
                 // send reg approved message
                 $maildata["mailsubject"]=$PHORUM["DATA"]["LANG"]["RegApprovedSubject"];
-                $maildata["mailmessage"]=wordwrap($PHORUM["DATA"]["LANG"]["RegApprovedEmailBody"], 72);
+                $maildata["mailmessage"]=phorum_wordwrap($PHORUM["DATA"]["LANG"]["RegApprovedEmailBody"], 72);
                 phorum_email_user(array($user["email"]), $maildata);
 
             }

@@ -171,7 +171,7 @@ function phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed
         $url = phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $message["thread"], $message["message_id"]);
 
         $body = phorum_strip_body($message["body"]);
-        $body = substr($body, 0, 200);
+        $body = mb_substr($body, 0, 200);
 
         $buffer.= "        <li><a href=\"".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\" title=\"".htmlspecialchars($message["body"], ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\">".htmlspecialchars($title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</a></li>\n";
     }

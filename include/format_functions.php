@@ -380,4 +380,87 @@ function phorum_filesize( $bytes )
     }
 }
 
+/**
+ * Unicode and newline aware version of wordwrap.
+ *
+ * @param text The text to format.
+ * @param width The width to wrap to. Defaults to 72.
+ * @param break The line is broken using the optional break parameter. Defaults to '\n'.
+ * @param cut If the cut is set to true, the string is always wrapped at the specified width.
+ * @return Formatted text.
+ *
+ * @link http://cakephp.org CakePHP(tm) Project
+ * @see Cake\Utility\Text::wordWrap
+ */
+function phorum_wordwrap( $text, $width = 72, $break = "\n", $cut = false )
+{
+    // Unfortunately, mbstring is a non-default extension and we can therefore
+    // not be sure that it is available in the PHP installation.
+    if (function_exists('mb_internal_encoding')) {
+        $paragraphs = explode($break, $text);
+        foreach ($paragraphs as &$paragraph) {
+            $paragraph = _phorum_wordwrap($paragraph, $width, $break, $cut);
+        }
+        return implode($break, $paragraphs);
+    } else {
+        return wordwrap($text, $width, $break, $cut);
+    }
+}
+
+/**
+ * Unicode aware version of wordwrap as helper method.
+ *
+ * @param text The text to format.
+ * @param width The width to wrap to. Defaults to 72.
+ * @param break The line is broken using the optional break parameter. Defaults to '\n'.
+ * @param cut If the cut is set to true, the string is always wrapped at the specified width.
+ * @return Formatted text.
+ *
+ * @link http://cakephp.org CakePHP(tm) Project
+ * @see Cake\Utility\Text::_wordWrap
+ */
+function _phorum_wordwrap( $text, $width = 72, $break = "\n", $cut = false )
+{
+    global $PHORUM;
+
+    if (isset($PHORUM['DATA']['HCHARSET']) && $PHORUM['DATA']['HCHARSET']) {
+        $encoding = $PHORUM['DATA']['HCHARSET'];
+    } else {
+        $encoding = mb_internal_encoding();
+    }
+    if ($cut) {
+        $parts = [];
+        while (mb_strlen($text, $encoding) > 0) {
+            $part = mb_substr($text, 0, $width, $encoding);
+            $parts[] = trim($part);
+            $text = trim(mb_substr($text, mb_strlen($part, $encoding), NULL, $encoding));
+        }
+        return implode($break, $parts);
+    }
+    $parts = [];
+    while (mb_strlen($text, $encoding) > 0) {
+        if ($width >= mb_strlen($text, $encoding)) {
+            $parts[] = trim($text);
+            break;
+        }
+        $part = mb_substr($text, 0, $width, $encoding);
+        $nextchar = mb_substr($text, $width, 1, $encoding);
+        if ($nextchar !== ' ') {
+            $breakat = mb_strrpos($part, ' ', 0, $encoding);
+            if ($breakat === false) {
+                $breakat = mb_strpos($text, ' ', $width, $encoding);
+            }
+            if ($breakat === false) {
+                $parts[] = trim($text);
+                break;
+            }
+            $part = mb_substr($text, 0, $breakat, $encoding);
+        }
+        $part = trim($part);
+        $parts[] = $part;
+        $text = trim(mb_substr($text, mb_strlen($part, $encoding), NULL, $encoding));
+    }
+    return implode($break, $parts);
+}
+
 ?>
