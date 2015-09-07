@@ -52,11 +52,15 @@ function phorum_api_format_wordwrap( $text, $width = 72, $break = "\n", $cut = f
 {
     // Unfortunately, mbstring is a non-default extension and we can therefore
     // not be sure that it is available in the PHP installation.
-    if (    function_exists('mb_internal_encoding')
-         && function_exists('mb_strlen')
-         && function_exists('mb_strpos')
-         && function_exists('mb_strrpos')
-         && function_exists('mb_substr') ) {
+    static $mbstring_available;
+    if ($mbstring_available === NULL) {
+        $mbstring_available = (boolean) function_exists('mb_internal_encoding')
+                              && function_exists('mb_strlen')
+                              && function_exists('mb_strpos')
+                              && function_exists('mb_strrpos')
+                              && function_exists('mb_substr');
+    }
+    if ($mbstring_available) {
         $paragraphs = explode($break, $text);
         foreach ($paragraphs as &$paragraph) {
             $paragraph = _phorum_api_format_wordwrap($paragraph, $width, $break, $cut);
