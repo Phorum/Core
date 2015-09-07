@@ -117,7 +117,7 @@ if ($step == 'start' && !isset($_POST["sanity_checks_done"]))
         <br/>
         One or more critical errors were encountered while checking
         your system. To see what is causing these errors and what you
-        can do about them, click the "show problem info" links.
+        can do about them, click the &quot;show problem info&quot; links.
         Please fix these errors and restart the system checks.
         <br/><br/>
         <input type="submit" value="Restart the system checks" />
@@ -128,9 +128,9 @@ if ($step == 'start' && !isset($_POST["sanity_checks_done"]))
         <br/>
         One or more warnings were encountered while checking
         your system. To see what is causing these warnings and what you
-        can do about them, click the "show problem info" links.
+        can do about them, click the &quot;show problem info&quot; links.
         Phorum probably will run without fixing the warnings, but
-        it's a good idea to fix them anyway for ensuring optimal
+        it&apos;s a good idea to fix them anyway for ensuring optimal
         performance.
         <br/><br/>
         <input type="submit" value="Restart the system checks" />
@@ -276,9 +276,6 @@ switch ($step){
 
             // insert the default module settings
             // hooks
-
-
-
             $mods_initial = array (
                 'announcements' => 1,
                 'bbcode' => 1,
@@ -378,6 +375,8 @@ switch ($step){
             "cache_messages" => 0,
             "redirect_after_post" => "list",
             "reply_on_read_page" => 1,
+            "strip_quote_posting_form" => 0,
+            "strip_quote_mail" => 0,
             "status" => "normal",
             "use_new_folder_style" => 1,
             "default_forum_options" => $default_forum_options,
@@ -519,7 +518,7 @@ switch ($step){
 
         $cont_url = phorum_admin_build_url('');
         phorum_db_update_settings( array("installed"=>1) );
-        echo "The setup is complete.  You can now go to <a href=\"$cont_url\">the admin</a> and start making Phorum all your own.<br /><br /><strong>Here are some things you will want to look at:</strong><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=settings\">The General Settings page</a><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=mods\">Pre-installed modules</a><br /><br /><a href=\"docs/faq.txt\">The FAQ</a><br /><br /><a href=\"docs/performance.txt\">How to get peak performance from Phorum</a><br /><br /><strong>For developers:</strong><br /><br /><a href=\"docs/creating_mods.txt\">Module Creation</a><br /><br /><a href=\"docs/permissions.txt\">How Phorum permisssions work</a><br /><br /><a href=\"docs/CODING-STANDARDS\">The Phorum Team's codings standards</a>";
+        echo "The setup is complete.  You can now go to <a href=\"$cont_url\">the admin</a> and start making Phorum all your own.<br /><br /><strong>Here are some things you will want to look at:</strong><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=settings\">The General Settings page</a><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=mods\">Pre-installed modules</a><br /><br /><a href=\"docs/faq.txt\">The FAQ</a><br /><br /><a href=\"docs/performance.txt\">How to get peak performance from Phorum</a><br /><br /><strong>For developers:</strong><br /><br /><a href=\"docs/creating_mods.txt\">Module Creation</a><br /><br /><a href=\"docs/permissions.txt\">How Phorum permisssions work</a><br /><br /><a href=\"docs/CODING-STANDARDS\">The Phorum Team&apos;s codings standards</a>";
 
         break;
 
@@ -550,7 +549,7 @@ switch ($step){
         error_reporting(E_WARN);
         if ($message == "") {
             if($err){
-                $message.="Your cache directory is not writable. Please change the permissions on '/cache' inside the Phorum directory to allow writing. In Unix, you may have to use this command: chmod 777 cache<br /><br />If you want to continue anyway and set a cache directory manually, press continue. Note that you must do this, Phorum will not work without a valid cache.";
+                $message.="Your cache directory is not writable. Please change the permissions on &apos;/cache&apos; inside the Phorum directory to allow writing. In Unix, you may have to use this command: chmod 777 cache<br /><br />If you want to continue anyway and set a cache directory manually, press continue. Note that you must do this, Phorum will not work without a valid cache.";
             } else {
                 $message.="Cache directory set.  Next we will create a user with administrator privileges.  Press continue when ready.";
             }
