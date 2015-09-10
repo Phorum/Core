@@ -1,6 +1,11 @@
 Changelog:
 ----------
 
+2015-09-10 v1.0.9 Oliver Riesen (oliver@riesen.org)
+
+    - Fixed multiple conversion of HTML special characters in logviewer link (see
+      http://www.phorum.org/phorum5/read.php?62,133303,155073#msg-155073)
+
 2015-09-10 v1.0.8 Oliver Riesen (oliver@riesen.org)
 
     - Database column "ip" extended to 45 characters for ipv6 addresses.
