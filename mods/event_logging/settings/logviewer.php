@@ -41,7 +41,7 @@ $filter_base = phorum_admin_build_url(array(
     'module=modsettings',
     'mod=event_logging',
     'el_action=filter'
-));
+), true);
 
 $show_loglevel = array();
 $show_categories = array();
@@ -378,10 +378,10 @@ foreach ($logs as $loginfo)
           phorum_api_format_date($PHORUM['short_time'], $loginfo["datestamp"]).
        '</td>
         <td valign="middle" style="white-space:nowrap; font-size: 10px">
-          <a title="Extend filter using this source" href="'.$filter_base.'&source='.urlencode($loginfo["source"]).'">'.htmlspecialchars($loginfo["source"]).'</a>
+          <a title="Extend filter using this source" href="'.htmlspecialchars($filter_base.'&source='.urlencode($loginfo["source"])).'">'.htmlspecialchars($loginfo["source"]).'</a>
         </td>
         <td valign="middle" style="font-size: 10px">
-          <a title="Extend filter using this category" href="'.$filter_base.'&show_category['.urlencode($loginfo["category"]).']=1'.'">'.$cat.'</a>
+          <a title="Extend filter using this category" href="'.htmlspecialchars($filter_base.'&show_category['.urlencode($loginfo["category"]).']=1').'">'.$cat.'</a>
         </td>
         <td valign="middle" style="font-size: 12px">'.
           htmlspecialchars($message).
