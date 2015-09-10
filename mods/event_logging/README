@@ -1,5 +1,5 @@
 Module  : Event Logging
-Version : 1.1.3
+Version : 1.1.4
 Author  : Maurice Makaay <maurice@phorum.org>
 
 This module implements an event logging system for Phorum, which can be used
