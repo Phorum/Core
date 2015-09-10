@@ -75,7 +75,7 @@ if ($PHORUM["DATA"]["MODERATOR"]) {
 
 // setup some stuff based on the url passed
 if(empty($PHORUM["args"][1])) {
-    // we have no forum-id given, redirect to the index
+    // we have no thread-id given, redirect to the index
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
     exit();
 } elseif(empty($PHORUM["args"][2]) || $PHORUM["args"][2]=="printview") {
