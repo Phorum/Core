@@ -20,8 +20,6 @@
 
 if(!defined("PHORUM_ADMIN")) return;
 
-include('./include/format_functions.php');
-
 $user_status_map = array(
     'any'                     => 'Any user status',
     'pending'                 => 'Any pending status',
