@@ -1,6 +1,10 @@
 Changelog:
 ----------
 
+2015-09-10 v1.1.4 Oliver Riesen (oliver@riesen.org)
+
+    - Database column "ip" extended to 45 characters for ipv6 addresses.
+
 2009-08-01 v1.1.3
 
     - Added a new logged event: User sends a private message.
