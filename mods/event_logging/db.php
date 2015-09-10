@@ -7,7 +7,7 @@ require_once('./mods/event_logging/constants.php');
 
 // The database schema version, which is used to handle
 // installation and upgrades directly from the module.
-define("EVENT_LOGGING_DB_VERSION", 1);
+define("EVENT_LOGGING_DB_VERSION", 2);
 
 // The table name for storing event logs.
 $GLOBALS["PHORUM"]["event_logging_table"] =
