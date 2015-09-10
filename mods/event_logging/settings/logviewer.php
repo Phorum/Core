@@ -39,7 +39,7 @@ $filter_base = phorum_admin_build_url(array(
     'module=modsettings',
     'mod=event_logging',
     'el_action=filter'
-));
+), true);
 
 $show_loglevel = array();
 $show_categories = array();
