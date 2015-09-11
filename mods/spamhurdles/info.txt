@@ -19,7 +19,7 @@ hook: before_post|phorum_mod_spamhurdles_pre_post
 hook: check_post|phorum_mod_spamhurdles_check_post
 hook: after_post|phorum_mod_spamhurdles_after_post
 
-# For implementing spam hurdles in the registration proces.
+# For implementing spam hurdles in the registration process.
 hook: tpl_register_form|phorum_mod_spamhurdles_tpl_register_form
 hook: before_register|phorum_mod_spamhurdles_before_register
 hook: after_register|phorum_mod_spamhurdles_after_register
