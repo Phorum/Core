@@ -6,14 +6,14 @@ php:
 #  - 5.6
 #  - hhvm
 
-mysql:
-  database: phorum5
-  username: root
-  encoding: utf8
 
 matrix:
   allow_failures:
     - php: hhvm
+
+before_install:
+  - mysql -e "create database IF NOT EXISTS phorum5;" -uroot
+  - mysql -e "GRANT ALL ON phorum5.* to phorum5@localhost identified by 'phorum5';" -uroot
 
 install:
   - wget http://selenium-release.storage.googleapis.com/2.42/selenium-server-standalone-2.42.2.jar
@@ -28,9 +28,8 @@ before_script:
   - java -jar selenium-server-standalone-2.42.2.jar -port 4444 > /dev/null &
   - sleep 5
   - "mysql -e 'create database phorum5;'"
-  - php -S localhost:8000 -t tests/data/app  > /dev/null &
-  - php -S localhost:8010 -t tests/data  > /dev/null &
-
+  - php -S localhost:8000 -t ./  > /dev/null &
+  - cp include/db/config.php.sample include/db/config.php
 
 script:
   - php vendor/bin/codecept run  # self tests
