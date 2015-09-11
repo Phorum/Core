@@ -768,9 +768,6 @@ function spamhurdles_iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>
     {
         for($j = 0; $j < $numberOfColumns; $j++ )
         {
-            $ts1=(((int)$scramblePassword{$k}) * $numberOfRows) + $i;
-            $ts2=$k;
-
             $scrambled{(int)(((int)$scramblePassword{$k}) * $numberOfRows) + $i} = $escaped{$k};
             $k++;
         }
