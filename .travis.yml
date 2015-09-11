@@ -1,0 +1,36 @@
+language: php
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - hhvm
+
+mysql:
+  database: phorum5
+  username: root
+  encoding: utf8
+
+matrix:
+  allow_failures:
+    - php: hhvm
+
+install:
+  - wget http://selenium-release.storage.googleapis.com/2.42/selenium-server-standalone-2.42.2.jar
+  - composer global require "fxp/composer-asset-plugin:1.0.0"
+  - composer self-update
+  - composer install --prefer-dist
+  - ulimit -c unlimited || true
+
+before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - java -jar selenium-server-standalone-2.42.2.jar -port 4444 > /dev/null &
+  - sleep 5
+  - "mysql -e 'create database phorum5;'"
+  - php -S localhost:8000 -t tests/data/app  > /dev/null &
+  - php -S localhost:8010 -t tests/data  > /dev/null &
+
+
+script:
+  - php codecept run  # self tests
