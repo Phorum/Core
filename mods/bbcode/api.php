@@ -1279,7 +1279,7 @@ function bbcode_list_handler($content, $args)
         '$1$2', $content
     );
 
-    if (strpos('iaIA1', $args['list']) !== FALSE) {
+    if (isset($args['list']) && strpos('iaIA1', $args['list']) !== FALSE) {
         $open = '<ol type="'.$args['list'].'">';
         $close = '</ol>';
     } else {
