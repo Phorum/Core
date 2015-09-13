@@ -24,10 +24,11 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - java -jar selenium-server-standalone-2.42.2.jar -port 4444 > /dev/null &
   - sleep 5
-  - mysql -e "create database IF NOT EXISTS phorum5;" -uroot
-  - mysql -e "GRANT ALL ON phorum5.* to phorum5@localhost identified by 'phorum5';" -uroot
+  - mysql -e "create database IF NOT EXISTS phorum5_tests;" -uroot
+  - mysql -e "GRANT ALL ON phorum5_tests.* to phorum5@localhost identified by 'phorum5';" -uroot
   - php -S localhost:8000 -t ./  > /dev/null &
   - cp include/db/config.php.sample include/db/config.php
+  - sed -ie "s#'name'          => 'phorum5'#'name'          => 'phorum5_tests'#g" include/db/config.php
 
 script:
   - php vendor/bin/codecept run  # self tests
