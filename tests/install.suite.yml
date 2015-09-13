@@ -14,7 +14,7 @@ modules:
             dsn: 'mysql:host=localhost;dbname=phorum5_tests'
             user: 'phorum5'
             password: 'phorum5'
-            dump: 'tests/_data/dump-forum.sql'
+            dump: 'tests/_data/dump-install.sql'
             populate: true
             cleanup: false
             reconnect: true
