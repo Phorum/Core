@@ -1,0 +1,20 @@
+# Codeception Test Suite Configuration
+#
+# Suite for acceptance tests.
+# Perform tests in browser using the WebDriver or PhpBrowser.
+# If you need both WebDriver and PHPBrowser tests - create a separate suite.
+
+class_name: AcceptanceTester
+modules:
+    enabled:
+        - PhpBrowser:
+            url: http://localhost:8000
+        - \Helper\Acceptance
+        - Db:
+            dsn: 'mysql:host=localhost;dbname=phorum5_tests'
+            user: 'phorum5'
+            password: 'phorum5'
+            dump: 'tests/_data/dump-forum.sql'
+            populate: true
+            cleanup: false
+            reconnect: true

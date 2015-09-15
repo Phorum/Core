@@ -1,0 +1,331 @@
+# Phorum Core
+
+[![Build Status](https://travis-ci.org/Phorum/Core.svg?branch=phorum_5_2)](https://travis-ci.org/Phorum/Core)
+
+Phorum 5 Installation instructions
+==================================
+
+Contents:
+
+1. Requirements
+2. Quickstart guide
+3. Detailed installation instructions
+   3.1 Download Phorum
+   3.2 Unpack the downloaded archive
+   3.3 Place the Phorum files in your website's document root
+   3.4 Create a database and a database user
+   3.5 Configure the database access
+   3.6 Run the web based installer
+   3.7 Things to do after installing Phorum
+4. Additional issues
+   4.1 Additional issues for UNIX (Linux, BSD, Solaris, etc.)
+       4.1.2 Cache directory
+   4.2 Additional issues for Windows
+       4.2.1 Cache directory
+       4.2.2 Problems sending mail to end-users
+       4.2.3 Date formatting
+5. Support
+
+
+1. Requirements
+-------------------------------------------------------------------------------
+
+
+   Requirements for running Phorum are:
+
+   * A webserver
+
+   * PHP, version 5 or above.
+
+     PHP4 is over 5 years old. As of Phorum 5.2 there are some functions
+     used in Phorum which *require* PHP5 as they didn't exist before.
+     Therefor PHP5 is a requirement now.
+
+   * A MySQL server, version 5 or above.
+
+     MySQL has discontinued active development for all version below 5.0. The
+     Phorum teams uses 5.0 for all development. MySQL 5.0.15 was the first
+     production release of the 5.0 branch.
+     Since the first release of Phorum 5.2 we were only testing against MySQL-5
+     but weren explicitly using MySQL-4 incompatible queries.
+     As of Phorum 5.2.14 there were changes needed to make Phorum work with more
+     recent MySQL versions and therefore MySQL-5 or higher is a requirement now.
+
+   If you do not run your own website, but have hosted your website with
+   a hosting provider, then please ask your hosting provider if your
+   account meets these requirements.
+
+
+2. Quickstart guide:
+-------------------------------------------------------------------------------
+
+
+   This is the quickstart guide for installing Phorum, aimed at people that
+   are used to working with websites, PHP and databases. If you are having
+   problems following this guide, then please read chapter 3 instead.
+
+   1. Unpack Phorum into a directory below your website's document root;
+   2. Create a database and a full-access database user for that database;
+   3. Edit include/config/database.php.sample, save it as include/config/database.php;
+   4. Open {phorum url}/admin.php in your web browser and finish the install.
+
+
+3. Detailed installation instructions
+-------------------------------------------------------------------------------
+
+
+ 3.1 Download Phorum
+ -------------------
+
+   If you haven't already done so, download the latest Phorum distribution
+   from http://phorum.org/downloads.php
+
+
+ 3.2 Unpack the downloaded archive
+ ---------------------------------
+
+   From Windows:
+
+   If you have downloaded the .zip file, you can extract the
+   files from that archive directly using Windows XP's zipfile support.
+   If you downloaded the .tar.gz file, you will have to download an
+   appropriate tool for unpacking, e.g. WinZip (http://www.winzip.com/).
+
+   From UNIX:
+
+   If you have access to a UNIX shell, you can unpack the .tar.gz
+   archive using the following command:
+
+   shell> tar xvzf phorum-x.y.z.tar.gz
+
+   Or if the tar program on your system does not support the -z flag:
+
+   shell> gunzip phorum-x-y-z.tar.gz
+   shell> tar xvf phorum-x.y.z.tar
+
+
+ 3.3 Place the Phorum files in your website's document root
+ ----------------------------------------------------------
+
+   The document root for a website is the directory in which your site's
+   web pages are stored. If your website's URL is "http://www.example.com"
+   and you place the Phorum files in a directory called "forum" inside
+   your document root, your Phorum installation will be available at the
+   URL "http://www.example.com/forum". From now on, we will name this
+   URL simply {phorum url}. So if you see {phorum url}/admin.php, using the
+   example we mean http://www.example.com/forum/admin.php
+
+   If the webserver is running on the same system as where you have
+   unpacked the downloaded archive, you can move the unpacked files
+   to your website's document root.
+
+   If the webserver is running on another system, you will have to upload
+   the files to your website's document root. In most cases, you will use
+   FTP for this, but some hosting providers require SCP (secure copy,
+   which is more secure than FTP). If you do not know how or where to
+   upload the Phorum files, please contact your hosting provider.
+
+   Security note:
+   (simply ignore this if it does not make sense to you)
+   There are software packages that require you to make files writable
+   for the webserver (using the infamous "chmod 777"). DO NOT DO THIS
+   FOR ANY OF THE PHORUM FILES. The webserver only needs read access on
+   the distribution files, because all dynamic data is stored in the
+   database. If you run into problems running Phorum, it will never be
+   because you "forgot" to do "chmod 777" on any the Phorum files.
+
+
+ 3.4 Create a database and a database user
+ -----------------------------------------
+
+   Phorum stores all its data in a database. So you now need to create
+   a database. Officially, only the MySQL database server is supported
+   by Phorum, so we recommend to use MySQL whenever possible.
+
+   If you have hosted your site with a hosting provider, then ask
+   your hosting provider to setup the database and a full access
+   database user for you.
+
+   If you run your own database server, then you will have to create
+   the database and the user yourself. If you are using a control
+   panel, like phpmyadmin, then use that control panel to create
+   them. Else, you can use the mysql prompt to create the database
+   by issuing commands like:
+
+   mysql> CREATE DATABASE phorum;
+   mysql> GRANT ALL ON phorum.* TO 'user'@'localhost' IDENTIFIED BY 'password';
+
+   Of course, for security reasons you would use your own user and
+   password instead.
+
+   If you are unsure how to create a database and a database user,
+   please refer to your system documentation.
+
+
+ 3.5 Configure the database access
+ ---------------------------------
+
+   After setting up the database, you'll have to tell Phorum how the
+   database can be accessed. This configuration is put in the file
+   include/config/database.php inside your Phorum directory. This file is
+   not in the distribution. Only a differently named sample file is
+   included.
+
+   First, copy or rename the file "include/config/database.php.sample" to
+   "include/config/database.php". Now edit the database.php file to match the
+   access settings for the database that was created in step 4.
+
+   If you run your website on a remote server, then either edit
+   the database.php file directly on that server (e.g. through a
+   UNIX prompt) or upload the file to the correct location after
+   editing it locally.
+
+
+ 3.6 Run the web based installer
+ -------------------------------
+
+   Now all is in place to run Phorum's installer script.
+   Open {phorum url}/admin.php using your web browser. This is the admin
+   interface, which will automatically detect that a fresh install has
+   to be performed.
+
+   Follow the instructions on screen to finish the Phorum installation.
+
+   In case you do not see the installer, but a blank screen instead,
+   something is wrong. Please check the following:
+
+   - Does the PHP installation include support your database server? If
+     the PHP installation is lacking support, it will not be able to
+     connect to the database. If you are running your website with a
+     hosting provider, then ask your provider;
+
+   - Is there a typo in include/config/database.php? A typo might crash PHP.
+     If you have access to your server's error logging, then please check
+     for errors in there. You could ask your provider to look at the error
+     log, in case you have no direct access to it;
+
+   - Did all files get uploaded and was filename case properly preserved
+     by your FTP client? There are some FTP clients which upload all files
+     using lower case only. Check whether the files
+     include/admin/PhorumAdminMenu.php and include/admin/PhorumInputForm.php
+     are uploaded, using exactly these names and not something like
+     include/admin/phorumadminmenu.php for example.
+
+
+ 3.7 Things to do after installing Phorum
+ ----------------------------------------
+
+   Now the installation is complete, test if the forum is working
+   correctly by opening {phorum url} in your web browser. If you run
+   into problems, please go to {forum url}/admin.php and click on
+   "System Sanity Checks" in the menu. This page will perform a couple
+   of system checks to rule out some basic problems. If problems are
+   found, please follow the instructions from the sanity checks page
+   to solve them.
+
+   Login into the admin interface at {phorum url}/admin.php and check
+   out what settings can be done to customize Phorum to your likings.
+
+   Customize the looks of Phorum to your needs by creating a custom
+   template. Instructions can be found in docs/creating_templates.txt.
+
+   Read the additional issues for your system (below), docs/faq.txt
+   and any other files in the docs dir that may help you.
+
+
+4. Additional issues
+-------------------------------------------------------------------------------
+
+
+ 4.1 Additional issues for UNIX (Linux, BSD, Solaris, etc.)
+ ----------------------------------------------------------
+
+  4.1.2 Cache directory
+  ---------------------
+
+   In step 5 above (Edit Settings) There is an entry called Cache
+   Directory. the installer should set that to /tmp if you appear to
+   be running a *nix system. This will keep compiled PHP versions of
+   your templates in /tmp. You can change the cache dir if you do not
+   want to have your files sitting in /tmp on the server or if you see
+   error messages like:
+
+   Warning:
+   fopen(/tmp/tpl-default-header-a72fb9dd20915e5953aa9b07d3eb3871.php):
+   failed to open stream: Permission denied in ...
+
+   If you change the the Cache Directory, the best bet is to set it
+   to ./cache and make that dir (that is already there in the Phorum dir)
+   writable by the web server. Most likely this means making it world
+   writeable (chmod 777). If you do not have access to the shell prompt
+   of the server and are using only FTP to access the server, please see
+   your FTP client's help on setting the permissions for a directory.
+
+
+ 4.2 Additional issues for Windows
+ ---------------------------------
+
+
+  4.2.1 Cache directory
+  ---------------------
+
+   In step 5 above (Edit Settings) There is an entry called Cache
+   Directory. The installer should set that to C:\Windows\Temp, if it
+   can detect you are using Windows. This should work for most modern
+   Windows versions. If it does not, you will see error messages like:
+
+   Warning:
+   fopen(c:\windows\temp\tpl-default-header-a72fb9dd209153aa9b07d3eb3871.php):
+   failed to open stream: Permission denied in ...
+
+   You will need to change the Cache Directory. The Phorum team is not
+   very familiar with Windows as a web server platform. We can only tell
+   you that it will need to be something that the web server can write to.
+   Changing the Cache Directory to ./cache has worked for some.
+
+
+  4.2.2 Problems sending mail to end-users
+  ----------------------------------------
+
+   PHP has to be configured correctly on Windows systems to be able to
+   send out mail. If this is not done, you might get errors and mail
+   will not arrive. What you need to do is edit the file "php.ini" (this
+   file holds the configuration for PHP). Find the section that is called
+   "[mail function]". In this section, set the parameter "SMTP" to the
+   hostname or IP-address of the your SMTP server. If you do not know your
+   SMTP server, please ask your internet access provider. After this,
+   PHP will know what mailserver to use for sending out mail messages.
+
+   If you have no access to the php.ini file and the system administrator
+   is not willing to update it for you, you will have to install the
+   SMTP module for Phorum. You can download this module from the module page:
+   http://phorum.org/cgi-bin/trac.cgi/wiki/ListOfModules
+   In the settings for this module, you can specify the SMTP server to use
+   for sending mail. When using this module, you will completely bypass PHP's
+   builtin mail system.
+
+
+  4.2.3 Date formatting
+  ---------------------
+
+   Windows does not support the date formatting function strftime() fully.
+   If your dates are not showing correctly, you have to edit your language
+   file ({phorum dir}/include/lang/<yourlanguage>.php) and change the
+   definitions for $PHORUM['long_date'] and $PHORUM['short_date'] in there
+   to something that will work for your system. We suggest using the
+   following definitions:
+
+      $PHORUM['long_date']="%B %d, %Y %I:%M%p";
+      $PHORUM['short_date']="%m/%d/%Y %I:%M%p";
+
+   Go to http://www.php.net/strftime for information on all available
+   formatting options as well as the formats that Windows does not support.
+
+
+5. Support
+-------------------------------------------------------------------------------
+
+   If you have questions about installing Phorum, please visit the website
+   http://phorum.org/ and ask the development team for help in the
+   Support forum. Also read the file docs/faq.txt for answers to the most
+   common questions.

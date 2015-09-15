@@ -1,0 +1,34 @@
+language: php
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - hhvm
+
+
+matrix:
+  allow_failures:
+    - php: hhvm
+
+
+install:
+  - wget http://selenium-release.storage.googleapis.com/2.42/selenium-server-standalone-2.42.2.jar
+  - composer global require "fxp/composer-asset-plugin:1.0.0"
+  - composer self-update
+  - composer install --prefer-dist
+  - ulimit -c unlimited || true
+
+before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - java -jar selenium-server-standalone-2.42.2.jar -port 4444 > /dev/null &
+  - sleep 5
+  - mysql -e "create database IF NOT EXISTS phorum5_tests;" -uroot
+  - mysql -e "GRANT ALL ON phorum5_tests.* to phorum5@localhost identified by 'phorum5';" -uroot
+  - php -S localhost:8000 -t ./  > /dev/null &
+  - cp include/db/config.php.sample include/db/config.php
+  - sed -ie "s#'name'          => 'phorum5'#'name'          => 'phorum5_tests'#g" include/db/config.php
+
+script:
+  - php vendor/bin/codecept run  # self tests
