@@ -72,11 +72,33 @@ function phorum_mod_smileys_format_fixup($data)
 
         // Do subject replacements.
         if (isset($replace["subject"]) && isset($message["subject"])) {
-            $data[$key]['subject'] = str_replace ($replace["subject"][0] , $replace["subject"][1], $message['subject'] );
+            $str = '';
+            # split complete string by entities and only run smiley substitution
+            # on non-entities
+            foreach (preg_split('/(&(?:[a-z]+|#[0-9]+);)/i', $message['subject'], -1, PREG_SPLIT_DELIM_CAPTURE) as $split)
+            {
+                if (isset($split[0]) && $split[0] == '&') {
+                    $str .= $split;
+                } else {
+                    $str .= str_replace($replace['subject'][0], $replace['subject'][1], $split);
+                }
+            }
+            $data[$key]['subject'] = $str;
         }
         // Do body replacements.
         if (isset($replace["body"]) && isset($message["body"])) {
-            $data[$key]['body'] = str_replace ($replace["body"][0] , $replace["body"][1], $message['body'] );
+            $str = '';
+            # split complete string by entities and only run smiley substitution
+            # on non-entities
+            foreach (preg_split('/(&(?:[a-z]+|#[0-9]+);)/i', $message['body'], -1, PREG_SPLIT_DELIM_CAPTURE) as $split)
+            {
+                if (isset($split[0]) && $split[0] == '&') {
+                    $str .= $split;
+                } else {
+                    $str .= str_replace($replace['body'][0], $replace['body'][1], $split);
+                }
+            }
+            $data[$key]['body'] = $str;
         }
     }
 
