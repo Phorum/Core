@@ -5077,7 +5077,7 @@ abstract class PhorumDB
                     add_datetime,
                     'Attachments, left behind by unposted messages' AS reason
              FROM   {$this->files_table}
-             WHERE  link = '".PHORUM_LINK_EDITOR."'
+             WHERE  ( link = '".PHORUM_LINK_EDITOR."' OR link = '".PHORUM_LINK_TEMPFILE."' )
                     AND
                     add_datetime < ". (time()-PHORUM_MAX_EDIT_TIME),
             'file_id',
