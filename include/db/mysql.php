@@ -4695,7 +4695,7 @@ function phorum_db_get_user_filesize_total($user_id)
 /**
  * Retrieve a list of stale files from the database.
  *
- * Stale files are files that are not linked to anything anymore.'
+ * Stale files are files that are not linked to anything anymore.
  * These can for example be caused by users that are writing a message
  * with attachments, but never post it.
  *
@@ -4723,7 +4723,7 @@ function phorum_db_list_stale_files()
                 add_datetime,
                 'Attachments, left behind by unposted messages' AS reason
          FROM   {$PHORUM['files_table']}
-         WHERE  link = '".PHORUM_LINK_EDITOR."'
+         WHERE  ( link = '".PHORUM_LINK_EDITOR."' OR link = '".PHORUM_LINK_TEMPFILE."' )
                 AND
                 add_datetime < ". (time()-PHORUM_MAX_EDIT_TIME),
         'file_id',
