@@ -7,7 +7,10 @@
 
 define('phorum_page', 'example-static-page');
 
-include_once('./common.php');
+include_once './common.php';
+
+// Include necessary API classes
+// include_once PHORUM_PATH.'/include/xxx.php';
 
 // Set heading, description and breadcrumps
 $PHORUM['DATA']['HEADING'] = 'Static Page Example'.(isset($PHORUM['name']) ? ' - '.$PHORUM['name'] : '');
@@ -32,6 +35,10 @@ phorum_hook('after_header');
     voluptua.
   </p>
 <?php
+
+// You can also include own template files.
+// The file must exist under /templates/yourtemplate/
+// include phorum_get_template('static_page');
 
 // Find more useful information inside $PHORUM['DATA']
 // var_dump($PHORUM['DATA']);
