@@ -35,6 +35,10 @@ phorum_hook('after_header');
   </p>
 <?php
 
+// You can also include own template files.
+// The file must exist under /templates/yourtemplate/
+// include phorum_get_template('static_page');
+
 // Find more useful information inside $PHORUM['DATA']
 // var_dump($PHORUM['DATA']);
 
