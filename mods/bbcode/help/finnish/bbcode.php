@@ -48,9 +48,9 @@
     "#ff0000", "#888", jne.). Esimerkiksi:<br/><br/>
     <tt>
     Kuka pelk‰‰
-    <nobr>[color=red]punaista[/color],</nobr>
-    <nobr>[color=#eeaa00]keltaista[/color]</nobr> ja
-    <nobr>[color=#30f]sinist‰[/color]?</nobr>
+    [color=red]punaista[/color],
+    [color=#eeaa00]keltaista[/color] ja
+    [color=#30f]sinist‰[/color]?
     </tt><br/><br/>
     T‰m‰ n‰ytt‰‰ t‰lt‰:<br/><br/>
     Kuka pelk‰‰
@@ -63,11 +63,11 @@
     Koon pit‰‰ olla oikea HTML koko elementin mukainen (kuten "12px",
     "small", "large", jne.). Esimerkiksi:<br/><br/>
     <tt>
-    <nobr>[size=x-small]N‰ytt‰‰[/size]</nobr>
-    <nobr>[size=small]silt‰[/size]</nobr>
-    <nobr>[size=medium]ett‰[/size]</nobr>
-    <nobr>[size=large]kasvan[/size]</nobr>
-    <nobr>[size=x-large]suuremmaksi![/size]</nobr>
+    [size=x-small]N‰ytt‰‰[/size]
+    [size=small]silt‰[/size]
+    [size=medium]ett‰[/size]
+    [size=large]kasvan[/size]
+    [size=x-large]suuremmaksi![/size]
     </tt><br/><br/>
     Ja se n‰ytt‰‰ t‰lt‰:<br/><br/>
     <span style="font-size: x-small">N‰ytt‰‰</span>
