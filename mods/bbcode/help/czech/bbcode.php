@@ -48,9 +48,9 @@
     "#ff0000", "#888", etc.). Pøíklad:<br/><br/>
     <tt>
     Kdo by se obával
-    <nobr>[color=red]èervené[/color],</nobr>
-    <nobr>[color=#eeaa00]žluté[/color]</nobr> a
-    <nobr>[color=#30f]modré[/color]?</nobr>
+    [color=red]èervené[/color],
+    [color=#eeaa00]žluté[/color] a
+    [color=#30f]modré[/color]?
     </tt><br/><br/>
     Pøíklad se zobrazí takto:<br/><br/>
     Kdo by se obával
@@ -63,11 +63,11 @@
     Velikost musí být ve tvaru platném pro jazyk HTML (napø. "12px",
     "small", "large", etc.). Pøíklad:<br/><br/>
     <tt>
-    <nobr>[size=x-small]To[/size]</nobr>
-    <nobr>[size=small]vypadá[/size]</nobr>
-    <nobr>[size=medium]jako,[/size]</nobr>
-    <nobr>[size=large]že[/size]</nobr>
-    <nobr>[size=x-large]rostu![/size]</nobr>
+    [size=x-small]To[/size]
+    [size=small]vypadá[/size]
+    [size=medium]jako,[/size]
+    [size=large]že[/size]
+    [size=x-large]rostu![/size]
     </tt><br/><br/>
     Pøíklad se zobrazí takto:<br/><br/>
     <span style="font-size: x-small">To</span>
