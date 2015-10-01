@@ -427,7 +427,7 @@ class PhorumInputForm {
         $checkidx++;
 
         $id = "admin_checkbox_$checkidx";
-        $data = "<nobr><input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$value\" $is_checked $extra>&nbsp;<label for=\"$id\">$caption</label></nobr>";
+        $data = "<span style=\"white-space: nowrap\"><input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$value\" $is_checked $extra>&nbsp;<label for=\"$id\">$caption</label></span>";
 
         return $data;
     }
