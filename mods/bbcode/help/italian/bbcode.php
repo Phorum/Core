@@ -57,9 +57,9 @@
     Ad esempio:<br/><br/>
     <tt>
     Chi ha paura del
-    <nobr>[color=red]rosso[/color],</nobr>
-    <nobr>[color=#eeaa00]giallo[/color]</nobr> e del
-    <nobr>[color=#30f]blu[/color]?</nobr>
+    [color=red]rosso[/color],
+    [color=#eeaa00]giallo[/color] e del
+    [color=#30f]blu[/color]?
     </tt><br/><br/>
     Diventerá:<br/><br/>
     Chi ha paura del
@@ -72,11 +72,11 @@
     L'indicazione della dimensione deve essere un codice valido HTML (ad esempio "12px" oppure
     "small", "large", etc.). Example:<br/><br/>
     <tt>
-    <nobr>[size=x-small]SEMBRA[/size]</nobr>
-    <nobr>[size=small]CHE[/size]</nobr>
-    <nobr>[size=medium]IO[/size]</nobr>
-    <nobr>[size=large]STIA[/size]</nobr>
-    <nobr>[size=x-large]CRESCENDO![/size]</nobr>
+    [size=x-small]SEMBRA[/size]
+    [size=small]CHE[/size]
+    [size=medium]IO[/size]
+    [size=large]STIA[/size]
+    [size=x-large]CRESCENDO![/size]
     </tt><br/><br/>
     Diventerá:<br/><br/>
     <span style="font-size: x-small">SEMBRA</span>

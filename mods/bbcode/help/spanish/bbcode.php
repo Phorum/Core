@@ -52,9 +52,9 @@
     "#ff0000", "#888", etc.). Ejemplo:<br/><br/>
     <tt>
     Quien tiene miedo del
-    <nobr>[color=red]rojo[/color],</nobr>
-    <nobr>[color=#eeaa00]amarillo[/color]</nobr> y
-    <nobr>[color=#30f]azul[/color]?</nobr>
+    [color=red]rojo[/color],
+    [color=#eeaa00]amarillo[/color] y
+    [color=#30f]azul[/color]?
     </tt><br/><br/>
     Aparecerá como:<br/><br/>
     Quién tiene miedo del
@@ -68,11 +68,11 @@
     El tamaño tiene que ser una indicación válida en HTML (como "12px",
     "small", "large", etc.). Ejemplo:<br/><br/>
     <tt>
-    <nobr>[size=x-small]Parece[/size]</nobr>
-    <nobr>[size=small]que[/size]</nobr>
-    <nobr>[size=medium]estoy[/size]</nobr>
-    <nobr>[size=large]creciendo[/size]</nobr>
-    <nobr>[size=x-large]mucho![/size]</nobr>
+    [size=x-small]Parece[/size]
+    [size=small]que[/size]
+    [size=medium]estoy[/size]
+    [size=large]creciendo[/size]
+    [size=x-large]mucho![/size]
     </tt><br/><br/>
     Se mostrará como:<br/><br/>
     <span style="font-size: x-small">Parece</span>
