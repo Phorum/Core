@@ -53,9 +53,9 @@
     Voorbeeld:<br/><br/>
     <tt>
     Wie is er bang voor
-    <nobr>[color=red]rood[/color],</nobr>
-    <nobr>[color=#eeaa00]geel[/color]</nobr> en
-    <nobr>[color=#30f]blauw[/color]?</nobr>
+    [color=red]rood[/color],
+    [color=#eeaa00]geel[/color] en
+    [color=#30f]blauw[/color]?
     </tt><br/><br/>
     Dit zal worden getoond als:</br></br>
     Wie is er bang voor
@@ -69,11 +69,11 @@
     tekstgrootte indicator worden opgegeven (bijvoorbeeld "12px",
     "small", "large", etc.). Voorbeeld:<br/><br/>
     <tt>
-    <nobr>[size=x-small]Het[/size]</nobr>
-    <nobr>[size=small]lijkt[/size]</nobr>
-    <nobr>[size=medium]alsof[/size]</nobr>
-    <nobr>[size=large]ik[/size]</nobr>
-    <nobr>[size=x-large]groei![/size]</nobr>
+    [size=x-small]Het[/size]
+    [size=small]lijkt[/size]
+    [size=medium]alsof[/size]
+    [size=large]ik[/size]
+    [size=x-large]groei![/size]
     </tt><br/><br/>
     Dit zal worden getoond als:</br></br>
     <span style="font-size: x-small">Het</span>

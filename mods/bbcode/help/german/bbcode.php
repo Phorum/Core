@@ -48,9 +48,9 @@
     "#ff0000", "#888", etc.). Beispiel:<br/><br/>
     <tt>
     Wer hat Angst vor
-    <nobr>[color=red]rot[/color],</nobr>
-    <nobr>[color=#eeaa00]gelb[/color]</nobr> und
-    <nobr>[color=#30f]blau[/color]?</nobr>
+    [color=red]rot[/color],
+    [color=#eeaa00]gelb[/color] und
+    [color=#30f]blau[/color]?
     </tt><br/><br/>
     Dies wird angezeigt als:<br/><br/>
     Wer hat Angst vor
@@ -63,11 +63,11 @@
     Die Gr&ouml;&szlig;e mu&szlig; eine g&uuml;ltige HTML-Angabe sein (z.B. "12px",
     "small", "large", etc.). Beispiel:<br/><br/>
     <tt>
-    <nobr>[size=x-small]It[/size]</nobr>
-    <nobr>[size=small]looks[/size]</nobr>
-    <nobr>[size=medium]like[/size]</nobr>
-    <nobr>[size=large]I'm[/size]</nobr>
-    <nobr>[size=x-large]growing![/size]</nobr>
+    [size=x-small]It[/size]
+    [size=small]looks[/size]
+    [size=medium]like[/size]
+    [size=large]I'm[/size]
+    [size=x-large]growing![/size]
     </tt><br/><br/>
     Dies wird angezeigt als:<br/><br/>
     <span style="font-size: x-small">It</span>
