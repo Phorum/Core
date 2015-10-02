@@ -130,7 +130,7 @@ function phorum_api_image_info($image)
  *
  * In case the image already has the correct size, then still image
  * processing is done. This will take care of normalizing all images
- * that pass this method to JPG.
+ * that pass this method to PNG.
  *
  * @param string $image
  *     The raw binary image data.
@@ -410,9 +410,9 @@ function phorum_api_image_clip(
 
         $imagick->setImagePage($clip_w, $clip_h, 0, 0);
 
-        $imagick->setFormat("jpg");
+        $imagick->setFormat('png');
         $img['image']    = $imagick->getImagesBlob();
-        $img['new_mime'] = 'image/jpeg';
+        $img['new_mime'] = 'image/png';
         $img['method']   = 'imagick';
 
         return $img;
@@ -430,9 +430,9 @@ function phorum_api_image_clip(
         // image support for the type of image that we are handling.
         $gd = gd_info();
 
-        // We always need JPEG support for the scaled down image.
-        if (empty($gd['JPG Support']) && empty($gd['JPEG Support'])) {
-            $error = "GD: no JPEG support available for processing images";
+        // We always need PNG support for the scaled down image.
+        if (empty($gd['PNG Support'])) {
+            $error = 'GD: no PNG support available for processing images';
         }
         elseif (($type == 'gif'  && empty($gd['GIF Read Support'])) ||
             ($type == 'jpeg' &&
@@ -486,9 +486,9 @@ function phorum_api_image_clip(
                     $clip_w, $clip_h  // source width + height
                 );
 
-                // Create the jpeg output data for the scaled image.
+                // Create the png output data for the scaled image.
                 ob_start();
-                imagejpeg($scaled);
+                imagepng($scaled);
                 $image = ob_get_contents();
                 $size = ob_get_length();
                 ob_end_clean();
@@ -497,7 +497,7 @@ function phorum_api_image_clip(
                 imagedestroy($scaled);
 
                 $img['image']    = $image;
-                $img['new_mime'] = 'image/jpeg';
+                $img['new_mime'] = 'image/png';
                 $img['method']   = 'gd';
 
                 return $img;
@@ -526,12 +526,11 @@ function phorum_api_image_clip(
 
         // Build the command line.
         $cmd = escapeshellcmd($convert) . ' ' .
-               '- ' .
-               '-background white -flatten ' . // handles transparent PNG
+               '- ' . // pseudo-filename '-' for STDIN (standard in)
                "-crop {$clip_w}x{$clip_h}+{$clip_x}+{$clip_y} " .
                '+repage ' .
                '-thumbnail ' . $dst_w .'x'. $dst_h . '\! ' .
-               'jpeg:-';
+               'png:-'; // explicit image format
 
         // Run the command.
         $descriptors = array(
@@ -561,7 +560,7 @@ function phorum_api_image_clip(
 
             if ($exit == 0) {
                 $img['image']    = $scaled;
-                $img['new_mime'] = 'image/jpeg';
+                $img['new_mime'] = 'image/png';
                 $img['method']   = 'convert';
 
                 return $img;
