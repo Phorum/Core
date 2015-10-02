@@ -59,8 +59,8 @@ if (!defined('PHORUM')) return;
  *     will try to autodetect a working method. Providing a $method parameter
  *     is mostly useful for debugging purposes. Available methods (in the
  *     order in which they are probed in the code) are:
- *     - gd: using the GD library (requires extension "gd")
  *     - imagick: using the ImageMagick library (requires extension "imagick")
+ *     - gd: using the GD library (requires extension "gd")
  *     - convert: using the ImageMagick "convert" tool (requires the
  *       ImageMagick package to be installed on the server, does not work
  *       in combination with some PHP safety restrictions).
@@ -177,9 +177,9 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         $imagick = new Imagick();
         $imagick->readImageBlob($image);
         $imagick->thumbnailImage($img['new_w'], $img['new_h'], TRUE);
-        $imagick->setFormat("jpg");
+        $imagick->setFormat('png');
         $img['image']    = $imagick->getimageblob();
-        $img['new_mime'] = 'image/jpeg';
+        $img['new_mime'] = 'image/png';
         $img['method']   = 'imagick';
 
         return $img;
@@ -197,9 +197,9 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
         // image support for the type of image that we are handling.
         $gd = gd_info();
 
-        // We always need JPEG support for the scaled down image.
-        if (empty($gd['JPG Support']) && empty($gd['JPEG Support'])) {
-            $error = "GD: no JPEG support available for creating thumbnail";
+        // We always need PNG support for the scaled down image.
+        if (empty($gd['PNG Support'])) {
+            $error = 'GD: no PNG support available for creating thumbnail';
         }
         elseif (($type == 'gif'  && empty($gd['GIF Read Support'])) ||
             ($type == 'jpeg' && (empty($gd['JPG Support']) && empty($gd['JPEG Support']))) ||
@@ -261,15 +261,15 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
                     $img['cur_w'], $img['cur_h']
                 );
 
-                // Create the jpeg output data for the scaled image.
+                // Create the png output data for the scaled image.
                 ob_start();
-                imagejpeg($scaled);
+                imagepng($scaled);
                 $image = ob_get_contents();
                 $size = ob_get_length();
                 ob_end_clean();
 
                 $img['image']    = $image;
-                $img['new_mime'] = 'image/jpeg';
+                $img['new_mime'] = 'image/png';
                 $img['method']   = 'gd';
                 return $img;
             }
@@ -297,10 +297,10 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
 
         // Build the command line.
         $cmd = escapeshellcmd($convert) . ' ' .
-               '- ' .
+               '- ' . // pseudo-filename '-' for STDIN (standard in)
                '-thumbnail ' . $img['new_w'] .'x'. $img['new_h'] . ' ' .
-               '-write jpeg:- ' .
-               '--'; // Otherwise I get: option requires an argument `-write'
+               'png:- ' . // explicit image format
+               '-write -'; // pseudo-filename '-' for STDOUT (standard out)
 
         // Run the command.
         $descriptors = array(
@@ -330,7 +330,7 @@ function phorum_api_image_thumbnail($image, $max_w = NULL, $max_h = NULL, $metho
 
             if ($exit == 0) {
                 $img['image']    = $scaled;
-                $img['new_mime'] = 'image/jpeg';
+                $img['new_mime'] = 'image/png';
                 $img['method']   = 'convert';
 
                 return $img;
