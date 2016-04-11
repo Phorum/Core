@@ -31,7 +31,7 @@ function phorum_gen_password($charpart=4, $numpart=3)
     $password="";
 
     for($i = 0; $i < $charpart; $i++){
-        $password .= $cons[mt_rand(0, $num_cons - 1)] . $vowels[mt_rand(0, $num_vowels - 1)];
+        $password .= $cons[random_int(0, $num_cons - 1)] . $vowels[random_int(0, $num_vowels - 1)];
     }
 
     $password = substr($password, 0, $charpart);
@@ -40,7 +40,7 @@ function phorum_gen_password($charpart=4, $numpart=3)
         $max=(int)str_pad("", $numpart, "9");
         $min=(int)str_pad("1", $numpart, "0");
 
-        $num=(string)mt_rand($min, $max);
+        $num=(string)random_int($min, $max);
     }
 
     return strtolower($password.$num);

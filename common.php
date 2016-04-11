@@ -196,7 +196,7 @@ if ( isset($PHORUM['internal_version']) && $PHORUM['internal_version'] >= PHORUM
             "stuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
    $private_key = "";
    for ($i = 0; $i<40; $i++) {
-       $private_key .= substr($chars, rand(0, strlen($chars)-1), 1);
+       $private_key .= substr($chars, random_int(0, strlen($chars)-1), 1);
    }
    $PHORUM["private_key"] = $private_key;
    phorum_db_update_settings(array("private_key" => $PHORUM["private_key"]));
@@ -236,7 +236,7 @@ $PHORUM['template_http_path'] = $PHORUM['http_path'].'/templates';
 // ----------------------------------------------------------------------
 
 // Thanks a lot for magic quotes :-/
-// In PHP6, magic quotes are (finally) removed, so we have to check for
+// In PHP7, magic quotes are (finally) removed, so we have to check for
 // the get_magic_quotes_gpc() function here. The "@" is for suppressing
 // deprecation warnings that are spawned by PHP 5.3 and higher when
 // using the get_magic_quotes_gpc() function.
@@ -2374,6 +2374,15 @@ if (!function_exists('mb_substr'))
             return substr($str, $start);
         }
     }
+}
+
+// PHP 5.x fallback for random_bytes and random_int functions.
+//
+// Thanks to Paragon Initiative Enterprises for the implementation of his
+// Random_* Compatibility Library. See: https://github.com/paragonie/random_compat
+if (!function_exists('random_int') || !function_exists('random_bytes'))
+{
+    require_once('./include/random_compat-2.0.2/lib/random.php');
 }
 
 ?>

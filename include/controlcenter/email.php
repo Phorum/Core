@@ -61,7 +61,7 @@ if ( count( $_POST ) ) {
                $email_temp_part="";
         } elseif($PHORUM['registration_control'] && !empty($_POST['email']) && strtolower($_POST['email']) != strtolower($PHORUM["DATA"]["PROFILE"]['email'])) {
             // ... generate the confirmation-code ... //
-            $conf_code= mt_rand ( 1000000, 9999999);
+            $conf_code= random_int(1000000, 9999999);
             $_POST['email_temp']=$_POST['email']."|".$conf_code;
             // ... send email ... //
             $maildata=array(
