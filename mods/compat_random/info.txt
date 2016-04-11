@@ -1,0 +1,9 @@
+title: Compatibility: Random Extension
+desc: This module implements a PHP 5.x fallback for random_bytes and random_int functions.
+category: compatibility
+version: 1.0.0
+author: Phorum Dev Team
+url: http://www.phorum.org/
+
+compat:random|random_bytes
+compat:random|random_int

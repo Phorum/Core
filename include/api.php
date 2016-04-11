@@ -111,11 +111,13 @@ defined('phorum_page') or define('phorum_page', 'unknown');
 // we can safely use them from the rest of the code.
 
 $compat_modules = array(
-    'mb_substr'   => 'mbstring',
-    'json_encode' => 'json',
-    'json_decode' => 'json',
-    'iconv'       => 'iconv',
-    'stripos'     => 'stripos'
+    'mb_substr'    => 'mbstring',
+    'json_encode'  => 'json',
+    'json_decode'  => 'json',
+    'iconv'        => 'iconv',
+    'random_bytes' => 'random',
+    'random_int'   => 'random',
+    'stripos'      => 'stripos'
 );
 
 $missing_compat = array();
