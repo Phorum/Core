@@ -86,7 +86,7 @@ if ($PHORUM["DATA"]["MODERATED"]) {
 
 // Create a unique message id.
 $suffix = preg_replace("/[^a-z0-9]/i", "", $PHORUM["name"]);
-$message["msgid"] = md5(uniqid(rand())) . ".$suffix";
+$message["msgid"] = md5(uniqid(random_int(0, getrandmax()))) . ".$suffix";
 
 // Add attachments to meta data. Because there might be inconsistencies in
 // the list due to going backward in the browser after deleting attachments,
