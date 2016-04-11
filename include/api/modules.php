@@ -174,7 +174,7 @@ function phorum_api_modules_list()
                     $req = phorum_parse_version($required_ver);
 
                     // If an admin is using a development or snapshot release,
-                    // the we asume that he knows what he's doing.
+                    // then we asume that he knows what he's doing.
                     if ($cur[0] == 'snapshot' ||
                         $cur[0] == 'development') {
                         // noop

@@ -55,17 +55,17 @@ class captcha_image extends captcha_base
         // Draw random characters for distortion.
         $colors = array();
         for ($i=0; $i<5; $i++) {
-            $cc = rand(120, 190);
+            $cc = random_int(120, 190);
             $colors[] = imagecolorallocate($img, $cc+30, $cc+20, $cc+10);
         }
         for ($i=0; $i<15; $i++) {
-            $x = rand(0, 60*strlen($question));
-            $y = rand(0, 100);
-            $size = rand(30,90);
-            $rfont = $fonts[rand(0, count($fonts)-1)];
-            $rcolor = $colors[rand(0, count($colors)-1)];
-            $angle = -90 + rand(0,180);
-            $char = chr(rand(ord('A'), ord('A')+26));
+            $x = random_int(0, 60*strlen($question));
+            $y = random_int(0, 100);
+            $size = random_int(30, 90);
+            $rfont = $fonts[random_int(0, count($fonts)-1)];
+            $rcolor = $colors[random_int(0, count($colors)-1)];
+            $angle = -90 + random_int(0, 180);
+            $char = chr(random_int(ord('A'), ord('A')+26));
             imagettftext($img, $size, $angle, $x, $y, $rcolor, $rfont, $char);
         }
 
@@ -74,11 +74,11 @@ class captcha_image extends captcha_base
         $boxheight = 0;
         for ($i=0; $i<strlen($question); $i++)
         {
-            $fontcolor = imagecolorallocate($img, rand(0,200), 0, 0);
-            $rfont = $fonts[rand(0, count($fonts)-1)];
-            $size = rand(25,32);
+            $fontcolor = imagecolorallocate($img, random_int(0, 200), 0, 0);
+            $rfont = $fonts[random_int(0, count($fonts)-1)];
+            $size = rand(25, 32);
             $char = substr($question, $i, 1);
-            $angle = -15 + rand(0, 30);
+            $angle = -15 + random_int(0, 30);
 
             // Determine the bounding box for the rendered character.
             $box = imagettfbbox($size, $angle, $rfont, $char);
@@ -94,7 +94,7 @@ class captcha_image extends captcha_base
             }
 
             $chary = 5 + 0 - $t;
-            $chary_rand = rand(0,20);
+            $chary_rand = random_int(0, 20);
             $charx = 5 + $boxwidth;
             imagettftext(
                 $img, $size, $angle, $charx, $chary+$chary_rand,

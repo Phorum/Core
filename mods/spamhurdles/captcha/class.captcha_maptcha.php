@@ -8,8 +8,8 @@ class captcha_maptcha extends captcha_base
         $lang = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_spamhurdles"];
 
         // Generate random data for the math question.
-        $number_1 = rand(1, 25);
-        $number_2 = rand(1, 25);
+        $number_1 = random_int(1, 25);
+        $number_2 = random_int(1, 25);
         $answer = $number_1 + $number_2;
 
         // Generate the MAPTCHA question.
