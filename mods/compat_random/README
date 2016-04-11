@@ -1,0 +1,21 @@
+Module  : Compatibility: Random Extension
+Version : 1.0.0
+Author  : Phorum Dev Team
+
+This module implements a PHP 5.x fallback for random_bytes and random_int
+functions.
+
+Thanks to Paragon Initiative Enterprises for the implementation of his
+Random_* Compatibility Library. See: https://github.com/paragonie/random_compat
+
+Install:
+--------
+
+- Unpack the archive and move the directory "compat_random" to the
+  directory "mods" within your Phorum installation (unless this module
+  was packaged with your Phorum release);
+
+- There is no need to enable the module manually. If your system needs
+  it, Phorum will automatically load the module.
+
+

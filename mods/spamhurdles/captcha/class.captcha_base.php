@@ -267,7 +267,7 @@ class captcha_base
         if ($chars === NULL) $chars = CAPTCHA_RANDOMCHARS;
         $string = '';
         for ($i = 0; $i<$length; $i++) {
-            $string .= substr($chars, rand(0, strlen($chars)-1), 1);
+            $string .= substr($chars, random_int(0, strlen($chars)-1), 1);
         }
         return $string;
     }

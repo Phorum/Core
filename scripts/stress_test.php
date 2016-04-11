@@ -100,7 +100,7 @@ if ($ucount > 0) {
     print "Creating $ucount random user(s):\n\n";
     for ($i = 0; $i < $ucount; $i++) {
         $name = $randomuserprefixes[array_rand($randomuserprefixes)];
-        $name .= rand(1, 9999999);
+        $name .= random_int(1, 9999999);
         $email = $name . '@example.com';
         $pass = "xxxxxxxx";
 
