@@ -549,7 +549,7 @@ function spamhurdles_generate_key()
              "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     $key = microtime() . ":" .  $_SERVER["REMOTE_ADDR"];
     for ($i = 0; $i<40; $i++) {
-        $key .= substr($chars, rand(0, strlen($chars)-1), 1);
+        $key .= substr($chars, random_int(0, strlen($chars)-1), 1);
     }
     // And MD5 will bring it into a nice shape.
     $key = md5($key);
@@ -753,7 +753,7 @@ function spamhurdles_iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>
         $availChars = substr("0123456789", 0, $numberOfColumns);
         for ($i = 0 ; $i < $numberOfColumns; $i++)
         {
-            $char = $availChars{ rand(0, strlen($availChars)-1) };
+            $char = $availChars{ random_int(0, strlen($availChars)-1) };
             $password .= $char;
             $availChars = str_replace($char, "", $availChars);
         }

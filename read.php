@@ -760,11 +760,11 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
      *     {
      *         // extend all message with some data
      *         foreach ($messages as &$message) {
-     *             $message['random'] = rand();
+     *             $message['somedata'] = dummy();
      *         }
      *         // Do something special with the current message
      *         if ($message_id > 0) {
-     *             $messages[$message_id]['random'] = 0;
+     *             $messages[$message_id]['somedata'] = 0;
      *          }
      *
      *         return $messages;
