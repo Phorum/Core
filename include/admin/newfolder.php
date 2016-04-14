@@ -33,7 +33,7 @@
                     $value = trim($value);
                     $_POST["name"] = $value;
                     if($value == ""){
-                        $error="Please fill in Title";
+                        $error='Please fill in Title.';
                     }
                     break;
                 case "vroot":

@@ -19,7 +19,7 @@
 
 if ( !defined( "PHORUM_ADMIN" ) ) return;
 
-$error = "";
+$error = '';
 
 if ( count( $_POST ) )
 {
@@ -42,7 +42,7 @@ if ( count( $_POST ) )
                 if ( empty( $value ) ) {
                     $_POST[$field] = dirname( $_SERVER["HTTP_REFERER"] );
                 } elseif ( !preg_match( "/^(http|https):\/\/(([a-z0-9][a-z0-9_-]*)(\.[a-z0-9][a-z0-9_-]*)+)(:(\d+))?/i", $value ) && !preg_match( "/^(http|https):\/\/[a-z0-9][a-z0-9_-]*(:\d+)?/i", $value ) ) {
-                    $error = "The provided HTTP Path is not a valid URL.";
+                    $error .= 'The provided HTTP Path is not a valid URL. ';
                 }
 
                 break;
@@ -67,7 +67,7 @@ if ( count( $_POST ) )
                 if ( empty( $value ) ) {
                     $_POST[$field] = "/";
                 } elseif ( $value[0] != "/" ) {
-                    $error = "Session Path must start with a /";
+                    $error .= 'Session Path must start with a /. ';
                 }
 
                 break;
@@ -75,7 +75,7 @@ if ( count( $_POST ) )
             case "session_domain":
 
                 if ( !empty( $value ) && !stristr( $_POST["http_path"], $value ) ) {
-                    $error = "Session Domain must be part of the domain in HTTP Path or empty.";
+                    $error .= 'Session Domain must be part of the domain in HTTP Path or empty. ';
                 }
 
                 break;
@@ -83,7 +83,7 @@ if ( count( $_POST ) )
             case "system_email_from_address":
 
                 if ( empty( $value ) ) {
-                    $error = "You must supply an email address for system emails to use as a from address.";
+                    $error .= 'You must supply an email address for system emails to use as a from address. ';
                 }
 
                 break;
@@ -110,7 +110,7 @@ if ( count( $_POST ) )
 
                 $private_key = trim($value);
                 if (strlen($private_key) < 30) {
-                    $error = "Use at least 30 characters for the secret private key.";
+                    $error .= 'Use at least 30 characters for the secret private key. ';
                 }
                 $_POST[$field] = $private_key;
                 break;
@@ -122,8 +122,6 @@ if ( count( $_POST ) )
                 }
                 break;
         }
-
-        if ( $error ) break;
     }
 
     if ( empty( $error ) ) {

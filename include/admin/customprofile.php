@@ -67,7 +67,7 @@ if(count($_POST) && $_POST['name'] != '')
           "<?php print htmlspecialchars($_POST['name']) ?>"
           was found.<br /><br />
           If you accidentally deleted that old field, then
-          you can choose to restore the old field's configuration and
+          you can choose to restore the old field&#x2019;s configuration and
           data. You can also create a totally new field and ignore
           the deleted field. What do you want to do?<br/><br/>
           <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
