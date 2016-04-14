@@ -4,6 +4,8 @@
 {! is targeted at "Standards Mode" in XHTML 1.0 Transitional. For more }
 {! info on this subject, see http://hsivonen.iki.fi/doctype/ }
 <?php
+{! Adds X-Frame-Options to HTTP header, so that page can only be shown in an iframe of the same site. }
+header('X-Frame-Options: SAMEORIGIN');
 if ($PHORUM['DATA']['CHARSET']) {
     header("Content-Type: text/html; charset=".htmlspecialchars($PHORUM['DATA']['CHARSET']));
     echo '<?xml version="1.0" encoding="'.$PHORUM['DATA']['CHARSET'].'"?>';
