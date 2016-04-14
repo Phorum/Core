@@ -2207,7 +2207,10 @@ function phorum_api_user_session_create($type, $reset = 0)
                 PHORUM_SESSION_LONG_TERM,
                 $user['user_id'].':'.$sessid_lt,
                 $timeout,
-                $PHORUM['session_path'], $PHORUM['session_domain']
+                $PHORUM['session_path'],
+                $PHORUM['session_domain'],
+                false,
+                true // httponly
             );
         } else {
             // Add the session id to the URL building GET variables.
@@ -2227,7 +2230,10 @@ function phorum_api_user_session_create($type, $reset = 0)
                 PHORUM_SESSION_SHORT_TERM,
                 $user['user_id'].':'.$user['sessid_st'],
                 $user['sessid_st_timeout'],
-                $PHORUM['session_path'], $PHORUM['session_domain']
+                $PHORUM['session_path'],
+                $PHORUM['session_domain'],
+                false,
+                true // httponly
             );
         }
     }
@@ -2238,7 +2244,10 @@ function phorum_api_user_session_create($type, $reset = 0)
             PHORUM_SESSION_ADMIN,
             $user['user_id'].':'.$sessid_admin,
             0, // admin sessions are destroyed as soon as the browser closes
-            $PHORUM['session_path'], $PHORUM['session_domain']
+            $PHORUM['session_path'],
+            $PHORUM['session_domain'],
+            false,
+            true // httponly
         );
     }
 
