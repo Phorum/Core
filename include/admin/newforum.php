@@ -21,7 +21,7 @@ if(!defined("PHORUM_ADMIN")) return;
 
 include_once "./include/format_functions.php";
 
-$error="";
+$error='';
 
 if(count($_POST)){
 
@@ -33,7 +33,7 @@ if(count($_POST)){
 
             case "name":
                 if(empty($value) && $_POST["module"]!="forum_defaults"){
-                    $error="Please fill in Title";
+                    $error.='Please fill in Title. ';
                 }
                 break;
 
@@ -98,18 +98,14 @@ if(count($_POST)){
                 if( $_POST['inherit_id'] !== NULL && $_POST["inherit_id"] != "NULL" && $_POST['inherit_id'] != 0) {
                     $forum_check_inherit =phorum_db_get_forums(intval($_POST["inherit_id"]));
                     if( $forum_check_inherit[$_POST["inherit_id"]]["inherit_id"] || ($_POST["inherit_id"]==$_POST["forum_id"]) ) {
-                        $error="Settings can't be inherited by this forum, because this forum already inherits settings from another forum.";
+                        $error.='Settings can&#x2019;t be inherited by this forum, because this forum already inherits settings from another forum. ';
                     }
                     if( $forum_check_inherit[$_POST["inherit_id"]]["inherit_id"] === 0) {
-                        $error="Settings can't be inherited by this forum, because this forum already inherits the default settings";
+                        $error.='Settings can&#x2019;t be inherited by this forum, because this forum already inherits the default settings. ';
                     }
                 }
                 break;
         }
-
-        if($error) break;
-
-
     }
 
     if (empty($error)) {
