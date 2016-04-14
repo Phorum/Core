@@ -20,8 +20,8 @@
 
 if ( !defined( "PHORUM_ADMIN" ) ) return;
 
-$error = "";
-$okmsg = "";
+$error = '';
+$okmsg = '';
 
 if ( count( $_POST ) ) {
     $new_settings = array();
@@ -34,7 +34,7 @@ if ( count( $_POST ) ) {
                 if ( empty( $value ) ) {
                     $new_settings[$field] = "/tmp";
                 } elseif ( !file_exists( $value ) ) {
-                    $error = "This cache directory does not exist.  Please create it with the proper permissions.";
+                    $error .= 'This cache directory does not exist.  Please create it with the proper permissions. ';
                 } else {
                     $new_settings[$field] = $value;
                 }
@@ -46,7 +46,7 @@ if ( count( $_POST ) ) {
                 if ( empty( $value ) ) {
                     $new_settings[$field] = "file";
                 } elseif ( !file_exists( './include/cache/'.$value.'.php' ) ) {
-                    $error = "This cache layer ($value) does not exist.";
+                    $error .= 'This cache layer ($value) does not exist. ';
                 } else {
                     $new_settings[$field] = $value;
                 }
@@ -68,8 +68,6 @@ if ( count( $_POST ) ) {
                 }
 
         }
-
-        if ( $error ) break;
     }
 
     if ( empty( $error ) ) {
