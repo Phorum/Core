@@ -118,6 +118,11 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
 // Set all our URLs.
 phorum_build_common_urls();
 
+// CSRF protection: we do not accept posting to this script,
+// when the browser does not include a Phorum signed token
+// in the request.
+phorum_check_posting_token();
+
 $template = "login";
 $error = "";
 $okmsg = "";
@@ -518,7 +523,9 @@ if (count($_POST) > 0) {
              *         if (!empty($PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]])) {
              *             // If the failures occur within the set time window,
              *             // increment the login failure count
-             *             if ($curr_time <= ($PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] + (int)$PHORUM["mod_foo"]["login_failures_time_window"])) {
+             *             if ( $curr_time
+             *                  <= ($PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"]
+             *                     + (int)$PHORUM["mod_foo"]["login_failures_time_window"])) {
              *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["login_failure_count"] ++;
              *                 $PHORUM["mod_foo"]["login_failures"][$_SERVER["REMOTE_ADDR"]]["timestamp"] = $curr_time;
              *             // Otherwise, reset the count.
