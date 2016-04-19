@@ -107,6 +107,11 @@ if (isset($PHORUM["args"]["approve"])) {
 
 }
 
+// CSRF protection: we do not accept posting to this script,
+// when the browser does not include a Phorum signed token
+// in the request.
+phorum_api_request_check_token();
+
 $error = ''; // Init error as empty.
 
 // Process posted form data.
