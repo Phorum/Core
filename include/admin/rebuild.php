@@ -197,7 +197,7 @@ if ( $error ) {
 
 require_once './include/admin/PhorumInputForm.php';
 
-$frm = &new PhorumInputForm ( "", "post" );
+$frm = new PhorumInputForm ( "", "post" );
 $frm->hidden( "module", "rebuild" );
 $frm->addbreak( "Rebuild parameters" );
 
