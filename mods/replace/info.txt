@@ -3,3 +3,4 @@ title: Simple Text Replacement Mod
 desc:  This module allows admins to define text replacement in messages.
 author: Phorum Dev Team
 url: http://www.phorum.org/
+version: 1.0.1

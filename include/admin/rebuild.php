@@ -165,7 +165,7 @@ if ( $error ) {
 
 include_once "./include/admin/PhorumInputForm.php";
 
-$frm = &new PhorumInputForm ( "", "post" );
+$frm = new PhorumInputForm ( "", "post" );
 $frm->hidden( "module", "rebuild" );
 $frm->addbreak( "Rebuild parameters" );
 $row=$frm->addrow( "Rebuild forum statistics", $frm->checkbox('rebuild_forumstats',1,"Yes"));
