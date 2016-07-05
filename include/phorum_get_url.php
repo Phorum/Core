@@ -276,7 +276,7 @@ function phorum_get_current_url($include_query_string=true) {
     // the SCRIPT_URI. Otherwise, we use the SCRIPT_URI as the current URL.
     if (isset($_SERVER["SCRIPT_URI"]) &&
         (!isset($_SERVER['HTTP_HOST']) ||
-         stripos($_SERVER['SCRIPT_URI'], "//$_SERVER[HTTP_HOST]/") !== FALSE)) {
+         stripos($_SERVER['SCRIPT_URI'], "//{$_SERVER['HTTP_HOST']}/") !== FALSE)) {
 
         $url = $_SERVER["SCRIPT_URI"];
 
