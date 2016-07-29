@@ -71,7 +71,7 @@
 
     if(!empty($_SERVER["QUERY_STRING"])){
 
-        $frm->hidden("target", htmlspecialchars($_SERVER["QUERY_STRING"], ENT_COMPAT, $PHORUM["DATA"]['CHARSET']));
+        $frm->hidden("target", htmlspecialchars($_SERVER["QUERY_STRING"], ENT_QUOTES, $PHORUM["DATA"]['CHARSET']));
 
     }
 

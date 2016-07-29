@@ -1085,7 +1085,7 @@ function bbcode_api_render($text, $tokens, &$message)
                                 '%'.$key.'%',
                                 htmlspecialchars(
                                     $token[2][$key], // 2 = args
-                                    ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]
+                                    ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]
                                 ),
                                 $tag[BBCODE_INFO_REPLACECLOSE]
                             );
@@ -1122,7 +1122,7 @@ function bbcode_api_render($text, $tokens, &$message)
                                 '%'.$key.'%',
                                 htmlspecialchars(
                                     $token[2][$key], // 2 = args
-                                    ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]
+                                    ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]
                                 ),
                                 $tag[BBCODE_INFO_REPLACEOPEN]
                             );

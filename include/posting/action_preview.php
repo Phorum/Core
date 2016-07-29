@@ -47,7 +47,7 @@ if ($attach_count)
             phorum_get_url(PHORUM_FILE_URL, "file={$data['file_id']}", "filename=".urlencode($data['name']), "download=1");
         $previewmessage["attachments"][$nr]["size"] =
             phorum_filesize($data["size"]);
-        $previewmessage["attachments"][$nr]["name"] = htmlspecialchars($data['name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+        $previewmessage["attachments"][$nr]["name"] = htmlspecialchars($data['name'], ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
     }
 }
 
