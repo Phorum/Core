@@ -107,11 +107,11 @@ function phorum_show_confirmation_form($message, $action, $args)
 
     ?>
     <div style="text-align: center;">
-        <strong><?php echo htmlspecialchars($message, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?></strong>
+        <strong><?php echo htmlspecialchars($message, ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]); ?></strong>
         <br />
         <br />
         <form
-            action="<?php echo htmlspecialchars($action, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?>"
+            action="<?php echo htmlspecialchars($action, ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]); ?>"
             method="post">
 
             <input type="hidden"
@@ -119,8 +119,8 @@ function phorum_show_confirmation_form($message, $action, $args)
 
             <?php foreach($args as $name=>$value){ ?>
                 <input type="hidden"
-                    name="<?php echo htmlspecialchars($name, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?>"
-                    value="<?php echo htmlspecialchars($value, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]); ?>" />
+                    name="<?php echo htmlspecialchars($name, ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]); ?>"
+                    value="<?php echo htmlspecialchars($value, ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]); ?>" />
             <?php } ?>
 
             <?php echo $PHORUM["DATA"]["POST_VARS"]; ?>

@@ -105,16 +105,16 @@ $PHORUM["DATA"]["PROFILE"]["is_buddy"] = phorum_db_pm_is_buddy($user["user_id"])
 $PHORUM["DATA"]["PROFILE"]["URL"]["SEARCH"] = phorum_get_url(PHORUM_SEARCH_URL, "author=".urlencode($PHORUM["DATA"]["PROFILE"]["user_id"]), "match_type=USER_ID", "match_dates=0", "match_threads=0");
 
 $PHORUM["DATA"]["PROFILE"]["username"] =
-    htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+    htmlspecialchars($PHORUM["DATA"]["PROFILE"]["username"], ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
 
 if (isset($PHORUM["DATA"]["PROFILE"]["real_name"])) {
     $PHORUM["DATA"]["PROFILE"]["real_name"] =
-        htmlspecialchars($PHORUM["DATA"]["PROFILE"]["real_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+        htmlspecialchars($PHORUM["DATA"]["PROFILE"]["real_name"], ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
 }
 
 if (empty($PHORUM["custom_display_name"])) {
     $PHORUM["DATA"]["PROFILE"]["display_name"] =
-        htmlspecialchars($PHORUM["DATA"]["PROFILE"]["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+        htmlspecialchars($PHORUM["DATA"]["PROFILE"]["display_name"], ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
 }
 
 if (isset($PHORUM["hooks"]["profile"]))

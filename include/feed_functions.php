@@ -9,11 +9,11 @@ function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_
     $buffer = "<?xml version=\"1.0\" encoding=\"{$PHORUM['DATA']['CHARSET']}\"?>\n";
     $buffer.= "<rss version=\"2.0\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n";
     $buffer.= "    <channel>\n";
-    $buffer.= "        <title>".htmlspecialchars($feed_title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</title>\n";
-    $buffer.= "        <description>".htmlspecialchars($feed_description, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</description>\n";
-    $buffer.= "        <link>".htmlspecialchars($feed_url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</link>\n";
-    $buffer.= "        <lastBuildDate>".htmlspecialchars(date("r"), ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</lastBuildDate>\n";
-    $buffer.= "        <generator>".htmlspecialchars("Phorum ".PHORUM, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</generator>\n";
+    $buffer.= "        <title>".htmlspecialchars($feed_title, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</title>\n";
+    $buffer.= "        <description>".htmlspecialchars($feed_description, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</description>\n";
+    $buffer.= "        <link>".htmlspecialchars($feed_url, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</link>\n";
+    $buffer.= "        <lastBuildDate>".htmlspecialchars(date("r"), ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</lastBuildDate>\n";
+    $buffer.= "        <generator>".htmlspecialchars("Phorum ".PHORUM, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</generator>\n";
 
     // Lookup the plain text usernames for the authenticated authors.
     $users = $messages['users'];
@@ -53,13 +53,13 @@ function phorum_feed_make_rss($messages, $forums, $feed_url, $feed_title, $feed_
         $body = strtr($message['body'], "\001\002\003\004\005\006\007\010\013\014\016\017\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037", "????????????????????????????");
 
         $buffer.= "        <item>\n";
-        $buffer.= "            <guid>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</guid>\n";
+        $buffer.= "            <guid>".htmlspecialchars($url, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</guid>\n";
         $buffer.= "            <title>$title</title>\n";
-        $buffer.= "            <link>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</link>\n";
+        $buffer.= "            <link>".htmlspecialchars($url, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</link>\n";
         $buffer.= "            <description><![CDATA[$body]]></description>\n";
-        $buffer.= "            <dc:creator>".htmlspecialchars($author, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</dc:creator>\n";
-        $buffer.= "            <category>".htmlspecialchars($category, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</category>\n";
-        $buffer.= "            <pubDate>".htmlspecialchars($date, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</pubDate>\n";
+        $buffer.= "            <dc:creator>".htmlspecialchars($author, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</dc:creator>\n";
+        $buffer.= "            <category>".htmlspecialchars($category, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</category>\n";
+        $buffer.= "            <pubDate>".htmlspecialchars($date, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</pubDate>\n";
         $buffer.= "        </item>\n";
     }
 
@@ -78,12 +78,12 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
 
     $buffer = "<?xml version=\"1.0\" encoding=\"{$PHORUM['DATA']['CHARSET']}\"?>\n";
     $buffer.= "<feed xmlns=\"http://www.w3.org/2005/Atom\">\n";
-    $buffer.= "    <title>".htmlspecialchars($feed_title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</title>\n";
-    $buffer.= "    <subtitle>".htmlspecialchars($feed_description, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</subtitle>\n";
-    $buffer.= "    <link rel=\"self\" href=\"".htmlspecialchars($self, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\" />\n";
-    $buffer.= "    <id>".htmlspecialchars($feed_url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</id>\n";
-    $buffer.= "    <updated>".htmlspecialchars(date("c"), ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</updated>\n";
-    $buffer.= "    <generator>".htmlspecialchars("Phorum ".PHORUM, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</generator>\n";
+    $buffer.= "    <title>".htmlspecialchars($feed_title, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</title>\n";
+    $buffer.= "    <subtitle>".htmlspecialchars($feed_description, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</subtitle>\n";
+    $buffer.= "    <link rel=\"self\" href=\"".htmlspecialchars($self, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."\" />\n";
+    $buffer.= "    <id>".htmlspecialchars($feed_url, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</id>\n";
+    $buffer.= "    <updated>".htmlspecialchars(date("c"), ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</updated>\n";
+    $buffer.= "    <generator>".htmlspecialchars("Phorum ".PHORUM, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</generator>\n";
 
     // Lookup the plain text usernames for the authenticated authors.
     $users = $messages['users'];
@@ -118,13 +118,13 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
 
         $buffer.= "    <entry>\n";
         $buffer.= "        <title type=\"html\">$title</title>\n";
-        $buffer.= "        <link href=\"".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\" />\n";
-        $buffer.= "        <category term=\"".htmlspecialchars($category, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\" />\n";
+        $buffer.= "        <link href=\"".htmlspecialchars($url, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."\" />\n";
+        $buffer.= "        <category term=\"".htmlspecialchars($category, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."\" />\n";
         $buffer.= "        <published>".date("c", $message["datestamp"])."</published>\n";
         $buffer.= "        <updated>".date("c", $message["modifystamp"])."</updated>\n";
-        $buffer.= "        <id>".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</id>\n";
+        $buffer.= "        <id>".htmlspecialchars($url, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</id>\n";
         $buffer.= "        <author>\n";
-        $buffer.= "            <name>".htmlspecialchars($author, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</name>\n";
+        $buffer.= "            <name>".htmlspecialchars($author, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</name>\n";
         $buffer.= "        </author>\n";
         $buffer.= "        <summary type=\"html\"><![CDATA[$body]]></summary>\n";
         $buffer.= "    </entry>\n";
@@ -142,8 +142,8 @@ function phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed
     global $PHORUM;
 
     $buffer = "<div id=\"phorum_feed\">\n";
-    $buffer.= "    <div id=\"phorum_feed_title\"><a href=\"".htmlspecialchars($feed_url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\" title=\"".htmlspecialchars($feed_description, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\">".htmlspecialchars($feed_title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</div>\n";
-    $buffer.= "    <div id=\"phorum_feed_date\">".htmlspecialchars(phorum_date($PHORUM['long_date'], time()), ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</lastBuildDate>\n";
+    $buffer.= "    <div id=\"phorum_feed_title\"><a href=\"".htmlspecialchars($feed_url, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."\" title=\"".htmlspecialchars($feed_description, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."\">".htmlspecialchars($feed_title, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</div>\n";
+    $buffer.= "    <div id=\"phorum_feed_date\">".htmlspecialchars(phorum_date($PHORUM['long_date'], time()), ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</lastBuildDate>\n";
     $buffer.= "    <ul>\n";
 
     unset($messages['users']);
@@ -173,7 +173,7 @@ function phorum_feed_make_html($messages, $forums, $feed_url, $feed_title, $feed
         $body = phorum_strip_body($message["body"]);
         $body = mb_substr($body, 0, 200);
 
-        $buffer.= "        <li><a href=\"".htmlspecialchars($url, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\" title=\"".htmlspecialchars($message["body"], ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."\">".htmlspecialchars($title, ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])."</a></li>\n";
+        $buffer.= "        <li><a href=\"".htmlspecialchars($url, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."\" title=\"".htmlspecialchars($message["body"], ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."\">".htmlspecialchars($title, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."</a></li>\n";
     }
 
     $buffer.= "    </ul>\n";

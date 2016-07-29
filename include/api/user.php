@@ -605,7 +605,7 @@ function phorum_api_user_save($user, $flags = 0)
     // to be provided in escaped HTML format.
     elseif (!isset($dbuser['display_name']) ||
             trim($dbuser['display_name']) == '') {
-        $dbuser['display_name'] = htmlspecialchars($dbuser['username'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+        $dbuser['display_name'] = htmlspecialchars($dbuser['username'], ENT_QUOTES, $PHORUM['DATA']['HCHARSET']);
     }
 
     /**
@@ -1139,7 +1139,7 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
             // Other names do have to be escaped.
             if (empty($users[$id]) || empty($PHORUM['custom_display_name']))
             {
-                $display_name = htmlspecialchars($display_name, ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+                $display_name = htmlspecialchars($display_name, ENT_QUOTES, $PHORUM['DATA']['HCHARSET']);
             }
         }
         // Generate a plain text version of the display name. This is the
@@ -1484,7 +1484,7 @@ function phorum_api_user_format($users)
         ) as $field) {
             if (isset($user[$field])) {
                 $users[$id][$field] = htmlspecialchars(
-                    $user[$field], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]
+                    $user[$field], ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]
                 );
             }
         }
