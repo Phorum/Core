@@ -178,9 +178,9 @@ if (!empty($group_id))
         }
 
         $PHORUM['DATA']['USERS'][$userid] = array('userid' => $userid,
-            'name' => htmlspecialchars($users[$userid]['username'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']),
+            'name' => phorum_api_format_htmlspecialchars($users[$userid]['username']),
             'display_name' => (empty($PHORUM['custom_display_name'])
-                            ? htmlspecialchars($users[$userid]['display_name'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET'])
+                            ? phorum_api_format_htmlspecialchars($users[$userid]['display_name'])
                             : $users[$userid]['display_name']),
             'status' => $status,
             'statustext' => $statustext,
@@ -200,8 +200,8 @@ if (!empty($group_id))
 
         foreach ($userlist as $userid => $userinfo){
             if (!in_array($userid, $usersingroup)){
-                $userinfo['username'] = htmlspecialchars($userinfo['username'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
-                $userinfo['display_name'] = htmlspecialchars($userinfo['display_name'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+                $userinfo['username'] = phorum_api_format_htmlspecialchars($userinfo['username']);
+                $userinfo['display_name'] = phorum_api_format_htmlspecialchars($userinfo['display_name']);
                 $PHORUM['DATA']['NEWMEMBERS'][] = $userinfo;
             }
         }

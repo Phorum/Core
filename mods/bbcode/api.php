@@ -1081,9 +1081,8 @@ function bbcode_api_render($text, $tokens, &$message)
                         foreach ($tag[BBCODE_INFO_REPLACEARGS] as $key) {
                             $tag[BBCODE_INFO_REPLACECLOSE] = str_replace(
                                 '%'.$key.'%',
-                                htmlspecialchars(
-                                    $token[2][$key], // 2 = args
-                                    ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]
+                                phorum_api_format_htmlspecialchars(
+                                    $token[2][$key] // 2 = args
                                 ),
                                 $tag[BBCODE_INFO_REPLACECLOSE]
                             );
@@ -1118,9 +1117,8 @@ function bbcode_api_render($text, $tokens, &$message)
                         foreach ($tag[BBCODE_INFO_REPLACEARGS] as $key) {
                             $tag[BBCODE_INFO_REPLACEOPEN] = str_replace(
                                 '%'.$key.'%',
-                                htmlspecialchars(
-                                    $token[2][$key], // 2 = args
-                                    ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]
+                                phorum_api_format_htmlspecialchars(
+                                    $token[2][$key] // 2 = args
                                 ),
                                 $tag[BBCODE_INFO_REPLACEOPEN]
                             );

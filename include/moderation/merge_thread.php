@@ -38,8 +38,7 @@ if (
     $PHORUM['DATA']['FORM']['merge_none'] = TRUE;
 
     $message = $PHORUM['DB']->get_message($msgthd_id, 'message_id', TRUE);
-    $PHORUM['DATA']['FORM']['merge_subject1'] = htmlspecialchars(
-        $message['subject'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+    $PHORUM['DATA']['FORM']['merge_subject1'] = phorum_api_format_htmlspecialchars($message['subject']);
 }
 // The moderator selects the source thread to merge from.
 else
@@ -47,12 +46,10 @@ else
     $PHORUM['DATA']['FORM']['merge_t1'] = $merge_t1;
 
     $message = $PHORUM['DB']->get_message($merge_t1, 'message_id', true);
-    $PHORUM['DATA']['FORM']['merge_subject1'] = htmlspecialchars(
-        $message['subject'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+    $PHORUM['DATA']['FORM']['merge_subject1'] = phorum_api_format_htmlspecialchars($message['subject']);
 
     $message = $PHORUM['DB']->get_message($msgthd_id);
-    $PHORUM['DATA']['FORM']['thread_subject'] = htmlspecialchars(
-        $message['subject'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+    $PHORUM['DATA']['FORM']['thread_subject'] = phorum_api_format_htmlspecialchars($message['subject']);
 }
 
 ?>

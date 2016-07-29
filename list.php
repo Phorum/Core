@@ -500,7 +500,7 @@ if ($bodies_in_list)
             // unset($row["meta"]["attachments"]);
             foreach($row["attachments"] as $key=>$file){
                 $row["attachments"][$key]["size"]=phorum_api_format_filesize($file["size"]);
-                $row["attachments"][$key]["name"]=htmlspecialchars($file['name'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                $row["attachments"][$key]["name"]=phorum_api_format_htmlspecialchars($file['name']);
                 $row["attachments"][$key]["url"] =str_replace(array('%file_id%','%file_name%'),array($file['file_id'],urlencode($file['name'])),$attachment_url_template);
             }
         }

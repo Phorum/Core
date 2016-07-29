@@ -293,6 +293,7 @@ require_once PHORUM_PATH . '/include/api/redirect.php';
 require_once PHORUM_PATH . '/include/api/user.php';
 require_once PHORUM_PATH . '/include/api/forums.php';
 require_once PHORUM_PATH . '/include/api/format.php';
+require_once PHORUM_PATH . '/include/api/format/htmlspecialchars.php';
 require_once PHORUM_PATH . '/include/api/format/users.php';
 require_once PHORUM_PATH . '/include/api/format/wordwrap.php';
 require_once PHORUM_PATH . '/include/api/template.php';
@@ -383,7 +384,7 @@ if (function_exists('phorum_api_cache_check'))
              "configuration is okay, check if the application used " .
              "for caching is running.<br/><br/>" .
              "The error as returned by the cache layer is:<br/>" .
-             "<b>" . htmlspecialchars($error) . "</b>";
+             "<b>" . phorum_api_format_htmlspecialchars($error) . "</b>";
         exit();
     }
 }

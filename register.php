@@ -486,7 +486,7 @@ if (count($_POST)) {
     // data to redisplay the registration form, including an error.
     if (!empty($error)) {
         foreach($_POST as $key => $val){
-            $PHORUM["DATA"]["REGISTER"][$key] = htmlspecialchars($val, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+            $PHORUM["DATA"]["REGISTER"][$key] = phorum_api_format_htmlspecialchars($val);
         }
         $PHORUM["DATA"]["ERROR"] = $error;
     }

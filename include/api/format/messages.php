@@ -109,8 +109,7 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
             );
 
             // Escape special HTML characters.
-            $escaped_body = htmlspecialchars(
-                $body, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+            $escaped_body = phorum_api_format_htmlspecialchars($body);
 
             // When there is a charset mismatch between the database
             // and the language file, then bodies might get crippled
@@ -157,7 +156,7 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
 
         // Escape special HTML characters.
         if (isset($message['subject'])) {
-            $messages[$id]['subject'] = htmlspecialchars($messages[$id]['subject'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+            $messages[$id]['subject'] = phorum_api_format_htmlspecialchars($messages[$id]['subject']);
         }
 
         // -----------------------------------------------------------------
@@ -166,7 +165,7 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
 
         // Escape special HTML characters in the email address.
         if (isset($message['email'])) {
-            $messages[$id]['email'] = htmlspecialchars($message['email'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+            $messages[$id]['email'] = phorum_api_format_htmlspecialchars($message['email']);
         }
 
         // Do author formatting for all provided author fields.
@@ -188,7 +187,7 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
                 $messages[$id]["URL"][$spec[4]] = $url;
                 $messages[$id][$spec[3]] =
                     (empty($PHORUM["custom_display_name"])
-                     ? htmlspecialchars($message[$spec[1]], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
+                     ? phorum_api_format_htmlspecialchars($message[$spec[1]])
                      : $message[$spec[1]]);
             }
             // For an anonymous user that left an email address.
@@ -202,13 +201,13 @@ function phorum_api_format_messages($messages, $author_specs = NULL)
                      phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES) && PHORUM_MOD_EMAIL_VIEW ||
                      phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_USERS) && PHORUM_MOD_EMAIL_VIEW) )
             {
-                $messages[$id][$spec[3]] = htmlspecialchars($message[$spec[1]], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                $messages[$id][$spec[3]] = phorum_api_format_htmlspecialchars($message[$spec[1]]);
                 $email_url = phorum_api_format_html_encode("mailto:".$message[$spec[2]]);
                 $messages[$id]["URL"]["PROFILE"] = $email_url;
             }
             // For an anonymous user that did not leave an e-mail address.
             else {
-                $messages[$id][$spec[3]] = htmlspecialchars($message[$spec[1]], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                $messages[$id][$spec[3]] = phorum_api_format_htmlspecialchars($message[$spec[1]]);
             }
 
             if ($censor_search !== NULL) {

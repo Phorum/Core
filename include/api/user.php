@@ -505,7 +505,7 @@ function phorum_api_user_save($user, $flags = 0)
             default:
                 trigger_error(
                     'phorum_api_user_save(): Illegal field type used: ' .
-                    htmlspecialchars($fldtype),
+                    phorum_api_format_htmlspecialchars($fldtype),
                     E_USER_ERROR
                 );
                 return NULL;
@@ -607,7 +607,7 @@ function phorum_api_user_save($user, $flags = 0)
     // to be provided in escaped HTML format.
     elseif (!isset($dbuser['display_name']) ||
             trim($dbuser['display_name']) == '') {
-        $dbuser['display_name'] = htmlspecialchars($dbuser['username'], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+        $dbuser['display_name'] = phorum_api_format_htmlspecialchars($dbuser['username']);
     }
 
     /**
@@ -1198,7 +1198,7 @@ function phorum_api_user_get_display_name($user_id = NULL, $fallback = NULL, $fl
             // Other names do have to be escaped.
             if (empty($users[$id]) || empty($PHORUM['custom_display_name']))
             {
-                $display_name = htmlspecialchars($display_name, ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+                $display_name = phorum_api_format_htmlspecialchars($display_name);
             }
         }
         // Generate a plain text version of the display name. This is the
@@ -1664,7 +1664,7 @@ function phorum_api_user_authenticate($type, $username, $password)
         if ($authinfo['user_id']!==NULL && !is_numeric($authinfo['user_id'])) {
             trigger_error(
                 'Hook user_check_login returned a non-numerical user_id "' .
-                htmlspecialchars($authinfo['user_id']) .
+                phorum_api_format_htmlspecialchars($authinfo['user_id']) .
                 '" for the authenticated user. Phorum only supports numerical ' .
                 'user_id values.',
                 E_USER_ERROR
@@ -2072,7 +2072,7 @@ function phorum_api_user_session_create($type, $reset = 0)
         $type != PHORUM_ADMIN_SESSION) {
         trigger_error(
             'phorum_api_user_session_create(): Illegal session type: ' .
-            htmlspecialchars($type),
+            phorum_api_format_htmlspecialchars($type),
             E_USER_ERROR
         );
         return NULL;
@@ -2319,7 +2319,7 @@ function phorum_api_user_session_restore($type)
     else {
         trigger_error(
             'phorum_api_user_session_restore(): Illegal session type: ' .
-            htmlspecialchars($type),
+            phorum_api_format_htmlspecialchars($type),
             E_USER_ERROR
         );
         return NULL;
@@ -2718,7 +2718,7 @@ function phorum_api_user_session_destroy($type)
         } else {
             trigger_error(
                 'phorum_api_user_session_destroy(): Illegal session type: ' .
-                htmlspecialchars($type),
+                phorum_api_format_htmlspecialchars($type),
                 E_USER_ERROR
             );
             return NULL;
@@ -2812,7 +2812,7 @@ function phorum_api_user_save_groups($user_id, $groups)
             $perm != PHORUM_USER_GROUP_MODERATOR) {
             trigger_error(
                 'phorum_api_user_save_groups(): Illegal group permission for ' .
-                'group id '.htmlspecialchars($id).': '.htmlspecialchars($perm),
+                'group id '.phorum_api_format_htmlspecialchars($id).': '.phorum_api_format_htmlspecialchars($perm),
                 E_USER_ERROR
             );
             return NULL;
