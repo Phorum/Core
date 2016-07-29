@@ -190,8 +190,8 @@ $allowed_forums = phorum_api_user_check_access(
 // setup some stuff based on the url passed
 if(!empty($phorum_search) || !empty($phorum_author)){
 
-    $PHORUM["DATA"]["SEARCH"]["safe_search"] = htmlspecialchars($phorum_search, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-    $PHORUM["DATA"]["SEARCH"]["safe_author"] = htmlspecialchars($phorum_author, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+    $PHORUM["DATA"]["SEARCH"]["safe_search"] = htmlspecialchars($phorum_search, ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
+    $PHORUM["DATA"]["SEARCH"]["safe_author"] = htmlspecialchars($phorum_author, ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
 
 
     if(isset($PHORUM["args"]["page"])){
@@ -373,7 +373,7 @@ if ($PHORUM["args"]["match_type"] == "USER_ID")
     } else {
         $search_name = $search_user["display_name"];
         if (empty($PHORUM['custom_display_name'])) {
-            $search_name = htmlspecialchars($search_name, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+            $search_name = htmlspecialchars($search_name, ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
         }
     }
     $PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["SearchAllPosts"];

@@ -114,7 +114,7 @@ if($PHORUM["file_space_quota"]){
 
 foreach ($files as $id => $file) {
   $files[$id]['filename'] = htmlspecialchars(
-    $file['filename'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+    $file['filename'], ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
 }
 
 $PHORUM["DATA"]["FILES"] = $files;
