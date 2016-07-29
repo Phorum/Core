@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2011  Phorum Development Team                              //
+//   Copyright (C) 2016  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -27,7 +27,7 @@
  *
  * @package    PhorumAPI
  * @subpackage Newflags
- * @copyright  2011, Phorum Development Team
+ * @copyright  2016, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  *
  * @todo Implement phorum_api_newflags_markunread(). This one might require
