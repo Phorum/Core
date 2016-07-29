@@ -57,14 +57,12 @@ function phorum_api_feed_atom($messages, $forums, $url, $title, $description, $r
 {
     global $PHORUM;
 
-    $hcharset    = $PHORUM['DATA']['HCHARSET'];
-
-    $selfurl     = htmlspecialchars(phorum_api_url_current(), ENT_COMPAT, $hcharset);
-    $url         = htmlspecialchars($url, ENT_COMPAT, $hcharset);
-    $title       = htmlspecialchars($title, ENT_COMPAT, $hcharset);
-    $description = htmlspecialchars($description, ENT_COMPAT, $hcharset);
-    $builddate   = htmlspecialchars(date('r'), ENT_COMPAT, $hcharset);
-    $generator   = htmlspecialchars('Phorum '.PHORUM, ENT_COMPAT, $hcharset);
+    $selfurl     = phorum_api_format_htmlspecialchars(phorum_api_url_current());
+    $url         = phorum_api_format_htmlspecialchars($url);
+    $title       = phorum_api_format_htmlspecialchars($title);
+    $description = phorum_api_format_htmlspecialchars($description);
+    $builddate   = phorum_api_format_htmlspecialchars(date('r'));
+    $generator   = phorum_api_format_htmlspecialchars('Phorum '.PHORUM);
 
     $buffer = "<?xml version=\"1.0\" encoding=\"{$PHORUM['DATA']['CHARSET']}\"?>\n";
     $buffer.= "<feed xmlns=\"http://www.w3.org/2005/Atom\">\n";
@@ -113,21 +111,21 @@ function phorum_api_feed_atom($messages, $forums, $url, $title, $description, $r
         }
 
         // Generate the URL for reading the message.
-        $url = htmlspecialchars(phorum_api_url(
+        $url = phorum_api_format_htmlspecialchars(phorum_api_url(
             PHORUM_FOREIGN_READ_URL,
             $message["forum_id"], $message["thread"], $message["message_id"]
         ));
 
         // The forum in which the message is stored is used as the category.
-        $category = htmlspecialchars(
-            $forums[$message['forum_id']]['name'], ENT_COMPAT, $hcharset
+        $category = phorum_api_format_htmlspecialchars(
+            $forums[$message['forum_id']]['name']
         );
 
         // Format the author.
         $author = !empty($users[$message['user_id']])
                 ? $users[$message['user_id']]
                 : $message['author'];
-        $author = htmlspecialchars($author, ENT_COMPAT, $hcharset);
+        $author = phorum_api_format_htmlspecialchars($author);
 
         // Strip unprintable characters from the message body.
         $body = strtr($message['body'],

@@ -282,7 +282,7 @@ if ($initial)
 }
 
 if (! in_array($mode, $valid_modes)) trigger_error(
-    "Illegal mode issued: " . htmlspecialchars($mode), E_USER_ERROR
+    "Illegal mode issued: " . phorum_api_format_htmlspecialchars($mode), E_USER_ERROR
 );
 
 // Find out if we are detaching an attachment.
@@ -720,7 +720,7 @@ if ($PHORUM["posting_template"] == 'posting')
             $val = base64_encode(serialize($message[$var]));
             if ($spec[pf_SIGNED]) $signval = $val;
         } else {
-            $val = htmlspecialchars($message[$var], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+            $val = phorum_api_format_htmlspecialchars($message[$var]);
             if ($spec[pf_SIGNED]) $signval = $message[$var];
         }
 
@@ -732,7 +732,7 @@ if ($PHORUM["posting_template"] == 'posting')
         if ($signval !== NULL) {
             $signature = phorum_api_sign($signval);
             $hidden .= '<input type="hidden" name="' . $var . ':signature" ' .
-                       'value="' . htmlspecialchars($signature, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) . "\" />\n";
+                       'value="' . phorum_api_format_htmlspecialchars($signature) . "\" />\n";
         }
     }
     $PHORUM["DATA"]["POST_VARS"] .= $hidden;
@@ -760,17 +760,17 @@ if ($PHORUM["posting_template"] == 'posting')
                         continue;
                     }
 
-                    $message[$var][$nr]["name"] = htmlspecialchars($data["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                    $message[$var][$nr]["name"] = phorum_api_format_htmlspecialchars($data["name"]);
                     $message[$var][$nr]["size"] = phorum_api_format_filesize(round($data["size"]));
                 }
             }
         } elseif ($var == "author") {
             if (empty($PHORUM["custom_display_name"])) {
-                $message[$var] = htmlspecialchars($val, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                $message[$var] = phorum_api_format_htmlspecialchars($val);
             }
         } else {
             if (is_scalar($val)) {
-                $message[$var] = htmlspecialchars($val, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                $message[$var] = phorum_api_format_htmlspecialchars($val);
             } else {
                 // Not used in the template, unless proven otherwise.
                 $message[$var] = '[removed from template data]';

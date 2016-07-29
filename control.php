@@ -33,7 +33,7 @@ define("PHORUM_CONTROL_CENTER", 1);
 
 $error_msg = false;
 $error = "";
-$okmsg = isset($PHORUM['args']['okmsg']) ? htmlspecialchars($PHORUM['args']['okmsg'], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) : "";
+$okmsg = isset($PHORUM['args']['okmsg']) ? phorum_api_format_htmlspecialchars($PHORUM['args']['okmsg']) : "";
 $template = "";
 
 // Generating the panel id of the page to use.
@@ -47,9 +47,7 @@ if(isset($PHORUM['args']['panel'])){
     $panel = PHORUM_CC_SUMMARY;
 }
 
-$panel = htmlspecialchars(
-    basename($panel), ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]
-);
+$panel = phorum_api_format_htmlspecialchars(basename($panel));
 
 // Set all our URLs.
 phorum_build_common_urls();
@@ -111,12 +109,12 @@ $user["signature_formatted"] = $fake_messages[0]["body"];
 
 // Format the user signature using standard message body formatting
 // or  HTML escape it
-$user["signature"] = htmlspecialchars($user["signature"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+$user["signature"] = phorum_api_format_htmlspecialchars($user["signature"]);
 
 // HTML escape all other fields that are used in the control center.
 foreach ($user as $key => $val) {
   if (is_array($val) || substr($key, 0, 9) == 'signature') continue;
-  $user[$key] = htmlspecialchars($user[$key], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+  $user[$key] = phorum_api_format_htmlspecialchars($user[$key]);
 }
 
 // Initialize any custom profile fields that are not present.
@@ -387,10 +385,10 @@ function phorum_controlcenter_user_save($panel)
 
                     // Format the user signature using standard message body formatting
                     // or  HTML escape it
-                    $PHORUM["DATA"]["PROFILE"]["signature"] = htmlspecialchars($PHORUM["user"]["signature"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                    $PHORUM["DATA"]["PROFILE"]["signature"] = phorum_api_format_htmlspecialchars($PHORUM["user"]["signature"]);
                  } else {
                     // same handling as when loading the page for the first time
-                    $PHORUM["DATA"]["PROFILE"][$key] = htmlspecialchars($PHORUM["user"][$key], ENT_COMPAT, $PHORUM['DATA']['HCHARSET']);
+                    $PHORUM["DATA"]["PROFILE"][$key] = phorum_api_format_htmlspecialchars($PHORUM["user"][$key]);
                  }
             } else {
                 $PHORUM["DATA"]["PROFILE"][$key] = "";

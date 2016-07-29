@@ -57,12 +57,11 @@
 function phorum_api_feed_html($messages, $forums, $url, $title, $description, $replies)
 {
     global $PHORUM;
-    $hcharset    = $PHORUM['DATA']['HCHARSET'];
 
-    $url         = htmlspecialchars($url, ENT_COMPAT, $hcharset);
-    $title       = htmlspecialchars($title, ENT_COMPAT, $hcharset);
-    $description = htmlspecialchars($description, ENT_COMPAT, $hcharset);
-    $builddate   = htmlspecialchars(date('r'), ENT_COMPAT, $hcharset);
+    $url         = phorum_api_format_htmlspecialchars($url);
+    $title       = phorum_api_format_htmlspecialchars($title);
+    $description = phorum_api_format_htmlspecialchars($description);
+    $builddate   = phorum_api_format_htmlspecialchars(date('r'));
 
     $buffer = "<div id=\"phorum_feed\">\n";
     $buffer.= " <div id=\"phorum_feed_title\">\n";
@@ -75,7 +74,7 @@ function phorum_api_feed_html($messages, $forums, $url, $title, $description, $r
 
     foreach($messages as $message)
     {
-        $title = htmlspecialchars(strip_tags($message["subject"]), ENT_COMPAT, $hcharset);
+        $title = phorum_api_format_htmlspecialchars(strip_tags($message["subject"]));
         if (!$replies)
         {
             $lang = $PHORUM['DATA']['LANG'];
@@ -89,13 +88,13 @@ function phorum_api_feed_html($messages, $forums, $url, $title, $description, $r
 
         }
 
-        $url = htmlspecialchars(phorum_api_url(
+        $url = phorum_api_format_htmlspecialchars(phorum_api_url(
             PHORUM_FOREIGN_READ_URL,
             $message["forum_id"], $message["thread"], $message["message_id"]
         ));
 
-        $body = substr(htmlspecialchars(
-            phorum_api_format_strip($message['body']), ENT_COMPAT, $hcharset
+        $body = substr(phorum_api_format_htmlspecialchars(
+            phorum_api_format_strip($message['body'])
         ), 0, 200);
 
         $buffer.= "  <li><a href=\"$url\" title=\"$body\">$title</a></li>\n";

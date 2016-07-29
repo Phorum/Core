@@ -12,7 +12,7 @@ $PHORUM['DATA']['URL']["ACTION"]     = phorum_api_url(PHORUM_MODERATION_ACTION_U
 $PHORUM['DATA']["FORM"]["forum_id"]  = $PHORUM["forum_id"];
 $PHORUM['DATA']["FORM"]["thread_id"] = $msgthd_id;
 $PHORUM['DATA']["FORM"]["mod_step"]  = PHORUM_DO_THREAD_MOVE;
-$PHORUM['DATA']["FORM"]["subject"]   = htmlspecialchars($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+$PHORUM['DATA']["FORM"]["subject"]   = phorum_api_format_htmlspecialchars($message["subject"]);
 
 // get all the forums the moderator may move to
 $PHORUM['DATA']["MoveForumsOption"]="";

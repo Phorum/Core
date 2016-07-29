@@ -74,7 +74,7 @@ $frm = new PhorumInputForm ("", "post");
 
 if(!empty($_SERVER["QUERY_STRING"])){
 
-    $frm->hidden("target", htmlspecialchars($_SERVER["QUERY_STRING"], ENT_COMPAT, $PHORUM["DATA"]['CHARSET']));
+    $frm->hidden("target", phorum_api_format_htmlspecialchars($_SERVER["QUERY_STRING"]));
 
 }
 

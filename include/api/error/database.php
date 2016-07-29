@@ -38,7 +38,6 @@ require_once PHORUM_PATH.'/include/api/error/backtrace.php';
 function phorum_api_error_database($error)
 {
     global $PHORUM;
-    $hcharset = $PHORUM['DATA']['HCHARSET'];
 
     // Clear any output that we buffered so far (e.g. in the admin interface,
     // we might already have sent the page header).
@@ -121,7 +120,7 @@ function phorum_api_error_database($error)
         // error message inside a comment in the page.
         if (defined("PHORUM_ADMIN")) {
             print "<!-- " .
-                  htmlspecialchars($error, ENT_COMPAT, $hcharset) .
+                  phorum_api_format_htmlspecialchars($error) .
                   " -->";
         }
     }
@@ -178,11 +177,11 @@ function phorum_api_error_database($error)
                 $htmlbacktrace =
                     $backtrace === NULL
                     ? NULL
-                    : nl2br(htmlspecialchars($backtrace, ENT_COMPAT, $hcharset));
+                    : nl2br(phorum_api_format_htmlspecialchars($backtrace));
 
                 print "Please try again later!" .
                       "<h3>Error:</h3>" .
-                      htmlspecialchars($error, ENT_COMPAT, $hcharset) .
+                      phorum_api_format_htmlspecialchars($error) .
                       ($backtrace !== NULL
                        ? "<h3>Backtrace:</h3>\n$htmlbacktrace"
                        : "");
@@ -196,7 +195,7 @@ function phorum_api_error_database($error)
             $data = array(
               'mailmessage' =>
                   "A database error occured in your Phorum installation\n" .
-                  htmlspecialchars($PHORUM['http_path']) . ":\n" .
+                  phorum_api_format_htmlspecialchars($PHORUM['http_path']) . ":\n" .
                   "\n" .
                   "Error message:\n" .
                   "--------------\n" .

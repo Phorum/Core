@@ -21,8 +21,8 @@ $new_subject = preg_replace('/^Re:\s*/', '', $message['subject']);
 $PHORUM['DATA']["FORM"]["forum_id"]            = $PHORUM["forum_id"];
 $PHORUM['DATA']["FORM"]["thread_id"]           = $message["thread"];
 $PHORUM['DATA']["FORM"]["message_id"]          = $msgthd_id;
-$PHORUM['DATA']["FORM"]["message_subject"]     = htmlspecialchars($message["subject"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
-$PHORUM['DATA']["FORM"]["new_message_subject"] = htmlspecialchars($new_subject, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+$PHORUM['DATA']["FORM"]["message_subject"]     = phorum_api_format_htmlspecialchars($message["subject"]);
+$PHORUM['DATA']["FORM"]["new_message_subject"] = phorum_api_format_htmlspecialchars($new_subject);
 $PHORUM['DATA']["FORM"]["mod_step"]            = PHORUM_DO_THREAD_SPLIT;
 
 $template = "split_form";

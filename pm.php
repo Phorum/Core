@@ -90,7 +90,7 @@ function phorum_getparam($name, $type = NULL)
             default:
                 trigger_error(
                     "Internal error in phorum_getparam: " .
-                    "illegal type for typecasting: ".htmlspecialchars($type),
+                    "illegal type for typecasting: ".phorum_api_format_htmlspecialchars($type),
                     E_USER_ERROR
                 );
         }
@@ -565,7 +565,7 @@ if (!empty($action))
                                         $error = $PHORUM["DATA"]["LANG"]["PMToMailboxFull"];
                                         $recipient =
                                             (empty($PHORUM["custom_display_name"])
-                                             ? htmlspecialchars($user["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
+                                             ? phorum_api_format_htmlspecialchars($user["display_name"])
                                              : $user["display_name"]);
                                         $error = str_replace('%recipient%', $recipient, $error);
                                     }
@@ -729,7 +729,7 @@ if (!empty($action))
 
         default:
             trigger_error(
-                "Unhandled action for pm.php: " . htmlspecialchars($action),
+                "Unhandled action for pm.php: " . phorum_api_format_htmlspecialchars($action),
                 E_USER_ERROR
             );
 
@@ -789,8 +789,8 @@ switch ($page) {
     // Manage the PM folders.
     case "folders":
 
-        $PHORUM["DATA"]["CREATE_FOLDER_NAME"] = isset($_POST["create_folder_name"]) ? htmlspecialchars($_POST["create_folder_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) : '';
-        $PHORUM["DATA"]["RENAME_FOLDER_NAME"] = isset($_POST["rename_folder_name"]) ? htmlspecialchars($_POST["rename_folder_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) : '';
+        $PHORUM["DATA"]["CREATE_FOLDER_NAME"] = isset($_POST["create_folder_name"]) ? phorum_api_format_htmlspecialchars($_POST["create_folder_name"]) : '';
+        $PHORUM["DATA"]["RENAME_FOLDER_NAME"] = isset($_POST["rename_folder_name"]) ? phorum_api_format_htmlspecialchars($_POST["rename_folder_name"]) : '';
         $template = "pm_folders";
         break;
 
@@ -818,7 +818,7 @@ switch ($page) {
                 'user_id'     => $id,
                 'display_name' =>
                     (empty($PHORUM["custom_display_name"])
-                     ? htmlspecialchars($buddy_user["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
+                     ? phorum_api_format_htmlspecialchars($buddy_user["display_name"])
                      : $buddy_user["display_name"]),
                 'mutual'      => $buddy_list[$id]["mutual"],
             );
@@ -1210,7 +1210,7 @@ switch ($page) {
                     foreach ($val as $id => $data) {
                         $msg[$key][$id]["display_name"] =
                           (empty($PHORUM["custom_display_name"])
-                           ? htmlspecialchars($data["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
+                           ? phorum_api_format_htmlspecialchars($data["display_name"])
                            : $data["display_name"]);
                     }
                     break;
@@ -1218,11 +1218,11 @@ switch ($page) {
                 case "author": {
                     $msg[$key] =
                       (empty($PHORUM["custom_display_name"])
-                       ? htmlspecialchars($val, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) : $val);
+                       ? phorum_api_format_htmlspecialchars($val) : $val);
                     break;
                 }
                 default: {
-                    $msg[$key] = htmlspecialchars($val, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                    $msg[$key] = phorum_api_format_htmlspecialchars($val);
                     break;
                 }
             }
@@ -1247,7 +1247,7 @@ switch ($page) {
             $userlist = phorum_api_user_list(PHORUM_GET_ACTIVE);
             foreach ($userlist as $user_id => $userinfo){
                 if (isset($msg["recipients"][$user_id])) continue;
-                $userinfo["display_name"] = htmlspecialchars($userinfo["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+                $userinfo["display_name"] = phorum_api_format_htmlspecialchars($userinfo["display_name"]);
                 $userinfo["user_id"] = $user_id;
                 $allusers[] = $userinfo;
             }
@@ -1300,7 +1300,7 @@ switch ($page) {
     default:
 
         trigger_error(
-            "Illegal page requested: " . htmlspecialchars($page),
+            "Illegal page requested: " . phorum_api_format_htmlspecialchars($page),
             E_USER_ERROR
         );
 }
@@ -1334,7 +1334,7 @@ foreach($pm_folders as $id => $data)
     $pm_folders[$id]["is_special"] = is_numeric($id) ? 0 : 1;
     $pm_folders[$id]["is_outgoing"] = $id == PHORUM_PM_OUTBOX;
     $pm_folders[$id]["id"] = $id;
-    $pm_folders[$id]["name"] = htmlspecialchars($data["name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
+    $pm_folders[$id]["name"] = phorum_api_format_htmlspecialchars($data["name"]);
     $pm_folders[$id]["url"] = phorum_api_url(PHORUM_PM_URL, "page=list", "folder_id=$id");
 
     if (!$pm_folders[$id]["is_special"]) {
@@ -1433,7 +1433,7 @@ function phorum_pm_format($messages)
                 } else {
                     $messages[$id]["recipients"][$rcpt_id]["display_name"]=
                         (empty($PHORUM["custom_display_name"])
-                         ? htmlspecialchars($rcpt["display_name"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])
+                         ? phorum_api_format_htmlspecialchars($rcpt["display_name"])
                          : $rcpt["display_name"]);
                     $messages[$id]["recipients"][$rcpt_id]["URL"]["PROFILE"] =
                         phorum_api_url(PHORUM_PROFILE_URL, $rcpt_id);

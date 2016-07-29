@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2011  Phorum Development Team                              //
+//   Copyright (C) 2016  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -18,46 +18,31 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * This script implements user formatting.
+ * This script implements our default htmlspecialchars function.
  *
  * @package    PhorumAPI
  * @subpackage Formatting
- * @copyright  2011, Phorum Development Team
+ * @copyright  2016, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
-// {{{ Function: phorum_api_format_users()
+
+// {{{ Function: phorum_api_format_htmlspecialchars()
 /**
- * This function handles preparing user data for use in the templates.
+ * htmlspecialchars with default arguments.
  *
- * @param array $users
- *     An array of users that have to be formatted.
- *     Each user is an array on its own, containing the user data.
+ * @param string $string
+ *     The string being converted.
+ * @return string
+ *     The converted string.
  *
- * @return array
- *     The same as the $users argument array, with formatting applied.
+ * The related variable from the language file is:
+ * - $PHORUM['DATA']['HCHARSET']: the charset to use
  */
-function phorum_api_format_users($users)
+function phorum_api_format_htmlspecialchars( $string )
 {
     global $PHORUM;
-
-    foreach ($users as $id => $user)
-    {
-        foreach (array(
-            'username', 'real_name', 'display_name',
-            'email', 'signature'
-        ) as $field) {
-            if (isset($user[$field])) {
-                if($field == 'display_name' && !empty($PHORUM['custom_display_name'])) {
-                      $users[$id][$field] = $user[$field];
-                } else {
-                    $users[$id][$field] = phorum_api_format_htmlspecialchars($user[$field]);
-                }
-            }
-        }
-    }
-
-    return $users;
+    return htmlspecialchars($string, ENT_QUOTES, $PHORUM['DATA']['HCHARSET']);
 }
 // }}}
 
