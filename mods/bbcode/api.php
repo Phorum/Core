@@ -1331,9 +1331,9 @@ function bbcode_quote_handler($content, $args, $message)
     return '<blockquote class="bbcode">' .
             '<div>' .
              '<small>' .
-              $PHORUM['DATA']['LANG']['mod_bbcode']['quote_title'] . '<br/>' .
+              $PHORUM['DATA']['LANG']['mod_bbcode']['quote_title'] . '<br />' .
              '</small>' .
-             '<strong>' . $args['quote'] . '</strong><br/>' .
+             '<strong>' . $args['quote'] . '</strong><br />' .
              $content .
             '</div>' .
            '</blockquote>';

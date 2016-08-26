@@ -272,11 +272,11 @@ Table of contents:
 
    Within a template, the variables are used like this:
 
-      You username is: {USER->username}<br/>
-      The current forum's name is: {NAME}<br/>
+      You username is: {USER->username}<br />
+      The current forum's name is: {NAME}<br />
 
       {LOOP MESSAGES}
-        Subject: {MESSAGES->subject}<br/>
+        Subject: {MESSAGES->subject}<br />
       {/LOOP}
 
    What variables are available for what pages is fully determined by Phorum.

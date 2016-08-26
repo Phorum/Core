@@ -90,8 +90,8 @@ if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]=
 
         // No database configuration found.
         if (!file_exists("./include/db/config.php")) { ?>
-            Phorum has been installed on this server, but the configuration<br/>
-            for the database connection has not yet been made. Please read<br/>
+            Phorum has been installed on this server, but the configuration<br />
+            for the database connection has not yet been made. Please read<br />
             <a href="docs/install.txt">docs/install.txt</a> for installation
             instructions. <?php
         } else {
@@ -99,14 +99,14 @@ if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]=
             // Unable to read the configuration file.
             if (!$fp) { ?>
                 A database configuration file was found in
-                ./include/db/config.php,<br/>but Phorum was unable to read it.
-                Please check the file permissions<br/>for this file. <?php
+                ./include/db/config.php,<br />but Phorum was unable to read it.
+                Please check the file permissions<br />for this file. <?php
             // Unknown error.
             } else {
                 fclose($fp); ?>
                 A database configuration file was found in
-                ./include/dbconfig.php,<br/>but it could not be loaded.
-                It possibly contains one or more errors.<br/>Please check
+                ./include/dbconfig.php,<br />but it could not be loaded.
+                It possibly contains one or more errors.<br />Please check
                 your configuration file. <?php
             }
         }
@@ -169,7 +169,7 @@ if (!defined('PHORUM_ADMIN')) {
             phorum_redirect_by_url($PHORUM["DBCONFIG"]["upgrade_page"]);
             exit();
         }
-        echo "<html><head><title>Upgrade notification</title></head><body>It looks like you have installed a new version of Phorum.<br/>Please visit the admin page to complete the upgrade!</body></html>";
+        echo "<html><head><title>Upgrade notification</title></head><body>It looks like you have installed a new version of Phorum.<br />Please visit the admin page to complete the upgrade!</body></html>";
         exit();
     }
 }
@@ -1759,8 +1759,8 @@ function phorum_get_template( $page )
     // {INCLUDE template} instead of {INCLUDE "template"}.
     if ($page === NULL || $page == "") {
         print "<h1>Phorum Template Error</h1>";
-        print "phorum_get_template() was called with an empty page name.<br/>";
-        print "This might indicate a template problem.<br/>";
+        print "phorum_get_template() was called with an empty page name.<br />";
+        print "This might indicate a template problem.<br />";
         if (function_exists('debug_print_backtrace')) {
             print "Here's a backtrace that might help finding the error:";
             print "<pre>";
@@ -2102,7 +2102,7 @@ function phorum_check_posting_token($target_page = NULL)
     // Add the posting token to the {POST_VARS}.
     $PHORUM['DATA']['POST_VARS'] .=
         "<input type=\"hidden\" name=\"posting_token:$target_page\" " .
-        "value=\"$posting_token\"/>\n";
+        "value=\"$posting_token\" />\n";
 
     // Check the posting token if a form post is done.
     if (!empty($_POST))
@@ -2267,7 +2267,7 @@ function phorum_database_error($error)
     <body>
     <h1>Phorum Database Error</h1>
 
-    Sorry, a Phorum database error occurred.<br/>
+    Sorry, a Phorum database error occurred.<br />
     <?php
 
     // In admin scripts, we will always include the
@@ -2293,8 +2293,8 @@ function phorum_database_error($error)
             );
             fclose($fp);
 
-            print "The error message has been written<br/>" .
-                  "to the phorum-sql-errors.log error log.<br/>" .
+            print "The error message has been written<br />" .
+                  "to the phorum-sql-errors.log error log.<br />" .
                   "Please try again later!";
             break;
 
@@ -2338,8 +2338,8 @@ function phorum_database_error($error)
             $adminmail = $PHORUM["system_email_from_address"];
             phorum_email_user(array($adminmail), $data);
 
-            print "The administrator of this forum has been<br/>" .
-                  "notified by email about the error.<br/>" .
+            print "The administrator of this forum has been<br />" .
+                  "notified by email about the error.<br />" .
                   "Please try again later!";
             break;
     }

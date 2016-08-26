@@ -202,7 +202,7 @@ if($PHORUM['forum_id'] == 0 || $PHORUM['vroot'] == $PHORUM['forum_id']) {
  *         {
  *             if (!$item['folder_flag'])
  *             {
- *                 $data[$id]['description'] .= '<br/>Blah foo bar baz';
+ *                 $data[$id]['description'] .= '<br />Blah foo bar baz';
  *             }
  *         }
  *

@@ -55,7 +55,7 @@
     $checkboxes = '';
     foreach ($valid_chars_options as $k => $v) {
         $enabled = strpos($PHORUM["mod_username_restrictions"]["valid_chars"], $k) === FALSE ? 0 : 1;
-        $checkboxes .= $frm->checkbox("valid_chars[$k]", "1", "", $enabled) . " $v<br/>";
+        $checkboxes .= $frm->checkbox("valid_chars[$k]", "1", "", $enabled) . " $v<br />";
     }
     $frm->addrow("Valid username characters (check none for no restrictions)", $checkboxes);
 

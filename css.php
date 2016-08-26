@@ -60,54 +60,54 @@ phorum_build_common_urls();
  * [input]
  *     An array, containing the following fields:
  *     <ul>
- *     <li><b>css</b><br>
+ *     <li><b>css</b><br />
  *         The name of the css file that was requested for the css.php
  *         script. Phorum requests either "css" or "css_print".
  *         The module can use this parameter to decide whether
  *         CSS code has to be registered or not.</li>
- *     <li><b>register</b><br>
+ *     <li><b>register</b><br />
  *         An array of registrations, filled by the modules. Modules
  *         can register their CSS code for inclusion in the base CSS
  *         file by adding a registration to this array. A registration
  *         is an array, containing the following fields:
  *         <ul>
- *         <li><b>module</b><br>
+ *         <li><b>module</b><br />
  *             The name of the module that adds the registration.
  *         </li>
- *         <li><b>where</b><br>
+ *         <li><b>where</b><br />
  *             This field determines whether the CSS data is added
  *             before or after the base CSS code. The value for this field
  *             is either "before" or "after".
  *         </li>
- *         <li><b>source</b><br>
+ *         <li><b>source</b><br />
  *             Specifies the source of the CSS data. This can be one of:
  *             <ul>
- *             <li><b>file(&lt;path to filename&gt;)</b><br>
+ *             <li><b>file(&lt;path to filename&gt;)</b><br />
  *                 For including a static CSS file. The path should be
  *                 absolute or relative to the Phorum install directory,
  *                 e.g. "<literal>file(mods/foobar/baz.css)</literal>".
  *                 Because this file is loaded using a PHP include() call,
  *                 it is possible to include PHP code in this file. Mind that
  *                 this code is stored interpreted in the cache.</li>
- *             <li><b>template(&lt;template name&gt;)</b><br>
+ *             <li><b>template(&lt;template name&gt;)</b><br />
  *                 For including a Phorum template,
  *                 e.g. "<literal>template(foobar::baz)</literal>"</li>
- *             <li><b>function(&lt;function name&gt;)</b><br>
+ *             <li><b>function(&lt;function name&gt;)</b><br />
  *                 For calling a function to retrieve the CSS code,
  *                 e.g. "<literal>function(mod_foobar_get_css)</literal>"</li>
  *             </ul>
  *         </li>
- *         <li><b>cache_key</b><br>
+ *         <li><b>cache_key</b><br />
  *             To make caching of the generated CSS data
  *             possible, the module should provide the css.php script
  *             a cache key using this field. This cache key needs to
- *             change if the module will provide different CSS data.<br>
- *             <br>
+ *             change if the module will provide different CSS data.<br />
+ *             <br />
  *             Note: in case "file" or "template" is used as the source,
  *             you are allowed to omit the cache_key. In that case, the
  *             modification time of the involved file(s) will be used as
- *             the cache key.<br>
- *             <br>
+ *             the cache key.<br />
+ *             <br />
  *             It is okay for the module to provide multiple cache keys
  *             for different situations (e.g. if the CSS code depends on
  *             a group or so). Keep in mind though that for each different

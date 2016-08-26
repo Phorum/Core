@@ -35,7 +35,7 @@
                     $usedsize = ceil($used/$total * $size);
                     $usedperc = floor($used/$total * 100 + 0.5);
                 ?>
-                <br/>
+                <br />
                 <div class="generic">
                     {IF PM_SPACE_LEFT}
                       {LANG->PMSpaceLeft}

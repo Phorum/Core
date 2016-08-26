@@ -81,7 +81,7 @@ function phorum_format_messages ($data, $author_specs = NULL)
         }
     }
 
-    // A special <br> tag to keep track of breaks that are added by phorum.
+    // A special br-tag to keep track of breaks that are added by phorum.
     $phorum_br = '<phorum break>';
 
     // prepare url-templates used later on

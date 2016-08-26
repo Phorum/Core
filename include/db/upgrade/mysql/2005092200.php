@@ -24,7 +24,7 @@ foreach ($rows as $row) {
 }
 
 if (count($check_tables)) { ?>
-    <br/>
+    <br />
     <b>Warning: database upgrade 2005091400 does not seem to have
     completed successfully. The old style private messages table
     <?php print $old_table ?> will be kept for backup. <?php

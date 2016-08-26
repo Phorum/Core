@@ -61,9 +61,10 @@ if ($step == 'start' && !isset($_POST["sanity_checks_done"]))
     indicate that some problem needs attention, but that the problem
     will not keep Phorum from running. Errors indicate critical
     problems, which need to be fixed before running Phorum.
-    <br/><br/>
+    <br /><br />
 
     <script type="text/javascript">
+    // <![CDATA[
     function toggle_sanity_info(check_id)
     {
         info_div = document.getElementById("sanity_info_" + check_id);
@@ -78,6 +79,7 @@ if ($step == 'start' && !isset($_POST["sanity_checks_done"]))
             }
         }
     }
+    // ]]>
     </script>
     <?php
 
@@ -98,9 +100,9 @@ if ($step == 'start' && !isset($_POST["sanity_checks_done"]))
         {
             print " (<a id=\"sanity_info_link_{$check["id"]}\" href=\"javascript:toggle_sanity_info('{$check["id"]}')\">show problem info</a>)";
             print "<div id=\"sanity_info_{$check["id"]}\" style=\"display: none; padding-top: 15px\">";
-            print "<b>Problem:</b><br/>";
+            print "<b>Problem:</b><br />";
             print $check["error"];
-            print "<br/><br/><b>Possible solution:</b><br/>";
+            print "<br /><br /><b>Possible solution:</b><br />";
             print $check["solution"];
             print "</div>";
         }
@@ -114,34 +116,34 @@ if ($step == 'start' && !isset($_POST["sanity_checks_done"]))
     <?php
     if ($got_crit) {
         ?>
-        <br/>
+        <br />
         One or more critical errors were encountered while checking
         your system. To see what is causing these errors and what you
         can do about them, click the &quot;show problem info&quot; links.
         Please fix these errors and restart the system checks.
-        <br/><br/>
+        <br /><br />
         <input type="submit" value="Restart the system checks" />
         <?php
 
     } elseif ($got_warn) {
         ?>
-        <br/>
+        <br />
         One or more warnings were encountered while checking
         your system. To see what is causing these warnings and what you
         can do about them, click the &quot;show problem info&quot; links.
         Phorum probably will run without fixing the warnings, but
         it&apos;s a good idea to fix them anyway for ensuring optimal
         performance.
-        <br/><br/>
+        <br /><br />
         <input type="submit" value="Restart the system checks" />
         <input type="submit" name="sanity_checks_done" value="Continue without fixing the warnings -&gt;" />
         <?php
     } else {
         ?>
-        <br/>
+        <br />
         No problems were encountered while checking your system.
         You can now continue with the Phorum installation.
-        <br/><br/>
+        <br /><br />
         <input type="submit" name="sanity_checks_done" value="Continue -&gt;" />
         <?php
     }

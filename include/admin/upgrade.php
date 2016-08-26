@@ -49,8 +49,8 @@ switch ($step) {
 
         $frm->addbreak("Phorum Upgrade");
         $frm->addmessage("
-            This wizard will upgrade Phorum on your server.<br/>
-            Phorum has confirmed that it can connect to your database.<br/>
+            This wizard will upgrade Phorum on your server.<br />
+            Phorum has confirmed that it can connect to your database.<br />
             Press continue when you are ready to start the upgrade.");
         $frm->hidden("module", "upgrade");
         $frm->hidden("step", "1");

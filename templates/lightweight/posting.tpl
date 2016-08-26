@@ -31,11 +31,11 @@
 
             {IF PREVIEW->attachments}
                 <div class="attachments">
-                    {LANG->Attachments}:<br/>
+                    {LANG->Attachments}:<br />
                     {LOOP PREVIEW->attachments}
                         <a href="{PREVIEW->attachments->url}">{LANG->AttachOpen}</a> | <a href="{PREVIEW->attachments->download_url}">{LANG->AttachDownload}</a> -
                         {PREVIEW->attachments->name}
-                        ({PREVIEW->attachments->size})</a><br/>
+                        ({PREVIEW->attachments->size})</a><br />
                     {/LOOP PREVIEW->attachments}
                 </div>
             {/IF}
@@ -71,7 +71,7 @@
                 {/IF}
                 <small>
                 {IF MODE "moderation"}
-                  {LANG->YourName}:<br/>
+                  {LANG->YourName}:<br />
                 {ELSE}
                   {LANG->Author}:<br />
                 {/IF}
@@ -80,7 +80,7 @@
                 {ELSE}
                     <big><strong>{POSTING->author}</strong></big><br />
                 {/IF}
-                <br/>
+                <br />
 
                 {IF MODE "post" OR MODE "reply"}
 
@@ -144,7 +144,7 @@
                     {/IF}
 
                     <input type="checkbox" id="show_signature" name="show_signature" value="1" {IF POSTING->show_signature} checked="checked"{/IF} /> <label for="show_signature"><small>{LANG->AddSig}</small></label><br />
-                    <br/>
+                    <br />
 
                 {/IF}
 

@@ -78,6 +78,7 @@
     }
 
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <title>Phorum Admin</title>
@@ -85,7 +86,7 @@
 
 // meta data with the charset from the default language
 if (isset($PHORUM["DATA"]['CHARSET'])) {
-    echo "<meta content=\"text/html; charset=".$PHORUM["DATA"]["CHARSET"]."\" http-equiv=\"Content-Type\">\n";
+    echo "<meta content=\"text/html; charset=".$PHORUM["DATA"]["CHARSET"]."\" http-equiv=\"Content-Type\" />\n";
 }
 
 ?>
@@ -94,7 +95,8 @@ if (isset($PHORUM["DATA"]['CHARSET'])) {
 
 <link rel="stylesheet" type="text/css" href="<?php echo htmlspecialchars($admin_css_path); ?>" />
 
-<script>
+<script type="text/javascript">
+// <![CDATA[
 
 function show_help(key)
 {
@@ -139,11 +141,12 @@ function hide_help()
     document.getElementById('help-text').innerHTML = "";
 }
 
+// ]]>
 </script>
 </head>
 <body>
 <div id="helpdiv">
-<div id="helpdiv-hide"><a href="javascript:hide_help();"><img border="0" src="<?php print $PHORUM['http_path'] ?>/images/close.gif" height="16" width="16" /></a></div>
+<div id="helpdiv-hide"><a href="javascript:hide_help();"><img border="0" src="<?php print $PHORUM['http_path'] ?>/images/close.gif" height="16" width="16" alt="" /></a></div>
 <div id="helpdiv-title">&nbsp;Phorum Admin Help</div>
 <div id="helpdiv-content">
 <div id="help-title"></div>
@@ -156,7 +159,7 @@ function hide_help()
     <td class="statusbar_edge">Phorum Admin<small><br />version <?php echo PHORUM; ?></small></td>
 <?php if(empty($module)){ // only show the versioncheck if you are on the front page of the admin ?>
     <td class="statusbar_edge" align="center" valign="middle">
-      <iframe scrolling="no" frameborder="0" align="top" width="400" height="35" src="versioncheck.php"></iframe>
+      <iframe scrolling="no" frameborder="0" width="400" height="35" src="versioncheck.php"></iframe>
     </td>
 <?php } else {
     // Reset the cookie that is used for the version check.
@@ -187,10 +190,10 @@ function hide_help()
 <input type="hidden" name="module" value="status" />
 Phorum Status:
 <select name="status" onchange="this.form.submit();">
-<option value="normal" <?php if($PHORUM["status"]=="normal") echo "selected"; ?>>Normal</option>
-<option value="read-only"<?php if($PHORUM["status"]=="read-only") echo "selected"; ?>>Read Only</option>
-<option value="admin-only"<?php if($PHORUM["status"]=="admin-only") echo "selected"; ?>>Admin Only</option>
-<option value="disabled"<?php if($PHORUM["status"]=="disabled" || !phorum_db_check_connection()) echo "selected"; ?>>Disabled</option>
+<option value="normal" <?php if($PHORUM["status"]=="normal") echo 'selected="selected"'; ?>>Normal</option>
+<option value="read-only"<?php if($PHORUM["status"]=="read-only") echo 'selected="selected"'; ?>>Read Only</option>
+<option value="admin-only"<?php if($PHORUM["status"]=="admin-only") echo 'selected="selected"'; ?>>Admin Only</option>
+<option value="disabled"<?php if($PHORUM["status"]=="disabled" || !phorum_db_check_connection()) echo 'selected="selected"'; ?>>Disabled</option>
 </select>
 </form>
 <?php } ?>
@@ -202,12 +205,11 @@ Phorum Status:
 </tr>
 </table><br />
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
 <?php
-
     if($module!="login" && $module!="install"
     && $module!="upgrade" && $module !="tokenmissing" ){
 ?>
-<tr>
     <td valign="top">
 <?php
         include_once "./include/admin/PhorumAdminMenu.php";

@@ -118,8 +118,8 @@ if(!empty($_GET["search"]) || !empty($_GET["author"])) {
      *     intermediate "Please wait while searching" page before doing the
      *     redirect. This is useful in case searching is taking a while, in
      *     which case users might otherwise repeatedly start hitting the
-     *     search button when results don't show up immediately.<br>
-     *     <br>
+     *     search button when results don't show up immediately.<br />
+     *     <br />
      *     This hook can be used to modify the parameters that are used
      *     for building the redirect URL. This can be useful in case a
      *     search page is implemented that uses more fields than the standard

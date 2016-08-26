@@ -9,12 +9,14 @@
     <b>{LANG->AttachFull}</b>
   {ELSE}
     <script type="text/javascript">
+    // <![CDATA[
       function phorumShowAttachForm() {
         document.getElementById('phorum-attach-link').style.display='none';
         document.getElementById('phorum-attach-form').style.display='block';
       }
       document.write("<div id=\"phorum-attach-link\" style=\"display: block;\"><a href=\"javascript:phorumShowAttachForm();\"><b>{AttachPhrase} ...<\/b><\/a><\/div>\n");
       document.write("<div id=\"phorum-attach-form\" style=\"display: none;\">");
+    // ]]>
     </script>
     <b>{AttachPhrase}</b>
     <ul>

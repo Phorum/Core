@@ -160,9 +160,9 @@ function phorum_api_modules_list()
                     } else {
                         $problems[] =
                             "Priority configuration error for module " .
-                            htmlspecialchars($entry) . "<br/>" .
+                            htmlspecialchars($entry) . "<br />" .
                             "Cannot parse priority " .
-                            "\"" . htmlspecialchars($prio) . "\"<br/>";
+                            "\"" . htmlspecialchars($prio) . "\"<br />";
                     }
                 } elseif ($parts[0]=="required_version" ||
                           $parts[0]=="require_version") {
@@ -222,7 +222,7 @@ function phorum_api_modules_list()
                     $info['version']     // required module's version
                 ) == -1) {
                 $modules[$module]['url'] = $info['url'];
-                $problems[] = "The module \"{$modinfo['title']}\" is no longer included in the core Phorum distribution. A more recent version of this module (version {$info['version']} or higher) is available at the phorum.org website. Please download and install that version. For more information, visit <a href=\"{$info['url']}\" target=\"_new\">the module's page at phorum.org</a>.";
+                $problems[] = "The module \"{$modinfo['title']}\" is no longer included in the core Phorum distribution. A more recent version of this module (version {$info['version']} or higher) is available at the phorum.org website. Please download and install that version. For more information, visit <a href=\"{$info['url']}\" target=\"_blank\">the module's page at phorum.org</a>.";
             }
         }
     }

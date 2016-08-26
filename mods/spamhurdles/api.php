@@ -194,7 +194,7 @@ function spamhurdles_api_build_form($data)
     $send_data['ttl'] = time() + $PHORUM['mod_spamhurdles']['key_max_ttl'];
     $crypted = htmlspecialchars(spamhurdles_encrypt($send_data));
     print '<input type="hidden" name="spamhurdles_'.$data['id'].'" ' .
-          'id="spamhurdles_'.$data['id'].'" value="'.$crypted.'"/>';
+          'id="spamhurdles_'.$data['id'].'" value="'.$crypted.'" />';
 
     // Let hurdles add their required data.
     spamhurdles_hurdle_call('build_form', $data, $data['hurdles']);
@@ -305,9 +305,9 @@ function spamhurdles_api_check_form($form_id)
         spamhurdles_log(
             "Spam Hurdles blocked post, form id \"$form_id\"",
             "The posting form was posted with an invalid Spam Hurdles " .
-            "form id.<br/>" .
-            "<br/>" .
-            "Posted form id = {$data['id']}<br/>" .
+            "form id.<br />" .
+            "<br />" .
+            "Posted form id = {$data['id']}<br />" .
             "Expected form id =  $form_id"
         );
 

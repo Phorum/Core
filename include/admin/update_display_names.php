@@ -105,8 +105,8 @@ else
     $perc = floor((($batch+1) * $batchsize) / $user_count * 100);
     if ($perc > 100) $perc = 100; ?>
 
-    <strong>Running display name updates.</strong><br/>
-    <strong>This might take a while ...</strong><br/><br/>
+    <strong>Running display name updates.</strong><br />
+    <strong>This might take a while ...</strong><br /><br />
     <table><tr><td>
     <div style="height:20px;width:300px; border:1px solid black">
     <div style="height:20px;width:<?php print $perc ?>%;background-color:green">
@@ -119,9 +119,11 @@ else
     ?>
 
     <script type="text/javascript">
+    // <![CDATA[
     window.onload = function () {
         document.location.href = '<?php print addslashes($redir) ?>';
     }
+    // ]]>
     </script> <?php
 }
 

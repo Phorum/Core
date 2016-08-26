@@ -266,8 +266,8 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
         phorum_ob_clean();
 
         // Notify the user and exit.
-        print "An error occurred in the application.<br/>" .
-              "The error was logged to the Phorum event log.<br/>";
+        print "An error occurred in the application.<br />" .
+              "The error was logged to the Phorum event log.<br />";
         exit(1);
     }
 

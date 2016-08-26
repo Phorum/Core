@@ -8,9 +8,9 @@
   <form action="{URL->ACTION}" method="post" style="display: inline;">
     {POST_VARS}
     <div class="information">
-        {LANG->YouWantToFollow}<br /><br/>
+        {LANG->YouWantToFollow}<br /><br />
         <strong>{SUBJECT}</strong><br />
-        <strong>{LANG->StartedBy} {AUTHOR}</strong><br/><br />
+        <strong>{LANG->StartedBy} {AUTHOR}</strong><br /><br />
 
         {LANG->FollowExplanation}
 
@@ -20,7 +20,7 @@
           <br />
           <input type="checkbox" id="send_email" name="send_email" checked="checked" /><label for="send_email">&nbsp;{LANG->FollowWithEmail}</label><br /><br />
         {/IF}
-        <br/><br/>
+        <br /><br />
         <input type="submit" value="{LANG->Submit}" />
     </div>
   </form>

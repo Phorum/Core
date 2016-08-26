@@ -11,7 +11,7 @@ class captcha_image extends captcha_base
         $captcha =
             '<div id="spamhurdles_captcha_image">' .
             '<img class="captcha_image" src="{IMAGEURL}" alt="CAPTCHA" ' .
-            'title="CAPTCHA"/></div>';
+            'title="CAPTCHA" /></div>';
 
         return array($captcha, "");
     }

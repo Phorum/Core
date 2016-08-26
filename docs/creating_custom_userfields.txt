@@ -112,7 +112,7 @@ Table of contents:
    To add the shoe_size field to the registration page, you could
    add the following code to the register.tpl at an appropriate place:
 
-      <input type="text" name="shoe_size" value="{REGISTER->shoe_size}"/>
+      <input type="text" name="shoe_size" value="{REGISTER->shoe_size}" />
 
 
  3.2 From the user's control center

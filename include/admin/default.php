@@ -55,25 +55,26 @@ foreach($forums as $forum_id => $forum)
         $type="folder";
         $folder_edit_url = phorum_admin_build_url(array('module=editfolder',"forum_id=$forum_id"));
         $folder_delete_url = phorum_admin_build_url(array('module=deletefolder',"forum_id=$forum_id"));
-        $actions="<a href=\"$folder_edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$folder_delete_url\">Delete</a>";
+        $actions="<a href=\"$folder_edit_url\">Edit</a>&nbsp;&bull;&nbsp;<a href=\"$folder_delete_url\">Delete</a>";
         $mainurl=phorum_admin_build_url(array('module=default',"parent_id=$forum_id"));
     } else {
         $type="forum";
         $forum_edit_url = phorum_admin_build_url(array('module=editforum',"forum_id=$forum_id"));
         $forum_delete_url = phorum_admin_build_url(array('module=deleteforum',"forum_id=$forum_id"));
 
-        $actions="<a href=\"$forum_edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$forum_delete_url\">Delete</a>";
+        $actions="<a href=\"$forum_edit_url\">Edit</a>&nbsp;&bull;&nbsp;<a href=\"$forum_delete_url\">Delete</a>";
         $mainurl=NULL;
     }
 
     $rows.="<tr><th align=\"left\" valign=\"top\" class=\"PhorumAdminTableRow forum-title\">";
     if ($mainurl) $rows .= "<a href=\"$mainurl\">";
-    $rows .= "<span class=\"icon-$type\"></span>";
+    $rows .= "<span class=\"icon-$type\">";
     $rows .= '<strong>' . ($forum['vroot'] == $forum['forum_id'] ? 'Virtual root: ' : '') . $forum['name'] . '</strong>';
+    $rows .= "</span>";
     if ($mainurl) $rows .= "</a>";
     $mv_up_url = phorum_admin_build_url(array('module=default',"display_up=$forum_id","parent_id=$folder_id"));
     $mv_down_url = phorum_admin_build_url(array('module=default',"display_down=$forum_id","parent_id=$folder_id"));
-    $rows .= "<p class=\"forum-description\">$forum[description]</p></th><td class=\"PhorumAdminTableRow\"><a href=\"$mv_up_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_up.png\" alt=\"Up\" title=\"Up\"/></a>&nbsp;<a href=\"$mv_down_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_down.png\" alt=\"Down\" title=\"Down\"/></a></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
+    $rows .= "<p class=\"forum-description\">$forum[description]</p></th><td class=\"PhorumAdminTableRow\"><span style=\"white-space: nowrap;\"><a href=\"$mv_up_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_up.png\" alt=\"Up\" title=\"Up\" /></a>&nbsp;<a href=\"$mv_down_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_down.png\" alt=\"Down\" title=\"Down\" /></a></span></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
 }
 
 if (empty($rows)) {
@@ -121,12 +122,10 @@ else {
 <div class="PhorumAdminBreadcrumbs">
   <?php
   if (empty($folder['forum_id'])) {
-      print "<span class=\"icon-folder\"></span>";
+      print "<span class=\"icon-folder\">$path</span>";
   } else {
-      $upurl = phorum_admin_build_url(array('module=default',"parent_id=$parent_parent_id"));
-      print "<a href=\"$upurl\"><span class=\"icon-folder-up\"></span></a>";
+      print "<span class=\"icon-folder-up\">$path</span>";
   }
-  echo "$path";
   ?>
 </div>
 

@@ -24,7 +24,7 @@
     // Execute file purging.
     if(count($_POST))
     {
-        print "<h2>Purging the cache now.<br/>One moment please...</h2>";
+        print "<h2>Purging the cache now.<br />One moment please...</h2>";
         ob_flush();
 
         // The standard cache system that is in use should handle its own
@@ -34,7 +34,7 @@
         if (function_exists("phorum_cache_purge")) {
             $full_purge = isset($_POST["purge_all"]) && $_POST["purge_all"];
             $report = phorum_cache_purge($full_purge);
-            print $report . "<br/>";
+            print $report . "<br />";
         }
 
         // Cleanup compiled templates.
@@ -51,11 +51,11 @@
             }
         }
         require_once("./include/format_functions.php");
-        print "Finished purging compiled Phorum templates<br/>\n" .
-              "Purged " . phorum_filesize($purged) . "<br/>";
+        print "Finished purging compiled Phorum templates<br />\n" .
+              "Purged " . phorum_filesize($purged) . "<br />";
 
-        print "<br/>";
-        print "DONE<br/><br/>";
+        print "<br />";
+        print "DONE<br /><br />";
     }
 
     include_once "./include/admin/PhorumInputForm.php";

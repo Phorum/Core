@@ -233,13 +233,13 @@ function phorum_check_ban_lists($value, $type)
             case "check":
                 $html ="<input type=\"checkbox\" name=\"$field[name]\" value=\"1\" ";
                 if($value) $html.="checked ";
-                $html.="/> $field[caption]";
+                $html.=" /> $field[caption]";
                 break;
             case "radio":
                 foreach($field["options"] as $option){
                     $html.="<input type=\"radio\" name=\"$field[name]\" value=\"$option\" ";
                     if($value==$option) $html.="checked ";
-                    $html.="/> $option&nbsp;&nbsp;";
+                    $html.=" /> $option&nbsp;&nbsp;";
                 }
                 break;
             case "select":

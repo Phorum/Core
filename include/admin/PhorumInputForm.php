@@ -159,10 +159,12 @@ class PhorumInputForm {
         // Allow title and text to span multiple lines and
         // do escaping for encapsulation within the help
         // javascript code.
-        $title = str_replace("\r", " ", $title);
-        $title = addslashes(str_replace("\n", " ", $title));
-        $text = str_replace("\r", " ", $text);
-        $text = addslashes(str_replace("\n", " ", $text));
+        $title = str_replace("\r", ' ', $title);
+        $title = addslashes(str_replace("\n", ' ', $title));
+        $title = str_replace('</', '<\/', $title);
+        $text = str_replace("\r", ' ', $text);
+        $text = addslashes(str_replace("\n", ' ', $text));
+        $text = str_replace('</', '<\/', $text);
         $this->_help[$row] = array( $title, $text );
     }
 
@@ -209,11 +211,11 @@ class PhorumInputForm {
         global $PHORUM;
 
         if(count($this->_help)){
-            echo "<script type=\"text/javascript\">\nvar help = Array;\n";
+            echo "<script type=\"text/javascript\">\n//<![CDATA[\nvar help = Array;\n";
             foreach($this->_help as $key=>$data){
                 echo "help[$key] = [\"$data[0]\", \"$data[1]\"];\n";
             }
-            echo "</script>\n";
+            echo "\n//]]></script>\n";
         }
         echo "<form style=\"display: inline;\" " .
              "action=\"".htmlspecialchars($this->_action)."\" " .
@@ -227,11 +229,11 @@ class PhorumInputForm {
 
         // add the admin token if we are in the admin and the token is available
         if(defined('PHORUM_ADMIN') && !empty($PHORUM['admin_token'])) {
-            echo "<input type=\"hidden\" name=\"phorum_admin_token\" value=\"".htmlspecialchars($PHORUM['admin_token'])."\">\n";
+            echo "<input type=\"hidden\" name=\"phorum_admin_token\" value=\"".htmlspecialchars($PHORUM['admin_token'])."\" />\n";
         }
 
         if ( is_array( $this->_hiddens ) ) foreach( $this->_hiddens as $name => $value ) {
-            echo "<input type=\"hidden\" name=\"$name\" value=\"".htmlspecialchars($value)."\">\n";
+            echo "<input type=\"hidden\" name=\"$name\" value=\"".htmlspecialchars($value)."\" />\n";
         }
 
         echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" class=\"input-form-table\" width=\"100%\">\n";
@@ -257,7 +259,7 @@ class PhorumInputForm {
                 echo "  <td colspan=\"2\" class=\"input-form-td-message\">$row[message]</td>\n";
                 echo "</tr>\n";
             } else {
-                $colspan = ( $row["contents"] == "" ) ? " colspan=2" : "";
+                $colspan = ( $row["contents"] == '' ) ? ' colspan="2"' : '';
 
                 $title = $row["title"];
 
@@ -276,7 +278,7 @@ class PhorumInputForm {
         echo "<tr class=\"input-form-tr\">\n";
         echo "  <td class=\"input-form-td-break\" align=\"center\" colspan=\"2\">";
         if (!empty($this->_submit)) {
-          echo "<input type=\"submit\" value=\"$this->_submit\" class=\"input-form-submit\">";
+          echo "<input type=\"submit\" value=\"$this->_submit\" class=\"input-form-submit\" />";
         }
         echo "</td>\n";
         echo "</tr>\n";
@@ -365,7 +367,7 @@ class PhorumInputForm {
         if ( $size > 0 ) $data .= " size=\"$size\"";
         if ( $maxlength > 0 ) $data .= " maxlength=\"$maxlength\"";
         $value = htmlspecialchars( $value );
-        $data .= " value=\"$value\" $extra>";
+        $data .= " value=\"$value\" $extra />";
 
         return $data;
     }
@@ -398,7 +400,7 @@ class PhorumInputForm {
         foreach( $values as $value => $text ) {
             $data .= "<option value=\"$text\"";
             $text = htmlspecialchars( $text );
-            if ( $text == $selected ) $data .= " selected";
+            if ( $text == $selected ) $data .= " selected=\"selected\"";
             $data .= ">$text</option>\n";
         }
         $data .= "</select>\n";
@@ -412,22 +414,21 @@ class PhorumInputForm {
             $text = htmlspecialchars( $text );
             $data .= "<input type=\"radio\" name=\"$name\" value=\"$value\"";
             if ( $selected == $value ) $data .= " checked";
-            $data .= " $extra>&nbsp;$text$separator";
+            $data .= " $extra />&nbsp;$text$separator";
         }
         return $data;
     }
 
-    function checkbox( $name, $value, $caption, $checked = 0, $extra = "" )
+    function checkbox( $name, $value, $caption, $checked = 0, $extra = '' )
     {
-        $is_checked = ( !empty( $checked ) ) ? "checked" : "" ;
-
-        $value = htmlspecialchars( $value );
-
         global $checkidx;
         $checkidx++;
-
         $id = "admin_checkbox_$checkidx";
-        $data = "<span style=\"white-space: nowrap\"><input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$value\" $is_checked $extra>&nbsp;<label for=\"$id\">$caption</label></span>";
+
+        $is_checked = ( !empty( $checked ) ) ? 'checked="checked"' : '';
+        $label_caption = ( !empty( $caption ) ) ? "&nbsp;<label for=\"$id\">$caption</label>" : '';
+        $value = htmlspecialchars( $value );
+        $data = "<span style=\"white-space: nowrap\"><input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$value\" $is_checked $extra />$label_caption</span>";
 
         return $data;
     }

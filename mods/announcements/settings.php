@@ -42,9 +42,9 @@ $frm->hidden("mod", "announcements");
 $frm->addbreak("Announcement Settings");
 
 
-$page_list = $frm->checkbox("pages[home]", 1, "Home page, root level forum list (index.php)", $PHORUM["mod_announcements"]["pages"]["home"])."<br/>".
-             $frm->checkbox("pages[index]", 1, "Any forum List (index.php)", $PHORUM["mod_announcements"]["pages"]["index"])."<br/>".
-             $frm->checkbox("pages[list]", 1, "Message List (list.php)", $PHORUM["mod_announcements"]["pages"]["list"])."<br/>".
+$page_list = $frm->checkbox("pages[home]", 1, "Home page, root level forum list (index.php)", $PHORUM["mod_announcements"]["pages"]["home"])."<br />".
+             $frm->checkbox("pages[index]", 1, "Any forum List (index.php)", $PHORUM["mod_announcements"]["pages"]["index"])."<br />".
+             $frm->checkbox("pages[list]", 1, "Message List (list.php)", $PHORUM["mod_announcements"]["pages"]["list"])."<br />".
              $frm->checkbox("pages[read]", 1, "Read Message (read.php)", $PHORUM["mod_announcements"]["pages"]["read"]);
 
 $frm->addrow("Announcements Appear On", $page_list);

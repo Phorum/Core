@@ -25,6 +25,7 @@
             <tr>
                 <th align="left" nowrap="nowrap">
                     <script type="text/javascript">
+                    // <![CDATA[
                         function checkAll() {
                             var lf=document.getElementById('phorum-sub-list');
                             for (var i=0;i<lf.elements.length;i++) {
@@ -35,6 +36,7 @@
                             }
                         }
                         document.write ( '<input type="checkbox" id="toggle" name="toggle" onclick="checkAll()" />' );
+                    // ]]>
                     </script>
                     {LANG->Delete}
                 </th>
@@ -56,11 +58,11 @@
 
                     <td width="65%" class="message-subject {altclass}">
                         <a href="{TOPICS->URL->READ}">
-                        {IF TOPICS->new}<img src="{URL->TEMPLATE}/images/flag_red.png" class="icon1616" alt="{LANG->New}" title="{LANG->New}"/>{/IF}
+                        {IF TOPICS->new}<img src="{URL->TEMPLATE}/images/flag_red.png" class="icon1616" alt="{LANG->New}" title="{LANG->New}" />{/IF}
                         {TOPICS->subject}</a><br />
                         <small>{LANG->Forum}: {TOPICS->forum}</small>
                     </td>
-                    <td width="15%" class="{altclass}" nowrap="nowrap">{TOPICS->lastpost}<br/>{IF TOPICS->URL->RECENT_AUTHOR_PROFILE}<a href="{TOPICS->URL->RECENT_AUTHOR_PROFILE}">{/IF}{TOPICS->recent_author}{IF TOPICS->URL->RECENT_AUTHOR_PROFILE}</a>{/IF}</td>
+                    <td width="15%" class="{altclass}" nowrap="nowrap">{TOPICS->lastpost}<br />{IF TOPICS->URL->RECENT_AUTHOR_PROFILE}<a href="{TOPICS->URL->RECENT_AUTHOR_PROFILE}">{/IF}{TOPICS->recent_author}{IF TOPICS->URL->RECENT_AUTHOR_PROFILE}</a>{/IF}</td>
                     {IF ALLOW_EMAIL_NOTIFY_COUNT}
                     <td width="5%">
                       {IF TOPICS->ALLOW_EMAIL_NOTIFY}

@@ -106,8 +106,8 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
 
     'url' => array(
         BBCODE_INFO_DESCRIPTION   =>
-            '[url=http://example.com]cool site![/url]<br/>' .
-            '[url]http://example.com[/url]<br/>' .
+            '[url=http://example.com]cool site![/url]<br />' .
+            '[url]http://example.com[/url]<br />' .
             'For adding website links.',
         BBCODE_INFO_HASEDITORTOOL => TRUE,
         BBCODE_INFO_DEFAULTSTATE  => 2,
@@ -125,7 +125,7 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
 
     'email' => array(
         BBCODE_INFO_DESCRIPTION   =>
-            '[email subject="website mail!"]johndoe@example.com[/email]<br/>' .
+            '[email subject="website mail!"]johndoe@example.com[/email]<br />' .
             'For adding links to email addresses',
         BBCODE_INFO_HASEDITORTOOL => TRUE,
         BBCODE_INFO_DEFAULTSTATE  => 2,
@@ -138,13 +138,13 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
         BBCODE_INFO_HASEDITORTOOL => TRUE,
         BBCODE_INFO_DEFAULTSTATE  => 2,
         BBCODE_INFO_OPENONLY      => TRUE,
-        BBCODE_INFO_REPLACEOPEN   => '<hr class="bbcode"/>',
+        BBCODE_INFO_REPLACEOPEN   => '<hr class="bbcode" />',
         BBCODE_INFO_STRIPBREAK    => TRUE
     ),
 
     'list' => array(
         BBCODE_INFO_DESCRIPTION   =>
-            '[list]<br/>[*]Item one<br/>[*]Item two<br/>[/list]',
+            '[list]<br />[*]Item one<br />[*]Item two<br />[/list]',
         BBCODE_INFO_HASEDITORTOOL => TRUE,
         BBCODE_INFO_DEFAULTSTATE  => 2,
         BBCODE_INFO_ARGS          => array('list' => 'b'),
@@ -164,9 +164,9 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
 
     'quote' => array(
         BBCODE_INFO_DESCRIPTION   =>
-            '[quote]quoted text[/quote]<br/>' .
-            '[quote John Doe]quoted text[/quote]<br/>' .
-            '[quote=John Doe]quoted text[/quote]<br/>' .
+            '[quote]quoted text[/quote]<br />' .
+            '[quote John Doe]quoted text[/quote]<br />' .
+            '[quote=John Doe]quoted text[/quote]<br />' .
             'For adding quoted text.',
         BBCODE_INFO_HASEDITORTOOL => TRUE,
         BBCODE_INFO_DEFAULTSTATE  => 2,
@@ -181,9 +181,9 @@ $GLOBALS['PHORUM']['MOD_BBCODE']['BUILTIN'] = array
 
     'code' => array(
         BBCODE_INFO_DESCRIPTION   =>
-            '[code]<br/>' .
-            ' preformatted<br/>' .
-            '&nbsp;&nbsp;&nbsp;text<br/>' .
+            '[code]<br />' .
+            ' preformatted<br />' .
+            '&nbsp;&nbsp;&nbsp;text<br />' .
             '[/code]',
         BBCODE_INFO_HASEDITORTOOL => TRUE,
         BBCODE_INFO_DEFAULTSTATE  => 2,

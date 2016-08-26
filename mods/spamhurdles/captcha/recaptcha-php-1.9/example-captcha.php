@@ -30,7 +30,7 @@ if ($_POST["recaptcha_response_field"]) {
 }
 echo recaptcha_get_html($publickey, $error);
 ?>
-    <br/>
+    <br />
     <input type="submit" value="submit" />
     </form>
   </body>

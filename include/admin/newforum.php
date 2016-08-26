@@ -555,7 +555,7 @@ $frm->addhelp($row, "Moderate Messages", "This setting determines whether messag
 $frm->addrow("Email Messages To Moderators", $frm->select_tag("email_moderators", array(PHORUM_EMAIL_MODERATOR_OFF=>"Disabled", PHORUM_EMAIL_MODERATOR_ON=>"Enabled"), $email_moderators, $disabled_form_input));
 
 $row = $frm->addrow("Allow Email Notification for following topics", $frm->select_tag("allow_email_notify", array("No", "Yes"), $allow_email_notify, $disabled_form_input));
-$frm->addhelp($row, "Allow Email Notification", "This option determines if it is possible for users to use email notification when following topics within this forum.<br/><br/>This does not only apply to enabling email notification at post time, but it also applies to clicking on \"".$PHORUM["DATA"]["LANG"]["FollowThread"]."\" from the message read page and to managing subscriptions from the user control center.");
+$frm->addhelp($row, "Allow Email Notification", "This option determines if it is possible for users to use email notification when following topics within this forum.<br /><br />This does not only apply to enabling email notification at post time, but it also applies to clicking on \"".$PHORUM["DATA"]["LANG"]["FollowThread"]."\" from the message read page and to managing subscriptions from the user control center.");
 
 $pub_perm_frm = $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_READ."]", 1, "Read", $pub_perms & PHORUM_USER_ALLOW_READ, $disabled_form_input)."&nbsp;&nbsp;".
 $frm->checkbox("pub_perms[".PHORUM_USER_ALLOW_REPLY."]", 1, "Reply", $pub_perms & PHORUM_USER_ALLOW_REPLY, $disabled_form_input)."&nbsp;&nbsp;".
@@ -606,8 +606,8 @@ $frm->addhelp($row, "Count views per thread for non-threaded list",
      its view count updated, although multiple messages might show).
      Additionally, if the list view is flat and the read view is threaded, the
      view count on the list view will only show how often the first message
-     in the thread was viewed.<br/>
-     <br/>
+     in the thread was viewed.<br />
+     <br />
      With this option enabled, a separate view counter will be updated
      for the full thread when viewing any of the read pages for that thread.
      For non-threaded list views, this counter will then be used as the view

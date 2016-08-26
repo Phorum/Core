@@ -36,7 +36,9 @@ function spamhurdle_block_quick_submit_build_after_form($data)
 
     if ($delay > 0) {
         print "<script type=\"text/javascript\">\n";
+        print "// <![CDATA[\n";
         print "spamhurdles_block_quick_submit('{$data['id']}', $delay);\n";
+        print "// ]]>\n";
         print "</script>\n";
     }
 

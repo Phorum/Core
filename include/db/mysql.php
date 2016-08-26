@@ -6953,19 +6953,19 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
  *
  * The query conditions are arrays, containing the following elements:
  * <ul>
- * <li>condition<br>
- *   <br>
+ * <li>condition<br />
+ *   <br />
  *   A description of a condition. The syntax for this is:
- *   <field name to query> <operator> <match specification><br>
- *   <br>
+ *   <field name to query> <operator> <match specification><br />
+ *   <br />
  *   The <field name to query> is a field in the message query that
- *   we are running in this function.<br>
- *   <br>
+ *   we are running in this function.<br />
+ *   <br />
  *   The <operator> can be one of "=", "!=", "<", "<=", ">", ">=".
  *   Note that there is nothing like "LIKE" or "NOT LIKE". If a "LIKE"
  *   query has to be done, then that is setup through the
- *   <match specification> (see below).<br>
- *   <br>
+ *   <match specification> (see below).<br />
+ *   <br />
  *   The <match specification> tells us with what the field should be
  *   matched. The string "QUERY" inside the specification is preserved to
  *   specify at which spot in the query the "query" element from the
@@ -6973,10 +6973,10 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
  *   the specification, then a match is made on the exact value in the
  *   specification. To perform "LIKE" searches (case insensitive wildcard
  *   searches), you can use the "*" wildcard character in the specification
- *   to do so.<br><br>
+ *   to do so.<br /><br />
  * </li>
- * <li>query<br>
- *   <br>
+ * <li>query<br />
+ *   <br />
  *   The data to use in the query, in case the condition element has a
  *   <match specification> that uses "QUERY" in it.
  * </li>

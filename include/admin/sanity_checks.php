@@ -145,9 +145,9 @@ foreach ($PHORUM["SANITY_CHECKS"]["CHECKS"] as $check)
         if (! empty($check["error"])) {
             if (! empty($check["solution"]))
                 $check["error"] .=
-                          "<br/><br/>" .
+                          "<br /><br />" .
                           "<strong>Possible solution:</strong>" .
-                          "<br/><br/>" .
+                          "<br /><br />" .
                           $check["solution"];
             $frm->addhelp($row,"Sanity check failed",$check["error"]);
         }
