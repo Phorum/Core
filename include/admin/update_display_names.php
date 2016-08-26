@@ -88,6 +88,7 @@ else
 
         if ($updated == 0) {
             $frm = new PhorumInputForm ("", "post", "Finish");
+            $frm->hidden('module', 'rebuild');
             $frm->addbreak("Display names updated");
             $frm->addmessage(
                 "The display names are all updated successfully."
