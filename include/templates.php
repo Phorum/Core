@@ -797,7 +797,7 @@ function phorum_write_file($file, $data)
     // the file it just had written :-/
     if (! $fp = fopen($file, "r")) trigger_error(
         "Failed to write a usable compiled template to the file " .
-        "\"" . htmlspecialchars($outfile) . "\". The file was created " .
+        "\"" . htmlspecialchars($file) . "\". The file was created " .
         "successfully, but it could not be read by the webserver " .
         "afterwards. This is probably caused by the filepermissions " .
         "on your cache directory.",
