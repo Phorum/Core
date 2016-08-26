@@ -68,17 +68,11 @@
     include_once "./include/admin/PhorumInputForm.php";
 
     $frm = new PhorumInputForm ("", "post");
-
     if(!empty($_SERVER["QUERY_STRING"])){
-
         $frm->hidden("target", htmlspecialchars($_SERVER["QUERY_STRING"], ENT_QUOTES, $PHORUM["DATA"]['CHARSET']));
-
     }
 
-    $frm->addrow("Username", $frm->text_box("username", "", 30));
-
-    $frm->addrow("Password", $frm->text_box("password", "", 30, 0, true));
-
+    $frm->addrow('Username', $frm->text_box('username', '', 30, 0, false, 'id="focushere"'));
+    $frm->addrow('Password', $frm->text_box('password', '', 30, 0, true));
     $frm->show();
-
 ?>

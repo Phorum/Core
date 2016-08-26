@@ -144,7 +144,7 @@ function hide_help()
 // ]]>
 </script>
 </head>
-<body>
+<body onload="var focuselt=document.getElementById('focushere'); if (focuselt) focuselt.focus();">
 <div id="helpdiv">
 <div id="helpdiv-hide"><a href="javascript:hide_help();"><img border="0" src="<?php print $PHORUM['http_path'] ?>/images/close.gif" height="16" width="16" alt="" /></a></div>
 <div id="helpdiv-title">&nbsp;Phorum Admin Help</div>
