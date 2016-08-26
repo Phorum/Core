@@ -8,6 +8,7 @@
             <tr>
                 <th align="left" width="20">
                     <script type="text/javascript">
+                    // <![CDATA[
                         function checkAll() {
                             var lf=document.getElementById('phorum-pm-list');
                             for (var i=0;i<lf.elements.length;i++) {
@@ -18,6 +19,7 @@
                             }
                         }
                         document.write ( '<input type="checkbox" id="toggle" name="toggle" onclick="checkAll()" />' );
+                    // ]]>
                     </script>
                     <noscript>&nbsp;</noscript>
                 </th>

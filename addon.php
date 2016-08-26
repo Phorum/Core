@@ -82,7 +82,7 @@ include_once( "./common.php" );
 // Bail out early if there are no modules enabled that implement
 // the addon hook.
 if (! isset($PHORUM["hooks"]["addon"])) trigger_error(
-    '<h1>Modscript Error</h1><br/>' .
+    '<h1>Modscript Error</h1><br />' .
     'There are no addon hook enabled modules active.',
     E_USER_ERROR
 );
@@ -99,7 +99,7 @@ if (isset($PHORUM['args']['module'])) {
 }
 
 if ($module === NULL) trigger_error(
-    '<h1>Modscript Error</h1><br/>' .
+    '<h1>Modscript Error</h1><br />' .
     'Missing "module" argument.',
     E_USER_ERROR
 );
@@ -127,7 +127,7 @@ if (count($filtered_hooks["mods"]) == 0) trigger_error(
 if (count($filtered_hooks["mods"]) > 1) trigger_error(
     '<h1>Modsript Error</h1>' .
     'More than one addon hook was registered ' .
-    'in the info for module "' . htmlspecialchars($module, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) . '".<br/>Only ' .
+    'in the info for module "' . htmlspecialchars($module, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) . '".<br />Only ' .
     'one addon hook is allowed per module.',
     E_USER_ERROR
 );

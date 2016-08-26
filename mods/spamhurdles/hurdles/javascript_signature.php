@@ -47,7 +47,9 @@ function spamhurdle_javascript_signature_build_after_form($data)
 {
     print spamhurdles_iScramble(
         "<script type=\"text/javascript\">\n" .
+        "// <![CDATA[\n" .
         "spamhurdle_javascript_signature('{$data['sig'][0]}');\n" .
+        "// ]]>\n" .
         "</script>\n"
     );
 

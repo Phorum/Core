@@ -7,7 +7,7 @@
         <form method="post" action="{GROUP->url}">
         {POST_VARS}
             {LANG->JoinGroupDescription}
-            <br/><br/>
+            <br /><br />
             <select name="joingroup">
                 <option value="0">&nbsp;</option>
                 {LOOP JOINGROUP}

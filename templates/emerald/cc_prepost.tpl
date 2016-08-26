@@ -1,5 +1,6 @@
 <!-- BEGIN TEMPLATE cc_prepost.tpl -->
 <script type="text/javascript">
+// <![CDATA[
 var phorum_marked_all = false;
 function phorum_markAllCheckboxes() {
     var pageform = document.getElementById('fprepost');
@@ -18,6 +19,7 @@ function phorum_markAllCheckboxes() {
     }
     phorum_marked_all = newval;
 }
+// ]]>
 </script>
 
 <form action="{URL->ACTION}" method="post">

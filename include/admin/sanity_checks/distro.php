@@ -187,7 +187,7 @@
             PHORUM_SANITY_CRIT,
             "Not all files that are required for running Phorum seem to
              be installed correctly on your server. Below is a list of
-             problems:<br/><ul><li>" .
+             problems:<br /><ul><li>" .
              implode("</li>\n<li>", $errors) .
              "</li></ul>",
             "If a file is marked \"<b>missing</b>\", then it's

@@ -9,7 +9,7 @@
 <html>
   <head>
     <title>Smiley help</title>
-    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/smileys/help/help.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php print $GLOBALS["PHORUM"]["http_path"] ?>/mods/smileys/help/help.css" />
   </head>
   <body>
     <h2>Smiley help information</h2>
@@ -21,7 +21,7 @@
     can find all smileys that are available. The "Where"
     column indicates where in your messages you can use the
     smiley (S = message subject, B = message body, BS = both).
-    <br/><br/>
+    <br /><br />
     <table cellspacing="1" width="100%">
     <tr>
       <th class="PhorumAdminTableHead">Smiley</th>
@@ -32,6 +32,6 @@
     <?php include("./mods/smileys/help/render_smileys_list.php") ?>
     </table>
 
-    <br/><br/><br/>
+    <br /><br /><br />
   </body>
 </html>

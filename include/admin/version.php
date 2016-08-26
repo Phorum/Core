@@ -28,12 +28,12 @@ require_once("./include/version_functions.php");
 $phorum_ver = PHORUM;
 
 print '<div class="PhorumAdminTitle">Check for new Phorum version</div>';
-print '<br/>';
+print '<br />';
 
 // Show the current software version.
 list ($running_type, $dummy) = phorum_parse_version($phorum_ver);
 print "You are currently running the $running_type version $phorum_ver " .
-      " of the Phorum software.<br/>";
+      " of the Phorum software.<br />";
 
 
 // Find all available upgrades. If no releases can be found
@@ -46,34 +46,34 @@ $new_d = isset($releases["development"]) && $releases["development"]["upgrade"];
 
 // Notice: when running a snapshot version.
 if ($running_type == 'snapshot') {
-    print "<br/>If this Phorum installation is run on a production server, " .
+    print "<br />If this Phorum installation is run on a production server, " .
           "the Phorum team recommends upgrading to either a stable " .
           "release or the latest development release. Snapshots should " .
-          "only be used for testing new bleeding edge features.<br/>";
+          "only be used for testing new bleeding edge features.<br />";
 }
 
 // Notice: when running a stable release while a new stable is available.
 if ($running_type == 'stable' && $new_s) {
-    print "<br/>A new stable release is available. The Phorum team " .
-          "recommends upgrading to this release as soon as possible.<br/>";
+    print "<br />A new stable release is available. The Phorum team " .
+          "recommends upgrading to this release as soon as possible.<br />";
 }
 
 // Notice: when running a development release while a new stable
 // and development release are available.
 if ($running_type == 'development' && $new_s && $new_d) {
-    print "<br/>There's both a new stable and a new development release " .
+    print "<br />There's both a new stable and a new development release " .
           "available. If this Phorum installation " .
           "is run on a production server, the Phorum team recommends " .
-          "upgrading to the stable version.<br/>";
+          "upgrading to the stable version.<br />";
 }
 
 // Notice: when running a development release while a new dev is available.
 if ($running_type == 'development' && $new_d && ! $new_s) {
-    print "<br/>A new development release is available. If this Phorum " .
+    print "<br />A new development release is available. If this Phorum " .
           "installation is run on a production server, the Phorum team " .
           "recommends only to upgrade in case new features are needed, " .
           "bugs you are suffering from are fixed or security holes have been " .
-          "closed. Else wait until a stable release is available.<br/>";
+          "closed. Else wait until a stable release is available.<br />";
 }
 
 // Display available upgrades.
@@ -84,7 +84,7 @@ foreach (array("stable","development") as $type) {
         $found_upgrade = true;
 
         $ver = $releases[$type]["version"];
-        print "<br/><h3 class=\"input-form-th\">";
+        print "<br /><h3 class=\"input-form-th\">";
         if ($running_type == 'snapshot') {
             print "The current $type release is version $ver";
         } else {
@@ -92,7 +92,7 @@ foreach (array("stable","development") as $type) {
         }
         print "</h3>";
 
-        print "This release can be downloaded from:<br/><ul>";
+        print "This release can be downloaded from:<br /><ul>";
         foreach ($releases["$type"]["locations"] as $url) {
             print "<li><a href=\"". htmlspecialchars($url) . "\">" .
                   htmlspecialchars($url) . "</a></li>";
@@ -102,7 +102,7 @@ foreach (array("stable","development") as $type) {
 }
 
 if (! $found_upgrade) {
-    print "<br/><h3 class=\"input-form-th\">" .
+    print "<br /><h3 class=\"input-form-th\">" .
           "Your Phorum installation is up to date</h3>";
 }
 ?>

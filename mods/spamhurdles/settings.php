@@ -89,7 +89,7 @@ else
                 "mod_spamhurdles" => $PHORUM["mod_spamhurdles"]
             ));
             phorum_admin_okmsg(
-                'The "flite" binary was found on the server.<br/>' .
+                'The "flite" binary was found on the server.<br />' .
                 'The path was automatically set to ' .
                 '"' . htmlspecialchars($flite_location) . '"'
             );
@@ -104,7 +104,7 @@ $image_url = $PHORUM['http_path'] . '/mods/spamhurdles/images/' .
   <img style="border:none; padding:5px;float:right"
        title="Click here for more Geek and Poke cartoons!"
        alt="Geek and Poke cartoon"
-       src="<?php print $image_url ?>"/>
+       src="<?php print $image_url ?>" />
 </a>
 <div style="font-size: xx-large; font-weight: bold">Spam Hurdles Module</div>
 <div style="padding-bottom: 15px; font-size: large">
@@ -195,9 +195,9 @@ $frm->addhelp(
     $row, "Action when a spam message is suspected",
     "You can choose whether you want to fully block suspected spam messages
      or that you want to have them posted in a moderated state, so they
-     will need approval by a moderator.<br/>
-     <br/>
-     A message is suspicious if it fails one of the spam hurdles:<br/>
+     will need approval by a moderator.<br />
+     <br />
+     A message is suspicious if it fails one of the spam hurdles:<br />
      <ul>
        <li>Block forms that are submitted multiple times</li>
        <li>Check if an HTML commented form field is submitted</li>
@@ -278,9 +278,9 @@ function create_spamhurdle_options($frm, $section, $tpl, $tplhook, $statusspec)
          from going back in the browser and resubmitting a (slightly changed)
          form (flooding) as well as spammers who directly submit posting
          forms to Phorum's post.php, without fetching a fresh unique key
-         first.<br/>
-         <br/>
-         <b>User impact:</b><br/>
+         first.<br />
+         <br />
+         <b>User impact:</b><br />
          This does not affect the way in which people can use Phorum,
          so it is recommended to enable this option."
     );
@@ -297,15 +297,15 @@ function create_spamhurdle_options($frm, $section, $tpl, $tplhook, $statusspec)
         "If this option is enabled, Phorum will check how much time there
          is between showing a form and actually posting it. If a form is
          posted too quickly, then it's considered to come from a
-         posting robot.<br/>
-         <br/>
+         posting robot.<br />
+         <br />
          To prevent users from accidentally posting the form too quickly
          themselves, the submit button is disabled as long as the server
          would block the form. On the button, a countdown is shown to
-         display how many seconds the user has to wait before posting.<br/>
-         <br/>
+         display how many seconds the user has to wait before posting.<br />
+         <br />
          <b>User impact:</b>
-         <br/>This option does work for all browsers, only for the posting
+         <br />This option does work for all browsers, only for the posting
          button to be disabled, JavaScript support is required."
     );
 
@@ -324,9 +324,9 @@ function create_spamhurdle_options($frm, $section, $tpl, $tplhook, $statusspec)
          fully ignore this extra field. On the other hand, some badly
          written spam bots will recognize the code as a form field.
          If such a spam bot posts a form including this extra form field,
-         the form will be blocked.<br/>
-         <br/>
-         <b>User impact:</b><br/>
+         the form will be blocked.<br />
+         <br />
+         <b>User impact:</b><br />
          This does not affect the way in which people can use Phorum,
          so it is recommended to enable this option."
     );
@@ -346,14 +346,14 @@ function create_spamhurdle_options($frm, $section, $tpl, $tplhook, $statusspec)
         JavaScript. The signing JavaScript code is put in the message
         editor in a scrambled way (using iScramble) and the browser will
         have to descramble it using JavaScript to be able to run the
-        signing code.<br/>
-        <br/>
+        signing code.<br />
+        <br />
         Functionally, this is all done to force the use of JavaScript
         when posting a form. This can block those spambots that do not
         interpret JavaScript, but only try to post the unmodified form
-        information that is found in the form.<br/>
-        <br/>
-        <b>User impact:</b><br/>
+        information that is found in the form.<br />
+        <br />
+        <b>User impact:</b><br />
         This option requires JavaScript support in the browser.
         If a user does not have JavaScript (enabled), then posting a form
         is not possible."
@@ -372,9 +372,9 @@ function create_spamhurdle_options($frm, $section, $tpl, $tplhook, $statusspec)
          Turing-test to tell Computers and Humans Apart) will be used
          when posting a form. A check is added to the form, where the user
          has to prove that he/she is a human, by solving a simple puzzle.
-         Below you can configure what type of CAPTCHA to use for this.<br/>
-         <br/>
-         <b>User impact:</b><br/>
+         Below you can configure what type of CAPTCHA to use for this.<br />
+         <br />
+         <b>User impact:</b><br />
          The user will have to solve the CAPTCHA before a form can be posted.
          So this will require an extra action by the user. The exact user
          impact depends on the type of CAPTCHA that is used."
@@ -425,13 +425,13 @@ function create_spamhurdle_options($frm, $section, $tpl, $tplhook, $statusspec)
         $frm->addmessage(
             "<b style=\"color:red\">" .
             "Warning: Incompatible template files detected" .
-            "</b><br/><br/>" .
+            "</b><br /><br />" .
             "Not all template files contain the template hook " .
             "<tt>{HOOK \"$tplhook\"}</tt> that is required for the " .
             "$section protection to work. If your Phorum site is using " .
             "the following template files, then check them against the " .
             "template files in the Phorum distribution and add the " .
-            "required hook code to them:</br>" .
+            "required hook code to them:<br />" .
             "<ul><li>" . implode("</li><li>", $incompatibilities) . "</li></ul>"
         );
     }
@@ -505,9 +505,9 @@ $frm->addmessage(
     "<div id=\"settings_recaptcha\" class=\"input-form-td\"
         style=\"margin:0; padding:10px; border: 1px solid navy\">
       For using reCAPTCHA, you need a (free) public and private key.
-      Please signup at <a href=\"http://recaptcha.net\" target=\"_new\">the
+      Please signup at <a href=\"http://recaptcha.net\" target=\"_blank\">the
       reCAPTCHA</a> web site and enter the public and private key for your
-      web site's domain in the fields below.<br/><br/>
+      web site's domain in the fields below.<br /><br />
       <table>
         <tr>
           <td>public key</td>

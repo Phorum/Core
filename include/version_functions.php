@@ -361,17 +361,17 @@ function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
     {
         // Initialize the return message.
         if (!$update_internal_version) {
-            $msg = "Installing patch $version ...<br/>\n";
+            $msg = "Installing patch $version ...<br />\n";
         }
         // Patch level 1111111111 is a special value that is used by
         // phorum if there is no patch level stored in the database.
         // So this is the first time a patch is installed.
         elseif ($fromversion == '1111111111') {
-            $msg = "Upgrading to patch level $version ...<br/>\n";
+            $msg = "Upgrading to patch level $version ...<br />\n";
         } else {
             $msg = "Upgrading from " .
                    ($type == "patch"?"patch level ":"database version ") .
-                   "$fromversion to $version ...<br/>\n";
+                   "$fromversion to $version ...<br />\n";
         }
 
         // Load the upgrade file. The upgrade file should fill the
@@ -382,13 +382,13 @@ function phorum_dbupgrade_run($upgrade, $update_internal_version = TRUE)
         // Run the upgrade queries.
         $err = phorum_db_run_queries($upgrade_queries);
         if($err !== NULL){
-            $msg.= "An error occured during this upgrade:<br/><br/>\n" .
-                   "<span style=\"color:red\">$err</span><br/><br/>\n" .
+            $msg.= "An error occured during this upgrade:<br /><br />\n" .
+                   "<span style=\"color:red\">$err</span><br /><br />\n" .
                    "Please make note of this error and contact the " .
                    "Phorum Dev Team for help.\nYou can try to continue " .
-                   "with the rest of the upgrade.<br/>\n";
+                   "with the rest of the upgrade.<br />\n";
         } else {
-            $msg.= "The upgrade was successful.<br/>\n";
+            $msg.= "The upgrade was successful.<br />\n";
         }
 
         // Update the upgrade version info.

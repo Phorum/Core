@@ -200,6 +200,7 @@ $available_smileys = phorum_mod_smileys_available();
 // is selected from the drop down box.
 ?>
 <script type="text/javascript">
+// <![CDATA[
 function change_image(new_image) {
   var div = document.getElementById("preview_div");
   var img = document.getElementById("preview_image");
@@ -212,6 +213,7 @@ function change_image(new_image) {
   }
   img.src =new_image;
 }
+// ]]>
 </script>
 <?php
 
@@ -233,7 +235,7 @@ foreach ($PHORUM["mod_smileys"]["smileys"] as $id => $smiley) {
 // Display a warning in case there are no smiley images available.
 if (! count($available_smileys)) {
     phorum_admin_error(
-        "<strong>Warning:</strong><br/>" .
+        "<strong>Warning:</strong><br />" .
         "No smiley images were found in your current smiley prefix " .
         "path. Please place some smileys in the directory " .
         htmlspecialchars($PHORUM["mod_smileys"]["prefix"]) .
@@ -241,7 +243,7 @@ if (! count($available_smileys)) {
         "containing smiley images.");
 } elseif ($inactive_smileys) {
     phorum_admin_error(
-        "<strong>Warning:</strong><br/>" .
+        "<strong>Warning:</strong><br />" .
         "You have $inactive_smileys smiley(s) configured for which the " .
         "image file was not found (marked as \"UNAVAILBLE\" in the list " .
         "below). Delete the smiley(s) from the list or place the missing " .
@@ -296,7 +298,7 @@ if ($smiley_id == "NEW")
     }
 
     $row = $frm->addrow("Enable posting option \"disable smileys\"", $frm->checkbox("allow_disable_per_post", "1", "Yes", $PHORUM["mod_smileys"]["allow_disable_per_post"]));
-    $frm->addhelp($row, "Enable posting option \"disable smileys\"", "If this feature is enabled, then your users can get an extra option in the posting editor for disabling the smileys handling for the posted message. This can be useful if the user wants to post a text that contains strings that unintentionally match smileys.<br/><br/>To make this option visible, you will have to add the code <b>{HOOK \"tpl_editor_disable_smileys\"}</b> to the posting.tpl template file at an appropriate spot.");
+    $frm->addhelp($row, "Enable posting option \"disable smileys\"", "If this feature is enabled, then your users can get an extra option in the posting editor for disabling the smileys handling for the posted message. This can be useful if the user wants to post a text that contains strings that unintentionally match smileys.<br /><br />To make this option visible, you will have to add the code <b>{HOOK \"tpl_editor_disable_smileys\"}</b> to the posting.tpl template file at an appropriate spot.");
 
     $frm->show();
 }
@@ -357,7 +359,9 @@ $frm->show();
 // Make the preview image visible in case a $smiley is set.
 if (!empty($smiley)) {?>
     <script type="text/javascript">
+    // <![CDATA[
     change_image('<?php print addslashes($smiley) ?>');
+    // ]]>
     </script><?php
 }
 
@@ -404,14 +408,14 @@ if ($smiley_id == "NEW")
             print "  <td class=\"PhorumAdminTableRow\">{$item["smiley"]}</td>\n";
             print "  <td class=\"PhorumAdminTableRow\" align=\"center\">";
             if ($item["active"]) {
-              print "<img src=\"{$PHORUM["mod_smileys"]["prefix"]}{$item["smiley"]}\"/></td>\n";
+              print "<img src=\"{$PHORUM["mod_smileys"]["prefix"]}{$item["smiley"]}\" /></td>\n";
             } else {
               print "<div style=\"color:red\">UNAVAILBLE</div>";
             }
             print "  <td class=\"PhorumAdminTableRow\">{$item["alt"]}</td>\n";
             print "  <td class=\"PhorumAdminTableRow\" style=\"white-space:nowrap\">$used_for_txt</td>\n";
             print "  <td class=\"PhorumAdminTableRow\">" .
-                  "<a href=\"$edit_url\">Edit</a>&nbsp;&#149;&nbsp;" .
+                  "<a href=\"$edit_url\">Edit</a>&nbsp;&bull;&nbsp;" .
                   "<a href=\"$delete_url\">Delete</a></td>\n";
             print "</tr>\n";
         }
@@ -425,7 +429,7 @@ if ($smiley_id == "NEW")
     }
 
     // For a more clear end of page.
-    print "<br/><br/><br/>";
+    print "<br /><br /><br />";
 }
 
 ?>

@@ -91,18 +91,18 @@ foreach ($list['modules'] as $name => $info)
         $settings_link="";
     }
 
-    $text = $info["title"];
+    $text = htmlspecialchars($info["title"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     if(isset($info["version"])){
-        $text.=" (version ".$info["version"].")";
+        $text.=" (version ".htmlspecialchars($info["version"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]).")";
     }
     if(isset($info["desc"])){
-        $text.="<div class=\"small\">".wordwrap($info["desc"], 90, "<br />")."</div>";
+        $text.="<div class=\"small\">".wordwrap(htmlspecialchars($info["desc"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]), 90, "<br />")."</div>";
     }
     if(isset($info["author"])){
-        $text.="<div class=\"small\">Created by ".$info["author"]."</div>";
+        $text.="<div class=\"small\">Created by ".htmlspecialchars($info["author"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])."</div>";
     }
     if(isset($info["release_date"])){
-        $text.="<div class=\"small\">Released ".$info["release_date"]."</div>";
+        $text.="<div class=\"small\">Released ".htmlspecialchars($info["release_date"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"])."</div>";
     }
 
     $moreinfo = array();
@@ -115,7 +115,7 @@ foreach ($list['modules'] as $name => $info)
         }
     }
     if (!empty($moreinfo)) {
-        $text.="More info: <small>" . implode(" &bull; ", $moreinfo) . "</small>";
+        $text.="<small>More info: " . implode(" &bull; ", $moreinfo) . "</small>";
     }
 
     if(!$info['version_disabled']) {
@@ -129,12 +129,12 @@ foreach ($list['modules'] as $name => $info)
         {
             phorum_admin_error(
                 "Minimum Phorum-Version requirement not met for " .
-                "module \"" . htmlspecialchars($name) . "\"<br/>" .
+                "module \"" . htmlspecialchars($name) . "\"<br />" .
                 "It requires at least version " .
                 "\"" . htmlspecialchars($info['required_version']) . "\", " .
                 "but the current version is \"" . PHORUM . "\".<br />".
                 "The module was disabled to avoid malfunction of " .
-                "your Phorum because of that requirement.<br/>"
+                "your Phorum because of that requirement.<br />"
             );
 
             phorum_api_modules_disable($name);

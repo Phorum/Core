@@ -282,7 +282,7 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
     $users_url = phorum_admin_build_url(array('module=users'));
     $users_add_url = phorum_admin_build_url(array('module=users','add=1'));
     print "<a href=\"$users_url\">" .
-          "Show all users</a> | <a href=\"$users_add_url\">Add User</a><br/>";
+          "Show all users</a> | <a href=\"$users_add_url\">Add User</a><br />";
 
     if (empty($_REQUEST["user_id"]))
     {
@@ -453,13 +453,13 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
     <hr class="PhorumAdminHR" />
 
     <script type="text/javascript">
-    <!--
+    // <![CDATA[
     function CheckboxControl(form, onoff) {
         for (var i = 0; i < form.elements.length; i++)
             if (form.elements[i].type == "checkbox")
                 form.elements[i].checked = onoff;
     }
-    // -->
+    // ]]>
     </script>
 <?php
 
@@ -770,12 +770,12 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
 
         echo <<<EOT
         <form name="UsersForm" action="$frm_url" method="post">
-        <input type="hidden" name="phorum_admin_token" value="{$PHORUM['admin_token']}">
-        <input type="hidden" name="curpage" value="$page">
-        <input type="hidden" name="sort" value="$sort">
-        <input type="hidden" name="sort_dir" value="$sort_dir">
-        <input type="hidden" name="module" value="users">
-        <input type="hidden" name="action" value="deleteUsers">
+        <input type="hidden" name="phorum_admin_token" value="{$PHORUM['admin_token']}" />
+        <input type="hidden" name="curpage" value="$page" />
+        <input type="hidden" name="sort" value="$sort" />
+        <input type="hidden" name="sort_dir" value="$sort_dir" />
+        <input type="hidden" name="module" value="users" />
+        <input type="hidden" name="action" value="deleteUsers" />
         <table border="0" cellspacing="1" cellpadding="0"
                class="PhorumAdminTable" width="100%">
         <tr>
@@ -789,7 +789,7 @@ EOT;
             echo " value=\"$value\">$description</option>";
         }
         echo "</select>&nbsp;&nbsp;&nbsp;";
-        if ($page > 1) echo "<input type=\"submit\" name=\"prevpage\" value=\"&lt;&lt;\"/> ";
+        if ($page > 1) echo "<input type=\"submit\" name=\"prevpage\" value=\"&lt;&lt;\" /> ";
         echo "page <select name=\"page\" onchange=\"this.form.submit()\">";
         foreach ($pagelist as $value) {
             echo "<option";
@@ -797,7 +797,7 @@ EOT;
             echo " value=\"$value\">$value</option>";
         }
         echo "</select> of $totalpages ";
-        if ($page < $totalpages) echo "<input type=\"submit\" name=\"nextpage\" value=\"&gt;&gt;\"/>";
+        if ($page < $totalpages) echo "<input type=\"submit\" name=\"nextpage\" value=\"&gt;&gt;\" />";
         echo <<<EOT
             </span>Number of users: $total
             </td>
@@ -838,7 +838,7 @@ EOT;
             if (!empty($_REQUEST["registered"])) {
                 echo "    <td class=\"".$ta_class."\" align=\"right\">".(intval($user['date_added']) ? phorum_date($PHORUM['short_date'], intval($user['date_added'])) : "&nbsp;")."</td>\n";
             }
-            echo "    <td class=\"".$ta_class."\"><input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$user['user_id']}\"></td>\n";
+            echo "    <td class=\"".$ta_class."\"><input type=\"checkbox\" name=\"deleteIds[]\" value=\"{$user['user_id']}\" /></td>\n";
             echo "</tr>\n";
         }
 
@@ -846,11 +846,11 @@ EOT;
         <tr>
           <td colspan="$cols" align="right">
           <input type="button" value="Check All"
-           onClick="CheckboxControl(this.form, true);">
+           onclick="CheckboxControl(this.form, true);" />
           <input type="button" value="Clear All"
-           onClick="CheckboxControl(this.form, false);">
+           onclick="CheckboxControl(this.form, false);" />
           <input type="submit" name="delete" value="Delete Selected Users"
-           onClick="return confirm('Really delete the selected user(s)?')">
+           onclick="return confirm('Really delete the selected user(s)?')" />
           </td>
         </tr>
         </table>
@@ -1051,7 +1051,7 @@ if (isset($_REQUEST["user_id"]))
     $email = isset($user_data["email"]) ? $user_data["email"] : "";
     $admin = isset($user_data["admin"]) ? $user_data["admin"] : "";
 
-    print "<a href=\"".htmlspecialchars($referrer)."\">Back to the user overview</a><br/>";
+    print "<a href=\"".htmlspecialchars($referrer)."\">Back to the user overview</a><br />";
 
     $frm = new PhorumInputForm ("", "post", "Add User");
 

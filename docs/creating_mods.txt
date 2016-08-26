@@ -2064,7 +2064,7 @@ Table of contents:
            </td>
            <td>
              <input type="text" name="mod_foo"
-              value="<?php print htmlspecialchars($value) ?>"/>
+              value="<?php print htmlspecialchars($value) ?>" />
            </td>
          </tr>
          <?php

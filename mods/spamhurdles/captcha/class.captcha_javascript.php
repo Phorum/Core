@@ -53,6 +53,7 @@ class captcha_javascript extends captcha_base
         ob_start();
         ?>
         <script type="text/javascript">
+        // <![CDATA[
 
         function spamhurdles_captcha_add_pixel(x,y) {
             if (!document.getElementById) return;
@@ -102,6 +103,7 @@ class captcha_javascript extends captcha_base
             print "spamhurdles_captcha_add_pixel({$point[0]},{$point[1]});\n";
         }
         ?>
+        // ]]>
         </script>
         <?php
         $after_form = ob_get_contents();

@@ -162,11 +162,11 @@ $frm->addrow(
     "<span style=\"float:right;margin-right:10px\">" .
          $frm->select_tag("pagelength", $pagelengths, $pagelength,
                           'onchange="this.form.submit()"') .
-        "&nbsp;&nbsp;&nbsp
-         <input type=\"submit\" name=\"prevpage\" value=\"&lt;&lt;\"/>
+        "&nbsp;&nbsp;&nbsp;
+         <input type=\"submit\" name=\"prevpage\" value=\"&lt;&lt;\" />
          page " . $frm->select_tag("page", $pagelist, $page,
                   'onchange="this.form.submit()"') . " of $pages
-         <input type=\"submit\" name=\"nextpage\" value=\"&gt;&gt;\"/>
+         <input type=\"submit\" name=\"nextpage\" value=\"&gt;&gt;\" />
      </span>Number of entries: $logcount"
 );
 
@@ -176,7 +176,7 @@ if ($filter_mode)
 
     $loglevel_checkboxes = '';
     foreach ($strings["LOGLEVELS"] as $l => $s) {
-        $loglevel_checkboxes .= '<span style="white-space: nowrap">' . $frm->checkbox("show_loglevel[$l]", "1", "", isset($show_loglevel[$l])?1:0, "id=\"llcb_$l\"") . ' <label for="llcb_'.$l.'"><img align="absmiddle" src="'.$PHORUM["http_path"].'/mods/event_logging/images/loglevels/'.$l.'.png"/> ' . $s . '</label></span> ';
+        $loglevel_checkboxes .= '<span style="white-space: nowrap">' . $frm->checkbox("show_loglevel[$l]", "1", "", isset($show_loglevel[$l])?1:0, "id=\"llcb_$l\"") . ' <label for="llcb_'.$l.'"><img align="absmiddle" src="'.$PHORUM["http_path"].'/mods/event_logging/images/loglevels/'.$l.'.png" /> ' . $s . '</label></span> ';
     }
     $row = $frm->addrow("Log levels to display", $loglevel_checkboxes);
     $frm->addhelp($row, "Log levels to display", "By using these checkboxes, you can limit the log levels that are displayed. If you do not check any of them, then no filtering will be applied and all log levels will be displayed.");
@@ -193,16 +193,16 @@ if ($filter_mode)
     $row = $frm->addrow("Source to display", $frm->select_tag("source", $sources, isset($_POST["source"]) ? $_POST["source"] : ""));
 
     $row = $frm->addrow("Filter by user", "User ID " . $frm->text_box("user_id", isset($_POST["user_id"]) ? $_POST["user_id"] : "", 10) . " Username " .  $frm->text_box("username", isset($_POST["username"]) ? $_POST["username"] : "", 20));
-    $frm->addhelp($row, "Filter by user", "Using these fields, you can specify for what user you want to display the event logs.<br/><br/>The User ID must be the exact numeric id for the user.<br/><br/>In the username field, you can use the \"*\" wildcard (e.g. searching for \"john*\" would find both the users \"johndoe\" and \"johnny\").");
+    $frm->addhelp($row, "Filter by user", "Using these fields, you can specify for what user you want to display the event logs.<br /><br />The User ID must be the exact numeric id for the user.<br /><br />In the username field, you can use the \"*\" wildcard (e.g. searching for \"john*\" would find both the users \"johndoe\" and \"johnny\").");
 
     $row = $frm->addrow("Filter by IP address", $frm->text_box("ip", isset($_POST["ip"]) ? $_POST["ip"] : "", 20));
-    $frm->addhelp($row, "Filter by IP address", "Using this field, you can specify for what IP address you want to display the event logs.<br/><br/>In the field, you can use the \"*\" wildcard (e.g. searching for \"172.16.12.*\" will find both the IP addresses \"172.16.12.1\" and \"172.16.12.211\").");
+    $frm->addhelp($row, "Filter by IP address", "Using this field, you can specify for what IP address you want to display the event logs.<br /><br />In the field, you can use the \"*\" wildcard (e.g. searching for \"172.16.12.*\" will find both the IP addresses \"172.16.12.1\" and \"172.16.12.211\").");
 
     $row = $frm->addrow("Filter by message", $frm->text_box("message", isset($_POST["message"]) ? htmlspecialchars($_POST["message"]) : "", 40));
-    $frm->addhelp($row, "Filter by message", "Filter all events where the message matches the specified text.<br/><br/>In the field, you can use the \"*\" wildcard (e.g. searching for \"fail*\" would find both entries with \"failure\" and \"failacity\").");
+    $frm->addhelp($row, "Filter by message", "Filter all events where the message matches the specified text.<br /><br />In the field, you can use the \"*\" wildcard (e.g. searching for \"fail*\" would find both entries with \"failure\" and \"failacity\").");
 
     $row = $frm->addrow("Filter by details", $frm->text_box("details", isset($_POST["details"]) ? htmlspecialchars($_POST["details"]) : "", 40));
-    $frm->addhelp($row, "Filter by details", "Filter all events where the details match the specified text .<br/><br/>In the field, you can use the \"*\" wildcard (e.g. searching for \"fail*\" would find both entries with \"failure\" and \"failacity\").");
+    $frm->addhelp($row, "Filter by details", "Filter all events where the details match the specified text .<br /><br />In the field, you can use the \"*\" wildcard (e.g. searching for \"fail*\" would find both entries with \"failure\" and \"failacity\").");
 
 }
 
@@ -212,6 +212,7 @@ $frm->show();
 // which can be used for clearing logs from the database.
 ?>
 <script type="text/javascript">
+// <![CDATA[
 var buttons = document.getElementsByTagName('input');
 for (var i = 0; i < buttons.length; i++) {
     if (buttons[i].type == 'submit' && (
@@ -271,6 +272,7 @@ for (var i = 0; i < buttons.length; i++) {
         break;
     }
 }
+// ]]>
 </script>
 <?php
 
@@ -367,12 +369,12 @@ foreach ($logs as $loginfo)
     print '
       <tr>
         <td valign="middle" style="white-space:nowrap">
-          <img alt="'.$title.'" title="'.$title.'" src="'.$icon.'"/>
+          <img alt="'.$title.'" title="'.$title.'" src="'.$icon.'" />
         </td>
-        <td valign="left" style="white-space:nowrap; font-size: 10px">'.
+        <td style="white-space:nowrap; font-size: 10px">'.
           phorum_date($PHORUM['short_date'], $loginfo["datestamp"]).
        '</td>
-        <td valign="left" style="white-space:nowrap; font-size: 10px">'.
+        <td style="white-space:nowrap; font-size: 10px">'.
           phorum_date($PHORUM['short_time'], $loginfo["datestamp"]).
        '</td>
         <td valign="middle" style="white-space:nowrap; font-size: 10px">
@@ -393,32 +395,32 @@ foreach ($logs as $loginfo)
         <td colspan="6" style="border-bottom: 1px solid #888">
           <div style="display:none;overflow:auto;border:1px solid #aaa; padding:10px; margin-bottom: 10px" id="detail_'.$loginfo["log_id"].'">
 
-            <b>User info:</b><br/><br/>' .
+            <b>User info:</b><br /><br />' .
 
             ($loginfo["user_id"]
              ? "User ID = <a title=\"Extend filter using this User ID\" href=\"".htmlspecialchars("$filter_base&user_id=".urlencode($loginfo["user_id"]))."\">{$loginfo["user_id"]}</a>" .
                 ($loginfo["username"] !== NULL
                  ? ', username = ' . htmlspecialchars($loginfo["username"])
                  : '') .
-                '&nbsp;[&nbsp;<a target="_new" href="'.phorum_get_url(PHORUM_PROFILE_URL, $loginfo["user_id"]).'">view user\'s profile</a>&nbsp]'
-             : "Anonymous user") . '<br/>' .
+                '&nbsp;[&nbsp;<a target="_blank" href="'.phorum_get_url(PHORUM_PROFILE_URL, $loginfo["user_id"]).'">view user\'s profile</a>&nbsp;]'
+             : "Anonymous user") . '<br />' .
             'User IP address = <a title="Extend filter using this IP address" href="'.htmlspecialchars($filter_base.'&ip='.urlencode($loginfo["ip"])).'">'. $loginfo["ip"] . '</a>' .
             ($loginfo["hostname"] !== NULL
              ? ', hostname = ' . htmlspecialchars($loginfo["hostname"])
-             : '') . '<br/>' .
+             : '') . '<br />' .
 
             ($message_url !== NULL
-             ? '<br/><b>Related message:</b><br/>
-                Forum = '.$loginfo["forum"].'<br/>
-                Message ID = '.$loginfo["message_id"].'<br/>
-                [&nbsp;<a target="_new" href="'.htmlspecialchars($message_url).'">view message</a>&nbsp;]<br/>'
+             ? '<br /><b>Related message:</b><br />
+                Forum = '.$loginfo["forum"].'<br />
+                Message ID = '.$loginfo["message_id"].'<br />
+                [&nbsp;<a target="_blank" href="'.htmlspecialchars($message_url).'">view message</a>&nbsp;]<br />'
              : '') .
 
             ($details !== NULL
-             ? '<br/><b>Additional details:</b><br/><br/>' .
-               nl2br(htmlspecialchars($details)) . '<br/>'
+             ? '<br /><b>Additional details:</b><br /><br />' .
+               nl2br(htmlspecialchars($details)) . '<br />'
              : '') .
-            '<br/>
+            '<br />
           </div>
         </td>
       </tr>';

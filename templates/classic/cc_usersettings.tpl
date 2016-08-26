@@ -29,7 +29,7 @@
           <tr>
             <td valign="top">{LANG->EmailVerify}:&nbsp;</td>
             <td>
-              {LANG->EmailVerifyDesc} {PROFILE->email_temp_part}<br>
+              {LANG->EmailVerifyDesc} {PROFILE->email_temp_part}<br />
               {LANG->EmailVerifyEnterCode}: <input type="text" name="email_verify_code" value="" />
             </td>
           </tr>

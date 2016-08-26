@@ -153,9 +153,9 @@ function phorum_cache_purge($full = false) {
 
     // Return a report about the purging action.
     require_once('./include/format_functions.php');
-    return "Finished purging the file based data cache<br/>\n" .
+    return "Finished purging the file based data cache<br />\n" .
            "Purged " . phorum_filesize($purged) . " of " .
-           phorum_filesize($total) . "<br/>\n";
+           phorum_filesize($total) . "<br />\n";
 }
 function phorum_cache_purge_recursive($dir, $subdir, $total, $purged, $full) {
     if (!is_dir("$dir/$subdir")) return array($total, $purged, false);

@@ -133,46 +133,46 @@
         $row = $frm->addrow("Field To Match", $frm->select_tag("type", $ban_types, $type));
         $frm->addhelp($row, "Field To Match", "
             Below, you will find an overview of what
-            ban items are used by what Phorum actions:<br/>
-            <br/>
-            <b>User registration</b>:<br/>
-            \"Name/User Name\" checks the new username<br/>
-            \"Email Address\" checks the new email address<br/>
-            \"IP Address/Hostname\" checks the visitor's IP<br/>
-            <br/>
-            <b>Posting forum messages by anonymous users</b><br/>
-            \"Name/User Name\" checks the author's name<br/>
-            \"Email Address\" checks the author's email address<br/>
-            \"Illegal Words (SPAM)\" checks the subject and body<br/>
-            \"IP Address/Hostname\" checks the author's IP<br/>
-            <br/>
-            <b>Posting forum messages by registered users</b><br/>
-            \"Name/User Name\" checks the author's username<br/>
-            \"User-Id (registered User)\" checks the author's user id<br/>
-            \"Email Address\" checks the author's email address<br/>
-            \"IP Address/Hostname\" checks the author's IP<br/>
-            \"Illegal Words (SPAM)\" checks the subject and body<br/>
-            <br/>
-            <b>Posting private messages</b><br/>
-            \"Name/User Name\" checks the sender's username<br/>
-            \"User-Id (registered User)\" checks the sender's user id<br/>
-            \"Email Address\" checks the sender's email address<br/>
+            ban items are used by what Phorum actions:<br />
+            <br />
+            <b>User registration</b>:<br />
+            \"Name/User Name\" checks the new username<br />
+            \"Email Address\" checks the new email address<br />
+            \"IP Address/Hostname\" checks the visitor's IP<br />
+            <br />
+            <b>Posting forum messages by anonymous users</b><br />
+            \"Name/User Name\" checks the author's name<br />
+            \"Email Address\" checks the author's email address<br />
+            \"Illegal Words (SPAM)\" checks the subject and body<br />
+            \"IP Address/Hostname\" checks the author's IP<br />
+            <br />
+            <b>Posting forum messages by registered users</b><br />
+            \"Name/User Name\" checks the author's username<br />
+            \"User-Id (registered User)\" checks the author's user id<br />
+            \"Email Address\" checks the author's email address<br />
+            \"IP Address/Hostname\" checks the author's IP<br />
+            \"Illegal Words (SPAM)\" checks the subject and body<br />
+            <br />
+            <b>Posting private messages</b><br />
+            \"Name/User Name\" checks the sender's username<br />
+            \"User-Id (registered User)\" checks the sender's user id<br />
+            \"Email Address\" checks the sender's email address<br />
             \"IP Address/Hostname\" checks the sender's IP
         ");
 
-        $row = $frm->addrow("Compare As", $frm->select_tag("pcre", $match_types, $pcre) .  "<div style=\"font-size:x-small\">If using PCRE for comparison, \"String To Match\" should be a valid PCRE expression.<br/>See <a href=\"http://php.net/pcre\" target=\"_blank\">the PHP manual</a> for more information about PCRE.</div>");
+        $row = $frm->addrow("Compare As", $frm->select_tag("pcre", $match_types, $pcre) .  "<div style=\"font-size:x-small\">If using PCRE for comparison, \"String To Match\" should be a valid PCRE expression.<br />See <a href=\"http://php.net/pcre\" target=\"_blank\">the PHP manual</a> for more information about PCRE.</div>");
 
         $frm->addhelp($row, "Compare As", "
             This setting can be used to specify the matching method
-            that has to be used for the ban item. There are two options:<br/>
-            <br/>
+            that has to be used for the ban item. There are two options:<br />
+            <br />
             <ul>
-              <li><b>String</b><br/>
+              <li><b>String</b><br />
                   The exact string from the \"String To Match\" field
                   will be used for matching. Wildcards are not available
-                  for the String field type.<br/><br/></li>
+                  for the String field type.<br /><br /></li>
 
-              <li><b>PCRE</b><br/>
+              <li><b>PCRE</b><br />
                   The \"String To Match\" field will be treated as
                   a <a href=\"http://www.php.net/pcre\">Perl Compatible
                   Regular Expression</a>.</li>
@@ -225,7 +225,7 @@
                         echo "    <td class=\"".$ta_class."\">".$ban_types[$type]."</td>\n";
                         echo "    <td class=\"".$ta_class."\">".$match_types[$item["pcre"]]."</td>\n";
                         echo "    <td class=\"".$ta_class."\">".$forum_list[$item["forum_id"]]."</td>\n";
-                        echo "    <td class=\"".$ta_class."\"><a href=\"$edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$delete_url\">Delete</a></td>\n";
+                        echo "    <td class=\"".$ta_class."\"><a href=\"$edit_url\">Edit</a>&nbsp;&bull;&nbsp;<a href=\"$delete_url\">Delete</a></td>\n";
                         echo "</tr>\n";
                         $t_last_string = $item["string"];
                     }

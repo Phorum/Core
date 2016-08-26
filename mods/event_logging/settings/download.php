@@ -196,12 +196,12 @@ foreach ($logs as $loginfo)
     print '
       <tr>
         <td valign="middle" style="white-space:nowrap">
-          <img alt="'.$title.'" title="'.$title.'" src="'.$icon.'"/>
+          <img alt="'.$title.'" title="'.$title.'" src="'.$icon.'" />
         </td>
-        <td valign="left" style="white-space:nowrap; font-size: 10px">'.
+        <td style="white-space:nowrap; font-size: 10px">'.
           phorum_date($PHORUM['short_date'], $loginfo["datestamp"]).
        '</td>
-        <td valign="left" style="white-space:nowrap; font-size: 10px">'.
+        <td style="white-space:nowrap; font-size: 10px">'.
           phorum_date($PHORUM['short_time'], $loginfo["datestamp"]).
        '</td>
         <td valign="middle" style="white-space:nowrap; font-size: 10px">
@@ -222,31 +222,31 @@ foreach ($logs as $loginfo)
         <td colspan="6" style="border-bottom: 1px solid #888">
           <div style="display:none;overflow:auto;border:1px solid #aaa; padding:10px; margin-bottom: 10px" id="detail_'.$loginfo["log_id"].'">
 
-            <b>User info:</b><br/><br/>' .
+            <b>User info:</b><br /><br />' .
 
             ($loginfo["user_id"]
              ? "User ID = {$loginfo["user_id"]}" .
                 ($loginfo["username"] !== NULL
                  ? ', username = ' . htmlspecialchars($loginfo["username"])
                  : '')
-             : "Anonymous user") . '<br/>' .
+             : "Anonymous user") . '<br />' .
             'User IP address = '. $loginfo["ip"] .
             ($loginfo["hostname"] !== NULL
              ? ', hostname = ' . htmlspecialchars($loginfo["hostname"])
-             : '') . '<br/>' .
+             : '') . '<br />' .
 
             ($message_url !== NULL
-             ? '<br/><b>Related message:</b><br/>
-                Forum = '.$loginfo["forum"].'<br/>
-                Message ID = '.$loginfo["message_id"].'<br/>
-                [&nbsp;<a target="_new" href="'.htmlspecialchars($message_url).'">view message</a>&nbsp;]<br/>'
+             ? '<br /><b>Related message:</b><br />
+                Forum = '.$loginfo["forum"].'<br />
+                Message ID = '.$loginfo["message_id"].'<br />
+                [&nbsp;<a target="_blank" href="'.htmlspecialchars($message_url).'">view message</a>&nbsp;]<br />'
              : '') .
 
             ($details !== NULL
-             ? '<br/><b>Additional details:</b><br/><br/>' .
-               nl2br(htmlspecialchars($details)) . '<br/>'
+             ? '<br /><b>Additional details:</b><br /><br />' .
+               nl2br(htmlspecialchars($details)) . '<br />'
              : '') .
-            '<br/>
+            '<br />
           </div>
         </td>
       </tr>';

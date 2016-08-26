@@ -119,7 +119,7 @@
         $row = $frm->addbreak($title);
         if ($curr == 'NEW') $frm->addmessage(
             "This feature can be used to mask bad words in forum messages
-             with \"".PHORUM_BADWORD_REPLACE."\". All bad words will
+             with \"".htmlspecialchars(PHORUM_BADWORD_REPLACE)."\". All bad words will
              automatically be replaced by that string. If you want to use
              a different string (e.g. \"CENSORED\" or \"*****\"), then you
              can change the definition of the constant
@@ -172,7 +172,7 @@
                 echo "<tr>\n";
                 echo "    <td class=\"".$ta_class."\">".htmlspecialchars($item[string])."</td>\n";
                 echo "    <td class=\"".$ta_class."\">".$forum_list[$item["forum_id"]]."</td>\n";
-                echo "    <td class=\"".$ta_class."\"><a href=\"$edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$delete_url\">Delete</a></td>\n";
+                echo "    <td class=\"".$ta_class."\"><a href=\"$edit_url\">Edit</a>&nbsp;&bull;&nbsp;<a href=\"$delete_url\">Delete</a></td>\n";
                 echo "</tr>\n";
             }
 

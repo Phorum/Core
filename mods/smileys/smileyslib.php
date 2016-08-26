@@ -187,7 +187,7 @@ function phorum_mod_smileys_store($modinfo)
         $src = htmlspecialchars("$prefix{$smiley['smiley']}");
         $alttxt = empty($smiley['alt']) ? $smiley["search"] : $smiley["alt"];
         $alt = htmlspecialchars($alttxt);
-        $img = "<img class=\"mod_smileys_img\" src=\"$src\" alt=\"$alt\" title=\"$alt\"/>";
+        $img = "<img class=\"mod_smileys_img\" src=\"$src\" alt=\"$alt\" title=\"$alt\" />";
 
         // Below we use htmlspecialchars() on the search string.
         // This is done, because the smiley mod is run after formatting

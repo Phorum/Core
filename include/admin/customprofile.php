@@ -62,14 +62,14 @@ if(count($_POST) && $_POST['name'] != '')
       else
       { ?>
         <div class="PhorumInfoMessage">
-          <strong>Restore deleted field?</strong><br/></br>
+          <strong>Restore deleted field?</strong><br /><br />
           A previously deleted custom profile field with the same name
           "<?php print htmlspecialchars($_POST['name']) ?>"
           was found.<br /><br />
           If you accidentally deleted that old field, then
           you can choose to restore the old field&#x2019;s configuration and
           data. You can also create a totally new field and ignore
-          the deleted field. What do you want to do?<br/><br/>
+          the deleted field. What do you want to do?<br /><br />
           <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
             <input type="hidden" name="phorum_admin_token"
                 value="<?php echo $PHORUM['admin_token'];?>" />
@@ -123,7 +123,7 @@ if (isset($_GET["curr"]) && isset($_GET["delete"]))
 { ?>
   <div class="PhorumInfoMessage">
     Are you sure you want to delete this custom profile field?
-    <br/><br/>
+    <br /><br />
     <form action="<?php echo phorum_admin_build_url('base'); ?>" method="post">
       <input type="hidden" name="phorum_admin_token" value="<?php echo $PHORUM['admin_token'];?>" />
       <input type="hidden" name="module" value="<?php print $module; ?>" />
@@ -178,7 +178,7 @@ $frm->hidden("curr", "$curr");
 $frm->addbreak($title);
 
 $row = $frm->addrow("Field Name", $frm->text_box('name', $name, 50));
-$frm->addhelp($row, "Field Name", "This is the name to assign to the custom profile field. Because it must be possible to use this name as the name property for an input element in an HTML form, there are a few restrictions to it:<br/><ul><li>it can only contain letters, numbers<br/> and underscores (_);</li><li>it must start with a letter.</li></ul>");
+$frm->addhelp($row, "Field Name", "This is the name to assign to the custom profile field. Because it must be possible to use this name as the name property for an input element in an HTML form, there are a few restrictions to it:<br /><ul><li>it can only contain letters, numbers<br /> and underscores (_);</li><li>it must start with a letter.</li></ul>");
 
 $frm->addrow("Field Length (Max. ".PHORUM_MAX_CPLENGTH.")", $frm->text_box("length", $length, 50));
 
@@ -187,9 +187,9 @@ $frm->addhelp($row, "Disable HTML", "
     If this option is enabled, then HTML code will not be usable
     in this field. When displaying the custom field's data,
     Phorum will automatically replace special HTML characters
-    with their safe HTML counter parts.<br/>
-    <br/>
-    There are two possible reasons for disabling it:<br/>
+    with their safe HTML counter parts.<br />
+    <br />
+    There are two possible reasons for disabling it:<br />
     <ol>
       <li>You need HTML in this field and run a module which formats
           the field data into safe html (before storing it to the database
@@ -198,8 +198,8 @@ $frm->addhelp($row, "Disable HTML", "
     </ol>
     So in practice, you only disable this option if module documentation tells
     you to do so or if you are writing a module which needs this. If you don't
-    understand what's going on here, then don't disable the option.<br/>
-    <br/>
+    understand what's going on here, then don't disable the option.<br />
+    <br />
     To learn about the security risks involved, search for \"XSS\" and
     \"cross site scripting\" on the internet.");
 
@@ -250,7 +250,7 @@ if ($curr == "NEW")
             print "  <td class=\"PhorumAdminTableRow\">".$item['name']."</td>\n";
             print "    <td class=\"PhorumAdminTableRow\">".$item['length']."</td>\n";
             print "    <td class=\"PhorumAdminTableRow\">".($item['html_disabled']?"Yes":"No")."</td>\n";
-            print "    <td class=\"PhorumAdminTableRow\"><a href=\"$edit_url\">Edit</a>&nbsp;&#149;&nbsp;<a href=\"$delete_url\">Delete</a></td>\n";
+            print "    <td class=\"PhorumAdminTableRow\"><a href=\"$edit_url\">Edit</a>&nbsp;&bull;&nbsp;<a href=\"$delete_url\">Delete</a></td>\n";
             print "</tr>\n";
         }
         print "</table>\n";

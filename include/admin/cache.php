@@ -103,12 +103,12 @@ $frm->addhelp($row, "Cache Directory",
     "Caching is used to take some load off the database and web server.
      The cache directory is used for caching preprocessed Phorum templates
      and for caching data in case \"file system based\" is selected as
-     the cache layer below.<br/>
-     <br/>
+     the cache layer below.<br />
+     <br />
      For most installations, it will be fine to the default temp directory
      for the server (/tmp on UNIX systems and C:\\Windows\\Temp for Windows
-     system).<br/>
-     <br/>
+     system).<br />
+     <br />
      If your server has PHP Safe Mode enabled, you will need to create a
      directory under your Phorum directory and make it writable by the web
      server (you can use the directory \"./cache\" which was included in the

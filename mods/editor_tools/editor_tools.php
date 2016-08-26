@@ -113,14 +113,14 @@ function phorum_mod_editor_tools_tpl_editor_before_textarea()
 
     if (!count($help)) return;
 
-    print '<noscript><div style="font-size: small;"><br/><br/>';
-    print $lang['help'] . "<br/><ul>";
+    print '<noscript><div style="font-size: small;"><br /><br />';
+    print $lang['help'] . "<br /><ul>";
     foreach ($help as $helpinfo) {
       print "<li><a href=\"" . htmlspecialchars($helpinfo[1]) . "\" " .
             "target=\"editor_tools_help\">" .
-            htmlspecialchars($helpinfo[0]) . "</a><br/></li>";
+            htmlspecialchars($helpinfo[0]) . "</a><br /></li>";
     }
-    print '</ul><br/></div></noscript>';
+    print '</ul><br /></div></noscript>';
 }
 
 /**
@@ -196,7 +196,7 @@ function phorum_mod_editor_tools_before_footer()
     }
 
     // Construct the javascript code for setting up the editor tools.
-    print '<script type="text/javascript">';
+    print "<script type=\"text/javascript\">\n// <![CDATA[\n";
 
     // Make language strings available for the javascript code.
     foreach ($PHORUM["MOD_EDITOR_TOOLS"]["TRANSLATIONS"] as $key => $val) {
@@ -238,7 +238,7 @@ function phorum_mod_editor_tools_before_footer()
         $idx ++;
     }
 
-    print "</script>\n";
+    print "// ]]>\n</script>\n";
 
     // Load all dynamic javascript libraries.
     foreach ($jslibs as $jslib)
