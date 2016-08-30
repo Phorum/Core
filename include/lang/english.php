@@ -1,6 +1,14 @@
 <?php
 
     $language="English (American)";
+
+    // In case there is no language file available for your language or if you
+    // want to create a new language file all of your own, you can generate a
+    // new language file using "Manage Language Files" from the Administration.
+
+    // Translations of Phorum's language files are available in our Language
+    // Forum: http://www.phorum.org/phorum5/list.php?65
+
     // uncomment this to hide this language from the user-select-box
     //$language_hide=1;
 
@@ -41,7 +49,7 @@
     // encoding set for outgoing mails
     $PHORUM["DATA"]["MAILENCODING"]="8bit";
 
-    /*------------------------------------------0-----------*/
+    /*-----------------------------------------------------*/
 
     $PHORUM["DATA"]["LANG"]=array(
 
