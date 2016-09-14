@@ -29,5 +29,7 @@ if (empty($GLOBALS['PHORUM']['mod_smileys']['subjectsmiley_popup_width'])) {
 if (empty($GLOBALS['PHORUM']['mod_smileys']['subjectsmiley_popup_offset'])) {
     $GLOBALS['PHORUM']['mod_smileys']['subjectsmiley_popup_offset'] = 0;
 }
-
+if (empty($GLOBALS['PHORUM']['mod_smileys']['allow_disable_per_post'])) {
+    $GLOBALS['PHORUM']['mod_smileys']['allow_disable_per_post'] = 1;
+}
 ?>
