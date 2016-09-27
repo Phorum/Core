@@ -79,6 +79,14 @@ define('phorum_page','addon');
 
 include_once( "./common.php" );
 
+// Search bots are trying to call this script without query string,
+// redirect to homepage.
+if (!$_GET && !$_POST && !$PHORUM['args']) {
+    header('HTTP/1.1 303 See Other');
+    header('Location: index.php');
+    exit;
+}
+
 // Bail out early if there are no modules enabled that implement
 // the addon hook.
 if (! isset($PHORUM["hooks"]["addon"])) trigger_error(
