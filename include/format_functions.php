@@ -429,7 +429,7 @@ function _phorum_wordwrap( $text, $width = 72, $break = "\n", $cut = false )
         $encoding = mb_internal_encoding();
     }
     if ($cut) {
-        $parts = [];
+        $parts = array();
         while (mb_strlen($text, $encoding) > 0) {
             $part = mb_substr($text, 0, $width, $encoding);
             $parts[] = trim($part);
@@ -437,7 +437,7 @@ function _phorum_wordwrap( $text, $width = 72, $break = "\n", $cut = false )
         }
         return implode($break, $parts);
     }
-    $parts = [];
+    $parts = array();
     while (mb_strlen($text, $encoding) > 0) {
         if ($width >= mb_strlen($text, $encoding)) {
             $parts[] = trim($text);
