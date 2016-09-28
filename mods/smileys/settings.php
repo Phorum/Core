@@ -360,7 +360,7 @@ $frm->show();
 if (!empty($smiley)) {?>
     <script type="text/javascript">
     // <![CDATA[
-    change_image('<?php print addslashes($smiley) ?>');
+      change_image('<?php print addslashes($smiley) ?>');
     // ]]>
     </script><?php
 }
