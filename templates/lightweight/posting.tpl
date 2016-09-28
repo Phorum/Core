@@ -127,17 +127,17 @@
 
                           <script type="text/javascript">
                           // <![CDATA[
-                          function phorum_subscription_displaystate() {
-                            if (document.getElementById) {
-                              var f = document.getElementById('subscription_follow');
-                              var d = document.getElementById('subscription_mail_div');
-                              var e = document.getElementById('subscription_mail');
-                              d.style.display  = f.checked ? 'block' : 'none';
-                            }
-                          }
+                              function phorum_subscription_displaystate() {
+                                if (document.getElementById) {
+                                  var f = document.getElementById('subscription_follow');
+                                  var d = document.getElementById('subscription_mail_div');
+                                  var e = document.getElementById('subscription_mail');
+                                  d.style.display  = f.checked ? 'block' : 'none';
+                                }
+                              }
 
-                          // Setup initial display state for subscription options.
-                          phorum_subscription_displaystate();
+                              // Setup initial display state for subscription options.
+                              phorum_subscription_displaystate();
                           // ]]>
                           </script>
                         {/IF}

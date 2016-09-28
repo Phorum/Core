@@ -270,7 +270,7 @@ class PhorumInputForm {
                 echo "<tr class=\"input-form-tr\">\n";
                 echo "  <th valign=\"$row[title_valign]\" align=\"$row[title_align]\" class=\"input-form-th\"$colspan nowrap=\"nowrap\">$title</th>\n";
                 if ( !$colspan ) {
-                    echo "  <td valign=\"$row[content_valign]\" align=\"$row[content_align]\"  class=\"input-form-td\">$row[contents]</td>\n";
+                    echo "  <td valign=\"$row[content_valign]\" align=\"$row[content_align]\" class=\"input-form-td\">$row[contents]</td>\n";
                 }
                 echo "</tr>\n";
             }

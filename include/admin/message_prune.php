@@ -550,10 +550,10 @@ foreach($ruledefs as $filter => $def) {
       <tr>
         <td colspan="5">
           <noscript>
-          <strong>
-            Please, enable JavaScript in your browser. This tool
-            requires JavaScript for its operation.
-          </strong>
+            <strong>
+              Please, enable JavaScript in your browser. This tool
+              requires JavaScript for its operation.
+            </strong>
           </noscript>
         </td>
       </tr>

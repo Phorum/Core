@@ -454,11 +454,11 @@ if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !
 
     <script type="text/javascript">
     // <![CDATA[
-    function CheckboxControl(form, onoff) {
-        for (var i = 0; i < form.elements.length; i++)
-            if (form.elements[i].type == "checkbox")
-                form.elements[i].checked = onoff;
-    }
+        function CheckboxControl(form, onoff) {
+            for (var i = 0; i < form.elements.length; i++)
+                if (form.elements[i].type == "checkbox")
+                    form.elements[i].checked = onoff;
+        }
     // ]]>
     </script>
 <?php

@@ -198,7 +198,7 @@ Some Icons courtesy of:
         <div class="description">{LANG->Postedby} {IF TOPIC->URL->PROFILE}<a href="{TOPIC->URL->PROFILE}">{/IF}{TOPIC->author}{IF TOPIC->URL->PROFILE}</a>{/IF}&nbsp;</div>
       {ELSEIF NAME}
         {! This is a forum page other than a read page or a folder page }
-        <h1 class="heading">{NAME}</h1>{! replace with path see http://www.phorum.org/cgi-bin/trac.cgi/ticket/213 }
+        <h1 class="heading">{NAME}</h1>
         {IF HTML_DESCRIPTION}
           <div class="description">{HTML_DESCRIPTION}&nbsp;</div>
         {/IF}
