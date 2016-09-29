@@ -613,12 +613,13 @@ if(!empty($data) && isset($data[$thread]) && isset($data[$message_id])) {
 
             // add the edited-message to a post if its edited
             if(isset($row['meta']['edit_count']) && $row['meta']['edit_count'] > 0) {
-                $editmessage = str_replace ("%count%", $row['meta']['edit_count'], $PHORUM["DATA"]["LANG"]["EditedMessage"]);
-                $editmessage = str_replace ("%lastedit%", phorum_date($PHORUM["short_date_time"],$row['meta']['edit_date']),  $editmessage);
-                $editmessage = str_replace ("%lastuser%", $row['meta']['edit_username'],  $editmessage);
-                $row["body"].="\n\n\n\n$editmessage";
-                if($row['meta']['edit_count'] > 0 && ($PHORUM["track_edits"] == PHORUM_EDIT_TRACK_ON || ($PHORUM["track_edits"] == PHORUM_EDIT_TRACK_MODERATOR && $PHORUM["DATA"]["MODERATOR"] ) ) ) {
-                    $row["URL"]["CHANGES"] = str_replace('%message_id%',$row['message_id'],$changes_url_template);
+                $editmessage = str_replace('%count%', $row['meta']['edit_count'], $PHORUM['DATA']['LANG']['EditedMessage']);
+                $editmessage = str_replace('%lastedit%', phorum_date($PHORUM['short_date_time'],$row['meta']['edit_date']), $editmessage);
+                // edit_username missing in older posts
+                $editmessage = str_replace('%lastuser%', (empty($row['meta']['edit_username']))?'(n/a)':$row['meta']['edit_username'], $editmessage);
+                $row['body'].="\n\n\n\n$editmessage";
+                if($row['meta']['edit_count'] > 0 && ($PHORUM['track_edits'] == PHORUM_EDIT_TRACK_ON || ($PHORUM['track_edits'] == PHORUM_EDIT_TRACK_MODERATOR && $PHORUM['DATA']['MODERATOR'] ) ) ) {
+                    $row['URL']['CHANGES'] = str_replace('%message_id%', $row['message_id'], $changes_url_template);
                 }
             }
         }
