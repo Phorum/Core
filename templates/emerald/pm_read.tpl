@@ -59,6 +59,5 @@
         {/IF}
     {/IF}
     <input type="submit" name="delete_message" value="{LANG->Delete}" onclick="return confirm('<?php echo addslashes($PHORUM['DATA']['LANG']['AreYouSure'])?>')" />
-  </div>
 </form>
 <!-- END TEMPLATE pm_read.tpl -->
