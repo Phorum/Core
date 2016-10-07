@@ -75,15 +75,24 @@
 //   $url = phorum_get_url(PHORUM_ADDON_URL, "module=foo", "action=bar");
 //
 
-define('phorum_page','addon');
+define('phorum_page', 'addon');
 
-include_once( "./common.php" );
+include_once('./common.php');
 
 // Search bots are trying to call this script without query string,
 // redirect to homepage.
 if (!$_GET && !$_POST && !$PHORUM['args']) {
     header('HTTP/1.1 303 See Other');
     header('Location: index.php');
+    exit;
+}
+
+// Check banlists.
+include_once('./include/profile_functions.php');
+$error = phorum_check_bans(array(array(NULL, PHORUM_BAD_IPS)));
+if (!empty($error)) {
+    $PHORUM['DATA']['ERROR'] = $error;
+    phorum_output('message');
     exit;
 }
 
