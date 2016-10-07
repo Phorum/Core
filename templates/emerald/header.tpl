@@ -107,120 +107,120 @@ Some Icons courtesy of:
   {! changing them in relation to CSS and JavaScript. }
   <div id="phorum">
 
-    {IF NOT PRINTVIEW}
+      {IF NOT PRINTVIEW}
 
-        {! This <div> shows code that relates to the currently active Phorum user }
-        {! or shows code for logging in or creating a new profile if there is no }
-        {! user logged in. }
-        <div id="user-info" class="{IF LOGGEDIN}logged-in{ELSE}logged-out{/IF}">
-            {! Code for logged in users }
-            {IF LOGGEDIN}
-                <span class="welcome">{LANG->Welcome}, {USER->username}</span>
-                <a class="icon icon-key-delete" href="{URL->LOGINOUT}">{LANG->LogOut}</a>
-                <a class="icon icon-user-edit" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>
-                {IF ENABLE_PM}
-                    <a class="icon icon-user-comment" href="{URL->PM}">
-                        {IF USER->new_private_messages}
-                            <strong>{LANG->NewPrivateMessages}</strong>
-                        {ELSE}
-                           {LANG->PrivateMessages}
-                        {/IF}
-                    </a>
-                {/IF}
-            {! Code for anonymous users }
-            {ELSE}
-                <span class="welcome">{LANG->Welcome}!</span>
-                <a class="icon icon-key-go" href="{URL->LOGINOUT}">{LANG->LogIn}</a>
-                <a class="icon icon-user-add" href="{URL->REGISTERPROFILE}">{LANG->Register}</a>
-            {/IF}
-        </div> <!-- end of div id=user-info -->
+          {! This <div> shows code that relates to the currently active Phorum user }
+          {! or shows code for logging in or creating a new profile if there is no }
+          {! user logged in. }
+          <div id="user-info" class="{IF LOGGEDIN}logged-in{ELSE}logged-out{/IF}">
+              {! Code for logged in users }
+              {IF LOGGEDIN}
+                  <span class="welcome">{LANG->Welcome}, {USER->username}</span>
+                  <a class="icon icon-key-delete" href="{URL->LOGINOUT}">{LANG->LogOut}</a>
+                  <a class="icon icon-user-edit" href="{URL->REGISTERPROFILE}">{LANG->MyProfile}</a>
+                  {IF ENABLE_PM}
+                      <a class="icon icon-user-comment" href="{URL->PM}">
+                          {IF USER->new_private_messages}
+                              <strong>{LANG->NewPrivateMessages}</strong>
+                          {ELSE}
+                              {LANG->PrivateMessages}
+                          {/IF}
+                      </a>
+                  {/IF}
+              {! Code for anonymous users }
+              {ELSE}
+                  <span class="welcome">{LANG->Welcome}!</span>
+                  <a class="icon icon-key-go" href="{URL->LOGINOUT}">{LANG->LogIn}</a>
+                  <a class="icon icon-user-add" href="{URL->REGISTERPROFILE}">{LANG->Register}</a>
+              {/IF}
+          </div> <!-- end of div id=user-info -->
 
-        {! This <div> holds the site logo. If you provide a different logo in }
-        {! images/logo.png, then change logo_width and logo_height in the }
-        {! settings.tpl file to match the size of your logo image. }
-        <div id="logo">
-            <a href="{URL->BASE}">
-                <img src="{URL->TEMPLATE}/images/logo.png" width="{logo_width}" height="{logo_height}" alt="Phorum" border="0" />
-            </a>
-        </div> <!-- end of div id=logo -->
+          {! This <div> holds the site logo. If you provide a different logo in }
+          {! images/logo.png, then change logo_width and logo_height in the }
+          {! settings.tpl file to match the size of your logo image. }
+          <div id="logo">
+              <a href="{URL->BASE}">
+                  <img src="{URL->TEMPLATE}/images/logo.png" width="{logo_width}" height="{logo_height}" alt="Phorum" border="0" />
+              </a>
+          </div> <!-- end of div id=logo -->
 
-        {! This <div> holds the breadcrumb navigation code. This breadcrumb }
-        {! navigation shows the user where he is on the site, relative to }
-        {! the Phorum start location (leaving a "breadcrumb" at every step }
-        {! deeper into the site structure.) }
-        <div id="breadcrumb">
-            {VAR FIRST TRUE}
-            {LOOP BREADCRUMBS}
-                {IF NOT FIRST} &gt;{/IF}
-                {IF BREADCRUMBS->URL}
-                    <a {IF BREADCRUMBS->ID AND BREADCRUMBS->TYPE}rel="breadcrumb-{BREADCRUMBS->TYPE}[{BREADCRUMBS->ID}]"{/IF} href="{BREADCRUMBS->URL}">{BREADCRUMBS->TEXT}</a>
-                {ELSE}
-                    {BREADCRUMBS->TEXT}
-                {/IF}
-                {VAR FIRST FALSE}
-            {/LOOP BREADCRUMBS}
-        </div> <!-- end of div id=breadcrumb -->
+          {! This <div> holds the breadcrumb navigation code. This breadcrumb }
+          {! navigation shows the user where he is on the site, relative to }
+          {! the Phorum start location (leaving a "breadcrumb" at every step }
+          {! deeper into the site structure.) }
+          <div id="breadcrumb">
+              {VAR FIRST TRUE}
+              {LOOP BREADCRUMBS}
+                  {IF NOT FIRST} &gt;{/IF}
+                  {IF BREADCRUMBS->URL}
+                      <a {IF BREADCRUMBS->ID AND BREADCRUMBS->TYPE}rel="breadcrumb-{BREADCRUMBS->TYPE}[{BREADCRUMBS->ID}]"{/IF} href="{BREADCRUMBS->URL}">{BREADCRUMBS->TEXT}</a>
+                  {ELSE}
+                      {BREADCRUMBS->TEXT}
+                  {/IF}
+                  {VAR FIRST FALSE}
+              {/LOOP BREADCRUMBS}
+          </div> <!-- end of div id=breadcrumb -->
 
-        {! This div holds the search form }
-        <div id="search-area" class="icon-zoom">
-            <form id="header-search-form" action="{URL->SEARCH}" method="get">
-                {POST_VARS}
-                <input type="hidden" name="phorum_page" value="search" />
-                <input type="hidden" name="match_forum" value="ALL" />
-                <input type="hidden" name="match_dates" value="365" />
-                <input type="hidden" name="match_threads" value="0" />
-                <input type="hidden" name="match_type" value="ALL" />
-                <input type="text" name="search" size="20" value="" class="styled-text" /><input type="submit" value="{LANG->Search}" class="styled-button" /><br />
-                <a href="{URL->SEARCH}">{LANG->Advanced}</a>
-            </form>
-        </div> <!-- end of div id=search-area -->
+          {! This div holds the search form }
+          <div id="search-area" class="icon-zoom">
+              <form id="header-search-form" action="{URL->SEARCH}" method="get">
+                  {POST_VARS}
+                  <input type="hidden" name="phorum_page" value="search" />
+                  <input type="hidden" name="match_forum" value="ALL" />
+                  <input type="hidden" name="match_dates" value="365" />
+                  <input type="hidden" name="match_threads" value="0" />
+                  <input type="hidden" name="match_type" value="ALL" />
+                  <input type="text" name="search" size="20" value="" class="styled-text" /><input type="submit" value="{LANG->Search}" class="styled-button" /><br />
+                  <a href="{URL->SEARCH}">{LANG->Advanced}</a>
+              </form>
+          </div> <!-- end of div id=search-area -->
 
-        {! This <div> holds info about the active page (heading and description) }
-        <div id="page-info">
-            {IF HEADING}
-                {! This is custom set heading }
-                    <h1 class="heading">{HEADING}</h1>
-                {IF HTML_DESCRIPTION}
-                    <div class="description">{HTML_DESCRIPTION}</div>
-                {/IF}
-            {ELSEIF MESSAGE->subject}
-                {! This is a threaded read page }
-                <h1 class="heading">{MESSAGE->subject}</h1>
-            {ELSEIF TOPIC->subject}
-                {! This is a read page }
-                <h1 class="heading">{TOPIC->subject}</h1>
-                <div class="description">{LANG->Postedby} {IF TOPIC->URL->PROFILE}<a href="{TOPIC->URL->PROFILE}">{/IF}{TOPIC->author}{IF TOPIC->URL->PROFILE}</a>{/IF}&nbsp;</div>
-            {ELSEIF NAME}
-                {! This is a forum page other than a read page or a folder page }
-                <h1 class="heading">{NAME}</h1>
-                {IF HTML_DESCRIPTION}
-                    <div class="description">{HTML_DESCRIPTION}&nbsp;</div>
-                {/IF}
-            {ELSE}
-                {! This is the index }
-                <h1 class="heading">{TITLE}</h1>
-                {IF HTML_DESCRIPTION}
-                    <div class="description">{HTML_DESCRIPTION}&nbsp;</div>
-                {/IF}
-            {/IF}
-        </div> <!-- end of div id=page-info -->
+          {! This <div> holds info about the active page (heading and description) }
+          <div id="page-info">
+              {IF HEADING}
+                  {! This is custom set heading }
+                      <h1 class="heading">{HEADING}</h1>
+                  {IF HTML_DESCRIPTION}
+                      <div class="description">{HTML_DESCRIPTION}</div>
+                  {/IF}
+              {ELSEIF MESSAGE->subject}
+                  {! This is a threaded read page }
+                  <h1 class="heading">{MESSAGE->subject}</h1>
+              {ELSEIF TOPIC->subject}
+                  {! This is a read page }
+                  <h1 class="heading">{TOPIC->subject}</h1>
+                  <div class="description">{LANG->Postedby} {IF TOPIC->URL->PROFILE}<a href="{TOPIC->URL->PROFILE}">{/IF}{TOPIC->author}{IF TOPIC->URL->PROFILE}</a>{/IF}&nbsp;</div>
+              {ELSEIF NAME}
+                  {! This is a forum page other than a read page or a folder page }
+                  <h1 class="heading">{NAME}</h1>
+                  {IF HTML_DESCRIPTION}
+                      <div class="description">{HTML_DESCRIPTION}&nbsp;</div>
+                  {/IF}
+              {ELSE}
+                  {! This is the index }
+                  <h1 class="heading">{TITLE}</h1>
+                  {IF HTML_DESCRIPTION}
+                      <div class="description">{HTML_DESCRIPTION}&nbsp;</div>
+                  {/IF}
+              {/IF}
+          </div> <!-- end of div id=page-info -->
 
-        {! The template variable GLOBAL_ERROR can be used to show an error }
-        {! message at the start of the page. }
-        {IF GLOBAL_ERROR}
-          <div id="global-error" class="attention">
-            {GLOBAL_ERROR}
-          </div>
-        {/IF}
+          {! The template variable GLOBAL_ERROR can be used to show an error }
+          {! message at the start of the page. }
+          {IF GLOBAL_ERROR}
+            <div id="global-error" class="attention">
+              {GLOBAL_ERROR}
+            </div>
+          {/IF}
 
-        {! Various notices for situations that require the users attention. }
-        {IF USER->NOTICE->SHOW}
-            <div id="notices" class="attention">
-                <h4 class="heading">{LANG->NeedsAttention}</h4>
-                {IF USER->NOTICE->MESSAGES}<a class="icon icon-table-add" href="{URL->NOTICE->MESSAGES}">{LANG->UnapprovedMessagesLong}</a>{/IF}
-                {IF USER->NOTICE->USERS}<a class="icon icon-user-add" href="{URL->NOTICE->USERS}">{LANG->UnapprovedUsersLong}</a>{/IF}
-                {IF USER->NOTICE->GROUPS}<a class="icon icon-group-add" href="{URL->NOTICE->GROUPS}">{LANG->UnapprovedGroupMembers}</a>{/IF}
-              </div> <!-- end of div id=notices -->
-        {/IF}
-    {/IF} {! end of NOT PRINTVIEW }
+          {! Various notices for situations that require the users attention. }
+          {IF USER->NOTICE->SHOW}
+              <div id="notices" class="attention">
+                  <h4 class="heading">{LANG->NeedsAttention}</h4>
+                  {IF USER->NOTICE->MESSAGES}<a class="icon icon-table-add" href="{URL->NOTICE->MESSAGES}">{LANG->UnapprovedMessagesLong}</a>{/IF}
+                  {IF USER->NOTICE->USERS}<a class="icon icon-user-add" href="{URL->NOTICE->USERS}">{LANG->UnapprovedUsersLong}</a>{/IF}
+                  {IF USER->NOTICE->GROUPS}<a class="icon icon-group-add" href="{URL->NOTICE->GROUPS}">{LANG->UnapprovedGroupMembers}</a>{/IF}
+                </div> <!-- end of div id=notices -->
+          {/IF}
+      {/IF} {! end of NOT PRINTVIEW }
 <!-- END TEMPLATE header.tpl -->
