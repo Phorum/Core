@@ -35,7 +35,7 @@
                                 }
                             }
                         }
-                        document.write ( '<input type="checkbox" id="toggle" name="toggle" onclick="checkAll()" />' );
+                        document.write('<input type="checkbox" id="toggle" name="toggle" onclick="checkAll()" \/>');
                     // ]]>
                     </script>
                     {LANG->Delete}
@@ -43,7 +43,7 @@
                 <th align="left">{LANG->Subject}</th>
                 <th align="left" nowrap="nowrap">{LANG->LastPost}</th>
                 {IF ALLOW_EMAIL_NOTIFY_COUNT}
-                  <th align="left" nowrap="nowrap">{LANG->Email}</th>
+                    <th align="left" nowrap="nowrap">{LANG->Email}</th>
                 {/IF}
             </tr>
             {LOOP TOPICS}
@@ -55,7 +55,6 @@
 
                 <tr>
                     <td width="5%"><input type="checkbox" name="delthreads[]" value="{TOPICS->thread}" /></td>
-
                     <td width="65%" class="message-subject {altclass}">
                         <a href="{TOPICS->URL->READ}">
                         {IF TOPICS->new}<img src="{URL->TEMPLATE}/images/flag_red.png" class="icon1616" alt="{LANG->New}" title="{LANG->New}" />{/IF}
@@ -64,18 +63,18 @@
                     </td>
                     <td width="15%" class="{altclass}" nowrap="nowrap">{TOPICS->lastpost}<br />{IF TOPICS->URL->RECENT_AUTHOR_PROFILE}<a href="{TOPICS->URL->RECENT_AUTHOR_PROFILE}">{/IF}{TOPICS->recent_author}{IF TOPICS->URL->RECENT_AUTHOR_PROFILE}</a>{/IF}</td>
                     {IF ALLOW_EMAIL_NOTIFY_COUNT}
-                    <td width="5%">
-                      {IF TOPICS->ALLOW_EMAIL_NOTIFY}
-                        <input type="hidden" name="thread_forum_id[{TOPICS->thread}]" value="{TOPICS->forum_id}" />
-                        <input type="hidden" name="old_sub_type[{TOPICS->thread}]" value="{TOPICS->sub_type}" />
-                        <select name="sub_type[{TOPICS->thread}]">
-                            <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_MESSAGE}selected="selected"{/IF} value="{PHORUM_SUBSCRIPTION_MESSAGE}">{LANG->Yes}</option>
-                            <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_BOOKMARK}selected="selected"{/IF} value="{PHORUM_SUBSCRIPTION_BOOKMARK}">{LANG->No}</option>
-                        </select>
-                      {ELSE}
-                        {LANG->No}
-                      {/IF}
-                    </td>
+                        <td width="5%">
+                            {IF TOPICS->ALLOW_EMAIL_NOTIFY}
+                                <input type="hidden" name="thread_forum_id[{TOPICS->thread}]" value="{TOPICS->forum_id}" />
+                                <input type="hidden" name="old_sub_type[{TOPICS->thread}]" value="{TOPICS->sub_type}" />
+                                <select name="sub_type[{TOPICS->thread}]">
+                                    <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_MESSAGE}selected="selected"{/IF} value="{PHORUM_SUBSCRIPTION_MESSAGE}">{LANG->Yes}</option>
+                                    <option {if TOPICS->sub_type PHORUM_SUBSCRIPTION_BOOKMARK}selected="selected"{/IF} value="{PHORUM_SUBSCRIPTION_BOOKMARK}">{LANG->No}</option>
+                                </select>
+                            {ELSE}
+                                {LANG->No}
+                            {/IF}
+                        </td>
                     {/IF}
                 </tr>
             {/LOOP TOPICS}

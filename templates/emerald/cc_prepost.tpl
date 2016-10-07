@@ -1,24 +1,23 @@
 <!-- BEGIN TEMPLATE cc_prepost.tpl -->
 <script type="text/javascript">
 // <![CDATA[
-var phorum_marked_all = false;
-function phorum_markAllCheckboxes() {
-    var pageform = document.getElementById('fprepost');
-    var elems = pageform.getElementsByTagName('input');
+    var phorum_marked_all = false;
+    function phorum_markAllCheckboxes() {
+        var pageform = document.getElementById('fprepost');
+        var elems = pageform.getElementsByTagName('input');
 
-    if(phorum_marked_all) {
-        newval = false;
-    } else {
-        newval = true;
-    }
-    for(i=0; i<elems.length; i++){
-        if(elems[i].type == 'checkbox') {
-            elems[i].checked=newval;
+        if(phorum_marked_all) {
+            newval = false;
+        } else {
+            newval = true;
         }
-
+        for(i=0; i<elems.length; i++){
+            if(elems[i].type == 'checkbox') {
+                elems[i].checked=newval;
+            }
+        }
+        phorum_marked_all = newval;
     }
-    phorum_marked_all = newval;
-}
 // ]]>
 </script>
 
@@ -47,34 +46,33 @@ function phorum_markAllCheckboxes() {
 {IF UNAPPROVEDMESSAGE}
     <div class="information">{UNAPPROVEDMESSAGE}</div>
 {ELSE}
-<form action="{URL->ACTION}" method="post" id="fprepost">
-  {POST_VARS}
-    <table cellspacing="0" class="list">
-        {LOOP PREPOST}
-            {IF PREPOST->checkvar 1}
+    <form action="{URL->ACTION}" method="post" id="fprepost">
+        {POST_VARS}
+        <table cellspacing="0" class="list">
+            {LOOP PREPOST}
+                {IF PREPOST->checkvar 1}
+                    <tr>
+                        <th align="left">{PREPOST->forumname}</th>
+                        <th align="left" nowrap="nowrap" width="150">{LANG->Author}&nbsp;</th>
+                        <th align="left" nowrap="nowrap" width="150">{LANG->Date}&nbsp;</th>
+                        <th align="left" nowrap="nowrap" width="150" onclick="phorum_markAllCheckboxes()">{LANG->Delete}&nbsp;</th>
+                    </tr>
+                {/IF}
                 <tr>
-                    <th align="left">{PREPOST->forumname}</th>
-                    <th align="left" nowrap="nowrap" width="150">{LANG->Author}&nbsp;</th>
-                    <th align="left" nowrap="nowrap" width="150">{LANG->Date}&nbsp;</th>
-                    <th align="left" nowrap="nowrap" width="150" onclick="phorum_markAllCheckboxes()">{LANG->Delete}&nbsp;</th>
+                    <td>
+                        <a href="{PREPOST->URL->READ}" target="_blank">{PREPOST->subject}</a><br />
+                        <small>&nbsp;&nbsp;&nbsp;&nbsp;<a href="{PREPOST->URL->DELETE}">{LANG->DeleteMessage}</a>&nbsp;&bull;&nbsp;<a href="{PREPOST->URL->APPROVE_MESSAGE}">{LANG->ApproveMessage Short}</a>&nbsp;&bull;&nbsp;<a href="{PREPOST->URL->APPROVE_TREE}">{LANG->ApproveMessageReplies}</a></small>
+                    </td>
+                    <td nowrap="nowrap" width="150">{IF PREPOST->URL->PROFILE}<a href="{PREPOST->URL->PROFILE}">{/IF}{PREPOST->author}{IF PREPOST->URL->PROFILE}</a>{/IF}&nbsp;</td>
+                    <td nowrap="nowrap" width="150">{PREPOST->short_datestamp}&nbsp;</td>
+                    <td nowrap="nowrap" width="150"><input type="checkbox" name="deleteids[{PREPOST->message_id}]" value="1" /></td>
                 </tr>
-            {/IF}
+            {/LOOP PREPOST}
             <tr>
-                <td>
-                    <a href="{PREPOST->URL->READ}" target="_blank">{PREPOST->subject}</a><br />
-                    <small>&nbsp;&nbsp;&nbsp;&nbsp;<a href="{PREPOST->URL->DELETE}">{LANG->DeleteMessage}</a>&nbsp;&bull;&nbsp;<a href="{PREPOST->URL->APPROVE_MESSAGE}">{LANG->ApproveMessage Short}</a>&nbsp;&bull;&nbsp;<a href="{PREPOST->URL->APPROVE_TREE}">{LANG->ApproveMessageReplies}</a></small>
-                </td>
-                <td nowrap="nowrap" width="150">{IF PREPOST->URL->PROFILE}<a href="{PREPOST->URL->PROFILE}">{/IF}{PREPOST->author}{IF PREPOST->URL->PROFILE}</a>{/IF}&nbsp;</td>
-                <td nowrap="nowrap" width="150">{PREPOST->short_datestamp}&nbsp;</td>
-                <td nowrap="nowrap" width="150"><input type="checkbox" name="deleteids[{PREPOST->message_id}]" value="1" /></td>
+                <td colspan="3">&nbsp;</td>
+                <td><input type="submit" name="submit" value="{LANG->Delete}" /></td>
             </tr>
-        {/LOOP PREPOST}
-<tr>
-<td colspan="3">&nbsp;</td>
-<td><input type="submit" name="submit" value="{LANG->Delete}" /></td>
-</tr>
-</table>
-</form>
-
+        </table>
+    </form>
 {/IF}
 <!-- END TEMPLATE cc_prepost.tpl -->

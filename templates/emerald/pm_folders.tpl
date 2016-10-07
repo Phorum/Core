@@ -8,6 +8,7 @@
         <input type="submit" name="create_folder" value="{LANG->Submit}" />
     </div>
 </form>
+
 {IF PM_USERFOLDERS}
     <form action="{URL->ACTION}" method="post">
         {POST_VARS}

@@ -7,27 +7,24 @@
 </div>
 
 <div id="profile">
-
     <div class="generic">
-
         <div class="icon-user">
             {PROFILE->display_name}
             <small>
-              {IF LOGGEDIN}
-                {IF ENABLE_PM}
+                {IF LOGGEDIN}
+                    {IF ENABLE_PM}
                         {IF PROFILE->is_buddy} ({LANG->Buddy}){/IF}
                         [ <a href="{PROFILE->URL->PM}">{LANG->SendPM}</a> ]
                         {IF NOT PROFILE->is_buddy}
                             [ <a href="{PROFILE->URL->ADD_BUDDY}">{LANG->BuddyAdd}</a> ]
                         {/IF}
+                    {/IF}
                 {/IF}
-              {/IF}
-              [ <a href="{PROFILE->URL->SEARCH}">{LANG->ShowPosts}</a> ]
+                [ <a href="{PROFILE->URL->SEARCH}">{LANG->ShowPosts}</a> ]
             </small>
         </div>
 
         <dl>
-
             <dt>{LANG->Email}:</dt>
             <dd>{PROFILE->email}</dd>
 
@@ -35,7 +32,6 @@
                 <dt>{LANG->RealName}:</dt>
                 <dd>{PROFILE->real_name}</dd>
             {/IF}
-
             {IF PROFILE->posts}
                 <dt>{LANG->Posts}:&nbsp;</dt>
                 <dd>{PROFILE->posts}</dd>
@@ -49,10 +45,7 @@
                 <dd>{PROFILE->date_last_active}</dd>
             {/IF}
             {HOOK "tpl_profile" PROFILE}
-
         </dl>
-
     </div>
-
 </div>
 <!-- END TEMPLATE profile.tpl -->

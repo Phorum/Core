@@ -5,7 +5,6 @@
 <form action="{URL->ACTION}" method="post">
     {POST_VARS}
     <div class="generic">
-
         <dl>
             {IF PROFILE->USERPROFILE}
                 <dt>{LANG->RealName}:&nbsp;</dt>
@@ -16,10 +15,11 @@
                 <dt>{LANG->Signature}:&nbsp;</dt>
                 <dd><div id="post-body"><textarea id="signature" name="signature" class="body" rows="15" cols="50">{PROFILE->signature}</textarea></div></dd>
             {/IF}
+
             {IF PROFILE->MAILSETTINGS}
                 <dt>{LANG->Email}:&nbsp;*&nbsp;</dt>
                 <dd>
-                    <input type="text" name="email" size="30" value="{PROFILE->email}" />
+                    <input type="text" name="email" onchange="this.value=this.value.toLowerCase();" size="30" value="{PROFILE->email}" />
                     {IF PROFILE->EMAIL_CONFIRM}
                         <br /><small>{LANG->EmailConfirmRequired}</small>
                     {/IF}
@@ -38,12 +38,12 @@
             {/IF}
 
             {IF PROFILE->PRIVACYSETTINGS}
-            {IF SHOW_EMAIL_HIDE}<dd><input type="checkbox" name="hide_email" value="1"{PROFILE->hide_email_checked} /> {LANG->AllowSeeEmail}</dd>{/IF}
+                {IF SHOW_EMAIL_HIDE}<dd><input type="checkbox" name="hide_email" value="1"{PROFILE->hide_email_checked} /> {LANG->AllowSeeEmail}</dd>{/IF}
                 <dd><input type="checkbox" name="hide_activity" value="1"{PROFILE->hide_activity_checked} /> {LANG->AllowSeeActivity}</dd>
             {/IF}
 
             {IF PROFILE->BOARDSETTINGS}
-                    {IF PROFILE->TZSELECTION}
+                {IF PROFILE->TZSELECTION}
                     <dt>{LANG->Timezone}:&nbsp;</dt>
                     <dd>
                         <select name="tz_offset">
@@ -55,6 +55,7 @@
                     <dt>{LANG->IsDST}:&nbsp;</dt>
                     <dd><input type="checkbox" name="is_dst" value="1"{IF PROFILE->is_dst 1} checked="checked"{/IF}/></dd>
                 {/IF}
+
                 <dt>{LANG->Language}:&nbsp;</dt>
                 <dd>
                     <select name="user_language">
@@ -112,13 +113,13 @@
                 </dd>
 
                 {IF SHOW_PM_EMAIL_NOTIFY}
-                <dt>{LANG->PMNotifyEnableSetting}:&nbsp;</dt>
-                <dd>
-                    <select name="pm_email_notify">
-                        <option value="0"{IF PROFILE->pm_email_notify 0} selected="selected" {/IF}>{LANG->No}</option>
-                        <option value="1"{IF PROFILE->pm_email_notify 1} selected="selected" {/IF}>{LANG->Yes}</option>
-                    </select>
-                </dd>
+                    <dt>{LANG->PMNotifyEnableSetting}:&nbsp;</dt>
+                    <dd>
+                        <select name="pm_email_notify">
+                            <option value="0"{IF PROFILE->pm_email_notify 0} selected="selected" {/IF}>{LANG->No}</option>
+                            <option value="1"{IF PROFILE->pm_email_notify 1} selected="selected" {/IF}>{LANG->Yes}</option>
+                        </select>
+                    </dd>
                 {/IF}
             {/IF}
 
@@ -137,10 +138,7 @@
             <dd><small>*{LANG->Required}</small></dd>
 
         </dl>
-
         <div><input type="submit" value=" {LANG->Submit} " /></div>
-
     </div>
-
 </form>
 <!-- END TEMPLATE cc_usersettings.tpl -->

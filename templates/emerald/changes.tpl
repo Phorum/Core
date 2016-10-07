@@ -7,9 +7,7 @@
 </div>
 
 {LOOP CHANGES}
-
     <div class="message">
-
         <div class="generic">
             {IF CHANGES->original}
                 <h4>{LANG->OriginalMessage}</h4>
@@ -19,21 +17,13 @@
                 {LANG->ChangeBy}: {CHANGES->username}<br />
                 {LANG->ChangeDate}: {CHANGES->date}<br />
             {/IF}
-
-        <strong>
-            <br />{CHANGES->colored_subject}<br />
-        </strong>
-
-
-
-
+            <strong>
+                <br />{CHANGES->colored_subject}<br />
+            </strong>
         </div>
-
-
         <div class="message-body">
             {CHANGES->colored_body}
         </div>
-
     </div>
 {/LOOP CHANGES}
 <!-- END TEMPLATE changes.tpl -->

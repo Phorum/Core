@@ -1,8 +1,6 @@
 <!-- BEGIN TEMPLATE pm_read.tpl -->
 <div class="pm">
-
     <h4>{MESSAGE->subject}</h4>
-
     <div class="message-author icon-user">
         {LANG->From}: <a href="{MESSAGE->URL->PROFILE}">{MESSAGE->author}</a>
     </div>
@@ -23,11 +21,8 @@
 </div>
 
 <div class="message-body">
-
     {MESSAGE->message}
-
 </div>
-
 
 <form action="{URL->ACTION}" method="post">
     {POST_VARS}
@@ -35,21 +30,21 @@
     <input type="hidden" name="folder_id" value="{FOLDER_ID}" />
     <input type="hidden" name="pm_id" value="{MESSAGE->pm_message_id}" />
     {IF FOLDER_IS_INCOMING}
-      {IF PM_USERFOLDERS}
-        <span style="white-space: nowrap; float:right">
-          <select name="target_folder" style="vertical-align: middle;">
-            <option value=""> {LANG->PMSelectAFolder}</option>
-            {LOOP PM_FOLDERS}
-              {IF NOT PM_FOLDERS->id FOLDER_ID}
-                {IF NOT PM_FOLDERS->is_outgoing}
-                  <option value="{PM_FOLDERS->id}"> {PM_FOLDERS->name}</option>
-                {/IF}
-              {/IF}
-            {/LOOP PM_FOLDERS}
-          </select>
-          <input type="submit" name="move_message" value="{LANG->PMMoveToFolder}" />
-        </span>
-      {/IF}
+        {IF PM_USERFOLDERS}
+            <span style="white-space: nowrap; float:right">
+                <select name="target_folder" style="vertical-align: middle;">
+                    <option value=""> {LANG->PMSelectAFolder}</option>
+                    {LOOP PM_FOLDERS}
+                        {IF NOT PM_FOLDERS->id FOLDER_ID}
+                            {IF NOT PM_FOLDERS->is_outgoing}
+                                <option value="{PM_FOLDERS->id}"> {PM_FOLDERS->name}</option>
+                            {/IF}
+                        {/IF}
+                    {/LOOP PM_FOLDERS}
+                </select>
+                <input type="submit" name="move_message" value="{LANG->PMMoveToFolder}" />
+            </span>
+        {/IF}
     {/IF}
     <input type="submit" name="close_message" value="{LANG->PMCloseMessage}" />
     {IF NOT MESSAGE->user_id USERINFO->user_id}
