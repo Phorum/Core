@@ -121,7 +121,7 @@
         <th align="left">{LANG->Subject}</th>
         <th align="left" nowrap="nowrap">{LANG->Author}</th>
         {IF VIEWCOUNT_COLUMN}
-          <th>{LANG->Views}</th>
+            <th>{LANG->Views}</th>
         {/IF}
         <th align="left" nowrap="nowrap">{LANG->Posted}</th>
     </tr>
