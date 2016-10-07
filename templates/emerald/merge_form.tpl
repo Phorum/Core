@@ -1,6 +1,5 @@
 <!-- BEGIN TEMPLATE merge_form.tpl -->
 <div class="generic">
-
     {IF FORM->merge_none}
         <h4>{LANG->MergeThread}</h4>
         <p>{LANG->MergeThreadInfo1}</p>
@@ -31,6 +30,5 @@
             <input type="submit" name="move" value="{LANG->MergeThreadCancel}" />
         </form>
     {/IF}
-
 </div>
 <!-- END TEMPLATE merge_form.tpl -->

@@ -1,17 +1,13 @@
 <!-- BEGIN TEMPLATE pm.tpl -->
 <div class="nav">
     {IF URL->INDEX}<a class="icon icon-folder" href="{URL->INDEX}">{LANG->ForumList}</a>{/IF}
-    {IF URL->LIST}
-        <a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>
-    {/IF}
+    {IF URL->LIST}<a class="icon icon-list" href="{URL->LIST}">{LANG->MessageList}</a>{/IF}
 </div>
 
 <table class="menu" cellspacing="0" border="0">
     <tr>
         <td class="menu" nowrap="nowrap">
-
             <div class="generic">
-
                 {LANG->PrivateMessages}
                 <ul>
                     {LOOP PM_FOLDERS}
@@ -28,7 +24,7 @@
 
             {IF MAX_PM_MESSAGECOUNT}
                 <?php
-                    // move into pm.php
+                    // TODO move into pm.php
                     $avail = $PHORUM['DATA']['PM_SPACE_LEFT'];
                     $used = $PHORUM['DATA']['PM_MESSAGECOUNT'];
                     $total = $avail + $used;

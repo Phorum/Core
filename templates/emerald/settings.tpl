@@ -49,31 +49,31 @@
 {VAR logo_height     "25"}
 
 {! -- colors -- }
-{VAR body_background_color "White"}
-{VAR default_font_color "Black"}
-{VAR default_background_color "White"}
+{VAR body_background_color "white"}
+{VAR default_font_color "black"}
+{VAR default_background_color "white"}
 {VAR alt_background_color "#edf2ed"} {! -- should compliment default_background_color -- }
 {VAR highlight_background_color "#f0f7f0"} {! -- should compliment the two above -- }
 {VAR border_color "#4d894d"}
-{VAR border_font_color "White"}
+{VAR border_font_color "white"}
 {VAR quote_border_color "#808080"}
-{VAR pre_border_color "#C4C6A2"}
-{VAR pre_background_color "#FEFFEC"}
-{VAR link_color "#355F35"}
-{VAR link_hover_color "#709CCC"}
+{VAR pre_border_color "#c4c6a2"}
+{VAR pre_background_color "#feffec"}
+{VAR link_color "#355f35"}
+{VAR link_hover_color "#709ccc"}
 {VAR new_color "red"}
 {VAR logo_background_color "#78ad78"}
 {VAR breadcrumb_border_color "#b6b6b6"}
 {VAR post_moderation_background_color "#fffdf6"}
 {VAR information_border_color "#62a762"}
 {VAR information_background_color "#e6ffe6"}
-{VAR warning_border_color "#A76262"}
-{VAR warning_background_color "#FFD1D1"}
-{VAR span_addition_background_color "#CBFFCB"}
+{VAR warning_border_color "#a76262"}
+{VAR warning_background_color "#ffd1d1"}
+{VAR span_addition_background_color "#cbffcb"}
 {VAR span_addition_font_color "#000000"}
-{VAR span_removal_background_color "#FFCBCB"}
+{VAR span_removal_background_color "#ffcbcb"}
 {VAR span_removal_font_color "#000000"}
-{VAR message_background_color "White"}
+{VAR message_background_color "white"}
 
 {! -- Background Images -- }
 {VAR header_background_image "templates/emerald/images/header_background.png"}

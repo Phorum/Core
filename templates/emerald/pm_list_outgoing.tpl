@@ -1,6 +1,5 @@
 <!-- BEGIN TEMPLATE pm_list_outgoing.tpl -->
 {IF MESSAGECOUNT}
-
     <table border="0" cellspacing="0" class="list">
         <tr>
             <th align="left" width="20">
@@ -15,7 +14,7 @@
                             }
                         }
                     }
-                    document.write ( '<input type="checkbox" id="toggle" name="toggle" onclick="checkAll()" />' );
+                    document.write('<input type="checkbox" id="toggle" name="toggle" onclick="checkAll()" \/>');
                 // ]]>
                 </script>
                 <noscript>&nbsp;</noscript>

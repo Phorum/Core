@@ -9,15 +9,12 @@
 </div>
 
 {LOOP MESSAGES}
-
     {IF NOT MESSAGES->parent_id 0}
         <a name="msg-{MESSAGES->message_id}"></a>
     {/IF}
 
     <div class="message" style="padding-left: {MESSAGES->indent_cnt}px;">
-
         <div class="generic">
-
             <table border="0" cellspacing="0">
                 <tr>
                     <td width="100%">
@@ -26,8 +23,8 @@
                             {IF MESSAGES->URL->PM}<small>[ <a href="{MESSAGES->URL->PM}">{LANG->PrivateReply}</a> ]</small>{/IF}
                         </div>
                         <small>
-                        <strong><a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a> {IF MESSAGES->new}<span class="new-flag">{MESSAGES->new}</span>{/IF}</strong><br />
-                        {MESSAGES->datestamp}
+                            <strong><a href="{MESSAGES->URL->READ}">{MESSAGES->subject}</a> {IF MESSAGES->new}<span class="new-flag">{MESSAGES->new}</span>{/IF}</strong><br />
+                            {MESSAGES->datestamp}
                         </small>
                     </td>
                     <td class="message-user-info" nowrap="nowrap">
@@ -56,9 +53,11 @@
             {/IF}
 
             {MESSAGES->body}
+
             {IF MESSAGES->URL->CHANGES}
                 (<a href="{MESSAGES->URL->CHANGES}">{LANG->ViewChanges}</a>)
             {/IF}
+
             <div class="message-options">
                 {IF MESSAGES->edit 1}
                     {IF MODERATOR false}
@@ -98,7 +97,6 @@
                     <a class="icon icon-comment-edit" href="{MESSAGES->URL->EDIT}">{LANG->EditPost}</a>
                 </div>
             {/IF}
-
         </div>
     </div>
 {/LOOP MESSAGES}

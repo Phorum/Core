@@ -6,15 +6,12 @@
 </div>
 
 {LOOP MESSAGES}
-
     {IF NOT MESSAGES->parent_id 0}
         <a name="msg-{MESSAGES->message_id}"></a>
     {/IF}
 
     <div class="message">
-
         <div class="generic">
-
             <table border="0" cellspacing="0">
                 <tr>
                     <td width="100%">
@@ -23,8 +20,8 @@
                             {IF MESSAGES->URL->PM}<small>[ <a href="{MESSAGES->URL->PM}">{LANG->PrivateReply}</a> ]</small>{/IF}
                         </div>
                         <small>
-                        <strong><a href="{MESSAGES->URL->READ}" rel="nofollow">{MESSAGES->subject}</a> {IF MESSAGES->new}<span class="new-flag">{MESSAGES->new}</span>{/IF}</strong><br />
-                        {MESSAGES->datestamp}
+                            <strong><a href="{MESSAGES->URL->READ}" rel="nofollow">{MESSAGES->subject}</a> {IF MESSAGES->new}<span class="new-flag">{MESSAGES->new}</span>{/IF}</strong><br />
+                            {MESSAGES->datestamp}
                         </small>
                     </td>
                     <td class="message-user-info" nowrap="nowrap">
@@ -53,9 +50,11 @@
             {/IF}
 
             {MESSAGES->body}
+
             {IF MESSAGES->URL->CHANGES}
                 (<a href="{MESSAGES->URL->CHANGES}">{LANG->ViewChanges}</a>)
             {/IF}
+
             <div class="message-options">
                 {IF MESSAGES->edit 1}
                     {IF MODERATOR false}
@@ -82,7 +81,6 @@
                 <div class="message-moderation">
                     {IF MESSAGES->threadstart true}
                         <a class="icon icon-delete" href="{MESSAGES->URL->DELETE_THREAD}">{LANG->DelMessReplies}</a>
-
                     {ELSE}
                         <a class="icon icon-delete" href="{MESSAGES->URL->DELETE_MESSAGE}">{LANG->DeleteMessage}</a>
                         <a class="icon icon-delete" href="{MESSAGES->URL->DELETE_THREAD}">{LANG->DelMessReplies}</a>
@@ -96,7 +94,6 @@
                     <a class="icon icon-comment-edit" href="{MESSAGES->URL->EDIT}">{LANG->EditPost}</a>
                 </div>
             {/IF}
-
         </div>
     </div>
 {/LOOP MESSAGES}
@@ -132,7 +129,6 @@
 </div>
 
 {IF REPLY_ON_READ}
-  <a name="REPLY"></a>
+    <a name="REPLY"></a>
 {/IF}
-
 <!-- END TEMPLATE read.tpl -->

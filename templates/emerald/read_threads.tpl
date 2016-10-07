@@ -11,9 +11,7 @@
 </div>
 
 <div class="message">
-
     <div class="generic">
-
         <table border="0" cellspacing="0">
             <tr>
                 <td width="100%">
@@ -49,9 +47,11 @@
         {/IF}
 
         {MESSAGE->body}
+
         {IF MESSAGE->URL->CHANGES}
             (<a href="{MESSAGE->URL->CHANGES}">{LANG->ViewChanges}</a>)
         {/IF}
+
         <div class="message-options">
             {IF MESSAGE->edit 1}
                 {IF MODERATOR false}
@@ -89,9 +89,7 @@
                 <a class="icon icon-comment-edit" href="{MESSAGE->URL->EDIT}">{LANG->EditPost}</a>
             </div>
         {/IF}
-
     </div>
-
 </div>
 
 <div class="nav">
@@ -107,7 +105,6 @@
             {IF TOPIC->URL->MOVE}<a class="icon icon-move" href="{TOPIC->URL->MOVE}">{LANG->MoveThread}</a>{/IF}
         </div>
     {/IF}
-
     {IF URL->MARKTHREADREAD}
         <a class="icon icon-tag-green" href="{URL->MARKTHREADREAD}">{LANG->MarkThreadRead}</a>
     {/IF}
@@ -130,70 +127,68 @@
     </tr>
 
     {LOOP MESSAGES}
-    {VAR alt ""}
-    {VAR title ""}
+        {VAR alt ""}
+        {VAR title ""}
 
-    {! This is the current message }
-    {IF MESSAGES->message_id MESSAGE->message_id}
-        {VAR altclass "current"}
-    {ELSE}
-        {VAR altclass ""}
-    {/IF}
+        {! This is the current message }
+        {IF MESSAGES->message_id MESSAGE->message_id}
+            {VAR altclass "current"}
+        {ELSE}
+            {VAR altclass ""}
+        {/IF}
 
-    {IF MESSAGES->message_id MESSAGE->message_id}
-        {VAR icon "bullet_go"}
-    {ELSEIF MESSAGES->parent_id 0}
-        {IF MESSAGES->sort PHORUM_SORT_STICKY}
-            {IF MESSAGES->new}
+        {IF MESSAGES->message_id MESSAGE->message_id}
+            {VAR icon "bullet_go"}
+        {ELSEIF MESSAGES->parent_id 0}
+            {IF MESSAGES->sort PHORUM_SORT_STICKY}
+                {IF MESSAGES->new}
+                    {VAR icon "flag_red"}
+                    {VAR alt LANG->NewMessage}
+                {ELSE}
+                    {VAR icon "bell"}
+                    {VAR alt LANG->Sticky}
+                {/IF}
+                {VAR title LANG->Sticky}
+            {ELSEIF MESSAGES->moved}
+                {VAR icon "page_go"}
+                {VAR title LANG->MovedSubject}
+                {VAR alt LANG->MovedSubject}
+            {ELSEIF MESSAGES->new}
                 {VAR icon "flag_red"}
+                {VAR title LANG->NewMessage}
                 {VAR alt LANG->NewMessage}
             {ELSE}
-                {VAR icon "bell"}
-                {VAR alt LANG->Sticky}
+                {VAR icon "comment"}
+                {VAR title ""}
+                {VAR alt ""}
             {/IF}
-            {VAR title LANG->Sticky}
-        {ELSEIF MESSAGES->moved}
-            {VAR icon "page_go"}
-            {VAR title LANG->MovedSubject}
-            {VAR alt LANG->MovedSubject}
         {ELSEIF MESSAGES->new}
             {VAR icon "flag_red"}
-            {VAR title LANG->NewMessage}
-            {VAR alt LANG->NewMessage}
         {ELSE}
-            {VAR icon "comment"}
-            {VAR title ""}
-            {VAR alt ""}
+            {VAR icon "bullet_black"}
         {/IF}
-    {ELSEIF MESSAGES->new}
-        {VAR icon "flag_red"}
-    {ELSE}
-        {VAR icon "bullet_black"}
-    {/IF}
 
-    {IF MESSAGES->new}
-        {VAR newclass "new"}
-    {ELSE}
-        {VAR newclass ""}
-    {/IF}
-
-    <tr>
-        <td width="65%" class="message-subject-threaded {altclass}">
-            <h4 style="padding-left: {MESSAGES->indent_cnt}px;">
-                <img src="{URL->TEMPLATE}/images/{icon}.png" class="icon1616" alt="{alt}" title="{title}" />
-                <a href="{MESSAGES->URL->READ}" class="{newclass}">{MESSAGES->subject}</a>
-                {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" class="icon1616" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
-            </h4>
-        </td>
-        <td width="10%" class="{altclass}" nowrap="nowrap">{IF MESSAGES->URL->PROFILE}<a href="{MESSAGES->URL->PROFILE}">{/IF}{MESSAGES->author}{IF MESSAGES->URL->PROFILE}</a>{/IF}</td>
-        {IF VIEWCOUNT_COLUMN}
-            <td width="10%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
+        {IF MESSAGES->new}
+            {VAR newclass "new"}
+        {ELSE}
+            {VAR newclass ""}
         {/IF}
-        <td width="15%" class="{altclass}" nowrap="nowrap">{MESSAGES->datestamp}</td>
-    </tr>
+
+        <tr>
+            <td width="65%" class="message-subject-threaded {altclass}">
+                <h4 style="padding-left: {MESSAGES->indent_cnt}px;">
+                    <img src="{URL->TEMPLATE}/images/{icon}.png" class="icon1616" alt="{alt}" title="{title}" />
+                    <a href="{MESSAGES->URL->READ}" class="{newclass}">{MESSAGES->subject}</a>
+                    {IF MESSAGES->meta->attachments}<img src="{URL->TEMPLATE}/images/attach.png" class="icon1616" title="{LANG->Attachments}"  alt="{LANG->Attachments}" /> {/IF}
+                </h4>
+            </td>
+            <td width="10%" class="{altclass}" nowrap="nowrap">{IF MESSAGES->URL->PROFILE}<a href="{MESSAGES->URL->PROFILE}">{/IF}{MESSAGES->author}{IF MESSAGES->URL->PROFILE}</a>{/IF}</td>
+            {IF VIEWCOUNT_COLUMN}
+                <td width="10%" align="center" class="{altclass}" nowrap="nowrap">{MESSAGES->viewcount}</td>
+            {/IF}
+            <td width="15%" class="{altclass}" nowrap="nowrap">{MESSAGES->datestamp}</td>
+        </tr>
     {/LOOP MESSAGES}
 </table>
-<br />
-<br />
-<br />
+<br /><br /><br />
 <!-- END TEMPLATE read_threads.tpl -->

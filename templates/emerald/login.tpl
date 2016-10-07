@@ -16,28 +16,26 @@
     <table border="0" cellspacing="0" class="form-table">
         <tr>
             <td width="50%" valign="top">
-
                 <h4>{LANG->LoginTitle}</h4>
                 <form action="{URL->ACTION}" method="post">
                     {POST_VARS}
                     {LANG->Username}:<br />
-                    <input type="text" id="username" name="username" size="30" value="{LOGIN->username}" /><br />
-                    <br />
+                    <input type="text" id="username" name="username" size="30" value="{LOGIN->username}" />
+                    <br /><br />
                     {LANG->Password}:<br />
-                    <input type="password" id="password" name="password" size="30" value="" /><br />
-                    <br />
+                    <input type="password" id="password" name="password" size="30" value="" />
+                    <br /><br />
                     <input type="submit" value="{LANG->Submit}" />
                 </form>
-
             </td>
             <td width="50%" valign="top">
                 <h4>{LANG->LostPassword}</h4>
                 <form action="{URL->ACTION}" method="post">
                     {POST_VARS}
-                    {LANG->LostPassInfo}<br />
-                    <br />
-                    <input type="text" name="lostpass" size="30" value="" /><br />
-                    <br />
+                    {LANG->LostPassInfo}
+                    <br /><br />
+                    <input type="text" name="lostpass" size="30" value="" />
+                    <br /><br />
                     <input type="submit" value="{LANG->Submit}" />
                 </form>
             </td>

@@ -1,18 +1,14 @@
 <!-- BEGIN TEMPLATE posting.tpl -->
-
 {IF ERROR}<div class="attention">{ERROR}</div>{/IF}
 {IF OKMSG}<div class="information">{OKMSG}</div>{/IF}
 
 {IF PREVIEW}
-
     <div class="information">
         {LANG->PreviewExplain}
     </div>
 
     <div class="message">
-
         <div class="generic">
-
             <table border="0" cellspacing="0">
                 <tr>
                     <td width="100%">
@@ -20,8 +16,8 @@
                             {PREVIEW->author}
                         </div>
                         <small>
-                        <strong>{PREVIEW->subject}</strong><br />
-                        {PREVIEW->datestamp}
+                            <strong>{PREVIEW->subject}</strong><br />
+                            {PREVIEW->datestamp}
                         </small>
                     </td>
                     <td class="message-user-info" nowrap="nowrap">
@@ -31,9 +27,7 @@
         </div>
 
         <div class="message-body">
-
             {PREVIEW->body}
-
             {IF PREVIEW->attachments}
                 <div class="attachments">
                     {LANG->Attachments}:<br />
@@ -44,41 +38,31 @@
                     {/LOOP PREVIEW->attachments}
                 </div>
             {/IF}
-
         </div>
-
     </div>
-
 {/IF}
 
 <div id="post">
-
     <form id="post_form" name="post_form" action="{URL->ACTION}" method="post" enctype="multipart/form-data">
-
         {POST_VARS}
-
         <div class="generic">
-                {IF SHOW_SPECIALOPTIONS}
-
-                  <div id="post-moderation">
+            {IF SHOW_SPECIALOPTIONS}
+                <div id="post-moderation">
                     <small>
-                    {LANG->Special}:<br />
-
-                    {IF OPTION_ALLOWED->sticky}
-                    <input type="checkbox" id="sticky" name="sticky" value="1" {IF POSTING->special "sticky"}checked="checked"{/IF} />
-                    <label for="sticky">{LANG->MakeSticky}</label>
-                    <br />
-                    {/IF}
-
-                    <input type="checkbox" id="allow_reply" name="allow_reply" value="1" {IF POSTING->allow_reply} checked="checked"{/IF} /> <label for="allow_reply">{LANG->AllowReplies}</label>
+                        {LANG->Special}:<br />
+                        {IF OPTION_ALLOWED->sticky}
+                            <input type="checkbox" id="sticky" name="sticky" value="1" {IF POSTING->special "sticky"}checked="checked"{/IF} /> <label for="sticky">{LANG->MakeSticky}</label><br />
+                        {/IF}
+                        <input type="checkbox" id="allow_reply" name="allow_reply" value="1" {IF POSTING->allow_reply} checked="checked"{/IF} /> <label for="allow_reply">{LANG->AllowReplies}</label>
                     </small>
-                  </div>
-                {/IF}
-                <small>
+                </div>
+            {/IF}
+
+            <small>
                 {IF MODE "moderation"}
-                  {LANG->YourName}:<br />
+                    {LANG->YourName}:<br />
                 {ELSE}
-                  {LANG->Author}:<br />
+                    {LANG->Author}:<br />
                 {/IF}
                 {IF OPTION_ALLOWED->edit_author}
                     <input type="text" name="author" size="30" value="{POSTING->author}" />
@@ -88,87 +72,73 @@
                 <br />
 
                 {IF MODE "post" OR MODE "reply"}
-
                     {IF NOT LOGGEDIN}
-
                         {LANG->YourEmail}:<br />
-                        <input type="text" name="email" size="30" value="{POSTING->email}" /><br />
-                        <br />
-
+                        <input type="text" name="email" onchange="this.value=this.value.toLowerCase();" size="30" value="{POSTING->email}" />
+                        <br /><br />
                     {/IF}
-
                 {ELSEIF MODE "moderation"}
-
                     {IF POSTING->user_id 0}
-
                         {LANG->Email}:<br />
-                        <input type="text" name="email" size="30" value="{POSTING->email}" /><br />
-                        <br />
-
+                        <input type="text" name="email" onchange="this.value=this.value.toLowerCase();" size="30" value="{POSTING->email}" />
+                        <br /><br />
                     {/IF}
-
                 {/IF}
 
                 {LANG->Subject}:<br />
-                <input type="text" id="subject" name="subject" size="50" value="{POSTING->subject}" /><br />
-                <br />
-
+                <input type="text" id="subject" name="subject" size="50" value="{POSTING->subject}" />
+                <br /><br />
                 {HOOK "tpl_editor_after_subject"}
+            </small>
 
-                </small>
-                {IF POSTING->user_id}
+            {IF POSTING->user_id}
+                <small>{LANG->Options}:</small><br />
+                {IF OPTION_ALLOWED->subscribe}
+                    <input type="checkbox" id="subscription_follow" name="subscription_follow" value="1" {IF POSTING->subscription}checked="checked"{/IF} {IF OPTION_ALLOWED->subscribe_mail}onclick="phorum_subscription_displaystate()"{/IF} /> <label for="subscription_follow"><small>{LANG->FollowThread}</small></label><br />
 
-                    <small>{LANG->Options}:</small><br />
-
-                    {IF OPTION_ALLOWED->subscribe}
-
-                        <input type="checkbox" id="subscription_follow" name="subscription_follow" value="1" {IF POSTING->subscription}checked="checked"{/IF} {IF OPTION_ALLOWED->subscribe_mail}onclick="phorum_subscription_displaystate()"{/IF} /> <label for="subscription_follow"><small>{LANG->FollowThread}</small></label><br />
-
-                        {IF OPTION_ALLOWED->subscribe_mail}
-                          <div id="subscription_mail_div">
+                    {IF OPTION_ALLOWED->subscribe_mail}
+                        <div id="subscription_mail_div">
                             <img src="{URL->TEMPLATE}/images/tree-L.gif" border="0" alt="tree-L" />
                             <input type="checkbox" id="subscription_mail" name="subscription_mail" value="1" {IF POSTING->subscription "message"}checked="checked"{/IF} /> <label for="subscription_mail"><small>{LANG->EmailReplies}</small></label>
                           </div>
 
-                          <script type="text/javascript">
-                          // <![CDATA[
-                              function phorum_subscription_displaystate() {
+                        <script type="text/javascript">
+                        // <![CDATA[
+                            function phorum_subscription_displaystate() {
                                 if (document.getElementById) {
-                                  var f = document.getElementById('subscription_follow');
-                                  var d = document.getElementById('subscription_mail_div');
-                                  var e = document.getElementById('subscription_mail');
-                                  d.style.display  = f.checked ? 'block' : 'none';
+                                    var f = document.getElementById('subscription_follow');
+                                    var d = document.getElementById('subscription_mail_div');
+                                    var e = document.getElementById('subscription_mail');
+                                    d.style.display  = f.checked ? 'block' : 'none';
                                 }
-                              }
-
-                              // Setup initial display state for subscription options.
-                              phorum_subscription_displaystate();
-                          // ]]>
-                          </script>
-                        {/IF}
+                            }
+                            // Setup initial display state for subscription options.
+                            phorum_subscription_displaystate();
+                        // ]]>
+                        </script>
                     {/IF}
-
-                    <input type="checkbox" id="show_signature" name="show_signature" value="1" {IF POSTING->show_signature} checked="checked"{/IF} /> <label for="show_signature"><small>{LANG->AddSig}</small></label><br />
-                    <br />
-
                 {/IF}
+
+                <input type="checkbox" id="show_signature" name="show_signature" value="1" {IF POSTING->show_signature} checked="checked"{/IF} /> <label for="show_signature"><small>{LANG->AddSig}</small></label>
+                <br /><br />
+            {/IF}
 
             {IF ATTACHMENTS}
                 <small>{LANG->Attachments}:</small><br />
                 {IF POSTING->attachments}
                     <table id="attachment-list" cellspacing="0">
-                      {VAR LIST POSTING->attachments}
-                      {LOOP LIST}
-                        {IF LIST->keep}
-                          <tr>
-                            <td>{LIST->name} ({LIST->size})</td>
-                            <td align="right">
-                              {HOOK "tpl_editor_attachment_buttons" LIST}
-                              <input type="submit" name="detach:{LIST->file_id}" value="{LANG->Detach}" />
-                            </td>
-                          </tr>
-                        {/IF}
-                      {/LOOP LIST}
+                        {VAR LIST POSTING->attachments}
+                        {LOOP LIST}
+                            {IF LIST->keep}
+                                <tr>
+                                    <td>{LIST->name} ({LIST->size})</td>
+                                    <td align="right">
+                                        {HOOK "tpl_editor_attachment_buttons" LIST}
+                                        <input type="submit" name="detach:{LIST->file_id}" value="{LANG->Detach}" />
+                                    </td>
+                                </tr>
+                            {/IF}
+                        {/LOOP LIST}
                     </table>
                     {VAR AttachPhrase LANG->AttachAnotherFile}
                 {ELSE}
@@ -180,66 +150,58 @@
                 {ELSE}
                     <script type="text/javascript">
                     //<![CDATA[
-                      function phorumShowAttachForm() {
-                        document.getElementById('attach-link').style.display='none';
-                        document.getElementById('attach-form').style.display='block';
-                      }
-                      document.write("<div id=\"attach-link\" class=\"attach-link\" style=\"display: block;\"><a href=\"javascript:phorumShowAttachForm();\"><b>{AttachPhrase} ...<\/b><\/a><\/div>\n");
-                      document.write("<div id=\"attach-form\" style=\"display: none;\">");
+                        function phorumShowAttachForm() {
+                            document.getElementById('attach-link').style.display='none';
+                            document.getElementById('attach-form').style.display='block';
+                        }
+                        document.write("<div id=\"attach-link\" class=\"attach-link\" style=\"display: block;\"><a href=\"javascript:phorumShowAttachForm();\"><b>{AttachPhrase} ...<\/b><\/a><\/div>\n");
+                        document.write("<div id=\"attach-form\" style=\"display: none;\">");
                     // ]]>
                     </script>
                     <div class="attach-link">{AttachPhrase}</div>
                     <ul>
-                      {IF EXPLAIN_ATTACH_FILE_TYPES}<li>{EXPLAIN_ATTACH_FILE_TYPES}</li>{/IF}
-                      {IF EXPLAIN_ATTACH_FILE_SIZE}<li>{EXPLAIN_ATTACH_FILE_SIZE}</li>{/IF}
-                      {IF EXPLAIN_ATTACH_TOTALFILE_SIZE}<li>{EXPLAIN_ATTACH_TOTALFILE_SIZE}</li>{/IF}
-                      {IF EXPLAIN_ATTACH_MAX_ATTACHMENTS}<li>{EXPLAIN_ATTACH_MAX_ATTACHMENTS}</li>{/IF}
+                        {IF EXPLAIN_ATTACH_FILE_TYPES}<li>{EXPLAIN_ATTACH_FILE_TYPES}</li>{/IF}
+                        {IF EXPLAIN_ATTACH_FILE_SIZE}<li>{EXPLAIN_ATTACH_FILE_SIZE}</li>{/IF}
+                        {IF EXPLAIN_ATTACH_TOTALFILE_SIZE}<li>{EXPLAIN_ATTACH_TOTALFILE_SIZE}</li>{/IF}
+                        {IF EXPLAIN_ATTACH_MAX_ATTACHMENTS}<li>{EXPLAIN_ATTACH_MAX_ATTACHMENTS}</li>{/IF}
                     </ul>
                     <input type="file" size="50" name="attachment" />
                     <input type="submit" name="attach" value="{LANG->Attach}" />
                     <script type="text/javascript">
                     //<![CDATA[
-                    document.write('<\/div>');
+                        document.write('<\/div>');
                     // ]]>
                     </script>
                 {/IF}
-
                 <br />
             {/IF}
 
             {HOOK "tpl_editor_before_textarea"}
             <small>{LANG->Message}:</small>
             <div id="post-body">
-              <!-- fieldset is a work around for an MSIE rendering bug -->
-              <fieldset>
-                <textarea id="body" name="body" class="body" rows="15" cols="50">{POSTING->body}</textarea>
-              </fieldset>
+                <!-- fieldset is a work around for an MSIE rendering bug -->
+                <fieldset>
+                    <textarea id="body" name="body" class="body" rows="15" cols="50">{POSTING->body}</textarea>
+                </fieldset>
             </div>
-
         </div>
 
         <div id="post-buttons">
-
             {HOOK "tpl_editor_buttons"}
-
             <input type="submit" name="preview" value=" {LANG->Preview} " />
             <input type="submit" name="finish" value=" {POSTING->submitbutton_text} " />
             {IF SHOW_CANCEL_BUTTON}
-            <input type="submit" name="cancel" onclick="return confirm('{LANG->CancelConfirm}')" value=" {LANG->Cancel} " />
+                <input type="submit" name="cancel" onclick="return confirm('{LANG->CancelConfirm}')" value=" {LANG->Cancel} " />
             {/IF}
-
         </div>
-
     </form>
-
 </div>
 
 {IF MODERATED}
-  <div class="notice">{LANG->ModeratedForum}</div>
+    <div class="notice">{LANG->ModeratedForum}</div>
 {/IF}
 
 {IF REPLY_ON_READ}
-  <a name="REPLY"></a>
+    <a name="REPLY"></a>
 {/IF}
-
 <!-- END TEMPLATE posting.tpl -->

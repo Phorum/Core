@@ -6,10 +6,9 @@
     {POST_VARS}
     <div class="generic">
         <h4>{LANG->UploadFile}</h4>
-        {IF FILE_SIZE_LIMIT}<div>{FILE_SIZE_LIMIT}</div>{/IF}
-        {IF FILE_TYPE_LIMIT}<div>{FILE_TYPE_LIMIT}</div>{/IF}
-        {IF FILE_QUOTA_LIMIT}<div>{FILE_QUOTA_LIMIT}</div>{/IF}
-        <br />
+        {IF FILE_SIZE_LIMIT}<div>{FILE_SIZE_LIMIT}</div><br />{/IF}
+        {IF FILE_TYPE_LIMIT}<div>{FILE_TYPE_LIMIT}</div><br />{/IF}
+        {IF FILE_QUOTA_LIMIT}<div>{FILE_QUOTA_LIMIT}</div><br />{/IF}
         <input type="file" name="newfile" size="30" /><br /><br />
         <input type="submit" value="{LANG->Submit}" />
     </div>
@@ -32,7 +31,6 @@
                 <td width="40%">{FILES->dateadded}</td>
             </tr>
         {/LOOP FILES}
-
         <tr>
             <td colspan="4" align="right" class="alt">
                 <small>
@@ -40,8 +38,6 @@
                 </small>
             </td>
         </tr>
-
-
     </table>
     <input type="submit" value="{LANG->Delete}" />
 </form>

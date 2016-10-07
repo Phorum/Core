@@ -1,14 +1,11 @@
 <!-- BEGIN TEMPLATE pm_post.tpl -->
 {IF PREVIEW}
-
     <div class="information">
         {LANG->PreviewExplain}
     </div>
 
     <div class="pm">
-
         <h4>{PREVIEW->subject}</h4>
-
         <div class="message-author icon-user">
             {LANG->From}: {PREVIEW->author}
         </div>
@@ -21,11 +18,8 @@
     </div>
 
     <div class="message-body">
-
         {PREVIEW->message}
-
     </div>
-
 {/IF}
 
 
@@ -33,11 +27,8 @@
     {POST_VARS}
     <input type="hidden" name="action" value="post" />
     <input type="hidden" name="hide_userselect" value="{HIDE_USERSELECT}" />
-
     <div class="generic">
-
         <small>
-
             {LANG->To}:<br />
             {! Show user selection}
             {IF SHOW_USERSELECTION}
@@ -81,19 +72,13 @@
             <div id="post-body">
                 <textarea id="message" name="message" class="body" rows="15" cols="50">{MESSAGE->message}</textarea>
             </div>
-
         </small>
-
     </div>
 
     <div id="post-buttons">
-
         {HOOK "tpl_editor_buttons"}
-
-      <input name="preview" type="submit" value=" {LANG->Preview} " />
-      <input name="post" type="submit" value=" {LANG->PostPM} " />
-
+        <input name="preview" type="submit" value=" {LANG->Preview} " />
+        <input name="post" type="submit" value=" {LANG->PostPM} " />
     </div>
-
 </form>
 <!-- END TEMPLATE pm_post.tpl -->
