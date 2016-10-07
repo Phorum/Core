@@ -1436,9 +1436,23 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $writ
     foreach ($messages as $id => $message)
     {
         // Unpack the message meta data.
+        if (!empty($message['meta'])) {
+            $fixed_meta = @unserialize($message['meta']);
+            if ($fixed_meta === false) {
+                // When database encoding changed from single to multibyte character set
+                // unserialize function fails for data with multibyte characters.
+                // The webmaster should fix this in the database...
+                // We try to get around the error.
+                $fixed_meta = preg_replace_callback(
+                    '/s:([0-9]+):\"(.*?)\";/',
+                    function ($matches) { return "s:".strlen($matches[2]).':"'.$matches[2].'";'; },
+                    $message['meta']
+                );
+            }
+        }
         $messages[$id]['meta'] = empty($message['meta'])
                                ? array()
-                               : unserialize($message['meta']);
+                               : $fixed_meta;
 
         // Collect all involved users.
         if ($message['user_id']) {
