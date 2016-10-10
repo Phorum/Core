@@ -62,6 +62,15 @@ require_once( "./include/constants.php" );
 require_once("./include/api/base.php");
 require_once("./include/api/user.php");
 
+// PHP 5.x fallback for random_bytes and random_int functions.
+//
+// Thanks to Paragon Initiative Enterprises for the implementation of his
+// Random_* Compatibility Library. See: https://github.com/paragonie/random_compat
+if (!function_exists('random_int') || !function_exists('random_bytes'))
+{
+    require_once('./include/random_compat-2.0.2/lib/random.php');
+}
+
 // ----------------------------------------------------------------------
 // Load the database layer and setup a connection
 // ----------------------------------------------------------------------
@@ -2374,15 +2383,6 @@ if (!function_exists('mb_substr'))
             return substr($str, $start);
         }
     }
-}
-
-// PHP 5.x fallback for random_bytes and random_int functions.
-//
-// Thanks to Paragon Initiative Enterprises for the implementation of his
-// Random_* Compatibility Library. See: https://github.com/paragonie/random_compat
-if (!function_exists('random_int') || !function_exists('random_bytes'))
-{
-    require_once('./include/random_compat-2.0.2/lib/random.php');
 }
 
 ?>
