@@ -17,7 +17,7 @@ $filter_mode = defined("LOGVIEWER_FILTER_MODE") ||
                isset($_POST["filter_mode"]);
 
 // Some defaults for the page.
-$default_pagelength = 20;
+$default_pagelength = 50;
 $default_loglevel   = EVENTLOG_LVL_DEBUG;
 
 // The available page lengths.
@@ -310,7 +310,6 @@ function toggle_detail_visibility(log_id)
 
     return false;
 }
-
 //]]>
 </script>
 
@@ -322,6 +321,7 @@ function toggle_detail_visibility(log_id)
     <th align="left" style="white-space:nowrap">Time</th>
     <th align="left" style="white-space:nowrap">Source</th>
     <th align="left" style="white-space:nowrap">Category</th>
+    <th align="left" style="white-space:nowrap">IP address</th>
     <th align="left" style="width:100%">Message</th>
     <th>&nbsp;</th>
   </tr>
@@ -378,10 +378,13 @@ foreach ($logs as $loginfo)
           phorum_date($PHORUM['short_time'], $loginfo["datestamp"]).
        '</td>
         <td valign="middle" style="white-space:nowrap; font-size: 10px">
-          <a title="Extend filter using this source" href="'.htmlspecialchars($filter_base.'&source='.urlencode($loginfo["source"])).'">'.htmlspecialchars($loginfo["source"]).'</a>
+          <a title="Extend filter using this source." href="'.htmlspecialchars($filter_base.'&source='.urlencode($loginfo["source"])).'">'.htmlspecialchars($loginfo["source"]).'</a>
         </td>
         <td valign="middle" style="font-size: 10px">
-          <a title="Extend filter using this category" href="'.htmlspecialchars($filter_base.'&show_category['.urlencode($loginfo["category"]).']=1').'">'.$cat.'</a>
+          <a title="Extend filter using this category." href="'.htmlspecialchars($filter_base.'&show_category['.urlencode($loginfo["category"]).']=1').'">'.$cat.'</a>
+        </td>
+        <td valign="middle" style="font-size: 10px">
+          <a title="Extend filter using this IP address." href="'.htmlspecialchars($filter_base.'&ip='.urlencode($loginfo["ip"])).'">'.$loginfo["ip"].'</a>
         </td>
         <td valign="middle" style="font-size: 12px">'.
           htmlspecialchars($message).
@@ -392,19 +395,19 @@ foreach ($logs as $loginfo)
       </tr>
       <tr>
         <td style="border-bottom: 1px solid #888"></td>
-        <td colspan="6" style="border-bottom: 1px solid #888">
+        <td colspan="7" style="border-bottom: 1px solid #888">
           <div style="display:none;overflow:auto;border:1px solid #aaa; padding:10px; margin-bottom: 10px" id="detail_'.$loginfo["log_id"].'">
 
             <b>User info:</b><br /><br />' .
 
             ($loginfo["user_id"]
-             ? "User ID = <a title=\"Extend filter using this User ID\" href=\"".htmlspecialchars("$filter_base&user_id=".urlencode($loginfo["user_id"]))."\">{$loginfo["user_id"]}</a>" .
+             ? "User ID = <a title=\"Extend filter using this User ID.\" href=\"".htmlspecialchars("$filter_base&user_id=".urlencode($loginfo["user_id"]))."\">{$loginfo["user_id"]}</a>" .
                 ($loginfo["username"] !== NULL
                  ? ', username = ' . htmlspecialchars($loginfo["username"])
                  : '') .
                 '&nbsp;[&nbsp;<a target="_blank" href="'.phorum_get_url(PHORUM_PROFILE_URL, $loginfo["user_id"]).'">view user\'s profile</a>&nbsp;]'
              : "Anonymous user") . '<br />' .
-            'User IP address = <a title="Extend filter using this IP address" href="'.htmlspecialchars($filter_base.'&ip='.urlencode($loginfo["ip"])).'">'. $loginfo["ip"] . '</a>' .
+            'User IP address = <a title="Extend filter using this IP address." href="'.htmlspecialchars($filter_base.'&ip='.urlencode($loginfo["ip"])).'">'. $loginfo["ip"] . '</a>' .
             ($loginfo["hostname"] !== NULL
              ? ', hostname = ' . htmlspecialchars($loginfo["hostname"])
              : '') . '<br />' .
