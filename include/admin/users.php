@@ -104,12 +104,17 @@ if(count($_POST))
             phorum_admin_okmsg("$count User(s) deleted.");
         }
 
-    //process new user data
+    // process force password change
+    } elseif (isset($_POST['forcePasswordChange'])) {
+        phorum_api_user_force_password_change($PHORUM['user']['user_id']);
+        phorum_admin_okmsg('Forced password change for all users (except you).');
+
+    // process new user data
     } elseif (isset($_POST["addUser"])) {
 
         $user_data = $_POST;
 
-        //check for pre-existing username
+        // check for pre-existing username
         if (!empty($_POST["username"])) {
             $existing_user = phorum_api_user_search("username", $_POST["username"]);
             if (!empty($existing_user))
@@ -118,7 +123,7 @@ if(count($_POST))
             $error = "You must provide a user name!";
         }
 
-        //check for a valid email
+        // check for a valid email
         if (!empty($_POST["email"])) {
             include('./include/email_functions.php');
             $valid_email = phorum_valid_email($_POST["email"]);
@@ -129,7 +134,7 @@ if(count($_POST))
         }
 
 
-        //check for password and password confirmation
+        // check for password and password confirmation
         if(isset($_POST['password1']) && !empty($_POST['password1']) && !empty($_POST['password2']) && $_POST['password1'] != $_POST['password2']) {
             $error="Passwords don't match!";
         } elseif(!empty($_POST['password1']) && !empty($_POST['password2'])) {
@@ -240,6 +245,7 @@ if(count($_POST))
         } elseif(!empty($_POST['password1']) && !empty($_POST['password2'])) {
             $user_data['password']=$_POST['password1'];
             $user_data['password_temp']=$_POST['password1'];
+            $user_data['force_password_change']=0;
         }
 
         // clean up
@@ -277,12 +283,17 @@ if(!defined("PHORUM_ORIGINAL_USER_CODE") || PHORUM_ORIGINAL_USER_CODE!==true){
     return;
 }
 
-if (!isset($_GET["edit"]) && !isset($_GET["add"]) && !isset($addUser_error) && !isset($_POST['section']))
+if (    !isset($_GET['edit'])
+     && !isset($_GET['add']) && !isset($addUser_error)
+     && !isset($_POST['section'])
+     && !isset($_REQUEST['forcePasswordChange']) )
 {
     $users_url = phorum_admin_build_url(array('module=users'));
     $users_add_url = phorum_admin_build_url(array('module=users','add=1'));
-    print "<a href=\"$users_url\">" .
-          "Show all users</a> | <a href=\"$users_add_url\">Add User</a><br />";
+    $users_force_password_change_url = phorum_admin_build_url(array('module=users','forcePasswordChange=1'));
+    print "<a href=\"$users_url\">Show all users</a> "
+              ."| <a href=\"$users_add_url\">Add User</a> "
+              ."| <a href=\"$users_force_password_change_url\">Force password change for all users</a><br />";
 
     if (empty($_REQUEST["user_id"]))
     {
@@ -899,15 +910,19 @@ if (isset($_REQUEST["user_id"]))
 
         $frm->addrow("Active", $frm->select_tag("active", array("No", "Yes"), $user["active"]));
 
+        $row=$frm->addrow("Force password change", $frm->select_tag("force_password_change", array("No", "Yes"), $user["force_password_change"]));
+
+        $frm->addhelp($row, "Force password change", "This option forces the user to change his password on his next page load or login.");
+
         $frm->addrow("Forum posts",$user["posts"]);
 
         $frm->addrow("Registration Date", phorum_date($PHORUM['short_date_time'], $user['date_added']));
 
         $row=$frm->addrow("Date last active", phorum_date($PHORUM['short_date_time'], $user['date_last_active']));
 
-        $frm->addrow("Administrator", $frm->select_tag("admin", array("No", "Yes"), $user["admin"]));
-
         $frm->addhelp($row, "Date last active", "This shows the date, when the user was last seen in the forum. Check your setting on \"Track user usage\" in the \"General Settings\". As long as this setting is not enabled, the activity will not be tracked.");
+
+        $frm->addrow("Administrator", $frm->select_tag("admin", array("No", "Yes"), $user["admin"]));
 
         $cf_header_shown=0;
         foreach($PHORUM["PROFILE_FIELDS"] as $key => $item){
@@ -1072,6 +1087,19 @@ if (isset($_REQUEST["user_id"]))
 
     $frm->addrow("Administrator", $frm->select_tag("admin", array("No", "Yes"), $admin));
 
+    $frm->show();
+
+//display force password change form
+} elseif (isset($_REQUEST['forcePasswordChange'])) {
+    print '<a href="'.htmlspecialchars($referrer).'">Back to the user overview</a><br />';
+    $frm = new PhorumInputForm ('', 'post', 'Force Password Change');
+
+    $frm->hidden('module', 'users');
+    $frm->hidden('referrer', $referrer);
+    $frm->hidden('forcePasswordChange', '1');
+
+    $frm->addbreak('Force Password Change');
+    $frm->addmessage('ATTENTION!<br /><br />This option forces ALL users (except you as executing administrator) to change their password on their next page load or login.<br /><br />The process is irreversible!');
     $frm->show();
 }
 ?>

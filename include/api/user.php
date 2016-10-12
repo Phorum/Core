@@ -317,6 +317,7 @@ $GLOBALS['PHORUM']['API']['user_fields'] = array
   'moderation_email'        => 'bool',
   'moderator_data'          => 'array',
   'settings_data'           => 'array',
+  'force_password_change'   => 'bool',
 
    // Fields that are used for passing on information about user related,
    // data, which is not stored in a standard user table field.
@@ -1459,6 +1460,20 @@ function phorum_api_user_delete($user_id)
     foreach ($files as $file_id => $file) {
         phorum_api_file_delete($file_id);
     }
+}
+// }}}
+
+// {{{ Function: phorum_api_user_force_password_change()
+/**
+ * Set the "force password change" marker for all users except executing admin.
+ *
+ * @param integer $user_id
+ *     The administrators user_id.
+ */
+function phorum_api_user_force_password_change($user_id)
+{
+    settype($user_id, "int");
+    phorum_db_user_force_password_change($user_id);
 }
 // }}}
 

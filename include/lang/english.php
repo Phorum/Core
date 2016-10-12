@@ -341,6 +341,7 @@
         "Page"                  =>      "Page",
         "Pages"                 =>      "Pages",
         "Password"              =>      "Password",
+        "PasswordChange"        =>      "For security reasons, you are required to change your password.",
         "PeriodicLogin"         =>      "For your protection, you are required to confirm your login information when you have been away from the site.",
         "PermAdministrator"     =>      "You are an Administrator.",
         "PermAllowPost"         =>      "post-permission",

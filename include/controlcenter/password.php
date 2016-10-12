@@ -17,11 +17,11 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-if(!defined("PHORUM_CONTROL_CENTER")) return;
+if(!defined('PHORUM_CONTROL_CENTER')) return;
 
 if(count($_POST)) {
 
-    $old_password = trim($_POST["password_old"]);
+    $old_password = trim($_POST['password_old']);
     $new_password = trim($_POST['password_new']);
 
     // attempt to authenticate the user
@@ -30,17 +30,18 @@ if(count($_POST)) {
                                 $PHORUM['user']['username'],
                                 $old_password) ) {
 
-        $error = $PHORUM["DATA"]["LANG"]["ErrOriginalPassword"];
+        $error = $PHORUM['DATA']['LANG']['ErrOriginalPassword'];
 
     } elseif(empty($new_password) || empty($_POST['password_new2']) ||
             $_POST['password_new'] !== $_POST['password_new2']) {
 
-        $error = $PHORUM["DATA"]["LANG"]["ErrPassword"];
+        $error = $PHORUM['DATA']['LANG']['ErrPassword'];
 
     } else {
 
         // everything's good, save
         $_POST['password_temp'] = $_POST['password'] = $new_password;
+        $_POST['force_password_change'] = 0;
         list($error,$okmsg) = phorum_controlcenter_user_save($panel);
 
         // Redirect to the password page, to make sure that the
@@ -48,14 +49,20 @@ if(count($_POST)) {
         // session id and this session id changed along with the password.
         phorum_redirect_by_url(phorum_get_url(
             PHORUM_CONTROLCENTER_URL,
-            "panel=" . PHORUM_CC_PASSWORD,
-            "okmsg=" . urlencode($okmsg)
+            'panel=' . PHORUM_CC_PASSWORD,
+            'okmsg=' . urlencode($okmsg)
         ));
+    }
+} else {
+    // Check if user is forced to change his password and show message
+    if (    isset($PHORUM['user']['force_password_change'])
+         && $PHORUM['user']['force_password_change'] ) {
+        $error = $PHORUM['DATA']['LANG']['PasswordChange'];
     }
 }
 
-$PHORUM["DATA"]["HEADING"] = $PHORUM["DATA"]["LANG"]["ChangePassword"];
+$PHORUM['DATA']['HEADING'] = $PHORUM['DATA']['LANG']['ChangePassword'];
 $PHORUM['DATA']['PROFILE']['CHANGEPASSWORD'] = 1;
-$template = "cc_usersettings";
+$template = 'cc_usersettings';
 
 ?>
