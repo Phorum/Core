@@ -32,7 +32,7 @@ define( "PHORUM", "5.2.21" );
 define( "PHORUM_SCHEMA_VERSION", "2010101500" );
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2015082600" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2016101000" );
 
 // Initialize the global $PHORUM variable, which holds all Phorum data.
 global $PHORUM;
@@ -996,6 +996,19 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             $PHORUM['DATA']['BREADCRUMBS'][$track]['URL'] = phorum_get_url(PHORUM_LIST_URL, $track);
         }
     }
+
+    // Check if user is forced to change his password and redirect to control center
+    if (    phorum_page !== 'control'
+         && phorum_page !== 'login'
+         && phorum_page !== 'ajax'
+         && phorum_page !== 'css'
+         && phorum_page !== 'javascript'
+         && isset($PHORUM['user']['force_password_change'])
+         && $PHORUM['user']['force_password_change'] ) {
+        phorum_redirect_by_url(phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, 'panel=password'));
+        exit();
+    }
+
 }
 
 // ----------------------------------------------------------------------
@@ -1012,7 +1025,6 @@ else {
         require_once("./include/lang/$PHORUM[language].php");
     }
 }
-
 
 // ----------------------------------------------------------------------
 // Functions

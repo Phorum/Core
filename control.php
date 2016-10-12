@@ -313,6 +313,7 @@ function phorum_controlcenter_user_save($panel)
     if ($panel == 'password') {
       $userdata['password'] = NULL;
       $userdata['password_temp'] = NULL;
+      $userdata['force_password_change'] = NULL;
     }
     // E-mail address related fields can only be updated from the email panel.
     if ($panel == 'email') {

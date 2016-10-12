@@ -4352,6 +4352,31 @@ function phorum_db_user_delete($user_id)
 }
 // }}}
 
+// {{{ Function: phorum_db_user_force_password_change()
+/**
+ * Set the "force password change" marker for all users except executing admin.
+ *
+ * @param integer $user_id
+ *     The administrators user_id.
+ */
+function phorum_db_user_force_password_change($user_id)
+{
+    settype($user_id, 'int');
+
+    if (!empty($user_id)) {
+        phorum_db_interact(
+            DB_RETURN_RES,
+            "UPDATE {$GLOBALS['PHORUM']['user_table']}
+             SET    force_password_change = 1
+             WHERE  force_password_change = 0
+             AND    user_id != $user_id",
+            NULL,
+            DB_MASTERQUERY
+        );
+    }
+}
+// }}}
+
 // {{{ Function: phorum_db_get_file_list()
 /**
  * Retrieve a list of files from the database.
