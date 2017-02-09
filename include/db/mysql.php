@@ -7415,6 +7415,7 @@ function phorum_db_create_tables()
            moderator_data           text           NOT NULL,
            moderation_email         tinyint(1)     NOT NULL default '1',
            settings_data            mediumtext     NOT NULL,
+           force_password_change    tinyint(1)     NOT NULL default '0',
 
            PRIMARY KEY (user_id),
            UNIQUE KEY username (username),
