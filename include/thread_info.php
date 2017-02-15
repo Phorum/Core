@@ -90,7 +90,9 @@ function phorum_update_thread_info($thread)
         $message["meta"]              = $parent_message["meta"];
 
         // For cleaning up pre-5.2 recent post data.
-        unset($message["meta"]["recent_post"]);
+        if (is_array($message['meta']) && isset($message['meta']['recent_post'])) {
+          unset($message['meta']['recent_post']);
+        }
 
         $message["meta"]["message_ids"]=$message_ids;
         // used only for mods
