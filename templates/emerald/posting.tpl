@@ -222,8 +222,8 @@
 
             {HOOK "tpl_editor_buttons"}
 
-            <input type="submit" name="preview" value=" {LANG->Preview} " />
-            <input type="submit" name="finish" value=" {POSTING->submitbutton_text} " />
+            <input type="submit" name="preview" tabindex="1" value=" {LANG->Preview} " />
+            <input type="submit" name="finish" tabindex="2" value=" {POSTING->submitbutton_text} " />
             {IF SHOW_CANCEL_BUTTON}
             <input type="submit" name="cancel" onclick="return confirm('{LANG->CancelConfirm}')" value=" {LANG->Cancel} " />
             {/IF}
