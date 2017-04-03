@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2016  Phorum Development Team                              //
+//   Copyright (C) 2017 Phorum Development Team                               //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -38,7 +38,7 @@
  *     belong here and could better go into the core maybe?
  *
  * @package    PhorumDBLayer
- * @copyright  2016, Phorum Development Team
+ * @copyright  2017, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
@@ -7429,6 +7429,7 @@ function phorum_db_create_tables()
            moderator_data           text           NOT NULL,
            moderation_email         tinyint(1)     NOT NULL default '1',
            settings_data            mediumtext     NOT NULL,
+           force_password_change    tinyint(1)     NOT NULL default '0',
 
            PRIMARY KEY (user_id),
            UNIQUE KEY username (username),
