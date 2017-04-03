@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2017 Phorum Development Team                               //
+//   Copyright (C) 2016  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -38,7 +38,7 @@
  *     belong here and could better go into the core maybe?
  *
  * @package    PhorumDBLayer
- * @copyright  2017, Phorum Development Team
+ * @copyright  2016, Phorum Development Team
  * @license    Phorum License, http://www.phorum.org/license.txt
  */
 
@@ -1345,11 +1345,25 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
 
     foreach ($messages as $message)
     {
+        if (!empty($message['meta'])) {
+            $fixed_meta = @unserialize($message['meta']);
+            if ($fixed_meta === false) {
+                // When database encoding changed from single to multibyte character set
+                // unserialize function fails for data with multibyte characters.
+                // The webmaster should fix this in the database...
+                // We try to get around the error.
+                $fixed_meta = preg_replace_callback(
+                    '/s:([0-9]+):\"(.*?)\";/',
+                    function ($matches) { return "s:".strlen($matches[2]).':"'.$matches[2].'";'; },
+                    $message['meta']
+                );
+            }
+        }
         $message['meta'] = empty($message['meta'])
                          ? array()
-                         : unserialize($message['meta']);
+                         : $fixed_meta;
 
-        if (! $multiple) {
+        if (!$multiple) {
             $return = $message;
             break;
         }
@@ -7415,7 +7429,6 @@ function phorum_db_create_tables()
            moderator_data           text           NOT NULL,
            moderation_email         tinyint(1)     NOT NULL default '1',
            settings_data            mediumtext     NOT NULL,
-           force_password_change    tinyint(1)     NOT NULL default '0',
 
            PRIMARY KEY (user_id),
            UNIQUE KEY username (username),
