@@ -1289,7 +1289,11 @@ function bbcode_url_handler($content, $args, $message)
 
     if ($strip_url && !$show_full_urls) {
         $parts = @parse_url($args['url']);
+        if (isset($parts['host'])) {
         return "[<a href=\"{$args['url']}\" $extratags{$nofollow}>{$parts['host']}</a>]";
+    } else {
+            return "[<a href=\"{$args['url']}\" $extratags{$nofollow}>{$args['url']}</a>]";
+        }
     } else {
         return "<a href=\"{$args['url']}\" $extratags{$nofollow}>$content</a>";
     }
