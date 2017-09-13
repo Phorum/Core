@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit bootstrap="vendor/autoload.php">
+
+    <testsuites>
+        <testsuite name="Phorum Testsuite">
+            <directory>tests/</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <const name="PHORUM" value="1" />
+    </php>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./</directory>
+        </whitelist>
+        <blacklist>
+            <directory suffix=".php">./tests/</directory>
+        </blacklist>
+    </filter>
+</phpunit>
