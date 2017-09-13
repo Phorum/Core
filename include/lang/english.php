@@ -327,7 +327,7 @@
         "NotRegistered"         =>      "Not Registered?  Click here to register now.",
         "NoResults"             =>      "No results were found.",
         "NoResultsHelp"         =>      "Your search did not match any messages.<br /><br />Suggestions:<ul><li>Make sure all words are spelled correctly.</li><li>Try different keywords.</li><li>Try more general keywords.</li><li>Try fewer keywords.</li></ul>",
-        "NoUnapprovedMessages"  =>      "There are currently no unapproved mesages",
+        "NoUnapprovedMessages"  =>      "There are currently no unapproved messages",
         "NoUnapprovedUsers"     =>      "There are currently no unapproved users",
         "NoUserMatchFilter"     =>      "No users match your current filter",
 
