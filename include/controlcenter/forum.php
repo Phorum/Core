@@ -83,7 +83,7 @@ if ( count( $_POST ) ) {
     if (empty($error) && !empty($_POST["user_template"]) &&
         $oldtemplate != $_POST["user_template"]) {
         phorum_redirect_by_url($PHORUM['DATA']['URL']['CC6']);
-        exit();
+        exit;
     }
 }
 

@@ -38,13 +38,13 @@ phorum_check_posting_token();
 // A user has to be logged in to use his control-center.
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
-    exit();
+    exit;
 }
 
 // If the user is not fully logged in, send him to the login page.
 if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
     phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=".PHORUM_CONTROLCENTER_URL));
-    exit();
+    exit;
 }
 
 $error_msg = false;

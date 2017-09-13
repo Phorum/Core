@@ -55,7 +55,7 @@ else{
 
 if (!$perm) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_CONTROLCENTER_URL));
-    exit();
+    exit;
 }
 
 // figure out what the user is trying to do, in this case we have a group to list (and maybe some commands)

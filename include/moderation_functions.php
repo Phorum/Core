@@ -32,7 +32,7 @@ function phorum_return_to_list()
     }else{
         phorum_redirect_by_url(phorum_get_url(PHORUM_INDEX_URL));
     }
-    exit();
+    exit;
 }
 
 /* A function to get moderator_data from the user's profile.

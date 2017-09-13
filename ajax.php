@@ -169,7 +169,7 @@ if (isset($PHORUM['hooks'][$call_hook])) {
 // Check if the Ajax call has a core handler script.
 if (file_exists("./include/ajax/call.$ajax_call.php")) {
     include("./include/ajax/call.$ajax_call.php");
-    exit();
+    exit;
 }
 
 // No handler script available. Bail out.

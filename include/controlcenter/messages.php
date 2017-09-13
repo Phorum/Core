@@ -24,7 +24,7 @@ require_once("./include/api/file_storage.php");
 
 if (!$PHORUM["DATA"]["MESSAGE_MODERATOR"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_CONTROLCENTER_URL));
-    exit();
+    exit;
 }
 
 // the number of days to show

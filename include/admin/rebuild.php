@@ -140,7 +140,7 @@ if ( count( $_POST ) ) {
     if (isset($_POST['rebuild_display_names']) && !empty($_POST['rebuild_display_names'])) {
         $redir_url = phorum_admin_build_url(array('module=update_display_names','request=integrity'), TRUE);
         phorum_redirect_by_url($redir_url);
-        exit();
+        exit;
     }
 
     if(isset($_POST['rebuild_forumpaths']) && !empty($_POST['rebuild_forumpaths'])) {
