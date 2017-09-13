@@ -620,7 +620,7 @@ CREATE TABLE `phorum_users` (
 
 LOCK TABLES `phorum_users` WRITE;
 /*!40000 ALTER TABLE `phorum_users` DISABLE KEYS */;
-INSERT INTO `phorum_users` VALUES (1,'admin','','admin','7adc785be4a31eff6783871ff63e18f1','*NO PASSWORD SET*','','',0,'test@phorum.org','',0,1,'',0,0,1,0,1442139723,1442139723,0,0,0,0,1,-99.00,0,'','','',1,'');
+INSERT INTO `phorum_users` VALUES (1,'admin','','admin','7adc785be4a31eff6783871ff63e18f1','*NO PASSWORD SET*','','',0,'test@phorum.org','',0,1,'',0,0,1,0,1442139723,1442139723,0,0,0,0,1,-99.00,0,'','','',1,'',0);
 /*!40000 ALTER TABLE `phorum_users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
