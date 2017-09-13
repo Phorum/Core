@@ -35,14 +35,14 @@ if(!phorum_check_read_common()) {
 if(empty($PHORUM["forum_id"])){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL);
     phorum_redirect_by_url($dest_url);
-    exit();
+    exit;
 }
 
 // somehow we got to a folder in list.php
 if($PHORUM["folder_flag"]){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
-    exit();
+    exit;
 }
 
 $newflagkey = $PHORUM["forum_id"]."-".$PHORUM['user']['user_id'];
@@ -61,7 +61,7 @@ if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["D
     // redirect to a fresh list without markread in url
     $dest_url = phorum_get_url(PHORUM_LIST_URL);
     phorum_redirect_by_url($dest_url);
-    exit();
+    exit;
 
 }
 
@@ -198,7 +198,7 @@ if($rows == null) {
     if(count($rows) < 1 && $offset > 0){
         $dest_url = phorum_get_url(PHORUM_LIST_URL);
         phorum_redirect_by_url($dest_url);
-        exit();
+        exit;
     }
 
     if ($PHORUM["threaded_list"]){

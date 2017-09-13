@@ -165,7 +165,7 @@
         if(empty($error)) {
             $redir_url = phorum_admin_build_url(array('parent_id='.$cur_folder["parent_id"]), TRUE);
             phorum_redirect_by_url($redir_url);
-            exit();
+            exit;
         }
 
         foreach($_POST as $key=>$value){

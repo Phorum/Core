@@ -61,7 +61,7 @@ if(empty($msgthd_id) || !$PHORUM["DATA"]["MODERATOR"]) {
 // to the referrer if they are not fully logged in
 if(!$PHORUM["DATA"]["FULLY_LOGGEDIN"]){
     phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=".$_SERVER["HTTP_REFERER"]));
-    exit();
+    exit;
 }
 
 
@@ -91,7 +91,7 @@ if(isset($_POST["confirmation"]) && $_POST["confirmation"]==$PHORUM["DATA"]["LAN
     }
 
     phorum_redirect_by_url($url);
-    exit();
+    exit;
 }
 
 

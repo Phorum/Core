@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
     // Don't allow this page to be loaded directly.
-    if(!defined("PHORUM_ADMIN")) exit();
+    if(!defined("PHORUM_ADMIN")) exit;
 
     if(count($_POST)) {
         if(!empty($_POST['phorum_admin_token']) &&
@@ -48,7 +48,7 @@
 
                    phorum_redirect_by_url($url);
                }
-               exit();
+               exit;
            }
     }
 

@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
     // don't allow this page to be loaded directly
-    if(!defined("PHORUM_ADMIN")) exit();
+    if(!defined("PHORUM_ADMIN")) exit;
 
     include_once("./include/api/base.php");
     include_once("./include/api/user.php");
@@ -54,7 +54,7 @@
                 $redir_url = phorum_admin_build_url('', TRUE);
                 phorum_redirect_by_url($redir_url);
             }
-            exit();
+            exit;
 
         } else {
             phorum_hook("failed_login", array(

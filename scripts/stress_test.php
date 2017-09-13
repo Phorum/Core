@@ -68,7 +68,7 @@ print "> ";
 $yes = trim(fgets(STDIN));
 if ($yes != 'yes') {
     print "\nAborting ...\n\n";
-    exit();
+    exit;
 }
 
 print "\nHow many users do you want to create?\n";

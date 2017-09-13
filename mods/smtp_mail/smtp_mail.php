@@ -218,7 +218,7 @@ function phorum_smtp_send_messages ($data)
                 echo $error_msg."\n";
                 echo $detail_msg;
             }
-            exit();
+            exit;
         }
     }
 

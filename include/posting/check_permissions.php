@@ -71,7 +71,7 @@ if( ($mode == "post" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_NEW_TOPI
         $redir = urlencode(call_user_func_array('phorum_get_url', $args));
 
         phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL,"redir=$redir"));
-        exit();
+        exit;
 
     }
 }
@@ -101,7 +101,7 @@ if ($finish && ($mode == 'edit' || $mode == 'reply'))
     $origmessage = phorum_db_get_message($message[$id]);
     if (! $origmessage) {
         phorum_redirect_by_url(phorum_get_url(PHORUM_INDEX_URL));
-        exit();
+        exit;
     }
 
     // Copy read-only information for editing messages.

@@ -334,5 +334,5 @@ foreach ($logs as $loginfo)
     }
 }
 ob_end_flush();
-exit();
+exit;
 ?>
