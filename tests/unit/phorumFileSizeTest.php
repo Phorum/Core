@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../include/api/format.php';
+require_once __DIR__ . '/../../include/api/format_functions.php';
 
 class formatFunctionsTest extends \PHPUnit_Framework_TestCase
 {
