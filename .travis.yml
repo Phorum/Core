@@ -31,4 +31,5 @@ before_script:
   - sed -ie "s#'name'          => 'phorum5'#'name'          => 'phorum5_tests'#g" include/db/config.php
 
 script:
+  - php vendor/bin/phpunit
   - php vendor/bin/codecept run  # self tests
