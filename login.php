@@ -108,7 +108,7 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
         $url = phorum_hook("after_logout", $url);
 
     phorum_redirect_by_url($url);
-    exit();
+    exit;
 }
 
 // ----------------------------------------------------------------------------
@@ -467,7 +467,7 @@ if (count($_POST) > 0) {
                         $redir = phorum_hook("after_login", $redir);
 
                     phorum_redirect_by_url($redir);
-                    exit();
+                    exit;
                 }
             }
 

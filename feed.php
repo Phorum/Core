@@ -26,12 +26,12 @@ include_once("./include/feed_functions.php");
 
 // Check if feeds are allowed.
 if (empty($PHORUM['use_rss'])) {
-    exit();
+    exit;
 }
 
 // somehow we got to a folder
 if(!empty($PHORUM["folder_flag"]) && $PHORUM["forum_id"] != $PHORUM["vroot"]){
-    exit();
+    exit;
 }
 
 // Get the forums that this user can read.

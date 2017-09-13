@@ -34,7 +34,7 @@ if(!phorum_check_read_common()) {
 if($PHORUM["folder_flag"]){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
-    exit();
+    exit;
 }
 
 if(isset($PHORUM["args"][1]) && is_numeric($PHORUM["args"][1])){
@@ -42,7 +42,7 @@ if(isset($PHORUM["args"][1]) && is_numeric($PHORUM["args"][1])){
 } else {
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
-    exit();
+    exit;
 }
 
 $message = phorum_db_get_message($message_id);
@@ -50,7 +50,7 @@ $message = phorum_db_get_message($message_id);
 if(empty($message)){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
-    exit();
+    exit;
 }
 
 $PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
@@ -63,7 +63,7 @@ if(count($edit_tracks)==0 ||
 
     $dest_url = phorum_get_url(PHORUM_READ_URL, $message["thread"], $message_id);
     phorum_redirect_by_url($dest_url);
-    exit();
+    exit;
 }
 
 

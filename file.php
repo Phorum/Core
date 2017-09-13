@@ -32,7 +32,7 @@ ob_start();
 // the message list for the forum.
 if (empty($PHORUM["args"]["file"])) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
-    exit();
+    exit;
 }
 $file_id = (int) $PHORUM["args"]["file"];
 

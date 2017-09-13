@@ -134,7 +134,7 @@ if ( count( $_POST ) )
                 $redir = phorum_admin_build_url(array('module=update_display_names'), TRUE);
             }
             phorum_redirect_by_url($redir);
-            exit();
+            exit;
         } else {
             $error = "Database error while updating settings.";
         }

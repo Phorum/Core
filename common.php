@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Check that this file is not loaded directly.
-if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
+if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit;
 
 
 // ----------------------------------------------------------------------
@@ -149,11 +149,11 @@ require_once( "./include/db/{$PHORUM['DBCONFIG']['type']}.php" );
 if(!phorum_db_check_connection()){
     if(isset($PHORUM["DBCONFIG"]["down_page"])){
         phorum_redirect_by_url($PHORUM["DBCONFIG"]["down_page"]);
-        exit();
+        exit;
     } else {
         header('HTTP/1.1 500 Internal Server Error');
         echo "The database connection failed. Please check your database configuration in include/db/config.php. If the configuration is okay, check if the database server is running.";
-        exit();
+        exit;
     }
 }
 
@@ -170,16 +170,16 @@ if (!defined('PHORUM_ADMIN')) {
     if (!isset($PHORUM['internal_version']))
     {
         echo "<html><head><title>Phorum error</title></head><body>No Phorum settings were found. Either this is a brand new installation of Phorum or there is a problem with your database server. If this is a new install, please <a href=\"admin.php\">go to the admin page</a> to complete the installation. If not, check your database server.</body></html>";
-        exit();
+        exit;
     } elseif ($PHORUM['internal_version'] < PHORUM_SCHEMA_VERSION ||
               !isset($PHORUM['internal_patchlevel']) ||
               $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL) {
         if (isset($PHORUM["DBCONFIG"]["upgrade_page"])) {
             phorum_redirect_by_url($PHORUM["DBCONFIG"]["upgrade_page"]);
-            exit();
+            exit;
         }
         echo "<html><head><title>Upgrade notification</title></head><body>It looks like you have installed a new version of Phorum.<br />Please visit the admin page to complete the upgrade!</body></html>";
-        exit();
+        exit;
     }
 }
 
@@ -490,10 +490,10 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
     if(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_DISABLED){
         if(!empty($PHORUM["disabled_url"])){
             header("Location: ".$PHORUM["disabled_url"]);
-            exit();
+            exit;
         } else {
             echo "This Phorum is currently disabled.  Please contact the web site owner at ".$PHORUM['system_email_from_address']." for more information.\n";
-            exit();
+            exit;
         }
     }
 
@@ -542,7 +542,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
              *         print "</head><body>";
              *         print "  <h1>404 - Forum Not Found</h1>";
              *         print "</body></html>";
-             *         exit();
+             *         exit;
              *     }
              *     </hookcode>
              */
@@ -551,7 +551,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             }
 
             phorum_redirect_by_url( phorum_get_url( PHORUM_INDEX_URL ) );
-            exit();
+            exit;
         }
 
         $PHORUM = array_merge( $PHORUM, $forum_settings[$PHORUM["forum_id"]] );
@@ -771,7 +771,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
             if (phorum_page != 'login') {
 
                 phorum_output("message");
-                exit();
+                exit;
             }
 
         } elseif(isset($PHORUM["status"]) && $PHORUM["status"]==PHORUM_MASTER_STATUS_READ_ONLY){
@@ -1006,7 +1006,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
          && isset($PHORUM['user']['force_password_change'])
          && $PHORUM['user']['force_password_change'] ) {
         phorum_redirect_by_url(phorum_get_url(PHORUM_CONTROLCENTER_ACTION_URL, 'panel=password'));
-        exit();
+        exit;
     }
 
 }
@@ -1091,7 +1091,7 @@ function phorum_require_login()
             PHORUM_LOGIN_URL, "redir=" . urlencode(phorum_get_current_url())
         );
         phorum_redirect_by_url( $url );
-        exit();
+        exit;
     }
 }
 
@@ -2135,7 +2135,7 @@ function phorum_check_posting_token($target_page = NULL)
                 'The posted form data was rejected.';
             phorum_build_common_urls();
             phorum_output("message");
-            exit();
+            exit;
         }
     }
 
@@ -2371,7 +2371,7 @@ function phorum_database_error($error)
     </html>
     <?php
 
-    exit();
+    exit;
 }
 
 // For safely doing substr() operations on strings that contain

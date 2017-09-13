@@ -51,7 +51,7 @@ if ($action == 'download_lang')
     $langfile = phorum_cache_get('updated_language', $filename);
     print $langfile;
 
-    exit();
+    exit;
 }
 
 // Handle updating a language.

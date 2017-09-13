@@ -50,7 +50,7 @@ include_once("./include/format_functions.php");
 // a user has to be logged in to use the private messages system
 if (!$PHORUM["DATA"]["LOGGEDIN"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
-    exit();
+    exit;
 }
 
 // if the user is not fully logged in, send him to the login page
@@ -65,7 +65,7 @@ if (!$PHORUM["DATA"]["FULLY_LOGGEDIN"]) {
     $redir = urlencode(call_user_func_array('phorum_get_url', $args));
 
     phorum_redirect_by_url(phorum_get_url(PHORUM_LOGIN_URL, "redir=$redir"));
-    exit();
+    exit;
 }
 
 // If private messages are disabled, just show a simple error message.
@@ -723,7 +723,7 @@ if (!empty($action)) {
         $redir_url = call_user_func_array('phorum_get_url', $args);
 
         phorum_redirect_by_url($redir_url);
-        exit();
+        exit;
     }
 
 }

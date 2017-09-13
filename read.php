@@ -39,7 +39,7 @@ if(!phorum_check_read_common()) {
 if($PHORUM["folder_flag"]){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
     phorum_redirect_by_url($dest_url);
-    exit();
+    exit;
 }
 
 $newflagkey = $PHORUM["forum_id"]."-".$PHORUM['user']['user_id'];
@@ -77,7 +77,7 @@ if ($PHORUM["DATA"]["MODERATOR"]) {
 if(empty($PHORUM["args"][1])) {
     // we have no thread-id given, redirect to the index
     phorum_redirect_by_url(phorum_get_url(PHORUM_LIST_URL));
-    exit();
+    exit;
 } elseif(empty($PHORUM["args"][2]) || $PHORUM["args"][2]=="printview") {
     $thread = (int)$PHORUM["args"][1];
     $message_id = (int)$PHORUM["args"][1];
@@ -180,7 +180,7 @@ if(empty($PHORUM["args"][1])) {
         }
 
         phorum_redirect_by_url($dest_url);
-        exit();
+        exit;
     }
 
     $thread = (int)$PHORUM["args"][1];

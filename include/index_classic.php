@@ -57,7 +57,7 @@ foreach( $forums as $forum ) {
         // if there is only one forum in Phorum, redirect to it.
         if ( $parent_id==0 && count( $forums ) < 2 ) {
             phorum_redirect_by_url($forum['url']);
-            exit();
+            exit;
         }
 
         if ( $forum["message_count"] > 0 ) {

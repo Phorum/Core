@@ -379,7 +379,7 @@ if(count($_POST)){
             }
 
             phorum_redirect_by_url($url);
-            exit();
+            exit;
         } else {
             $error="Database error while adding/updating forum.";
         }

@@ -47,7 +47,7 @@ if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["D
         $dest_url = phorum_get_url(PHORUM_INDEX_URL);
     }
     phorum_redirect_by_url($dest_url);
-    exit();
+    exit;
 
 }
 
@@ -55,7 +55,7 @@ if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["D
 if(!empty($PHORUM["forum_id"]) && $PHORUM["folder_flag"]==0){
     $dest_url = phorum_get_url(PHORUM_LIST_URL);
     phorum_redirect_by_url($dest_url);
-    exit();
+    exit;
 }
 
 // add feed urls

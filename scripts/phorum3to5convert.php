@@ -124,7 +124,7 @@ mysql_select_db($CONVERT['olddb'], $oldlink);
 
 if (!$oldlink) {
     print "Couldn't connect to the old database.".$CONVERT['lbr'];
-    exit();
+    exit;
 }
 
 // set the old data link's charset

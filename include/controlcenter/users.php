@@ -21,7 +21,7 @@ if(!defined("PHORUM_CONTROL_CENTER")) return;
 
 if (!$PHORUM["DATA"]["USER_MODERATOR"]) {
     phorum_redirect_by_url(phorum_get_url(PHORUM_CONTROLCENTER_URL));
-    exit();
+    exit;
 }
 
 $users=phorum_db_user_get_unapproved();
