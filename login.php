@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//   Copyright (C) 2017 Phorum Development Team                               //
+//   Copyright (C) 2017  Phorum Development Team                              //
 //   http://www.phorum.org                                                    //
 //                                                                            //
 //   This program is free software. You can redistribute it and/or modify     //
@@ -18,9 +18,20 @@
 ////////////////////////////////////////////////////////////////////////////////
 define('phorum_page','login');
 
-include_once( "./common.php" );
-include_once( "./include/email_functions.php" );
-include_once( "./include/format_functions.php" );
+include_once('./common.php');
+include_once('./include/email_functions.php');
+include_once('./include/format_functions.php');
+
+// Check banlists.
+include_once('./include/profile_functions.php');
+$error = phorum_check_bans(array(array(NULL, PHORUM_BAD_IPS)));
+if (!empty($error)) {
+    // set all our URL's
+    phorum_build_common_urls();
+    $PHORUM['DATA']['ERROR'] = $error;
+    phorum_output('message');
+    exit;
+}
 
 // ----------------------------------------------------------------------------
 // Handle logout
