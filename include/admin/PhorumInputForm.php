@@ -208,7 +208,7 @@ class PhorumInputForm {
     {
         global $PHORUM;
 
-        if (is_array($this->_help)) {
+        if (is_array($this->_help) && count($this->_help)) {
             echo "<script type=\"text/javascript\">\nvar help = Array;\n";
             foreach($this->_help as $key=>$data){
                 echo "help[$key] = [\"$data[0]\", \"$data[1]\"];\n";
