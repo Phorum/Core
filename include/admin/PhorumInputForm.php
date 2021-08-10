@@ -39,7 +39,7 @@ class PhorumInputForm {
     var $_submit;
     var $_help;
 
-    function PhorumInputForm ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = array() )
+    function __construct($action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = array())
     {
         $this->_action = ( empty( $action ) ) ? $_SERVER["PHP_SELF"] : $action;
         $this->_method = $method;
@@ -208,7 +208,7 @@ class PhorumInputForm {
     {
         global $PHORUM;
 
-        if(count($this->_help)){
+        if (is_array($this->_help)) {
             echo "<script type=\"text/javascript\">\nvar help = Array;\n";
             foreach($this->_help as $key=>$data){
                 echo "help[$key] = [\"$data[0]\", \"$data[1]\"];\n";

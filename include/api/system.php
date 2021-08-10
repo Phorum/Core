@@ -123,7 +123,7 @@ function phorum_api_system_get_max_upload()
 function phorum_api_system_phpsize2bytes($size)
 {
     $size = trim($size);
-    $last = strtolower($size{strlen($size)-1});
+    $last = strtolower($size[strlen($size)-1]);
     switch($last) {
        // The 'G' modifier is available since PHP 5.1.0
        case 'g':

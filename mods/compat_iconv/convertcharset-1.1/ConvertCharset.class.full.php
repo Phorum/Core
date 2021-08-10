@@ -164,7 +164,7 @@ class ConvertCharset {
 	 * @param boolean $TurnOnEntities
 	 * @access public
 	 */
-	function ConvertCharset ($FromCharset, $ToCharset, $TurnOnEntities = false)
+	function __construct($FromCharset, $ToCharset, $TurnOnEntities = false)
 	{
 		/**
 		 * For all people who like to use uppercase for charset encoding names :)

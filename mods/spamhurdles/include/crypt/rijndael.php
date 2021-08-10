@@ -358,7 +358,7 @@ class Crypt_Rijndael {
      * @return Crypt_Rijndael
      * @access public
      */
-    function Crypt_Rijndael($mode = CRYPT_MODE_RIJNDAEL_CBC)
+    function __construct($mode = CRYPT_MODE_RIJNDAEL_CBC)
     {
         switch ($mode) {
             case CRYPT_RIJNDAEL_MODE_ECB:
