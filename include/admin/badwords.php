@@ -154,7 +154,7 @@ if($_GET["curr"] && $_GET["delete"]){
 
     echo "<hr class=\"PhorumAdminHR\" />";
 
-    if(count($bad_words)){
+    if (is_array($bad_words) && count($bad_words)) {
 
         echo "<table border=\"0\" cellspacing=\"1\" cellpadding=\"0\" class=\"PhorumAdminTable\" width=\"100%\">\n";
         echo "<tr>\n";

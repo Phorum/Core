@@ -1,7 +1,7 @@
 <?php
 class banner
 {
-    function banner($font = "banner.fnt")
+    function __construct($font = "banner.fnt")
     {
         $font = basename($font);
 

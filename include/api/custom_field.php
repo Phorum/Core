@@ -382,7 +382,7 @@ function phorum_api_custom_field_restore($id)
  *     Returns the input array with the custom fields added.
  */
 function phorum_api_custom_field_apply(
-    $field_type = NULL, $data_array, $raw_data = FALSE)
+    $field_type, $data_array, $raw_data = FALSE)
 {
     global $PHORUM;
 
