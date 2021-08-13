@@ -27,6 +27,7 @@ if (!$PHORUM['DB']->check_connection()) {
 
 require_once './include/admin/PhorumInputForm.php';
 require_once './include/version_functions.php';
+require_once './include/misc/polyfill-each.php';
 
 $is_module_upgrade = isset($_POST['is_module_upgrade'])
       ? ($_POST['is_module_upgrade'] ? 1 : 0)

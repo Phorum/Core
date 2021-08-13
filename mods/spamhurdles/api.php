@@ -691,7 +691,7 @@ function spamhurdles_iScramble_escape($plain)
 
     for ($i = 0; $i < strlen($plain); $i++)
     {
-        $char = $plain{$i};
+        $char = $plain[$i];
         if (strpos($passChars, $char) === false)
         {
             // $char is not in the list of $passChars. Encode in hex format
@@ -753,7 +753,7 @@ function spamhurdles_iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>
         $availChars = substr("0123456789", 0, $numberOfColumns);
         for ($i = 0 ; $i < $numberOfColumns; $i++)
         {
-            $char = $availChars{ random_int(0, strlen($availChars)-1) };
+            $char = $availChars[random_int(0, strlen($availChars)-1)];
             $password .= $char;
             $availChars = str_replace($char, "", $availChars);
         }
@@ -768,7 +768,7 @@ function spamhurdles_iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>
     {
         for($j = 0; $j < $numberOfColumns; $j++ )
         {
-            $scrambled{(int)(((int)$scramblePassword{$k}) * $numberOfRows) + $i} = $escaped{$k};
+            $scrambled[(int)(((int)$scramblePassword[$k]) * $numberOfRows) + $i] = $escaped[$k];
             $k++;
         }
     }

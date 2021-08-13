@@ -4,6 +4,7 @@ $PATH_TO_CLASS = dirname(ereg_replace("\\\\", "/", __FILE__)) . "/" . "ConvertTa
 define ("CONVERT_TABLES_DIR", $PATH_TO_CLASS);
 define ("DEBUG_MODE", 1);
 
+require_once __DIR__.'/../../include/misc/polyfill-each.php';
 
 class ConvertCharset{
      var $RecognizedEncoding; // (boolean) This value keeps information if string contains multibyte chars.

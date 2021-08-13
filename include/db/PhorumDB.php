@@ -55,6 +55,8 @@ if (!defined('PHORUM')) return;
 // included separately from the Phorum core code.)
 defined('PHORUM_PATH') or define('PHORUM_PATH', dirname(__FILE__).'/../..');
 
+require_once __DIR__.'/../misc/polyfill-each.php';
+
 // ----------------------------------------------------------------------
 // Definitions
 // ----------------------------------------------------------------------
