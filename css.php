@@ -27,13 +27,13 @@ define('PHORUM_COMPRESS_CSS', FALSE);
 if(!empty($PHORUM["args"]["1"])){
     $css = basename((string)$PHORUM["args"]["1"]);
 } else {
-    trigger_error("Missing argument", E_USER_ERROR);
+    phorum_user_error("Missing argument");
     exit(1);
 }
 
 // let it only process css templates
 if(substr($css,0,3) != 'css') {
-    trigger_error("Wrong template", E_USER_ERROR);
+    phorum_user_error("Wrong template");
     exit(1);
 }
 
@@ -162,28 +162,28 @@ $cache_key = $PHORUM['template'] .'|'.
 foreach ($module_registrations as $id => $r)
 {
     if (!isset($r['module'])) {
-        trigger_error(
+        phorum_user_error(
             "css_register hook: module registration error: " .
             "the \"module\" field was not set."
         );
         exit(1);
     }
     if (!isset($r['source'])) {
-        trigger_error(
+        phorum_user_error(
             "css_register hook: module registration error: " .
             "the \"source\" field was not set."
         );
         exit(1);
     }
     if (!isset($r['where'])) {
-        trigger_error(
+        phorum_user_error(
             "css_register hook: module registration error: " .
             "the \"where\" field was not set."
         );
         exit(1);
     }
     if ($r['where'] != 'before' && $r['where'] != 'after') {
-        trigger_error(
+        phorum_user_error(
             "css_register hook: module registration error: " .
             "illegal \"where\" field value\"{$r['where']}\"."
         );
@@ -228,7 +228,7 @@ foreach ($module_registrations as $id => $r)
             case "function":
 
                 if (!isset($r['cache_key'])) {
-                    trigger_error(
+                    phorum_user_error(
                         "css_register hook: module registration error: " .
                         "\"cache_key\" field missing for source " .
                         "\"{$r['source']}\" in module \"{$r['module']}\"."
@@ -239,7 +239,7 @@ foreach ($module_registrations as $id => $r)
                 break;
         }
     } else {
-        trigger_error(
+        phorum_user_error(
             "css_register hook: module registration error: " .
             "illegal format for source definition \"{$r['source']}\" " .
             "in module \"{$r['module']}\"."

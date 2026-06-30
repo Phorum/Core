@@ -305,13 +305,11 @@ function phorum_mod_editor_tools_before_footer()
  */
 function editor_tools_register_tool($tool_id, $description, $icon=NULL, $jsaction=NULL, $iwidth=NULL, $iheight=NULL, $target=NULL)
 {
-    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) phorum_user_error(
         "Internal error for the editor_tools module: " .
         "tool ".htmlspecialchars($toold_id)." was registered " .
         "after the editor_tools were started up. Tools must " .
-        "be registered within or before the \"editor_tool_plugin\" hook.",
-        E_USER_ERROR
-    );
+        "be registered within or before the \"editor_tool_plugin\" hook.");
 
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TOOLS"][$tool_id] = array(
         $tool_id,
@@ -335,13 +333,11 @@ function editor_tools_register_tool($tool_id, $description, $icon=NULL, $jsactio
  */
 function editor_tools_register_jslib($jslib)
 {
-    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) phorum_user_error(
         "Internal error for the editor_tools module: " .
         "javascript library ".htmlspecialchars($jslib)." was registered " .
         "after the editor_tools were started up. Libraries must " .
-        "be registered within or before the \"editor_tool_plugin\" hook.",
-        E_USER_ERROR
-    );
+        "be registered within or before the \"editor_tool_plugin\" hook.");
 
     if (is_array($jslib)) {
         foreach($jslib as $path) {
@@ -365,13 +361,11 @@ function editor_tools_register_jslib($jslib)
  */
 function editor_tools_register_help($title, $url)
 {
-    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) phorum_user_error(
         "Internal error for the editor_tools module: " .
         "help chapter ".htmlspecialchars($title)." was registered " .
         "after the editor_tools were started up. Help chapters must " .
-        "be registered within or before the \"editor_tool_plugin\" hook.",
-        E_USER_ERROR
-    );
+        "be registered within or before the \"editor_tool_plugin\" hook.");
 
     $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["HELP_CHAPTERS"][] = array($title, $url);
 }
@@ -385,13 +379,11 @@ function editor_tools_register_help($title, $url)
  */
 function editor_tools_register_translations($translations)
 {
-    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) trigger_error(
+    if ($GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["STARTED"]) phorum_user_error(
         "Internal error for the editor_tools module: " .
         "translation strings were registered after the editor_tools were " .
         "started up. Translation strings must be registered within or " .
-        "before the \"editor_tool_plugin\" hook.",
-        E_USER_ERROR
-    );
+        "before the \"editor_tool_plugin\" hook.");
 
     foreach ($translations as $key => $val) {
         $GLOBALS["PHORUM"]["MOD_EDITOR_TOOLS"]["TRANSLATIONS"][$key] = $val;

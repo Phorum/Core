@@ -3,6 +3,10 @@ require_once(dirname(__FILE__) . "/class.captcha_base.php");
 
 class captcha_maptcha extends captcha_base
 {
+    var $qn1;
+    var $op;
+    var $qn2;
+
     function generate_question_and_answer()
     {
         $lang = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_spamhurdles"];

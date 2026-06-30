@@ -154,10 +154,8 @@ function phorum_mod_smileys_addon()
 {
     global $PHORUM;
 
-    if (empty($PHORUM["args"]["action"])) trigger_error(
-        'Missing "action" argument for smileys module addon call',
-        E_USER_ERROR
-    );
+    if (empty($PHORUM["args"]["action"])) phorum_user_error(
+        'Missing "action" argument for smileys module addon call');
 
     // Include the smileys help page.
     if ($PHORUM["args"]["action"] == 'help')
@@ -170,12 +168,10 @@ function phorum_mod_smileys_addon()
         exit(0);
     }
 
-    trigger_error(
+    phorum_user_error(
         'Illegal "action" argument ' .
         '"' . htmlspecialchars($PHORUM['args']['action']) . '"' .
-        'for smileys module addon call',
-        E_USER_ERROR
-    );
+        'for smileys module addon call');
 }
 
 // Add the "Disable smileys" option to the template. Note that the template

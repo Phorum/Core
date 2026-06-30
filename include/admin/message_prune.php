@@ -314,13 +314,13 @@ if (isset($_POST["filterdesc"]))
                     if (substr($condition, 0, 9) == "function:"){
                         $func = substr($condition, 9);
                         if (!function_exists($func)) {
-                            trigger_error(
+                            phorum_user_error(
                                 "Internal error: filter function \"" .
                                 htmlspecialchars($func) . "\" from the match ".
                                 "specification for \"" .
                                 htmlspecialchars($field) . "/" .
                                 htmlspecialchars($match) .
-                                "\" does not exist.", E_USER_ERROR);
+                                "\" does not exist.");
                         } else {
                             $meta = call_user_func($func,$meta,$field,$match,$query);
                         }
@@ -347,11 +347,9 @@ if (isset($_POST["filterdesc"]))
             elseif ($spec == '|') {$meta[]="OR" ; $filtermode="or" ; continue;}
         }
 
-        trigger_error(
+        phorum_user_error(
             'Internal error: illegal filter specification (' .
-            'unexpected token "'.htmlspecialchars($spec).'")',
-            E_USER_ERROR
-        );
+            'unexpected token "'.htmlspecialchars($spec).'")');
     }
 
     // Let the database layer turn the metaquery into a real query
@@ -371,10 +369,9 @@ function prepare_filter_date($meta, $field, $match, $query)
 
     global $ruledefs;
     if (!$ruledefs[$field] || !isset($ruledefs[$field]["prepare_filter_date"])){
-        trigger_error(
+        phorum_user_error(
             "Internal error: no date field configure in rule defs for field " .
-            '"' . htmlspecialchars($field) . '"', E_USER_ERROR
-        );
+            '"' . htmlspecialchars($field) . '"');
     }
     $dbfield = $ruledefs[$field]["prepare_filter_date"];
 
@@ -440,10 +437,9 @@ function prepare_filter_date($meta, $field, $match, $query)
             );
         }
         else {
-            trigger_error(
+            phorum_user_error(
                 "prepare_filter_date(): illegal match \"" .
-                htmlspecialchars($match) . "\"", E_USER_ERROR
-            );
+                htmlspecialchars($match) . "\"");
         }
     }
     else

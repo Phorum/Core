@@ -53,7 +53,7 @@
             "The system is unable to write files
              to your cache directory \"".htmlspecialchars($dir)."\".
              The system error was:<br /><br />".
-             htmlspecialchars($php_errormsg).".",
+             htmlspecialchars(error_get_last()['message'] ?? '').".",
             $solution_2
         );
         if (! fclose($fp)) return array (
@@ -92,7 +92,7 @@
             $is_install ? PHORUM_SANITY_WARN : PHORUM_SANITY_CRIT,
             "The system is unable to create directories
              in your cache directory \"".htmlspecialchars($dir)."\".
-             The system error was:<br /><br />".htmlspecialchars($php_errormsg).".",
+             The system error was:<br /><br />".htmlspecialchars(error_get_last()['message'] ?? '').".",
             $solution_2
         );
         rmdir($dummy_dir);

@@ -1,5 +1,12 @@
 {
-    "require": {
-        "codeception/codeception": "*"
+    "require-dev": {
+        "codeception/codeception": "*",
+        "php-parallel-lint/php-parallel-lint": "^1.0",
+        "phan/phan": "^6.0",
+        "codeception/module-asserts": "^3.3"
+    },
+    "scripts": {
+        "lint": "parallel-lint --exclude vendor .",
+        "analyze": "phan --no-progress-bar"
     }
 }

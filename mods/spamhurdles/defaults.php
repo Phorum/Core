@@ -12,8 +12,8 @@ $mod_spamhurdles_defaults = array(
         'type'             => 'javascript',
         'spoken_captcha'   => true,
         'flite_location'   => NULL,
-        'recaptcha_pubkey' => '',
-        'recaptcha_prvkey' => ''
+        'recaptcha_sitekey' => '',
+        'recaptcha_secret'  => ''
     ),
     'posting' => array(
         'block_action' => 'unapprove',
@@ -119,8 +119,8 @@ if (!isset($PHORUM['mod_spamhurdles']['config_version']) ||
         'captcha_type'      => 'type',
         'spoken_captcha'    => 'spoken_captcha',
         'flite_location'    => 'flite_location',
-        'recaptcha_pubkey'  => 'recaptcha_pubkey',
-        'recaptcha_prvkey'  => 'recaptcha_prvkey'
+        'recaptcha_pubkey'  => 'recaptcha_sitekey',
+        'recaptcha_prvkey'  => 'recaptcha_secret'
     ) as $old => $new) {
         if (isset($PHORUM['mod_spamhurdles'][$old])) {
             $PHORUM['mod_spamhurdles']['captcha'][$new] =

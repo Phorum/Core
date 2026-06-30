@@ -19,6 +19,12 @@
 
 if (!defined('PHORUM')) return;
 
+// PHP 8.1+ changed mysqli to throw exceptions on error by default. This
+// driver's entire error-handling path checks for FALSE returns and uses the
+// $flags bitmask (DB_MISSINGTABLEOK, etc.) to decide which errors are
+// acceptable, so we restore the pre-8.1 behaviour here.
+mysqli_report(MYSQLI_REPORT_OFF);
+
 /**
  * This function is the central function for handling database interaction.
  * The function can be used for setting up a database connection, for running
@@ -125,10 +131,9 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     }
 
     // By now, we really need a SQL query.
-    if ($sql === NULL) trigger_error(
+    if ($sql === NULL) phorum_user_error(
         'Internal error: phorum_db_interact(): ' .
-        'missing sql query statement!', E_USER_ERROR
-    );
+        'missing sql query statement!');
 
     // Execute the SQL query.
 
@@ -318,10 +323,9 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         return mysqli_insert_id($conn);
     }
 
-    trigger_error(
+    phorum_user_error(
         'Internal error: phorum_db_interact(): ' .
-        'illegal return type specified!', E_USER_ERROR
-    );
+        'illegal return type specified!');
 }
 
 /**
@@ -351,10 +355,9 @@ function phorum_db_fetch_row($res, $type)
         $row = mysqli_fetch_assoc($res);
     } elseif ($type === DB_RETURN_ROW) {
         $row = mysqli_fetch_row($res);
-    } else trigger_error(
+    } else phorum_user_error(
         'Internal error: phorum_db_fetch_row(): ' .
-        'illegal \$type parameter used', E_USER_ERROR
-    );
+        'illegal \$type parameter used');
 
     return $row ? $row : NULL;
 }

@@ -154,7 +154,7 @@ function phorum_email_user($addresses, $data)
     }
 
     $num_addresses = count($addresses);
-    $from_address = $data['from_address'];
+    $from_address = str_replace(["\r", "\n"], '', $data['from_address']);
 
     # Try to find a useful hostname to use in the Message-ID.
     $host = "";
@@ -262,9 +262,11 @@ function phorum_email_user($addresses, $data)
             $mailheader.=$data['custom_headers']."\n";
         }
         if(isset($PHORUM['use_bcc']) && $PHORUM['use_bcc'] && $num_addresses > 3){
-            mail(" ", $mailsubject, $mailmessage, $mailheader."From: $from_address\nBCC: " . implode(",", $addresses));
+            $safe_addresses = array_map(fn($a) => str_replace(["\r", "\n"], '', $a), $addresses);
+            mail(" ", $mailsubject, $mailmessage, $mailheader."From: $from_address\nBCC: " . implode(",", $safe_addresses));
         } else {
             foreach($addresses as $address){
+                $address = str_replace(["\r", "\n"], '', $address);
                 mail($address, $mailsubject, $mailmessage, $mailheader."From: $from_address");
             }
         }

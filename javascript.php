@@ -32,40 +32,6 @@ phorum_build_common_urls();
 // have to be added to the javascript code.
 $module_registrations = array();
 
-// Add core JSON parser library code
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/ajax/json2.js.php)',
-    'cache_key' => filemtime('./include/ajax/json2.js.php')
-);
-
-// Add the jQuery JavaScript library code.
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/javascript/jquery-1.4.4.min.js)',
-    'cache_key' => '1.4.4.min'
-);
-
-// Add the jQuery JSON plugin.
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/javascript/jquery.json-1.3.min.js)',
-    'cache_key' => '1.3.min'
-);
-
-// Add the jQuery bgiframe plugin.
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/javascript/jquery.bgiframe-2.1.2.min.js)',
-    'cache_key' => '2.1.2.min'
-);
-
-// Add the Phorum JavaScript library.
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/javascript/phorum-javascript-library.php)'
-);
-
 // Add core Phorum posting form object manipulation client JavaScript code.
 $module_registrations[] = array(
     'module'    => 'core',

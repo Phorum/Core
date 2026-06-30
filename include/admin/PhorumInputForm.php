@@ -35,9 +35,10 @@ class PhorumInputForm {
     var $_method;
     var $_target;
     var $_enctype;
-    var $_events;
+    var $_events = array();
     var $_submit;
     var $_help;
+    var $_module;
 
     function PhorumInputForm ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = array() )
     {
@@ -210,7 +211,7 @@ class PhorumInputForm {
     {
         global $PHORUM;
 
-        if(count($this->_help)){
+        if(!empty($this->_help)){
             echo "<script type=\"text/javascript\">\n//<![CDATA[\nvar help = Array;\n";
             foreach($this->_help as $key=>$data){
                 echo "help[$key] = [\"$data[0]\", \"$data[1]\"];\n";

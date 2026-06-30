@@ -81,7 +81,7 @@
                 "The system is unable to write files
                  to PHP's upload tmpdir \"".htmlspecialchars($tmpdir)."\".
                  The system error was:<br /><br />".
-                 htmlspecialchars($php_errormsg).".",
+                 htmlspecialchars(error_get_last()['message'] ?? '').".",
                 "Change the upload_tmp_dir setting in your php.ini file
                  or give your webserver more permissions for the current
                  upload directory."

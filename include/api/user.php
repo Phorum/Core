@@ -403,26 +403,20 @@ function phorum_api_user_save($user, $flags = 0)
 
     // $user must be an array.
     if (!is_array($user)) {
-        trigger_error(
-            'phorum_api_user_save(): $user argument is not an array',
-            E_USER_ERROR
-        );
+        phorum_user_error(
+            'phorum_api_user_save(): $user argument is not an array');
         return NULL;
     }
 
     // We need at least the user_id field.
     if (!array_key_exists('user_id', $user)) {
-        trigger_error(
-            'phorum_api_user_save(): missing field "user_id" in user data array',
-            E_USER_ERROR
-        );
+        phorum_user_error(
+            'phorum_api_user_save(): missing field "user_id" in user data array');
         return NULL;
     }
     if ($user['user_id'] !== NULL && !is_numeric($user['user_id'])) {
-        trigger_error(
-            'phorum_api_user_save(): field "user_id" not NULL or numerical',
-            E_USER_ERROR
-        );
+        phorum_user_error(
+            'phorum_api_user_save(): field "user_id" not NULL or numerical');
         return NULL;
     }
 
@@ -508,11 +502,9 @@ function phorum_api_user_save($user, $flags = 0)
                 break;
 
             default:
-                trigger_error(
+                phorum_user_error(
                     'phorum_api_user_save(): Illegal field type used: ' .
-                    htmlspecialchars($fldtype),
-                    E_USER_ERROR
-                );
+                    htmlspecialchars($fldtype));
                 return NULL;
                 break;
         }
@@ -526,21 +518,17 @@ function phorum_api_user_save($user, $flags = 0)
     // enough to continue with.
     // We really need a username, so we can always generate a display name.
     if (!isset($dbuser['username']) || $dbuser['username'] == '') {
-        trigger_error(
+        phorum_user_error(
             'phorum_api_user_save(): the username field for a user record ' .
-            'cannot be empty',
-            E_USER_ERROR
-        );
+            'cannot be empty');
         return NULL;
     }
     // Phorum sends out mail messages on several occasions. So we need a
     // mail address for the user.
     if (!isset($dbuser['email']) || $dbuser['email'] == '') {
-        trigger_error(
+        phorum_user_error(
             'phorum_api_user_save(): the email field for a user record ' .
-            'cannot be empty',
-            E_USER_ERROR
-        );
+            'cannot be empty');
         return NULL;
     }
 
@@ -558,13 +546,12 @@ function phorum_api_user_save($user, $flags = 0)
     foreach (array('password', 'password_temp') as $fld)
     {
         // Sometimes, this function is (accidentally) called with existing
-        // passwords in the data. Prevent duplicate encryption.
-        if ($existing  && strlen($existing[$fld]) == 32 &&
-            $existing[$fld] == $dbuser[$fld]) {
+        // passwords in the data. Prevent duplicate hashing.
+        if ($existing && isset($existing[$fld]) && $existing[$fld] === $dbuser[$fld]) {
             continue;
         }
 
-        // If the password field is empty, we should never store the MD5 sum
+        // If the password field is empty, we should never store the hash
         // of an empty string as a safety precaution. Instead we store a
         // string which will never work as a password. This could happen in
         // case of bugs in the code or in case external user auth is used
@@ -576,10 +563,10 @@ function phorum_api_user_save($user, $flags = 0)
             continue;
         }
 
-        // Only crypt the password using MD5, if the PHORUM_FLAG_RAW_PASSWORD
-        // flag is not set.
+        // Hash with bcrypt unless PHORUM_FLAG_RAW_PASSWORD is set
+        // (used by migration scripts that supply a pre-hashed value).
         if (!($flags & PHORUM_FLAG_RAW_PASSWORD)) {
-            $dbuser[$fld] = md5($dbuser[$fld]);
+            $dbuser[$fld] = password_hash($dbuser[$fld], PASSWORD_DEFAULT);
         }
     }
 
@@ -764,10 +751,8 @@ function phorum_api_user_save($user, $flags = 0)
 function phorum_api_user_save_raw($user)
 {
     if (empty($user['user_id'])) {
-        trigger_error(
-            'phorum_api_user_save_raw(): the user_id field cannot be empty',
-            E_USER_ERROR
-        );
+        phorum_user_error(
+            'phorum_api_user_save_raw(): the user_id field cannot be empty');
         return NULL;
     }
 
@@ -1640,13 +1625,11 @@ function phorum_api_user_authenticate($type, $username, $password)
         // Check if the returned user_id is numerical, if the the module
         // did return a user_id.
         if ($authinfo['user_id']!==NULL && !is_numeric($authinfo['user_id'])) {
-            trigger_error(
+            phorum_user_error(
                 'Hook user_check_login returned a non-numerical user_id "' .
                 htmlspecialchars($authinfo['user_id']) .
                 '" for the authenticated user. Phorum only supports numerical ' .
-                'user_id values.',
-                E_USER_ERROR
-            );
+                'user_id values.');
             return NULL;
         }
 
@@ -1657,30 +1640,38 @@ function phorum_api_user_authenticate($type, $username, $password)
     // Then we have to run the Phorum authentication.
     if ($user_id === NULL)
     {
-        // Check the password.
-        $user_id = phorum_db_user_check_login($username, md5($password));
+        // Check the password. $needs_rehash is set TRUE when the stored hash
+        // is legacy MD5 or the bcrypt cost factor has changed.
+        $needs_rehash = FALSE;
+        $user_id = phorum_db_user_check_login($username, $password, FALSE, $needs_rehash);
 
         // Password check failed? Then try the temporary password (used for
         // the password reminder feature).
         $temporary_matched = FALSE;
         if ($user_id == 0) {
-            $user_id = phorum_db_user_check_login($username, md5($password), TRUE);
+            $user_id = phorum_db_user_check_login($username, $password, TRUE);
             if ($user_id != 0) {
                 $temporary_matched = TRUE;
             }
         }
 
-        // If the temporary password matched, then synchronize the main
-        // password with the temporary password. The temporary password
-        // is kept the same. We also reset the long term session id, so
-        // sessions in other browsers are reset along with the pasword
-        // reset. For the active browser, a new session id will be generated
-        // by the {@link phorum_api_user_session_create()} function.
+        // If the temporary password matched, synchronize the main password
+        // with the temporary password (also upgrades the hash). We also reset
+        // the long term session id so sessions in other browsers are reset
+        // along with the password reset. For the active browser, a new session
+        // id will be generated by phorum_api_user_session_create().
         if ($temporary_matched) {
             phorum_api_user_save(array(
                 'user_id'   => $user_id,
                 'password'  => $password,
                 'sessid_lt' => ''
+            ));
+        }
+        // Transparently upgrade legacy MD5 hashes on successful login.
+        elseif ($user_id && $needs_rehash) {
+            phorum_api_user_save(array(
+                'user_id'  => $user_id,
+                'password' => $password,
             ));
         }
     }
@@ -1774,11 +1765,9 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
         }
         // Bogus $user parameter.
         else {
-            trigger_error(
+            phorum_user_error(
                 'phorum_api_user_set_active_user(): $user argument should be ' .
-                'one of NULL, array or integer',
-                E_USER_ERROR
-            );
+                'one of NULL, array or integer');
             return NULL;
         }
 
@@ -2045,21 +2034,17 @@ function phorum_api_user_session_create($type, $reset = 0)
     // Check if we have a valid session type.
     if ($type != PHORUM_FORUM_SESSION &&
         $type != PHORUM_ADMIN_SESSION) {
-        trigger_error(
+        phorum_user_error(
             'phorum_api_user_session_create(): Illegal session type: ' .
-            htmlspecialchars($type),
-            E_USER_ERROR
-        );
+            htmlspecialchars($type));
         return NULL;
     }
 
     // Check if the active Phorum user was set.
     if (empty($PHORUM['user']) ||
         empty($PHORUM['user']['user_id'])) {
-        trigger_error(
-            'phorum_api_user_session_create(): Missing user in environment',
-            E_USER_ERROR
-        );
+        phorum_user_error(
+            'phorum_api_user_session_create(): Missing user in environment');
         return NULL;
     }
 
@@ -2105,7 +2090,7 @@ function phorum_api_user_session_create($type, $reset = 0)
         (!$use_cookies && $reset == PHORUM_SESSID_RESET_LOGIN) ||
         $reset == PHORUM_SESSID_RESET_ALL;
     if ($refresh_sessid_lt) {
-        $sessid_lt = md5($user['username'].microtime().$user['password']);
+        $sessid_lt = bin2hex(random_bytes(32));
         phorum_api_user_save_raw(array(
             'user_id'   => $user['user_id'],
             'sessid_lt' => $sessid_lt,
@@ -2131,7 +2116,7 @@ function phorum_api_user_session_create($type, $reset = 0)
         // Create a new short term session id if ..
         if (empty($user['sessid_st']) || // .. no session id is available yet
             $reset) {                    // .. any type of reset was requested
-            $sessid_st = md5($user['username'].microtime().$user['password']);
+            $sessid_st = bin2hex(random_bytes(32));
             $refresh_sessid_st = TRUE;
         } else {
             // Reuse the existing short term session id
@@ -2162,7 +2147,7 @@ function phorum_api_user_session_create($type, $reset = 0)
     // For admin sessions, the session id is computed using the long term
     // session id and some random data that was generated at install time.
     if ($type == PHORUM_ADMIN_SESSION) {
-        $sessid_admin = md5($sessid_lt . $PHORUM['admin_session_salt']);
+        $sessid_admin = hash_hmac('sha256', $sessid_lt, $PHORUM['admin_session_salt']);
     }
 
     // ----------------------------------------------------------------------
@@ -2178,14 +2163,12 @@ function phorum_api_user_session_create($type, $reset = 0)
         if ($use_cookies) {
             $timeout = empty($PHORUM['session_timeout'])
                      ? 0 : time() + 86400 * $PHORUM['session_timeout'];
-            setcookie(
+            phorum_set_cookie(
                 PHORUM_SESSION_LONG_TERM,
                 $user['user_id'].':'.$sessid_lt,
                 $timeout,
                 $PHORUM['session_path'],
-                $PHORUM['session_domain'],
-                false,
-                true // httponly
+                $PHORUM['session_domain']
             );
         } else {
             // Add the session id to the URL building GET variables.
@@ -2201,28 +2184,24 @@ function phorum_api_user_session_create($type, $reset = 0)
 
         // The short term session id is always put in a cookie.
         if ($refresh_sessid_st) {
-            setcookie(
+            phorum_set_cookie(
                 PHORUM_SESSION_SHORT_TERM,
                 $user['user_id'].':'.$user['sessid_st'],
                 $user['sessid_st_timeout'],
                 $PHORUM['session_path'],
-                $PHORUM['session_domain'],
-                false,
-                true // httponly
+                $PHORUM['session_domain']
             );
         }
     }
 
     // The admin session id is always put in a cookie.
     elseif ($type == PHORUM_ADMIN_SESSION) {
-        setcookie(
+        phorum_set_cookie(
             PHORUM_SESSION_ADMIN,
             $user['user_id'].':'.$sessid_admin,
             0, // admin sessions are destroyed as soon as the browser closes
             $PHORUM['session_path'],
-            $PHORUM['session_domain'],
-            false,
-            true // httponly
+            $PHORUM['session_domain']
         );
     }
 
@@ -2292,11 +2271,9 @@ function phorum_api_user_session_restore($type)
         $check_session[PHORUM_SESSION_ADMIN] = 1;
     }
     else {
-        trigger_error(
+        phorum_user_error(
             'phorum_api_user_session_restore(): Illegal session type: ' .
-            htmlspecialchars($type),
-            E_USER_ERROR
-        );
+            htmlspecialchars($type));
         return NULL;
     }
 
@@ -2506,15 +2483,15 @@ function phorum_api_user_session_restore($type)
 
             ($cookie == PHORUM_SESSION_LONG_TERM  &&
              !empty($session_user['sessid_lt']) &&
-             $session_user['sessid_lt'] == $sessid) ||
+             hash_equals($session_user['sessid_lt'], $sessid)) ||
 
             ($cookie == PHORUM_SESSION_SHORT_TERM &&
              !empty($session_user['sessid_st']) &&
-             $session_user['sessid_st'] == $sessid) ||
+             hash_equals($session_user['sessid_st'], $sessid)) ||
 
             ($cookie == PHORUM_SESSION_ADMIN &&
              !empty($session_user['sessid_lt']) &&
-             md5($session_user['sessid_lt'].$PHORUM['admin_session_salt']) == $sessid);
+             hash_equals(hash_hmac('sha256', $session_user['sessid_lt'], $PHORUM['admin_session_salt']), $sessid));
 
         // Keep track of valid session cookies.
         if ($valid_session) {
@@ -2676,25 +2653,23 @@ function phorum_api_user_session_destroy($type)
         // Destroy session cookie(s). We do not care here if use_cookies is
         // enabled or not. We just want to clean out all that we have here.
         if ($type == PHORUM_FORUM_SESSION) {
-            setcookie(
+            phorum_set_cookie(
                 PHORUM_SESSION_SHORT_TERM, '', time()-86400,
                 $PHORUM['session_path'], $PHORUM['session_domain']
             );
-            setcookie(
+            phorum_set_cookie(
                 PHORUM_SESSION_LONG_TERM, '', time()-86400,
                 $PHORUM['session_path'], $PHORUM['session_domain']
             );
         } elseif ($type == PHORUM_ADMIN_SESSION) {
-            setcookie(
+            phorum_set_cookie(
                 PHORUM_SESSION_ADMIN, '', time()-86400,
                 $PHORUM['session_path'], $PHORUM['session_domain']
             );
         } else {
-            trigger_error(
+            phorum_user_error(
                 'phorum_api_user_session_destroy(): Illegal session type: ' .
-                htmlspecialchars($type),
-                E_USER_ERROR
-            );
+                htmlspecialchars($type));
             return NULL;
         }
 
@@ -2708,7 +2683,7 @@ function phorum_api_user_session_destroy($type)
 
             $user = $PHORUM['user'];
 
-            $sessid_lt = md5($user['username'].microtime().$user['password']);
+            $sessid_lt = bin2hex(random_bytes(32));
             phorum_api_user_save_raw(array(
                 'user_id'   => $user['user_id'],
                 'sessid_lt' => $sessid_lt,
@@ -2780,11 +2755,9 @@ function phorum_api_user_save_groups($user_id, $groups)
             $perm != PHORUM_USER_GROUP_UNAPPROVED &&
             $perm != PHORUM_USER_GROUP_APPROVED   &&
             $perm != PHORUM_USER_GROUP_MODERATOR) {
-            trigger_error(
+            phorum_user_error(
                 'phorum_api_user_save_groups(): Illegal group permission for ' .
-                'group id '.htmlspecialchars($id).': '.htmlspecialchars($perm),
-                E_USER_ERROR
-            );
+                'group id '.htmlspecialchars($id).': '.htmlspecialchars($perm));
             return NULL;
         }
 

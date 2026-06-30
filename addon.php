@@ -100,11 +100,9 @@ if (!empty($error)) {
 
 // Bail out early if there are no modules enabled that implement
 // the addon hook.
-if (! isset($PHORUM["hooks"]["addon"])) trigger_error(
+if (! isset($PHORUM["hooks"]["addon"])) phorum_user_error(
     '<h1>Modscript Error</h1><br />' .
-    'There are no addon hook enabled modules active.',
-    E_USER_ERROR
-);
+    'There are no addon hook enabled modules active.');
 
 // Find the module argument. This one can be in the Phorum args,
 // $_POST or $_GET (in that order).
@@ -117,11 +115,9 @@ if (isset($PHORUM['args']['module'])) {
     $module = $_GET['module'];
 }
 
-if ($module === NULL) trigger_error(
+if ($module === NULL) phorum_user_error(
     '<h1>Modscript Error</h1><br />' .
-    'Missing "module" argument.',
-    E_USER_ERROR
-);
+    'Missing "module" argument.');
 
 $module = basename($module);
 
@@ -137,19 +133,15 @@ foreach ($avail_hooks["mods"] as $id => $checkmodule) {
     }
 }
 
-if (count($filtered_hooks["mods"]) == 0) trigger_error(
+if (count($filtered_hooks["mods"]) == 0) phorum_user_error(
     '<h1>Modscript Error</h1>' .
-    'No addon hook enabled for module "'. htmlspecialchars($module, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) .'"',
-    E_USER_ERROR
-);
+    'No addon hook enabled for module "'. htmlspecialchars($module, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) .'"');
 
-if (count($filtered_hooks["mods"]) > 1) trigger_error(
+if (count($filtered_hooks["mods"]) > 1) phorum_user_error(
     '<h1>Modsript Error</h1>' .
     'More than one addon hook was registered ' .
     'in the info for module "' . htmlspecialchars($module, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]) . '".<br />Only ' .
-    'one addon hook is allowed per module.',
-    E_USER_ERROR
-);
+    'one addon hook is allowed per module.');
 
 // Run the hook function.
 $PHORUM["hooks"]["addon"] = $filtered_hooks;

@@ -36,18 +36,16 @@ $status2display = array(
 
 $sanity_checks = array();
 $dh = opendir ($sanity_checks_dir);
-if (!$dh) trigger_error("Could not open sanity checks directory",E_USER_ERROR);
+if (!$dh) phorum_user_error("Could not open sanity checks directory");
 while ($file = readdir($dh)) {
     if (preg_match('/^(.+)\.php$/', $file, $m)) {
         unset($phorum_check);
         include("$sanity_checks_dir/$file");
         $func = "phorum_check_$m[1]";
-        if (!isset($phorum_check)||!function_exists($func)) trigger_error(
+        if (!isset($phorum_check)||!function_exists($func)) phorum_user_error(
             "$sanity_checks_dir/$file is no valid check file! " .
             "Either \$phorum_check is not set or the " .
-            "function " . htmlspecialchars($func) . " does not exist",
-            E_USER_ERROR
-        );
+            "function " . htmlspecialchars($func) . " does not exist");
 
         $sanity_checks[] = array (
             'function'    => $func,
@@ -74,9 +72,6 @@ $PHORUM["SANITY_CHECKS"] = array(
         PHORUM_SANITY_SKIP => 0
     )
 );
-
-// Make using $php_errormsg possible for the checks.
-ini_set('track_errors', 1);
 
 // Run all available sanity checks.
 foreach ($sanity_checks as $check)

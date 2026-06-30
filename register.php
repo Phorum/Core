@@ -31,8 +31,9 @@ phorum_build_common_urls();
 if (isset($PHORUM["args"]["approve"])) {
 
     // Extract registration validation code and user_id.
-    $tmp_pass=md5(substr($PHORUM["args"]["approve"], 0, 8));
-    $user_id = (int)substr($PHORUM["args"]["approve"], 8);
+    // Token is 16 hex chars; user_id is the integer suffix.
+    $tmp_pass = substr($PHORUM["args"]["approve"], 0, 16);
+    $user_id  = (int)substr($PHORUM["args"]["approve"], 16);
     $user_id = phorum_api_user_search(
         array("user_id", "password_temp"),
         array($user_id,  $tmp_pass),
@@ -164,11 +165,11 @@ if (count($_POST)) {
             $userdata["active"] = PHORUM_USER_ACTIVE;
         } elseif ($PHORUM["registration_control"] == PHORUM_REGISTER_VERIFY_EMAIL) {
             $userdata["active"] = PHORUM_USER_PENDING_EMAIL;
-            $userdata["password_temp"]=substr(md5(microtime()), 0, 8);
+            $userdata["password_temp"]=bin2hex(random_bytes(8));
         } elseif ($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_MODERATOR) {
             $userdata["active"] = PHORUM_USER_PENDING_MOD;
         } elseif ($PHORUM["registration_control"]==PHORUM_REGISTER_VERIFY_BOTH) {
-            $userdata["password_temp"]=substr(md5(microtime()), 0, 8);
+            $userdata["password_temp"]=bin2hex(random_bytes(8));
             $userdata["active"] = PHORUM_USER_PENDING_BOTH;
         }
 

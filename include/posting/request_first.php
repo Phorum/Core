@@ -23,9 +23,8 @@ if(!defined("PHORUM")) return;
 $message_id = 0;
 
 if ($mode != "post") {
-    if (! isset($PHORUM["postingargs"][2])) trigger_error(
-        "Missing message_id parameter in request for mode $mode", E_USER_ERROR
-    );
+    if (! isset($PHORUM["postingargs"][2])) phorum_user_error(
+        "Missing message_id parameter in request for mode $mode");
     $message_id = $PHORUM["postingargs"][2];
 }
 
