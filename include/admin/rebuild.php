@@ -116,7 +116,7 @@ if ( count( $_POST ) ) {
     if(isset($_POST['rebuild_searchdata']) && !empty($_POST['rebuild_searchdata'])) {
 
         if(empty($PHORUM['DBCONFIG']['empty_search_table'])) {
-            $ret = phorum_db_rebuild_search_data();
+            phorum_db_rebuild_search_data();
 
 
             $okmsg .= "Searchdata successfully rebuilt.<br />";
@@ -130,7 +130,7 @@ if ( count( $_POST ) ) {
 
     if(isset($_POST['rebuild_userposts']) && !empty($_POST['rebuild_userposts'])) {
 
-        $ret = phorum_db_rebuild_user_posts();
+        phorum_db_rebuild_user_posts();
 
 
         $okmsg .= "Postcounts for users updated.<br />";

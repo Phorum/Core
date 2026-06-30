@@ -96,11 +96,9 @@ function phorum_api_modules_list()
     include_once('./include/version_functions.php');
 
     $dh = opendir("./mods");
-    if (! $dh) trigger_error(
+    if (! $dh) phorum_user_error(
         "Unable to create a list of available modules: " .
-        "opendir of directory \"./mods\" failed.",
-        E_USER_ERROR
-    );
+        "opendir of directory \"./mods\" failed.");
 
     while ($entry = readdir($dh))
     {
@@ -265,10 +263,8 @@ function phorum_api_modules_enable($module)
     }
 
     // Check if the module is valid.
-    if (!isset($PHORUM["API"]["mods_modules"][$module])) trigger_error(
-        "Unable to enable module \"$module\": no such module available.",
-        E_USER_ERROR
-    );
+    if (!isset($PHORUM["API"]["mods_modules"][$module])) phorum_user_error(
+        "Unable to enable module \"$module\": no such module available.");
 
     $PHORUM["mods"][$module] = 1;
 }

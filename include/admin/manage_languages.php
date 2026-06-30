@@ -478,16 +478,13 @@ function token_get_string(&$tokens, $string = NULL)
                 case T_ARRAY:
                 case T_LNUMBER:
                 case T_VARIABLE:
-                case T_CHARACTER:
                     $string .= $token[1];
                     break;
                 default:
-                    trigger_error(
+                    phorum_user_error(
                         "Unhandled complex " . token_name($token[0]) .
                         " token in token_get_string: " .
-                        htmlspecialchars($token[1]),
-                        E_USER_ERROR
-                    );
+                        htmlspecialchars($token[1]));
                     break;
             }
         }
@@ -530,17 +527,15 @@ function phorum_get_language($lang)
     $PHORUM = array();
     $DEPRECATED = array();
     $keep_comment = '';
-    if (! file_exists($path)) trigger_error(
-        "Cannot locate language module in $path", E_USER_ERROR
-    );
+    if (! file_exists($path)) phorum_user_error(
+        "Cannot locate language module in $path");
 
     // Read the language file. Keep track of comments that
     // we want to keep (those starting with '##').
     $file = '';
     $fp = fopen($path, "r");
-    if (! $fp) trigger_error(
-        "Cannot read language file $path", E_USER_ERROR
-    );
+    if (! $fp) phorum_user_error(
+        "Cannot read language file $path");
     while (($line = fgets($fp))) {
         $file .= $line;
         if (substr($line, 0, 2) == '##') {
@@ -575,31 +570,26 @@ function phorum_get_language($lang)
                     token_shift($tokens);
                     token_skip_whitespace($tokens);
                     $token = token_shift($tokens);
-                    if ($token != '(') trigger_error(
+                    if ($token != '(') phorum_user_error(
                         "$path: Expected array opening bracket for array " .
-                        htmlspecialchars($varname), E_USER_ERROR
-                    );
+                        htmlspecialchars($varname));
 
                     while (count($tokens))
                     {
                         // Get key
                         list($key, $endedby) = token_get_string($tokens);
-                        if ($endedby != '=>') trigger_error(
+                        if ($endedby != '=>') phorum_user_error(
                             "$path: Expected double arrow (=>) for key " .
                             htmlspecialchars($key) . " in array " .
-                            htmlspecialchars($varname) . ", but got $endedby",
-                            E_USER_ERROR
-                        );
+                            htmlspecialchars($varname) . ", but got $endedby");
 
                         // Get value
                         list($val, $endedby) = token_get_string($tokens);
 
-                        if ($endedby != ',' && $endedby != ')') trigger_error(
+                        if ($endedby != ',' && $endedby != ')') phorum_user_error(
                             "$path: Expected ending comma or bracket for key " .
                             htmlspecialchars($key) . " in array " .
-                            htmlspecialchars($varname) . ", but got $endedby",
-                            E_USER_ERROR
-                        );
+                            htmlspecialchars($varname) . ", but got $endedby");
 
                         // Put the data in the environment.
                         $fullvar = $varname . '[' . $key . ']';
@@ -692,7 +682,7 @@ function phorum_extract_language_strings_recurse($path)
 
         if (preg_match('/\.(php|tpl)$/', $file)) {
             $fp = fopen($file, "r");
-            if (! $fp) trigger_error("Can't read file '$file'", E_USER_ERROR);
+            if (! $fp) phorum_user_error("Can't read file '$file'");
             while (($line = fgets($fp, 1024))) {
                 $strings = array();
                 if (preg_match_all('/LANG->([\w_-]+)/', $line, $m, PREG_SET_ORDER)) {

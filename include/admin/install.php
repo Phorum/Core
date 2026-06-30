@@ -111,7 +111,7 @@ if ($step == 'start' && !isset($_POST["sanity_checks_done"]))
 
     // Display navigation options, based on the check results.
     ?>
-    <form method="post" action="<?php print $_SERVER["PHP_SELF"] ?>">
+    <form method="post" action="<?php print htmlspecialchars($_SERVER["PHP_SELF"], ENT_QUOTES, 'UTF-8') ?>">
     <input type="hidden" name="module" value="install" />
     <?php
     if ($got_crit) {
@@ -520,7 +520,8 @@ switch ($step){
 
         $cont_url = phorum_admin_build_url('');
         phorum_db_update_settings( array("installed"=>1) );
-        echo "The setup is complete.  You can now go to <a href=\"$cont_url\">the admin</a> and start making Phorum all your own.<br /><br /><strong>Here are some things you will want to look at:</strong><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=settings\">The General Settings page</a><br /><br /><a href=\"$_SERVER[PHP_SELF]?module=mods\">Pre-installed modules</a><br /><br /><a href=\"docs/faq.txt\">The FAQ</a><br /><br /><a href=\"docs/performance.txt\">How to get peak performance from Phorum</a><br /><br /><strong>For developers:</strong><br /><br /><a href=\"docs/creating_mods.txt\">Module Creation</a><br /><br /><a href=\"docs/permissions.txt\">How Phorum permisssions work</a><br /><br /><a href=\"docs/CODING-STANDARDS\">The Phorum Team&apos;s codings standards</a>";
+        $safe_self = htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8');
+        echo "The setup is complete.  You can now go to <a href=\"$cont_url\">the admin</a> and start making Phorum all your own.<br /><br /><strong>Here are some things you will want to look at:</strong><br /><br /><a href=\"{$safe_self}?module=settings\">The General Settings page</a><br /><br /><a href=\"{$safe_self}?module=mods\">Pre-installed modules</a><br /><br /><a href=\"docs/faq.txt\">The FAQ</a><br /><br /><a href=\"docs/performance.txt\">How to get peak performance from Phorum</a><br /><br /><strong>For developers:</strong><br /><br /><a href=\"docs/creating_mods.txt\">Module Creation</a><br /><br /><a href=\"docs/permissions.txt\">How Phorum permisssions work</a><br /><br /><a href=\"docs/CODING-STANDARDS\">The Phorum Team&apos;s codings standards</a>";
 
         break;
 
@@ -548,7 +549,7 @@ switch ($step){
             }
 
         }
-        error_reporting(E_WARN);
+        error_reporting(E_WARNING);
         if ($message == "") {
             if($err){
                 $message.="Your cache directory is not writable. Please change the permissions on &apos;/cache&apos; inside the Phorum directory to allow writing. In Unix, you may have to use this command: chmod 777 cache<br /><br />If you want to continue anyway and set a cache directory manually, press continue. Note that you must do this, Phorum will not work without a valid cache.";

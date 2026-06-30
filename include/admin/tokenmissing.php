@@ -22,7 +22,7 @@
 
     if(count($_POST)) {
         if(!empty($_POST['phorum_admin_token']) &&
-            $_POST['phorum_admin_token'] == $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] &&
+            hash_equals($GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'], $_POST['phorum_admin_token']) &&
             time()-PHORUM_ADMIN_TOKEN_TIMEOUT < $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time']
            ) {
 

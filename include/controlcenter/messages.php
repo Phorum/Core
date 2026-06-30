@@ -130,7 +130,7 @@ foreach($mod_forums as $forum => $rest) {
     // loop through and read all the data in.
     foreach($rows as $key => $row) {
         $numunapproved++;
-        $rows[$key]['forumname'] = $foruminfo[$forum]['name'];
+        $rows[$key]['forumname'] = htmlspecialchars($foruminfo[$forum]['name'], ENT_QUOTES, $PHORUM['DATA']['HCHARSET']);
         $rows[$key]['checkvar'] = $checkvar;
         if ($checkvar)
             $checkvar = 0;

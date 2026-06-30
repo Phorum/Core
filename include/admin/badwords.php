@@ -170,7 +170,7 @@
 
                 $ta_class = "PhorumAdminTableRow".($ta_class == "PhorumAdminTableRow" ? "Alt" : "");
                 echo "<tr>\n";
-                echo "    <td class=\"".$ta_class."\">".htmlspecialchars($item[string])."</td>\n";
+                echo "    <td class=\"".$ta_class."\">".htmlspecialchars($item['string'])."</td>\n";
                 echo "    <td class=\"".$ta_class."\">".$forum_list[$item["forum_id"]]."</td>\n";
                 echo "    <td class=\"".$ta_class."\"><a href=\"$edit_url\">Edit</a>&nbsp;&bull;&nbsp;<a href=\"$delete_url\">Delete</a></td>\n";
                 echo "</tr>\n";

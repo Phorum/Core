@@ -58,7 +58,7 @@ while (count($args))
              $mod = array_shift($args);
              $modules[$mod] = $mod;
              continue;
-        } else trigger_error(
+        } else phorum_user_error(
             "Missing argument for the -m option.\n"
         );
     }
@@ -104,14 +104,10 @@ if (count($modules))
     // find a registered external/scheduled hook for them.
     if (count($process)) {
         $mod = array_shift($process);
-        if (empty($PHORUM['mods'][$mod])) trigger_error(
-            "Requested module \"$mod\" does not exist or is not enabled.",
-            E_USER_ERROR
-        );
-        trigger_error(
-            "Requested module \"$mod\" does not implement hook \"$callhook\".",
-            E_USER_ERROR
-        );
+        if (empty($PHORUM['mods'][$mod])) phorum_user_error(
+            "Requested module \"$mod\" does not exist or is not enabled.");
+        phorum_user_error(
+            "Requested module \"$mod\" does not implement hook \"$callhook\".");
     }
 }
 

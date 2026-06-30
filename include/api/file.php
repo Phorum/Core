@@ -173,11 +173,9 @@ function phorum_api_file_check_write_access($file)
     $GLOBALS["PHORUM"]["API"]["errno"] = NULL;
     $GLOBALS["PHORUM"]["API"]["error"] = NULL;
 
-    if (!isset($file["link"])) trigger_error(
+    if (!isset($file["link"])) phorum_user_error(
         "phorum_api_file_check_write_access(): \$file parameter needs a " .
-        "\"link\" field.",
-        E_USER_ERROR
-    );
+        "\"link\" field.");
 
     if (empty($file["user_id"])) {
         $file["user_id"] = $PHORUM["user"]["user_id"];
@@ -358,10 +356,8 @@ function phorum_api_file_store($file)
     global $PHORUM;
 
     // Check if we really got an array argument for $file.
-    if (!is_array($file)) trigger_error(
-        "phorum_api_file_store(): \$file parameter must be an array.",
-        E_USER_ERROR
-    );
+    if (!is_array($file)) phorum_user_error(
+        "phorum_api_file_store(): \$file parameter must be an array.");
 
     // Check and preprocess the data from the $file argument.
     // First we create a new empty file structure to fill.
@@ -411,11 +407,9 @@ function phorum_api_file_store($file)
                 break;
 
             default:
-                trigger_error(
+                phorum_user_error(
                     "phorum_api_file_store(): \$file parameter contains " .
-                    'an illegal field "'.htmlspecialchars($k).'".',
-                    E_USER_ERROR
-                );
+                    'an illegal field "'.htmlspecialchars($k).'".');
         }
     }
 
@@ -438,16 +432,12 @@ function phorum_api_file_store($file)
             $checkfile["message_id"] = 0;
             if (empty($checkfile["user_id"])) trigger_error (
                 "phorum_api_file_store(): \$file set the link type to " .
-                "PHORUM_LINK_USER, but the user_id was not set.",
-                E_USER_ERROR
-            );
+                "PHORUM_LINK_USER, but the user_id was not set.");
             break;
         case PHORUM_LINK_MESSAGE:
             if (empty($checkfile["message_id"])) trigger_error (
                 "phorum_api_file_store(): \$file set the link type to " .
-                "PHORUM_LINK_MESSAGE, but the message_id was not set.",
-                E_USER_ERROR
-            );
+                "PHORUM_LINK_MESSAGE, but the message_id was not set.");
             break;
         default:
             if (empty($checkfile["message_id"])) {
@@ -459,11 +449,9 @@ function phorum_api_file_store($file)
     // See if all required values are set.
     foreach ($checkfile as $k => $v) {
         if ($k == 'file_id') continue; // is NULL for new files.
-        if ($v === NULL) trigger_error(
+        if ($v === NULL) phorum_user_error(
             "phorum_api_file_store(): \$file parameter misses the " .
-            '"' . htmlspecialchars($k) . '" field.',
-            E_USER_ERROR
-        );
+            '"' . htmlspecialchars($k) . '" field.');
     }
 
     // All data was checked, so now we can continue with the checked data.
@@ -769,14 +757,10 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     }
 
     // A small basic check to see if we have a proper $file array.
-    if (!isset($file["file_id"])) trigger_error(
-        "phorum_api_file_get(): \$file parameter needs a \"file_id\" field.",
-        E_USER_ERROR
-    );
-    if (!isset($file["filename"])) trigger_error(
-        "phorum_api_file_get(): \$file parameter needs a \"filename\" field.",
-        E_USER_ERROR
-    );
+    if (!isset($file["file_id"])) phorum_user_error(
+        "phorum_api_file_get(): \$file parameter needs a \"file_id\" field.");
+    if (!isset($file["filename"])) phorum_user_error(
+        "phorum_api_file_get(): \$file parameter needs a \"filename\" field.");
     settype($file["file_id"], "int");
 
     /*
@@ -931,12 +915,17 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
             header('Pragma: no-cache');
         }
 
+        // Strip characters that could inject extra headers or break the
+        // quoted-string value in Content-Disposition.
+        $safe_filename = str_replace(['"', "\r", "\n"], '', $file["filename"]);
+
+        header("X-Content-Type-Options: nosniff");
         if ($flags & PHORUM_FLAG_FORCE_DOWNLOAD) {
             header("Content-Type: application/octet-stream");
-            header("Content-Disposition: attachment; filename=\"{$file["filename"]}\"");
+            header("Content-Disposition: attachment; filename=\"$safe_filename\"");
         } else {
             header("Content-Type: " . $file["mime_type"]);
-            header("Content-Disposition: filename=\"{$file["filename"]}\"");
+            header("Content-Disposition: inline; filename=\"$safe_filename\"");
         }
 
         header('Content-Length: ' . strlen($file['file_data']));
@@ -952,11 +941,9 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     }
 
     // Safety net.
-    else trigger_error(
+    else phorum_user_error(
         "phorum_api_file_retrieve(): no retrieve mode specified in the " .
-        "flags (either use PHORUM_FLAG_GET or PHORUM_FLAG_SEND).",
-        E_USER_ERROR
-    );
+        "flags (either use PHORUM_FLAG_GET or PHORUM_FLAG_SEND).");
 }
 // }}}
 
@@ -1075,11 +1062,9 @@ function phorum_api_file_delete($file)
 
     // Find the file_id parameter to use.
     if (is_array($file)) {
-        if (!isset($file["file_id"])) trigger_error(
+        if (!isset($file["file_id"])) phorum_user_error(
             "phorum_api_file_delete(): \$file parameter needs a " .
-            "\"file_id\" field.",
-            E_USER_ERROR
-        );
+            "\"file_id\" field.");
         $file_id = (int) $file["file_id"];
     } else {
         $file_id = (int) $file;
@@ -1227,11 +1212,9 @@ function phorum_api_file_purge_stale($do_purge)
  */
 function phorum_api_file_safe_to_view($file)
 {
-    if (!isset($file['file_data'])) trigger_error(
+    if (!isset($file['file_data'])) phorum_user_error(
         "phorum_api_file_safe_to_view(): \$file parameter needs a " .
-        "\"file_data\" field.",
-        E_USER_ERROR
-    );
+        "\"file_data\" field.");
 
     $safe_to_cache = TRUE;
     $safe_to_view  = TRUE;

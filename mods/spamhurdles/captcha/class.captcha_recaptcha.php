@@ -1,64 +1,81 @@
 <?php
 
-// Note:
-// This CAPTCHA needs a public and private key for communicating
-// to the reCAPTCHA servers. The configuration of these keys is
-// implemented in the settings.php script. That script takes care of
-// filling $PHORUM['mod_spamhurdles']['recaptcha_pubkey'] and
-// $PHORUM['mod_spamhurdles']['recaptcha_prvkey'].
-// This is not a clean separation of functionality. If we are going
-// to implement more CAPTCHAs which need extra configuration, then
-// we might implement the configuration as a part of the CAPTCHA class.
-// For now, this setup will do just fine.
-
-define('RECAPTCHA_LIB', './mods/spamhurdles/captcha/recaptcha-php-1.9/recaptchalib.php');
+// reCAPTCHA v2 ("I'm not a robot" checkbox) implementation.
+// Configuration: set recaptcha_sitekey and recaptcha_secret in the
+// Spam Hurdles admin settings page.
 
 class captcha_recaptcha
 {
     function generate_captcha()
     {
-        require_once(RECAPTCHA_LIB);
+        $conf = $GLOBALS['PHORUM']['mod_spamhurdles']['captcha'];
+        $sitekey = htmlspecialchars(
+            empty($conf['recaptcha_sitekey']) ? '' : $conf['recaptcha_sitekey'],
+            ENT_QUOTES, 'UTF-8'
+        );
 
-        $conf = $GLOBALS["PHORUM"]["mod_spamhurdles"]["captcha"];
-        $pub = empty($conf['recaptcha_pubkey'])
-             ? '' : $conf['recaptcha_pubkey'];
+        $lang = $GLOBALS['PHORUM']['DATA']['LANG']['mod_spamhurdles'];
 
-        $html_form = recaptcha_get_html($pub);
-
-        $lang = $GLOBALS["PHORUM"]["DATA"]["LANG"]["mod_spamhurdles"];
+        $html_form =
+            '<script src="https://www.google.com/recaptcha/api.js" async defer></script>' .
+            '<div class="g-recaptcha" data-sitekey="' . $sitekey . '"></div>';
 
         return array(
-            "question"        => 'not used',
-            "answer"          => 'not used',
-            "input_fieldname" => 'not used',
-            "spoken_text"     => 'not used',
-            "html_form"       => $html_form,
-            "html_after_form" => '',
-            "error"           => $lang["CaptchaWrongCode"],
+            'question'        => 'not used',
+            'answer'          => 'not used',
+            'input_fieldname' => 'not used',
+            'spoken_text'     => 'not used',
+            'html_form'       => $html_form,
+            'html_after_form' => '',
+            'error'           => $lang['CaptchaWrongCode'],
         );
     }
 
     function check_answer($info)
     {
-        require_once(RECAPTCHA_LIB);
+        $conf   = $GLOBALS['PHORUM']['mod_spamhurdles']['captcha'];
+        $secret = empty($conf['recaptcha_secret']) ? '' : $conf['recaptcha_secret'];
 
-        $conf = $GLOBALS["PHORUM"]["mod_spamhurdles"]["captcha"];
-        $prv = empty($conf['recaptcha_prvkey'])
-             ? '' : $conf['recaptcha_prvkey'];
+        $response = isset($_POST['g-recaptcha-response'])
+                  ? $_POST['g-recaptcha-response'] : '';
 
-        $response = recaptcha_check_answer(
-            $prv,
-            $_SERVER['REMOTE_ADDR'],
-            $_POST['recaptcha_challenge_field'],
-            $_POST['recaptcha_response_field']
-        );
-
-        if (! $response->is_valid) {
-          return $info['error'];
+        if ($response === '') {
+            return $info['error'];
         }
 
-        return NULL;
+        $result = $this->verify($secret, $response, $_SERVER['REMOTE_ADDR']);
+
+        return $result ? NULL : $info['error'];
+    }
+
+    private function verify($secret, $response, $remoteip)
+    {
+        $data = http_build_query(array(
+            'secret'   => $secret,
+            'response' => $response,
+            'remoteip' => $remoteip,
+        ));
+
+        $ctx = stream_context_create(array(
+            'http' => array(
+                'method'  => 'POST',
+                'header'  => "Content-Type: application/x-www-form-urlencoded\r\n",
+                'content' => $data,
+                'timeout' => 5,
+            )
+        ));
+
+        $result = @file_get_contents(
+            'https://www.google.com/recaptcha/api/siteverify',
+            false, $ctx
+        );
+
+        if ($result === false) {
+            return false;
+        }
+
+        $json = json_decode($result, true);
+        return !empty($json['success']);
     }
 }
-
 ?>

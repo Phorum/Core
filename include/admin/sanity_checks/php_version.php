@@ -17,26 +17,25 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Check if the PHP version is 5 or higher.
-// Phorum will not run on PHP4 anymore.
+// Check if the PHP version is 8.2 or higher.
+// Phorum requires PHP 8.2+; older versions are end-of-life.
 
 $phorum_check = "PHP version";
 
 function phorum_check_php_version()
 {
-    if (version_compare(PHP_VERSION, '5.0.0', '<')) {
+    if (version_compare(PHP_VERSION, '8.2.0', '<')) {
         return array(
             PHORUM_SANITY_CRIT,
-            "You server is running PHP version ".PHP_VERSION.", however
-             PHP version 5 or higher is required for running Phorum.",
-            "Upgrade PHP to version 5. If you are hosting with a
-             company, please contact them to do this for you. Sometimes,
-             PHP5 can be enabled by placing an .htaccess file with some
-             special directives in your web directory. Your hosting
-             company should be able to help you with this too."
+            "Your server is running PHP version " . PHP_VERSION . ", however
+             PHP 8.2 or higher is required for running Phorum. Versions
+             older than 8.2 have reached end-of-life and no longer receive
+             security updates.",
+            "Upgrade PHP to version 8.2 or higher. If you are hosted with
+             a company, please contact them to do this for you."
         );
     }
 
-    return array (PHORUM_SANITY_OK, NULL, NULL);
+    return array(PHORUM_SANITY_OK, NULL, NULL);
 }
 ?>

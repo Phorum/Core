@@ -161,11 +161,9 @@ function phorum_api_http_get($url, $method = NULL)
                 }
 
                 // Shouldn't get here.
-                trigger_error(
+                phorum_user_error(
                     'phorum_api_http_get_nalyze() returned an ' .
-                    'unexpected result.',
-                    E_USER_ERROR
-                );
+                    'unexpected result.');
             }
         }
     }
@@ -343,11 +341,9 @@ function phorum_api_http_get($url, $method = NULL)
             }
 
             // Shouldn't get here.
-            trigger_error(
+            phorum_user_error(
                 'phorum_api_http_get_analyze() returned an ' .
-                'unexpected result.',
-                E_USER_ERROR
-            );
+                'unexpected result.');
         }
     }
 
@@ -366,14 +362,12 @@ function phorum_api_http_get($url, $method = NULL)
     {
         $method = NULL;
 
-        $track = ini_get('track_errors');
-        ini_set('track_errors', TRUE);
-        $php_errormsg = '';
+        error_clear_last();
         $contents = @file_get_contents($url);
-        ini_set('track_errors', $track);
 
-        if ($contents === FALSE || $php_errormsg != '') {
-            $error = preg_replace('/(^.*?\:\s+|[\r\n])/', '', $php_errormsg);
+        if ($contents === FALSE) {
+            $last = error_get_last();
+            $error = $last ? preg_replace('/(^.*?\:\s+|[\r\n])/', '', $last['message']) : '';
             $error = "[$error]";
         } else {
             return $contents;

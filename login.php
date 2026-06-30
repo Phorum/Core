@@ -57,10 +57,17 @@ if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
 
     // Determine the URL to redirect the user to. The hook "after_logout"
     // can be used by module writers to set a custom redirect URL.
+    // Validate the Referer against the forum's own base URL to prevent
+    // open redirects: only redirect back if the page is on this site.
+    $url = phorum_get_url(PHORUM_LIST_URL);
     if (isset($_SERVER["HTTP_REFERER"]) && !empty($_SERVER['HTTP_REFERER'])) {
-        $url = $_SERVER["HTTP_REFERER"];
-    } else {
-        $url = phorum_get_url(PHORUM_LIST_URL);
+        $referer   = $_SERVER["HTTP_REFERER"];
+        $base      = $PHORUM['http_path'];
+        $base_len  = strlen($base);
+        if (stripos($referer, $base) === 0 &&
+            (strlen($referer) === $base_len || $referer[$base_len] === '/')) {
+            $url = $referer;
+        }
     }
 
     // Strip the session id from the URL in case URI auth is in use.
@@ -170,7 +177,7 @@ if (count($_POST) > 0) {
 
                 // Generate and store a new email confirmation code.
                 $tmp_user["user_id"] = $uid;
-                $tmp_user["password_temp"] = substr(md5(microtime()), 0, 8);
+                $tmp_user["password_temp"] = bin2hex(random_bytes(8));
                 phorum_api_user_save($tmp_user);
 
                 // Mail the new confirmation code to the user.
@@ -380,7 +387,7 @@ if (count($_POST) > 0) {
                     // Destroy the temporary cookie that is used for testing
                     // for cookie compatibility.
                     if (isset($_COOKIE["phorum_tmp_cookie"])) {
-                        setcookie(
+                        phorum_set_cookie(
                             "phorum_tmp_cookie", "", 0,
                             $PHORUM["session_path"], $PHORUM["session_domain"]
                         );
@@ -413,11 +420,15 @@ if (count($_POST) > 0) {
                     $check_urls[]=$PHORUM['http_path'];
 
                     foreach($check_urls as $check_url) {
-                         // the redir-url has to start with one of these URLs
-                         if(stripos($redir,$check_url) === 0) {
-                                $redir_ok = true;
-                                break;
-                         }
+                        // The redir URL must start with an allowed prefix and
+                        // the next character must be '/' or end-of-string to
+                        // prevent subdomain bypass (e.g. example.com.evil.com).
+                        $prefix_len = strlen($check_url);
+                        if (stripos($redir, $check_url) === 0 &&
+                            (strlen($redir) === $prefix_len || $redir[$prefix_len] === '/')) {
+                            $redir_ok = true;
+                            break;
+                        }
                     }
                     if(!$redir_ok) {
                         $redir = phorum_get_url( PHORUM_LIST_URL );
@@ -556,7 +567,7 @@ if (count($_POST) > 0) {
 // No data posted, so this is the first request. Here we set a temporary
 // cookie, so we can check if the user's browser supports cookies.
 elseif($PHORUM["use_cookies"] > PHORUM_NO_COOKIES) {
-    setcookie( "phorum_tmp_cookie", "this will be destroyed once logged in", 0, $PHORUM["session_path"], $PHORUM["session_domain"] );
+    phorum_set_cookie("phorum_tmp_cookie", "this will be destroyed once logged in", 0, $PHORUM["session_path"], $PHORUM["session_domain"]);
 }
 
 // Determine to what URL the user must be redirected after login.

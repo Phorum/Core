@@ -117,6 +117,23 @@ if (empty($PHORUM["custom_display_name"])) {
         htmlspecialchars($PHORUM["DATA"]["PROFILE"]["display_name"], ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
 }
 
+// Escape signature and custom profile field values so that modules and
+// themes can safely output them without risking stored XSS.
+if (isset($PHORUM["DATA"]["PROFILE"]["signature"])) {
+    $PHORUM["DATA"]["PROFILE"]["signature"] =
+        htmlspecialchars($PHORUM["DATA"]["PROFILE"]["signature"], ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
+}
+if (!empty($PHORUM["PROFILE_FIELDS"])) {
+    foreach ($PHORUM["PROFILE_FIELDS"] as $id => $field) {
+        if ($id === 'num_fields' || !empty($field['deleted'])) continue;
+        $name = $field['name'];
+        if (isset($PHORUM["DATA"]["PROFILE"][$name]) && !is_array($PHORUM["DATA"]["PROFILE"][$name])) {
+            $PHORUM["DATA"]["PROFILE"][$name] =
+                htmlspecialchars($PHORUM["DATA"]["PROFILE"][$name], ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
+        }
+    }
+}
+
 if (isset($PHORUM["hooks"]["profile"]))
     $PHORUM["DATA"]["PROFILE"] = phorum_hook("profile", $PHORUM["DATA"]["PROFILE"]);
 

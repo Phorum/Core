@@ -22,7 +22,7 @@
     // load the default Phorum language
     if(isset($PHORUM["default_forum_options"]["language"])){
         $lang = basename($PHORUM["default_forum_options"]["language"]);
-        if (!file_exists("./include/lang/${lang}.php")) {
+        if (!file_exists("./include/lang/{$lang}.php")) {
             $lang = PHORUM_DEFAULT_LANGUAGE;
         }
         include_once( "./include/lang/{$lang}.php" );
@@ -163,8 +163,8 @@ function hide_help()
     </td>
 <?php } else {
     // Reset the cookie that is used for the version check.
-    setcookie("phorum_upgrade_available", '', time()-86400,
-              $PHORUM["session_path"], $PHORUM["session_domain"]);
+    phorum_set_cookie("phorum_upgrade_available", '', time()-86400,
+        $PHORUM["session_path"], $PHORUM["session_domain"]);
 } ?>
     <td class="statusbar_edge" align="center" valign="middle">
 <?php

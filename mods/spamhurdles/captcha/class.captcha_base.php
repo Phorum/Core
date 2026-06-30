@@ -6,7 +6,7 @@ define("CAPTCHA_CODE_LENGTH", 5);
 // The default set of characters to create random strings with.
 define("CAPTCHA_RANDOMCHARS",
     "0123456789" .
-    "abcdefghijklmnopqrstuvwxyz",
+    "abcdefghijklmnopqrstuvwxyz" .
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 );
 

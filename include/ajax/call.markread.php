@@ -56,7 +56,7 @@ if (!defined('PHORUM')) return;
 
 // This call only makes sense for logged in users.
 // For anonymous users, we'll ignore the call and pretend it was successful.
-if (!$PHORUM['DATA']['LOGGEDIN']) ajax_return(TRUE);
+if (!$PHORUM['DATA']['LOGGEDIN']) phorum_ajax_return(TRUE);
 
 // Load the newflags API, which handles marking messages as read.
 require_once('./include/api/newflags.php');
