@@ -49,18 +49,15 @@ foreach ($PHORUM["post_fields"] as $var => $spec)
     // Check the signature of signed fields.
     if ($spec[pf_SIGNED]) {
         $qvar = htmlspecialchars($var);
-        if (! isset($_POST["$var:signature"])) trigger_error(
+        if (! isset($_POST["$var:signature"])) phorum_user_error(
             "Data signing error: signature for field $qvar is missing " .
-            "in the form data.", E_USER_ERROR
-        );
-        if (! isset($_POST["$var"])) trigger_error(
-            "Data signing error: field $qvar is missing in the form data.",
-            E_USER_ERROR
-        );
+            "in the form data.");
+        if (! isset($_POST["$var"])) phorum_user_error(
+            "Data signing error: field $qvar is missing in the form data.");
         if (! phorum_check_data_signature($_POST["$var"], $_POST["$var:signature"]))
-            trigger_error("Data signing error: signature for field $qvar " .
+            phorum_user_error("Data signing error: signature for field $qvar " .
                           "is wrong; there was probably tampering with the " .
-                          "form data", E_USER_ERROR);
+                          "form data");
     }
 
     // Format and store the data based on the configuration.
@@ -92,10 +89,8 @@ foreach ($PHORUM["post_fields"] as $var => $spec)
             break;
 
         default:
-            trigger_error(
-                "Illegal field type used for field $var: " . $spec[pf_TYPE],
-                E_USER_ERROR
-            );
+            phorum_user_error(
+                "Illegal field type used for field $var: " . $spec[pf_TYPE]);
     }
 }
 

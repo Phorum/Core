@@ -128,7 +128,7 @@ if(count($_POST))
             include('./include/email_functions.php');
             $valid_email = phorum_valid_email($_POST["email"]);
             if ($valid_email !== true)
-                $error = 'The email "'.htmlspecialchars($_POST[email]).'" is not valid!';
+                $error = 'The email "'.htmlspecialchars($_POST['email']).'" is not valid!';
         } else {
             $error = "You must provide an e-mail!";
         }
@@ -349,7 +349,7 @@ if (    !isset($_GET['edit'])
                 $forum_permissions_forums_select .= "<option value=\"$forum_id\"";
                 if (isset($selected_forum_permissions_forums[$forum_id]))
                     $forum_permissions_forums_select .= " selected='selected'";
-                $forum_permissions_forums_select .= ">$forumname</option>";
+                $forum_permissions_forums_select .= ">" . htmlspecialchars($forumname, ENT_QUOTES, 'UTF-8') . "</option>";
             }
             $forum_permissions_forums_select .= "</select>";
 

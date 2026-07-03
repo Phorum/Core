@@ -69,7 +69,7 @@ function spamhurdle_block_replay_after_post($data)
 
 function spamhurdle_block_replay_collect_garbage($data)
 {
-    spamhurldes_db_remove_expired();
+    spamhurdles_db_remove_expired();
     return $data;
 }
 

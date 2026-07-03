@@ -267,14 +267,12 @@ if ($initial) {
     }
 
 } else {
-    if (! isset($_POST["mode"])) trigger_error(
-        "Missing parameter \"mode\" in request", E_USER_ERROR
-    );
+    if (! isset($_POST["mode"])) phorum_user_error(
+        "Missing parameter \"mode\" in request");
     $mode = $_POST["mode"];
 }
-if (! in_array($mode, $valid_modes)) trigger_error(
-    "Illegal mode issued: " . htmlspecialchars($mode), E_USER_ERROR
-);
+if (! in_array($mode, $valid_modes)) phorum_user_error(
+    "Illegal mode issued: " . htmlspecialchars($mode));
 
 // Find out if we are detaching an attachment.
 // If we are, $do_detach will be set to the attachment's file_id.
@@ -599,10 +597,8 @@ if ( !$PHORUM["DATA"]["ERROR"] && $finish )
         include("./include/posting/action_edit.php");
     }
     // A little safety net.
-    else trigger_error(
-        "Internal error: finish action for \"$mode\" not available",
-        E_USER_ERROR
-    );
+    else phorum_user_error(
+        "Internal error: finish action for \"$mode\" not available");
 }
 
 // ----------------------------------------------------------------------

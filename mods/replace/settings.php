@@ -90,7 +90,8 @@
                 echo "    <td class=\"PhorumAdminTableRow\">".htmlspecialchars($item["search"])."</td>\n";
                 echo "    <td class=\"PhorumAdminTableRow\">".htmlspecialchars($item["replace"])."</td>\n";
                 echo "    <td class=\"PhorumAdminTableRow\">".$match_types[$item["pcre"]]."</td>\n";
-                echo "    <td class=\"PhorumAdminTableRow\"><a href=\"$_SERVER[PHP_SELF]?module=modsettings&amp;mod=replace&amp;curr=$key&amp;edit=1\">Edit</a>&nbsp;&bull;&nbsp;<a href=\"$_SERVER[PHP_SELF]?module=modsettings&amp;mod=replace&amp;curr=$key&amp;delete=1\">Delete</a></td>\n";
+                $safe_self = htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8');
+                echo "    <td class=\"PhorumAdminTableRow\"><a href=\"{$safe_self}?module=modsettings&amp;mod=replace&amp;curr=$key&amp;edit=1\">Edit</a>&nbsp;&bull;&nbsp;<a href=\"{$safe_self}?module=modsettings&amp;mod=replace&amp;curr=$key&amp;delete=1\">Delete</a></td>\n";
                 echo "</tr>\n";
             }
 

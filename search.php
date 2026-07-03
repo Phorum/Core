@@ -270,7 +270,7 @@ if(!empty($phorum_search) || !empty($phorum_author)){
 
         foreach($arr["rows"] as $key => $row){
             $arr["rows"][$key]["URL"]["LIST"] = phorum_get_url(PHORUM_LIST_URL, $row["forum_id"]);
-            $arr["rows"][$key]["forum_name"] = $forums[$row["forum_id"]]["name"];
+            $arr["rows"][$key]["forum_name"] = htmlspecialchars($forums[$row["forum_id"]]["name"], ENT_QUOTES, $PHORUM['DATA']['HCHARSET']);
         }
 
         $PHORUM["DATA"]["RANGE_START"] = $start + 1;

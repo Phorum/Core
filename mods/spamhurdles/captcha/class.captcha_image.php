@@ -36,11 +36,9 @@ class captcha_image extends captcha_base
                 $fonts[] = "$fontsdir/$file";
             }
         }
-        if (count($fonts) == 0) trigger_error(
+        if (count($fonts) == 0) phorum_user_error(
             'captcha_image class did not find any ttf fonts to use for ' .
-            'writing the captcha code',
-            E_USER_ERROR
-        );
+            'writing the captcha code');
 
         // Create an image, that should be large enough for holding
         // our complete captcha. We will clip it to the right size later on.

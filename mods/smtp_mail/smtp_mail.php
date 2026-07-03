@@ -35,10 +35,11 @@ function phorum_smtp_send_messages ($data)
 
         try {
 
-            require_once("./mods/smtp_mail/phpmailer/class.phpmailer.php");
+            require_once("./mods/smtp_mail/phpmailer/Exception.php");
+            require_once("./mods/smtp_mail/phpmailer/PHPMailer.php");
+            require_once("./mods/smtp_mail/phpmailer/SMTP.php");
 
-            $mail = new PHPMailer();
-            $mail->PluginDir = "./mods/smtp_mail/phpmailer/";
+            $mail = new \PHPMailer\PHPMailer\PHPMailer();
 
             $mail->CharSet  = $PHORUM["DATA"]["CHARSET"];
             $mail->Encoding = $PHORUM["DATA"]["MAILENCODING"];

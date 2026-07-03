@@ -107,6 +107,7 @@ define('CRYPT_AES_MODE_MCRYPT', 2);
  * @access  public
  * @package Crypt_AES
  */
+#[AllowDynamicProperties]
 class Crypt_AES extends Crypt_Rijndael {
     /**
      * MCrypt parameters

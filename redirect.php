@@ -26,9 +26,15 @@ define('phorum_page', 'redirect');
 
 require_once("./common.php");
 
-if (isset($PHORUM["args"]["phorum_redirect_to"]) && strpos($PHORUM["args"]["phorum_redirect_to"], $PHORUM['http_path']) === 0) {
-    $redir = urldecode($PHORUM["args"]["phorum_redirect_to"]);
-    phorum_redirect_by_url($redir);
+$redirect_to = isset($PHORUM["args"]["phorum_redirect_to"]) ? $PHORUM["args"]["phorum_redirect_to"] : '';
+$prefix      = $PHORUM['http_path'];
+$prefix_len  = strlen($prefix);
+// Require the URL to start with http_path and the next char to be '/' or
+// end-of-string to prevent subdomain bypass (e.g. example.com.evil.com).
+if ($redirect_to !== '' &&
+    strpos($redirect_to, $prefix) === 0 &&
+    (strlen($redirect_to) === $prefix_len || $redirect_to[$prefix_len] === '/')) {
+    phorum_redirect_by_url(urldecode($redirect_to));
 } else {
     header("Location: index.php");
 }

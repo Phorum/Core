@@ -228,6 +228,29 @@ function phorum_format_messages ($data, $author_specs = NULL)
 }
 
 /**
+ * Converts a strftime() format string to a date() format string.
+ * Language files define date formats using strftime codes; this lets us
+ * use date()/gmdate() without touching every language file.
+ */
+function phorum_strftime_to_date_format($fmt)
+{
+    static $map = [
+        '%A' => 'l',   '%a' => 'D',
+        '%B' => 'F',   '%b' => 'M',
+        '%d' => 'd',   '%e' => 'j',
+        '%H' => 'H',   '%I' => 'h',
+        '%j' => 'z',   '%m' => 'm',
+        '%M' => 'i',   '%p' => 'A',
+        '%P' => 'a',   '%S' => 's',
+        '%u' => 'N',   '%w' => 'w',
+        '%Y' => 'Y',   '%y' => 'y',
+        '%Z' => 'T',   '%z' => 'O',
+        '%%' => '%',
+    ];
+    return strtr($fmt, $map);
+}
+
+/**
  * Formats an epoch timestamp to a date/time for displaying on screen.
  *
  * @param picture - The time formatting to use, in strftime() format
@@ -238,18 +261,15 @@ function phorum_date( $picture, $ts )
 {
     global $PHORUM;
 
-    // Setting locale.
-    if (!isset($PHORUM['locale']))
-        $PHORUM['locale']="EN";
-    setlocale(LC_TIME, $PHORUM['locale']);
+    $fmt = phorum_strftime_to_date_format($picture);
 
     // Format the date.
     if ($PHORUM["user_time_zone"] && isset($PHORUM["user"]["tz_offset"]) && $PHORUM["user"]["tz_offset"]!=-99) {
         $ts += $PHORUM["user"]["tz_offset"] * 3600;
-        return gmstrftime( $picture, $ts );
+        return gmdate( $fmt, $ts );
     } else {
         $ts += $PHORUM["tz_offset"] * 3600;
-        return strftime( $picture, $ts );
+        return date( $fmt, $ts );
     }
 }
 

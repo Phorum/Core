@@ -441,10 +441,8 @@ function phorum_db_update_settings($settings)
             }
         }
     }
-    else trigger_error(
-        'phorum_db_update_settings(): $settings cannot be empty',
-        E_USER_ERROR
-    );
+    else phorum_user_error(
+        'phorum_db_update_settings(): $settings cannot be empty');
 
     return TRUE;
 }
@@ -653,15 +651,11 @@ function phorum_db_get_recent_messages($length, $offset = 0, $forum_id = 0, $thr
     if ($thread   < 0) $thread   = 0;
 
     // Parameter checking.
-    if ($list_type < 0 || $list_type > 3) trigger_error(
-        "phorum_db_get_recent_messages(): illegal \$list_type parameter used",
-        E_USER_ERROR
-    );
-    if ($list_type != LIST_RECENT_MESSAGES && $thread) trigger_error(
+    if ($list_type < 0 || $list_type > 3) phorum_user_error(
+        "phorum_db_get_recent_messages(): illegal \$list_type parameter used");
+    if ($list_type != LIST_RECENT_MESSAGES && $thread) phorum_user_error(
         "phorum_db_get_recent_messages(): \$thread parameter can only be " .
-        "used with \$list_type = LIST_RECENT_MESSAGES",
-        E_USER_ERROR
-    );
+        "used with \$list_type = LIST_RECENT_MESSAGES");
 
     // We have to check what forums the active Phorum user can read first.
     // Even if a $thread is passed, we have to make sure that the user
@@ -1039,10 +1033,8 @@ function phorum_db_update_message($message_id, $message)
 
     settype($message_id, 'int');
 
-    if (count($message) == 0) trigger_error(
-        '$message cannot be empty in phorum_update_message()',
-        E_USER_ERROR
-    );
+    if (count($message) == 0) phorum_user_error(
+        '$message cannot be empty in phorum_update_message()');
 
     foreach ($message as $field => $value)
     {
@@ -1124,9 +1116,8 @@ function phorum_db_delete_message($message_id, $mode = PHORUM_DELETE_MESSAGE)
          FROM   {$PHORUM['message_table']}
          WHERE  message_id = $message_id"
     );
-    if (empty($msg)) trigger_error(
-        "No message found for message_id $message_id", E_USER_ERROR
-    );
+    if (empty($msg)) phorum_user_error(
+        "No message found for message_id $message_id");
 
     // Find all message_ids that have to be deleted, based on the mode.
     if ($mode == PHORUM_DELETE_TREE) {
@@ -1305,10 +1296,9 @@ function phorum_db_get_message($value, $field='message_id', $ignore_forum_id=FAL
 
     phorum_db_sanitize_mixed($value, 'string');
     settype($ignore_forum_id, 'bool');
-    if (!phorum_db_validate_field($field)) trigger_error(
+    if (!phorum_db_validate_field($field)) phorum_user_error(
         'phorum_db_get_message(): Illegal database field ' .
-        '"' . htmlspecialchars($field) . '"', E_USER_ERROR
-    );
+        '"' . htmlspecialchars($field) . '"');
 
     $forum_id_check = '';
     if (!$ignore_forum_id && !empty($PHORUM['forum_id'])) {
@@ -1952,11 +1942,9 @@ function phorum_db_get_neighbour_thread($key, $direction)
         case 'newer': $compare = '>'; $orderdir = 'ASC';  break;
         case 'older': $compare = '<'; $orderdir = 'DESC'; break;
         default:
-            trigger_error(
+            phorum_user_error(
                 'phorum_db_get_neighbour_thread(): ' .
-                'Illegal direction "'.htmlspecialchars($direction).'"',
-                E_USER_ERROR
-            );
+                'Illegal direction "'.htmlspecialchars($direction).'"');
     }
 
     // If the active Phorum user is not a moderator for the forum, then
@@ -2615,10 +2603,8 @@ function phorum_db_drop_folder($forum_id)
          WHERE  forum_id = $forum_id AND
                 folder_flag = 1"
     );
-    if ($new_parent_id === NULL) trigger_error(
-        "phorum_db_drop_folder(): id $forum_id not found or not a folder",
-        E_USER_ERROR
-    );
+    if ($new_parent_id === NULL) phorum_user_error(
+        "phorum_db_drop_folder(): id $forum_id not found or not a folder");
 
     // Start with reattaching the folder's children to the new parent.
     phorum_db_interact(
@@ -2663,10 +2649,8 @@ function phorum_db_update_forum($forum)
     global $PHORUM;
 
     // Check if the forum_id is set.
-    if (!isset($forum['forum_id']) || empty($forum['forum_id'])) trigger_error(
-        'phorum_db_update_forum(): $forum["forum_id"] cannot be empty',
-        E_USER_ERROR
-    );
+    if (!isset($forum['forum_id']) || empty($forum['forum_id'])) phorum_user_error(
+        'phorum_db_update_forum(): $forum["forum_id"] cannot be empty');
 
     phorum_db_sanitize_mixed($forum['forum_id'], 'int');
 
@@ -2938,10 +2922,8 @@ function phorum_db_update_group($group)
     global $PHORUM;
 
     // Check if the group_id is set.
-    if (!isset($group['group_id']) || empty($group['group_id'])) trigger_error(
-        'phorum_db_update_group(): $group["group_id"] cannot be empty',
-        E_USER_ERROR
-    );
+    if (!isset($group['group_id']) || empty($group['group_id'])) phorum_user_error(
+        'phorum_db_update_group(): $group["group_id"] cannot be empty');
 
     settype($group['group_id'], 'int');
     $group_where = 'group_id = ' . $group['group_id'];
@@ -3480,25 +3462,35 @@ function phorum_db_user_get_list($type = 0)
  *     The user_id if the password is correct or 0 (zero)
  *     if the password is wrong.
  */
-function phorum_db_user_check_login($username, $password, $temp_password=FALSE)
+function phorum_db_user_check_login($username, $password, $temp_password=FALSE, &$needs_rehash=NULL)
 {
     global $PHORUM;
 
     settype($temp_password, 'bool');
-    $username = phorum_db_interact(DB_RETURN_QUOTED, $username);
-    $password = phorum_db_interact(DB_RETURN_QUOTED, $password);
-
     $pass_field = $temp_password ? 'password_temp' : 'password';
+    $username_escaped = phorum_db_interact(DB_RETURN_QUOTED, $username);
 
-    $user_id = phorum_db_interact(
-        DB_RETURN_VALUE,
-        "SELECT user_id
+    $row = phorum_db_interact(
+        DB_RETURN_ROW,
+        "SELECT user_id, $pass_field
          FROM   {$PHORUM['user_table']}
-         WHERE  username    = '$username' AND
-                $pass_field = '$password'"
+         WHERE  username = '$username_escaped'"
     );
 
-    return $user_id ? $user_id : 0;
+    if (empty($row)) return 0;
+
+    list($user_id, $stored_hash) = $row;
+
+    // Detect legacy MD5 hash (32 lowercase hex chars) vs modern hash.
+    if (strlen($stored_hash) === 32 && ctype_xdigit($stored_hash)) {
+        $match = hash_equals($stored_hash, md5($password));
+        if ($needs_rehash !== NULL) $needs_rehash = TRUE;
+    } else {
+        $match = password_verify($password, $stored_hash);
+        if ($needs_rehash !== NULL) $needs_rehash = password_needs_rehash($stored_hash, PASSWORD_DEFAULT);
+    }
+
+    return $match ? (int)$user_id : 0;
 }
 // }}}
 
@@ -3575,18 +3567,14 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
     // Basic check to see if all condition arrays contain the
     // same number of elements.
     if (count($field) != count($value) ||
-        count($field) != count($operator)) trigger_error(
+        count($field) != count($operator)) phorum_user_error(
         'phorum_db_user_search(): array parameters $field, $value, ' .
-        'and $operator do not contain the same number of elements',
-        E_USER_ERROR
-    );
+        'and $operator do not contain the same number of elements');
 
     $type = strtoupper($type);
-    if ($type != 'AND' && $type != 'OR') trigger_error(
+    if ($type != 'AND' && $type != 'OR') phorum_user_error(
         'phorum_db_user_search(): Illegal search type parameter (must ' .
-        'be either AND" or "OR")',
-        E_USER_ERROR
-    );
+        'be either AND" or "OR")');
 
     $valid_operators = array('=', '<>', '!=', '>', '<', '>=', '<=', '*', '?*', '*?','()');
 
@@ -3633,11 +3621,9 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
                 $dir = 'ASC';
             }
 
-            if (!phorum_db_validate_field($fld)) trigger_error(
+            if (!phorum_db_validate_field($fld)) phorum_user_error(
                 'phorum_db_user_search(): Illegal sort field: ' .
-                htmlspecialchars($spec),
-                E_USER_ERROR
-            );
+                htmlspecialchars($spec));
 
             $sort[$id] = "$fld $dir";
         }
@@ -3686,7 +3672,7 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
             $ret = $user_ids;
         } else {
             // Return a single user_id.
-            list ($user_id, $dummy) = each($user_ids);
+            $user_id = array_key_first($user_ids);
 
             $ret = $user_id;
         }
@@ -3713,10 +3699,8 @@ function phorum_db_user_add($userdata)
     global $PHORUM;
 
     // We need at least the username for the user.
-    if (! isset($userdata['username'])) trigger_error(
-        'phorum_db_user_add: Missing field in userdata: username',
-        E_USER_ERROR
-    );
+    if (! isset($userdata['username'])) phorum_user_error(
+        'phorum_db_user_add: Missing field in userdata: username');
     $username = phorum_db_interact(DB_RETURN_QUOTED, $userdata['username']);
 
     // We can set the user_id. If not, then we'll create a new user_id.
@@ -3801,12 +3785,10 @@ function phorum_db_user_save($userdata)
     }
 
     // The user_id is required for doing the update.
-    if (!isset($userdata['user_id'])) trigger_error(
+    if (!isset($userdata['user_id'])) phorum_user_error(
         'phorum_db_user_save(): the user_id field is missing in the ' .
-        '$userdata argument',
-        E_USER_ERROR
-    );
-    $user_id = $userdata['user_id'];
+        '$userdata argument');
+    $user_id = (int) $userdata['user_id'];
     unset($userdata['user_id']);
 
     // If there are standard user table fields in the userdata then
@@ -3820,10 +3802,9 @@ function phorum_db_user_save($userdata)
             if ($key === 'settings_data') {
                 if (is_array($value)) {
                     $value = serialize($value);
-                } else trigger_error(
+                } else phorum_user_error(
                     'Internal error: settings_data field for ' .
-                    'phorum_db_user_save() must be an array', E_USER_ERROR
-                );
+                    'phorum_db_user_save() must be an array');
             }
             $value = phorum_db_interact(DB_RETURN_QUOTED, $value);
 
@@ -3859,6 +3840,8 @@ function phorum_db_user_save($userdata)
 
         // Add new forum permissions.
         foreach ($forum_perms as $forum_id => $permission) {
+            $forum_id   = (int) $forum_id;
+            $permission = (int) $permission;
             phorum_db_interact(
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['user_permissions_table']}
@@ -3930,16 +3913,12 @@ function phorum_db_user_save($userdata)
 function phorum_db_user_display_name_updates($userdata)
 {
     global $PHORUM;
-    if (!isset($userdata['user_id'])) trigger_error(
+    if (!isset($userdata['user_id'])) phorum_user_error(
         'phorum_db_user_display_name_updates(): Missing user_id field in ' .
-        'the $userdata parameter',
-        E_USER_ERROR
-    );
-    if (!isset($userdata['display_name'])) trigger_error(
+        'the $userdata parameter');
+    if (!isset($userdata['display_name'])) phorum_user_error(
         'phorum_db_user_display_name_updates(): Missing display_name field ' .
-        'in the $userdata parameter',
-        E_USER_ERROR
-    );
+        'in the $userdata parameter');
 
     $author = phorum_db_interact(DB_RETURN_QUOTED, $userdata['display_name']);
     $user_id = (int) $userdata['user_id'];
@@ -4576,10 +4555,8 @@ function phorum_db_file_save($file)
     if ($file["link"] === NULL) {
         if     ($file["message_id"]) $file["link"] = PHORUM_LINK_MESSAGE;
         elseif ($file["user_id"])    $file["link"] = PHORUM_LINK_USER;
-        else trigger_error(
-            'phorum_db_file_save(): Missing link field in the $file parameter',
-            E_USER_ERROR
-        );
+        else phorum_user_error(
+            'phorum_db_file_save(): Missing link field in the $file parameter');
     }
 
     $user_id    = (int)$file["user_id"];
@@ -5705,14 +5682,12 @@ function phorum_db_pm_list($folder, $user_id = NULL, $reverse = TRUE)
     settype($reverse, 'bool');
 
     if (is_numeric($folder)) {
-        $folder_where = "pm_folder_id = $folder";
+        $folder_where = "pm_folder_id = " . (int)$folder;
     } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
         $folder_where = "(pm_folder_id = 0 AND special_folder = '$folder')";
-    } else trigger_error(
+    } else phorum_user_error(
         'phorum_db_pm_list(): Illegal folder "'.htmlspecialchars($folder).'" '.
-        'requested for user id "'.$user_id.'"',
-        E_USER_ERROR
-    );
+        'requested for user id "'.$user_id.'"');
 
     // Retrieve the messages from the folder.
     $messages = phorum_db_interact(
@@ -5772,14 +5747,12 @@ function phorum_db_pm_get($pm_id, $folder = NULL, $user_id = NULL)
     if ($folder === NULL) {
         $folder_where = '';
     } elseif (is_numeric($folder)) {
-        $folder_where = "pm_folder_id = $folder AND ";
+        $folder_where = "pm_folder_id = " . (int)$folder . " AND ";
     } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
         $folder_where = "pm_folder_id = 0 AND special_folder = '$folder' AND ";
-    } else trigger_error(
+    } else phorum_user_error(
         'phorum_db_pm_get(): Illegal folder "'.htmlspecialchars($folder).'" '.
-        'requested for user id "'.$user_id.'"',
-        E_USER_ERROR
-    );
+        'requested for user id "'.$user_id.'"');
 
     // Retrieve the private message.
     $messages = phorum_db_interact(
@@ -6054,16 +6027,14 @@ function phorum_db_pm_messagecount($folder, $user_id = NULL)
     settype($user_id, 'int');
 
     if (is_numeric($folder)) {
-        $folder_where = "pm_folder_id = $folder AND";
+        $folder_where = "pm_folder_id = " . (int)$folder . " AND";
     } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
         $folder_where = "pm_folder_id = 0 AND special_folder = '$folder' AND";
     } elseif ($folder == PHORUM_PM_ALLFOLDERS) {
         $folder_where = '';
-    } else trigger_error(
+    } else phorum_user_error(
         'phorum_db_pm_messagecount(): Illegal folder "' .
-        htmlspecialchars($folder).'" requested for user id "'.$user_id.'"',
-        E_USER_ERROR
-    );
+        htmlspecialchars($folder).'" requested for user id "'.$user_id.'"');
 
     $counters = phorum_db_interact(
         DB_RETURN_ASSOCS,
@@ -6147,10 +6118,8 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
     if ($from === NULL) $from = $PHORUM['user']['user_id'];
     settype($from, 'int');
     $fromuser = phorum_db_user_get($from, FALSE);
-    if (! $fromuser) trigger_error(
-        "phorum_db_pm_send(): Unknown sender user_id '$from'",
-        E_USER_ERROR
-    );
+    if (! $fromuser) phorum_user_error(
+        "phorum_db_pm_send(): Unknown sender user_id '$from'");
     $fromuser = phorum_db_interact(DB_RETURN_QUOTED, $fromuser['display_name']);
     $subject = phorum_db_interact(DB_RETURN_QUOTED, $subject);
     $message = phorum_db_interact(DB_RETURN_QUOTED, $message);
@@ -6164,10 +6133,8 @@ function phorum_db_pm_send($subject, $message, $to, $from=NULL, $keepcopy=FALSE)
         settype($user_id, 'int');
 
         $user = phorum_db_user_get($user_id, FALSE);
-        if (! $user) trigger_error(
-            "phorum_db_pm_send(): Unknown recipient user_id '$user_id'",
-            E_USER_ERROR
-        );
+        if (! $user) phorum_user_error(
+            "phorum_db_pm_send(): Unknown recipient user_id '$user_id'");
         $rcpts[$user_id] = array(
             'user_id'        => $user_id,
             'display_name'   => $user['display_name'],
@@ -6253,11 +6220,9 @@ function phorum_db_pm_setflag($pm_id, $flag, $value, $user_id = NULL)
     settype($pm_id, 'int');
 
     if ($flag != PHORUM_PM_READ_FLAG &&
-        $flag != PHORUM_PM_REPLY_FLAG) trigger_error(
+        $flag != PHORUM_PM_REPLY_FLAG) phorum_user_error(
         'phorum_db_pm_setflag(): Illegal value "' . htmlspecialchars($flag) .
-        '" for parameter $flag',
-        E_USER_WARNING
-    );
+        '" for parameter $flag');
 
     $value = $value ? 1 : 0;
 
@@ -6306,14 +6271,12 @@ function phorum_db_pm_delete($pm_id, $folder, $user_id = NULL)
     settype($user_id, 'int');
 
     if (is_numeric($folder)) {
-        $folder_where = "pm_folder_id = $folder";
+        $folder_where = "pm_folder_id = " . (int)$folder;
     } elseif ($folder == PHORUM_PM_INBOX || $folder == PHORUM_PM_OUTBOX) {
         $folder_where = "(pm_folder_id = 0 AND special_folder = '$folder')";
-    } else trigger_error(
+    } else phorum_user_error(
         'phorum_db_pm_delete(): Illegal folder "' .
-        htmlspecialchars($folder).'" requested for user id "'.$user_id.'"',
-        E_USER_ERROR
-    );
+        htmlspecialchars($folder).'" requested for user id "'.$user_id.'"');
 
     phorum_db_interact(
         DB_RETURN_RES,
@@ -6357,26 +6320,22 @@ function phorum_db_pm_move($pm_id, $from, $to, $user_id = NULL)
     settype($user_id, 'int');
 
     if (is_numeric($from)) {
-        $folder_where = "pm_folder_id = $from";
+        $folder_where = "pm_folder_id = " . (int)$from;
     } elseif ($from == PHORUM_PM_INBOX || $from == PHORUM_PM_OUTBOX) {
         $folder_where = "(pm_folder_id = 0 AND special_folder = '$from')";
-    } else trigger_error(
+    } else phorum_user_error(
         'phorum_db_pm_move(): Illegal source folder "' .
-        htmlspecialchars($from).'" requested for user id "'.$user_id.'"',
-        E_USER_ERROR
-    );
+        htmlspecialchars($from).'" requested for user id "'.$user_id.'"');
 
     if (is_numeric($to)) {
-        $pm_folder_id = $to;
+        $pm_folder_id = (int)$to;
         $special_folder = 'NULL';
     } elseif ($to == PHORUM_PM_INBOX || $to == PHORUM_PM_OUTBOX) {
         $pm_folder_id = 0;
         $special_folder = "'$to'";
-    } else trigger_error(
+    } else phorum_user_error(
         'phorum_db_pm_move(): Illegal target folder "' .
-        htmlspecialchars($to).'" requested for user_id "'.$user_id.'"',
-        E_USER_ERROR
-    );
+        htmlspecialchars($to).'" requested for user_id "'.$user_id.'"');
 
     phorum_db_interact(
         DB_RETURN_RES,
@@ -6894,19 +6853,15 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
     // Basic check to see if all condition arrays contain the
     // same number of elements.
     if (count($field_id) != count($value) ||
-        count($field_id) != count($operator)) trigger_error(
+        count($field_id) != count($operator)) phorum_user_error(
         'phorum_db_user_search_custom_profile_field(): ' .
         'array parameters $field_id, $value, and $operator do not contain ' .
-        'the same number of elements',
-        E_USER_ERROR
-    );
+        'the same number of elements');
 
     $type = strtoupper($type);
-    if ($type != 'AND' && $type != 'OR') trigger_error(
+    if ($type != 'AND' && $type != 'OR') phorum_user_error(
         'phorum_db_user_search_custom_profile_field(): ' .
-        'Illegal search type parameter (must be either AND" or "OR")',
-        E_USER_ERROR
-    );
+        'Illegal search type parameter (must be either AND" or "OR")');
 
     $valid_operators = array('=', '<>', '!=', '>', '<', '>=', '<=', '*', '?*', '*?');
 
@@ -6973,7 +6928,7 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
     }
 
     // Return a single user_id.
-    list ($user_id, $dummy) = each($user_ids);
+    $user_id = array_key_first($user_ids);
     return $user_id;
 }
 // }}}
@@ -7152,11 +7107,9 @@ function phorum_db_metaquery_compile($metaquery)
             $expect_combine     = FALSE;
         }
         // Unexpected or illegal token.
-        else trigger_error(
+        else phorum_user_error(
             'Internal error: unexpected token in metaquery description: ' .
-            (is_array($part) ? 'condition' : htmlspecialchars($part)),
-            E_USER_ERROR
-        );
+            (is_array($part) ? 'condition' : htmlspecialchars($part)));
     }
 
     if ($expect_groupend) die ('Internal error: unclosed group in metaquery');
@@ -7196,7 +7149,7 @@ function phorum_db_metaquery_messagesearch($metaquery)
 
     // Compile the metaquery into a where statement.
     list($success, $where) = phorum_db_metaquery_compile($metaquery);
-    if (!$success) trigger_error($where, E_USER_ERROR);
+    if (!$success) phorum_user_error($where);
 
     // Retrieve matching messages.
     $messages = phorum_db_interact(
@@ -7767,22 +7720,18 @@ if (isset($PHORUM['DBCONFIG']['mysql_php_extension'])) {
 }
 
 // If we have no extension by now, we are very much out of luck.
-if ($ext === NULL) trigger_error(
+if ($ext === NULL) phorum_user_error(
    "The Phorum MySQL database layer is unable to determine the PHP " .
    "MySQL extension to use. This might indicate that there is no " .
-   "extension loaded from the php.ini.",
-   E_USER_ERROR
-);
+   "extension loaded from the php.ini.");
 
 // Load the specific code for the PHP extension that we use.
 $extfile = "./include/db/mysql/{$ext}.php";
-if (!file_exists($extfile)) trigger_error(
+if (!file_exists($extfile)) phorum_user_error(
    "The Phorum MySQL database layer is unable to find the extension " .
    "file $extfile on the system. Check if all Phorum files are uploaded " .
    "and if you did specify the correct \"mysql_php_extension\" in the file " .
-   "include/db/config.php (valid options are \"mysql\" and \"mysqli\").",
-   E_USER_ERROR
-);
+   "include/db/config.php (valid options are \"mysql\" and \"mysqli\").");
 include($extfile);
 
 ?>

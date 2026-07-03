@@ -1,0 +1,7 @@
+include/db/config.php
+cache/*
+!cache/.gitkeep
+vendor/
+composer.lock
+PLAN.md
+.idea

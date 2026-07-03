@@ -237,7 +237,7 @@ function phorum_mod_smileys_sortbylength($a, $b) {
         if (strlen($a["search"]) == strlen($b["search"])) {
             return strcmp($a["search"], $b["search"]);
         } else {
-            return strlen($a["search"]) < strlen($b["search"]);
+            return strlen($b["search"]) <=> strlen($a["search"]);
         }
     } else {
         return 0;

@@ -69,12 +69,12 @@ foreach($forums as $forum_id => $forum)
     $rows.="<tr><th align=\"left\" valign=\"top\" class=\"PhorumAdminTableRow forum-title\">";
     if ($mainurl) $rows .= "<a href=\"$mainurl\">";
     $rows .= "<span class=\"icon-$type\">";
-    $rows .= '<strong>' . ($forum['vroot'] == $forum['forum_id'] ? 'Virtual root: ' : '') . $forum['name'] . '</strong>';
+    $rows .= '<strong>' . ($forum['vroot'] == $forum['forum_id'] ? 'Virtual root: ' : '') . htmlspecialchars($forum['name'], ENT_QUOTES, 'UTF-8') . '</strong>';
     $rows .= "</span>";
     if ($mainurl) $rows .= "</a>";
     $mv_up_url = phorum_admin_build_url(array('module=default',"display_up=$forum_id","parent_id=$folder_id"));
     $mv_down_url = phorum_admin_build_url(array('module=default',"display_down=$forum_id","parent_id=$folder_id"));
-    $rows .= "<p class=\"forum-description\">$forum[description]</p></th><td class=\"PhorumAdminTableRow\"><span style=\"white-space: nowrap;\"><a href=\"$mv_up_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_up.png\" alt=\"Up\" title=\"Up\" /></a>&nbsp;<a href=\"$mv_down_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_down.png\" alt=\"Down\" title=\"Down\" /></a></span></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
+    $rows .= "<p class=\"forum-description\">" . htmlspecialchars($forum['description'], ENT_QUOTES, 'UTF-8') . "</p></th><td class=\"PhorumAdminTableRow\"><span style=\"white-space: nowrap;\"><a href=\"$mv_up_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_up.png\" alt=\"Up\" title=\"Up\" /></a>&nbsp;<a href=\"$mv_down_url\"><img border=\"0\" src=\"{$PHORUM["http_path"]}/images/arrow_down.png\" alt=\"Down\" title=\"Down\" /></a></span></td><td class=\"PhorumAdminTableRow\">$actions</td></tr>\n";
 }
 
 if (empty($rows)) {

@@ -145,11 +145,9 @@ function spamhurdles_api_init($form_id, $hurdles)
                     continue 2;
                 }
             }
-            trigger_error(
+            phorum_user_error(
                 'spamhurdles_api_init(): Illegal hurdle id used: ' .
-                htmlspecialchars($hurdle),
-                E_USER_ERROR
-            );
+                htmlspecialchars($hurdle));
         }
     }
 
@@ -445,12 +443,10 @@ function spamhurdles_decrypt($data)
     // Don't splash decrypting and unpacking warnings all over the browser.
     $decrypted = @$aes->decrypt(base64_decode($data));
     $unpacked = @unserialize($decrypted);
-    if ($decrypted === FALSE || $unpacked === FALSE) trigger_error(
+    if ($decrypted === FALSE || $unpacked === FALSE) phorum_user_error(
         'Cannot decrypt the spam hurdles data. ' .
         'This probably means that somebody or something tampered with ' .
-        'the crypted spam hurdles data string that was sent to the server.',
-        E_USER_ERROR
-    );
+        'the crypted spam hurdles data string that was sent to the server.');
     return $unpacked;
 }
 
@@ -512,11 +508,9 @@ function spamhurdles_hurdle_call($call, $data, $hurdles = NULL)
         }
 
         // Check the hurdle name.
-        if (!isset($registry[$hurdle])) trigger_error(
+        if (!isset($registry[$hurdle])) phorum_user_error(
             "spamhurdles_hurdle_call(): Illegal hurdle name: " .
-            htmlspecialchars($hurdle),
-            E_USER_ERROR
-        );
+            htmlspecialchars($hurdle));
 
         // Load the code for the hurdle if it wasn't yet loaded.
         if (empty($registry[$hurdle]['loaded']))
@@ -598,11 +592,9 @@ function spamhurdles_get_hurdles_for_form($form_id)
     // Check if a configuration is available for the provided form_id.
     // If not then we trigger an error.
     if (!isset($PHORUM['mod_spamhurdles'][$form_id]['hurdles'])) {
-        trigger_error(
+        phorum_user_error(
             'spamhurdles_get_hurdles_for_form(): No configuration found for ' .
-            'form_id ' . $form_id,
-            E_USER_ERROR
-        );
+            'form_id ' . $form_id);
     }
 
     // Check what hurdles should be activated for the current user.
@@ -632,7 +624,7 @@ function spamhurdles_get_hurdles_for_form($form_id)
                 break;
 
             default:
-                trigger_error(
+                phorum_user_error(
                     'spamhurdles_get_hurdles_for_form(): Illegal ' .
                     'configuration value for spam hurdle ' .
                     $info['name'] . ': ' . $hurdles[$info['name']]
@@ -691,7 +683,7 @@ function spamhurdles_iScramble_escape($plain)
 
     for ($i = 0; $i < strlen($plain); $i++)
     {
-        $char = $plain{$i};
+        $char = $plain[$i];
         if (strpos($passChars, $char) === false)
         {
             // $char is not in the list of $passChars. Encode in hex format
@@ -753,7 +745,7 @@ function spamhurdles_iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>
         $availChars = substr("0123456789", 0, $numberOfColumns);
         for ($i = 0 ; $i < $numberOfColumns; $i++)
         {
-            $char = $availChars{ random_int(0, strlen($availChars)-1) };
+            $char = $availChars[random_int(0, strlen($availChars)-1)];
             $password .= $char;
             $availChars = str_replace($char, "", $availChars);
         }
@@ -768,7 +760,7 @@ function spamhurdles_iScramble($plain, $longPwd=False, $rot13=False, $sorry="<i>
     {
         for($j = 0; $j < $numberOfColumns; $j++ )
         {
-            $scrambled{(int)(((int)$scramblePassword{$k}) * $numberOfRows) + $i} = $escaped{$k};
+            $scrambled[(int)(((int)$scramblePassword[$k]) * $numberOfRows) + $i] = $escaped[$k];
             $k++;
         }
     }

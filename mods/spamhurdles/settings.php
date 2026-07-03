@@ -10,16 +10,15 @@ $captchaspec = array(
     'asciiart'   => 'Code, drawn using ASCII art',
     'plaintext'  => 'Code, plain text format',
     'maptcha'    => 'Solve a simple math question',
-    'recaptcha'  => 'Code, using the reCAPTCHA service'
+    'recaptcha'  => 'reCAPTCHA v2 ("I\'m not a robot")'
 );
 
 // Save settings.
 if (count($_POST))
 {
     $captcha_type = basename($_POST['captcha_type']);
-    if (!isset($captchaspec[$captcha_type])) trigger_error(
-        'Illegal CAPTCHA specified.', E_USER_ERROR
-    );
+    if (!isset($captchaspec[$captcha_type])) phorum_user_error(
+        'Illegal CAPTCHA specified.');
 
     if ($captcha_type === 'image' && !function_exists('imagecreatetruecolor'))
     {
@@ -42,8 +41,8 @@ if (count($_POST))
                 'type'              => $captcha_type,
                 'flite_location'    => trim($_POST['flite_location']),
                 'spoken_captcha'    => isset($_POST['spoken_captcha']) ? 1 : 0,
-                'recaptcha_pubkey'  => $_POST['recaptcha_pubkey'],
-                'recaptcha_prvkey'  => $_POST['recaptcha_prvkey']
+                'recaptcha_sitekey' => $_POST['recaptcha_sitekey'],
+                'recaptcha_secret'  => $_POST['recaptcha_secret']
             ),
 
             // Spam Hurdles configuration for posting messages.
@@ -504,26 +503,26 @@ $row = $frm->addrow(
 $frm->addmessage(
     "<div id=\"settings_recaptcha\" class=\"input-form-td\"
         style=\"margin:0; padding:10px; border: 1px solid navy\">
-      For using reCAPTCHA, you need a (free) public and private key.
-      Please signup at <a href=\"http://recaptcha.net\" target=\"_blank\">the
-      reCAPTCHA</a> web site and enter the public and private key for your
-      web site's domain in the fields below.<br /><br />
+      For using reCAPTCHA v2, you need a free site key and secret key.
+      Register your domain at <a href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">
+      Google reCAPTCHA admin</a> (choose \"Challenge (v2)\" &rarr;
+      \"I'm not a robot\" checkbox) and enter the keys below.<br /><br />
       <table>
         <tr>
-          <td>public key</td>
+          <td>Site key</td>
           <td>" .
             $frm->text_box(
-              'recaptcha_pubkey',
-              $PHORUM['mod_spamhurdles']['captcha']['recaptcha_pubkey'], 40
+              'recaptcha_sitekey',
+              $PHORUM['mod_spamhurdles']['captcha']['recaptcha_sitekey'] ?? '', 40
             ) . "
           </td>
         </tr>
         <tr>
-          <td>private key</td>
+          <td>Secret key</td>
           <td>" .
             $frm->text_box(
-              'recaptcha_prvkey',
-              $PHORUM['mod_spamhurdles']['captcha']['recaptcha_prvkey'], 40
+              'recaptcha_secret',
+              $PHORUM['mod_spamhurdles']['captcha']['recaptcha_secret'] ?? '', 40
             ) . "
           </td>
         </tr>

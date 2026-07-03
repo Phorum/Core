@@ -75,7 +75,7 @@ switch ($step) {
         }
 
         // Run the first upgrade from the list of available upgrades.
-        list ($dummy, $upgrade) = each($upgrades);
+        $upgrade = reset($upgrades);
         $message = phorum_dbupgrade_run($upgrade);
 
         // Show the results.

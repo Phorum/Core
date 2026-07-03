@@ -109,6 +109,7 @@ define('CRYPT_RIJNDAEL_MODE_MCRYPT', 2);
  * @access  public
  * @package Crypt_Rijndael
  */
+#[AllowDynamicProperties]
 class Crypt_Rijndael {
     /**
      * The Encryption Mode

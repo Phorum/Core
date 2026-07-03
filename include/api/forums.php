@@ -175,11 +175,9 @@ function phorum_api_forums_get($forum_ids = NULL, $parent_id = NULL, $vroot = NU
                     $filtered[$fld] = unserialize($forum[$fld]);
                     break;
                 default:
-                    trigger_error(
+                    phorum_user_error(
                         'phorum_api_forums_get(): Illegal field type used: ' .
-                        htmlspecialchars($fldtype),
-                        E_USER_ERROR
-                    );
+                        htmlspecialchars($fldtype));
                     break;
             }
         }
@@ -251,11 +249,9 @@ function phorum_api_forums_change_order($folder_id, $forum_id, $movement, $value
         case "end":   $new_pos = $pos;                  break;
 
         default:
-            trigger_error(
+            phorum_user_error(
                 "phorum_api_forums_change_order(): " .
-                "Illegal \$movement parameter \"$movement\" used",
-                E_USER_ERROR
-            );
+                "Illegal \$movement parameter \"$movement\" used");
     }
 
     // Keep the new position within boundaries.

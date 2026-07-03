@@ -1,0 +1,32 @@
+services:
+  nginx:
+    image: brianlmoon/nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  php:
+    image: brianlmoon/php:8.4
+    command: php-fpm
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: phorum
+      MYSQL_USER: phorum
+      MYSQL_PASSWORD: phorum
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - phorum_mysql:/var/lib/mysql
+
+volumes:
+  phorum_mysql:

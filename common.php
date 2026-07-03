@@ -20,10 +20,69 @@
 // Check that this file is not loaded directly.
 if ( basename( __FILE__ ) == basename( $_SERVER["PHP_SELF"] ) ) exit();
 
+// Never display PHP errors to end users; errors go to the server error log.
+// Admins can override this in php.ini or .htaccess for development environments.
+ini_set('display_errors', '0');
+ini_set('display_startup_errors', '0');
+ini_set('log_errors', '1');
+
+// Send security headers on every response.
+// CSP allows 'unsafe-inline' and 'unsafe-eval' because the app has many
+// inline <script> blocks and client.js.php uses eval(). The high-value
+// directives here are object-src 'none', base-uri 'self', and form-action 'self'.
+if (!headers_sent()) {
+    header("X-Content-Type-Options: nosniff");
+    header("X-Frame-Options: SAMEORIGIN");
+    header("Referrer-Policy: strict-origin-when-cross-origin");
+    header(
+        "Content-Security-Policy: " .
+        "default-src 'self'; " .
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' " .
+            "https://www.google.com/recaptcha/ " .
+            "https://www.gstatic.com/recaptcha/; " .
+        "style-src 'self' 'unsafe-inline'; " .
+        "img-src 'self' data:; " .
+        "font-src 'self' data:; " .
+        "frame-src 'self' https://www.google.com/recaptcha/; " .
+        "object-src 'none'; " .
+        "base-uri 'self'; " .
+        "form-action 'self';"
+    );
+}
 
 // ----------------------------------------------------------------------
 // Initialize variables and constants and load required libraries
 // ----------------------------------------------------------------------
+
+// E_USER_ERROR is deprecated in PHP 8.4. Use this wrapper everywhere instead.
+function phorum_user_error(string $message): never {
+    throw new \RuntimeException($message);
+}
+
+/**
+ * Set a cookie with consistent security flags.
+ * Uses the options-array form (PHP 7.3+) so SameSite can be specified.
+ * Automatically sets Secure when the request came in over HTTPS.
+ */
+function phorum_set_cookie(
+    string $name,
+    string $value,
+    int    $expires,
+    string $path,
+    string $domain,
+    bool   $httponly = true
+): void {
+    $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+              (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+    setcookie($name, $value, [
+        'expires'  => $expires,
+        'path'     => $path,
+        'domain'   => $domain,
+        'secure'   => $secure,
+        'httponly' => $httponly,
+        'samesite' => 'Lax',
+    ]);
+}
 
 // the Phorum version
 define( "PHORUM", "5.2.23" );
@@ -32,7 +91,7 @@ define( "PHORUM", "5.2.23" );
 define( "PHORUM_SCHEMA_VERSION", "2010101500" );
 
 // our database patch level in format of year-month-day-serial
-define( "PHORUM_SCHEMA_PATCHLEVEL", "2016101000" );
+define( "PHORUM_SCHEMA_PATCHLEVEL", "2026062900" );
 
 // Initialize the global $PHORUM variable, which holds all Phorum data.
 global $PHORUM;
@@ -62,14 +121,6 @@ require_once( "./include/constants.php" );
 require_once("./include/api/base.php");
 require_once("./include/api/user.php");
 
-// PHP 5.x fallback for random_bytes and random_int functions.
-//
-// Thanks to Paragon Initiative Enterprises for the implementation of his
-// Random_* Compatibility Library. See: https://github.com/paragonie/random_compat
-if (!function_exists('random_int') || !function_exists('random_bytes'))
-{
-    require_once('./include/random_compat-2.0.2/lib/random.php');
-}
 
 // ----------------------------------------------------------------------
 // Load the database layer and setup a connection
@@ -558,7 +609,7 @@ if ( !defined( "PHORUM_ADMIN" ) ) {
 
     } elseif(isset($PHORUM["forum_id"]) && $PHORUM["forum_id"]==0){
 
-        $PHORUM = array_merge( $PHORUM, $PHORUM["default_forum_options"] );
+        $PHORUM = array_merge( $PHORUM, $PHORUM["default_forum_options"] ?? [] );
 
         // some hard settings are needed if we are looking at forum_id 0
         $PHORUM['vroot']=0;
@@ -1020,7 +1071,7 @@ else {
     // The admin interface is not localized, but we might need language
     // strings at some point after all, for example if we reset the
     // author name in messages for deleted users to "anonymous".
-    $PHORUM["language"] = basename($PHORUM["default_forum_options"]["language"]);
+    $PHORUM["language"] = basename($PHORUM["default_forum_options"]["language"] ?? 'english');
     if (file_exists("./include/lang/$PHORUM[language].php")) {
         require_once("./include/lang/$PHORUM[language].php");
     }
@@ -2047,9 +2098,9 @@ function print_var( $var, $admin_only = FALSE )
 }
 
 /**
- * Generates an MD5 signature for a piece of data using Phorum's secret
- * private key. This can be used to sign data which travels an unsafe path
- * (for example data that is sent to a user's browser and then back to
+ * Generates an HMAC-SHA256 signature for a piece of data using Phorum's
+ * secret private key. This can be used to sign data which travels an unsafe
+ * path (for example data that is sent to a user's browser and then back to
  * Phorum) and for which tampering should be prevented.
  *
  * @param $data The data to sign.
@@ -2058,8 +2109,7 @@ function print_var( $var, $admin_only = FALSE )
 function phorum_generate_data_signature($data)
 {
    global $PHORUM;
-   $signature = md5($data . $PHORUM["private_key"]);
-   return $signature;
+   return hash_hmac('sha256', $data, $PHORUM['private_key']);
 }
 
 /**
@@ -2072,7 +2122,7 @@ function phorum_generate_data_signature($data)
 function phorum_check_data_signature($data, $signature)
 {
     global $PHORUM;
-    return md5($data . $PHORUM["private_key"]) == $signature;
+    return hash_equals(hash_hmac('sha256', $data, $PHORUM['private_key']), $signature);
 }
 
 /**
@@ -2106,7 +2156,7 @@ function phorum_check_posting_token($target_page = NULL)
     if ($target_page === NULL) $target_page = phorum_page;
 
     // Generate the posting token.
-    $posting_token = md5(
+    $posting_token_data =
         ($target_page !== NULL ? $target_page : phorum_page) . '/' .
         (
           $PHORUM['user']['user_id']
@@ -2116,9 +2166,8 @@ function phorum_check_posting_token($target_page = NULL)
               ? $_SERVER['HTTP_USER_AGENT']
               : 'unknown'
             )
-        ) . '/' .
-        $PHORUM['private_key']
-    );
+        );
+    $posting_token = hash_hmac('sha256', $posting_token_data, $PHORUM['private_key']);
 
     // Add the posting token to the {POST_VARS}.
     $PHORUM['DATA']['POST_VARS'] .=
@@ -2129,7 +2178,7 @@ function phorum_check_posting_token($target_page = NULL)
     if (!empty($_POST))
     {
         if (!isset($_POST["posting_token:$target_page"]) ||
-            $_POST["posting_token:$target_page"] != $posting_token) {
+            !hash_equals($posting_token, $_POST["posting_token:$target_page"])) {
             $PHORUM['DATA']['ERROR'] =
                 'Possible hack attempt detected. ' .
                 'The posted form data was rejected.';
@@ -2275,7 +2324,7 @@ function phorum_database_error($error)
     // Find out what type of error handling is required.
     $logopt = isset($PHORUM["error_logging"])
             ? $PHORUM["error_logging"]
-            : 'screen';
+            : 'file';
 
     // Create a backtrace report, so it's easier to find out where a problem
     // is coming from.
