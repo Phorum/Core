@@ -1,4 +1,9 @@
-# Phorum Core — CLAUDE.md
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+`AGENTS.md` in the repo root is a symlink to this file, so both names stay in sync automatically.
+
+## Phorum Core
 
 Phorum is a PHP forum application (version 5.2.x). The goal of this project is twofold:
 
@@ -133,15 +138,28 @@ When auditing a file:
 
 ## Testing
 
-The project uses Codeception (`codeception.yml`). Test suites are in `tests/`:
+The project uses Codeception (`codeception.yml`), with four suites in `tests/`:
+
+- `tests/unit` — pure PHP unit tests, no DB/HTTP dependency (e.g. `PasswordMigrationTest.php`).
+- `tests/functional` — emulated web requests against the app.
+- `tests/acceptance` — full browser tests via PhpBrowser against a running server, with a MySQL `Db` module that loads `tests/_data/dump-forum.sql`.
+- `tests/install` — acceptance-style tests for the web installer, using `tests/_data/dump-install.sql`.
 
 ```bash
 composer install                              # install dev dependencies
-composer lint                                 # lint all PHP files
+composer lint                                 # lint all PHP files (php-parallel-lint)
+composer analyze                              # static analysis (phan, see .phan/config.php)
 vendor/bin/codecept run                       # run all suites
+vendor/bin/codecept run unit                  # run one suite
+vendor/bin/codecept run unit PasswordMigrationTest       # run one test file
+vendor/bin/codecept run unit PasswordMigrationTest:testX # run one test method
 ```
 
+Functional/acceptance/install suites need a real MySQL DB and a running PHP server (see `.travis.yml` for the reference setup: create the DB, copy `include/db/config.php.sample` to `include/db/config.php`, point it at the test DB, then `php -S localhost:8000`). A `docker-compose.yml` is also available for local dev (nginx + php-fpm 8.4 + MySQL 8); it mounts `docker/db-config.php` as the DB config.
+
 Before any significant change, confirm which test suite covers the area being modified. Write or update tests when fixing security issues — especially for authentication, input handling, and SQL query construction.
+
+`phan` is configured for `target_php_version` 8.4 with many issue types suppressed to cut noise from Phorum's legacy `$PHORUM` global-array style — see `.phan/config.php` before treating a suppressed category as unused.
 
 ## Development conventions
 
