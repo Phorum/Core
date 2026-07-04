@@ -40,7 +40,7 @@ class PhorumInputForm {
     var $_help;
     var $_module;
 
-    function PhorumInputForm ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = array() )
+    function __construct ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = array() )
     {
         $this->_action = ( empty( $action ) ) ? $_SERVER["PHP_SELF"] : $action;
         $this->_method = $method;
