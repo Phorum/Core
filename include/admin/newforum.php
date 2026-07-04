@@ -479,6 +479,7 @@ if(!defined("PHORUM_DEFAULT_OPTIONS")){
     phorum_hook("admin_editforum_section_edit_forum", $frm);
 
     // Edit + inherit_id exists
+    $disabled_form_input = "";
     if(defined("PHORUM_EDIT_FORUM") && strlen($inherit_id)>0 ) {
 
         if($inherit_id!=0){
@@ -491,8 +492,6 @@ if(!defined("PHORUM_DEFAULT_OPTIONS")){
             $inherit_id ="0";
             unset($forum_settings_inherit);
         }
-    } else {
-        unset($disabled_form_input);
     }
 
     $frm->addbreak("Inherit Forum Settings");
