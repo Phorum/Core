@@ -149,7 +149,8 @@ Table of contents:
 
     See: <http://marc.theaimsgroup.com/?l=php-dev&m=100955714924477&w=2>
 
-    This applys to PHP4 only.  We may reconsider once PHP5 is widespread.
+    This applied to older PHP versions only. Phorum now targets PHP 8.2
+    and above.
 
 
 10. What are Sticky posts?
