@@ -326,8 +326,8 @@ switch ($step){
 
             // set initial settings
             $settings=array(
-            "title" => "Phorum 5",
-            "description" => "Congratulations!  You have installed Phorum 5!  To change this text, go to your admin, choose General Settings and change the description",
+            "title" => "Phorum 6",
+            "description" => "Congratulations!  You have installed Phorum 6!  To change this text, go to your admin, choose General Settings and change the description",
             "cache" => $default_cache_dir,
             "session_timeout" => "30",
             "short_session_timeout" => "60",

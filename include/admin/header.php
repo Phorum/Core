@@ -161,7 +161,7 @@ function hide_help()
     <td class="statusbar_edge" align="center" valign="middle">
       <iframe scrolling="no" frameborder="0" width="400" height="35" src="versioncheck.php"></iframe>
     </td>
-<?php } else {
+<?php } elseif ($module != "install" && $module != "upgrade") {
     // Reset the cookie that is used for the version check.
     phorum_set_cookie("phorum_upgrade_available", '', time()-86400,
         $PHORUM["session_path"], $PHORUM["session_domain"]);
