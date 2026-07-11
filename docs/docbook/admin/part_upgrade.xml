@@ -41,10 +41,10 @@
           overwrite hacks and any changes made to the default template (in the directory {phorum
           dir}/templates/default). Other templates will be kept intact.</para>
         <para> Here are the steps for upgrading: <itemizedlist>
-            <listitem>Backup your existing Phorum5 installation. Before doing an upgrade, it is
+            <listitem>Backup your existing Phorum 5/6 installation. Before doing an upgrade, it is
               always wise to make a good backup of your running system. Make a backup your Phorum
               install directory and the database in which your Phorum tables are stored</listitem>
-            <listitem>Download a newer Phorum5 package</listitem>
+            <listitem>Download a newer Phorum 5/6 package</listitem>
             <listitem>Delete the folder include/db/upgrade for making sure that you have the correct db-upgrade-scripts.</listitem>
             <listitem> Extract the files and put them on top of the current installation</listitem>
             <listitem>Keep the database settings from {phorum dir}/include/db/config.php the
@@ -103,40 +103,40 @@
       <title>Upgrade preparations</title>
       <para>
         <itemizedlist>
-          <listitem>Download and unpack the Phorum5 package;</listitem>
+          <listitem>Download and unpack the Phorum 5/6 package;</listitem>
 
           <listitem>Follow the installation instructions in <xref linkend="installation.main"/>.
-            Install Phorum5 into a new directory. </listitem>
+            Install Phorum 5/6 into a new directory. </listitem>
         </itemizedlist>
       </para>
     </section>
     <section id="upgrade.major.convert">
       <title>Convert the old forum data</title>
-      <para> In the scripts directory of your Phorum5 distribution, you will find a script named
+      <para> In the scripts directory of your Phorum 5/6 distribution, you will find a script named
         phorum3to5convert.php. Instructions for using this script are given below. The script will
-        convert your old forum to Phorum5. Everything, but permission levels, is converted. </para>
+        convert your old forum to Phorum 5/6. Everything, but permission levels, is converted. </para>
       <para>
         <emphasis role="bold">Instructions from phorum3to5convert.php</emphasis>
-        <sbr/> This script will convert the data from a Phorum 3 database to a Phorum 5 database.
+        <sbr/> This script will convert the data from a Phorum 3 database to a Phorum 5/6 database.
           <emphasis role="bold">It does not change any of the old phorum3 tables. The data is only
-          copied over to the new Phorum 5 tables. </emphasis></para>
+          copied over to the new Phorum 5/6 tables. </emphasis></para>
       <para> Instructions: <itemizedlist>
 
           <listitem>Be sure your Phorum 3 is running a 3.4.x version. If you are running an older
             version of Phorum 3, first upgrade to 3.4.x.</listitem>
 
-          <listitem>Copy or move this script one directory up, to the main Phorum 5 directory.</listitem>
+          <listitem>Copy or move this script one directory up, to the main Phorum 5/6 directory.</listitem>
 
           <listitem>Edit the $CONVERT variables in the beginning of phorum3to5convert.php to match
             the settings of your phorum3 installation (set there in the admin).</listitem>
 
-          <listitem>Install Phorum 5 as usual. For speed and reliability, preferably use the same
-            database as the database where Phorum 3 lives. Because Phorum 5 uses a table prefix
-            (typically "phorum_"), the tables for Phorum 3 and Phorum 5 can safely live next to each
+          <listitem>Install Phorum 5/6 as usual. For speed and reliability, preferably use the same
+            database as the database where Phorum 3 lives. Because Phorum 5/6 uses a table prefix
+            (typically "phorum_"), the tables for Phorum 3 and Phorum 5/6 can safely live next to each
             other in the same database.</listitem>
 
-          <listitem>Empty the phorum_messages and phorum_forums tables of the Phorum 5 installation.
-            You can do this either by dropping all forums from the Phorum 5 admin interface or by
+          <listitem>Empty the phorum_messages and phorum_forums tables of the Phorum 5/6 installation.
+            You can do this either by dropping all forums from the Phorum 5/6 admin interface or by
             issuing the appropriate SQL queries from the MySQL prompt or from a database tool like
             "phpmyadmin". The queries to execute are (replace "phorum" with your own table_prefix if
             you changed this during install):
@@ -156,7 +156,7 @@
           <listitem>If you do not have shell access, call the upgrade script from your browser: <screen><literal>{phorum url}/phorum3to5convert.php</literal></screen>
             <emphasis role="bold"> *** THIS STEP MAY TAKE A WHILE ***</emphasis>
           </listitem>
-          <listitem>Take a look at the Phorum 5 forums to see if everything was converted correctly.</listitem>
+          <listitem>Take a look at the Phorum 5/6 forums to see if everything was converted correctly.</listitem>
 
           <listitem>Delete the upgrade script phorum3to5convert.php. </listitem>
         </itemizedlist>
@@ -168,7 +168,7 @@
         This script can be used to update the number of posts for users to the right value. So if
         you want correct numbers to show up in the user profiles, just run this script once AFTER
         the conversion has been completed. To run it, you will have to copy it over to the main
-        Phorum5 directory. After that you can either run it from the command line or by opening it
+        Phorum 5/6 directory. After that you can either run it from the command line or by opening it
         from your webbrowser. See also the instructions in the script itself. </para>
     </section>
   </section>

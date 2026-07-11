@@ -1,10 +1,10 @@
-Creating Modules for Phorum5
-============================
+Creating Modules for Phorum 5/6
+================================
 
-This document describes the Phorum5 module system. It is targeted at
+This document describes the Phorum 5/6 module system. It is targeted at
 developers who want to do customization and extend the functionality
-of Phorum5. Modules are the preferred way to archieve this in
-Phorum5.
+of Phorum 5/6. Modules are the preferred way to archieve this in
+Phorum 5/6.
 
 For much of this document, we will be talking about an example module
 "foo". Of course you will not name your module "foo", but something much

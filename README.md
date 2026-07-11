@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/Phorum/Core.svg?branch=phorum_5_2)](https://travis-ci.org/Phorum/Core)
 
-Phorum 5 Installation instructions
-==================================
+Phorum 5/6 Installation instructions
+====================================
 
 Contents:
 
@@ -35,11 +35,10 @@ Contents:
 
    * A webserver
 
-   * PHP, version 5 or above.
+   * PHP, version 8.2 or above.
 
-     PHP4 is over 5 years old. As of Phorum 5.2 there are some functions
-     used in Phorum which *require* PHP5 as they didn't exist before.
-     Therefor PHP5 is a requirement now.
+     Phorum has been modernized to run on current PHP releases and
+     requires PHP 8.2 or higher.
 
    * A MySQL server, version 5 or above.
 

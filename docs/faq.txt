@@ -1,5 +1,5 @@
-Phorum 5 FAQ
-============
+Phorum 5/6 FAQ
+==============
 
 Table of contents:
 
@@ -62,9 +62,9 @@ Table of contents:
 -------------------------------------------------------------------------------
 
     Because of many cookie problems that plagued Phorum 3, we have decided
-    to store all user settings in the database for Phorum 5.  The down side
+    to store all user settings in the database for Phorum 5/6.  The down side
     of this is that users must be registered to use these features.  The up
-    side is that the new indicator really works like it should in Phorum 5.
+    side is that the new indicator really works like it should in Phorum 5/6.
 
 
 5. Why doesn't the default template use {insert latest greatest W3C concept}?

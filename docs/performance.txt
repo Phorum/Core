@@ -1,5 +1,5 @@
-Phorum 5 performance notes
-==========================
+Phorum 5/6 performance notes
+============================
 
 Several of Phorum's options have a tradeoff effect: enabling more
 features can slow Phorum down. This document describes which options

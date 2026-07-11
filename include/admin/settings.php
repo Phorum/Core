@@ -32,7 +32,7 @@ if ( count( $_POST ) )
             case "title":
 
                 if ( empty( $value ) ) {
-                    $_POST[$field] = "Phorum 5";
+                    $_POST[$field] = "Phorum 6";
                 }
 
                 break;

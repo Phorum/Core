@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Phorum Core
 
-Phorum is a PHP forum application (version 5.2.x). The goal of this project is twofold:
+Phorum is a PHP forum application (version 5.2.x/6.x). The goal of this project is twofold:
 
 1. **PHP modernization** — make it run correctly on PHP 8.x
 2. **Security audit** — identify and fix security vulnerabilities

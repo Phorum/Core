@@ -424,7 +424,7 @@ switch ($step){
             "reg_perms" =>  $default_forum_options['reg_perms'],
             "template_settings" => "",
             "inherit_id"=>0,
-            "forum_path" => 'a:2:{i:0;s:8:"Phorum 5";i:1;s:13:"Announcements";}'
+            "forum_path" => 'a:2:{i:0;s:8:"Phorum 6";i:1;s:13:"Announcements";}'
             );
 
             phorum_db_add_forum($forum);
@@ -454,7 +454,7 @@ switch ($step){
             "reg_perms" =>  $default_forum_options['reg_perms'],
             "template_settings" => "",
             "inherit_id"=>0,
-            "forum_path" => 'a:2:{i:0;s:8:"Phorum 5";i:2;s:10:"Test Forum";}'
+            "forum_path" => 'a:2:{i:0;s:8:"Phorum 6";i:2;s:10:"Test Forum";}'
             );
 
             $GLOBALS["PHORUM"]['forum_id']=phorum_db_add_forum($forum);
@@ -475,7 +475,7 @@ switch ($step){
             "status" => PHORUM_STATUS_APPROVED,
             "sort" => PHORUM_SORT_DEFAULT,
             "msgid" => '',
-            "body" => "This is a test message. You can delete it after installation using the moderation tools. These tools will be visible in this screen if you log in as the administrator user that you created during install.\n\nPhorum 5 Team"
+            "body" => "This is a test message. You can delete it after installation using the moderation tools. These tools will be visible in this screen if you log in as the administrator user that you created during install.\n\nPhorum 6 Team"
             );
 
             phorum_db_post_message($test_message);

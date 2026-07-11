@@ -1,5 +1,5 @@
-Permissions in Phorum 5
-=======================
+Permissions in Phorum 5/6
+=========================
 
 This document describes the way the permission system of Phorum works.
 It is targeted at developers that need inside information on the

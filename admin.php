@@ -17,7 +17,7 @@
 //   along with this program.                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-    // Phorum 5 Admin
+    // Phorum 6 Admin
 
     define("PHORUM_ADMIN", 1);
 
