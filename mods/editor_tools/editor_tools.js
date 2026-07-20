@@ -271,8 +271,8 @@ function editor_tools_construct()
         // This makes it a lot quicker for the user to jump from the
         // subject field to the message body textarea when writing
         // a message.
-        $PJ(a_obj).attr('tabindex', 1);
-        $PJ(img_obj).attr('tabindex', 1);
+        a_obj.setAttribute('tabindex', 1);
+        img_obj.setAttribute('tabindex', 1);
 
         // If an icon is added that is less high than our default icon
         // height, we try to make the button the same height as the
@@ -343,10 +343,9 @@ function editor_tools_construct_popup(create_id, anchor)
 function editor_tools_toggle_popup(popup_obj, button_obj, width, leftoffset)
 {
     // Determine where to show the popup on screen.
-    var $button_obj = $PJ(button_obj);
-    var pos  = $button_obj.offset();
-    var top  = pos.top + 2 + $button_obj.outerHeight();
-    var left = pos.left;
+    var rect = button_obj.getBoundingClientRect();
+    var top  = rect.top + window.pageYOffset + 2 + button_obj.offsetHeight;
+    var left = rect.left + window.pageXOffset;
 
     if (leftoffset) left -= leftoffset;
     if (width) popup_obj.style.width = width;
