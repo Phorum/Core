@@ -34,16 +34,10 @@ if (isset($PHORUM["args"]["approve"])) {
     // Token is 16 hex chars; user_id is the integer suffix.
     $tmp_pass = substr($PHORUM["args"]["approve"], 0, 16);
     $user_id  = (int)substr($PHORUM["args"]["approve"], 16);
-    $user_id = phorum_api_user_search(
-        array("user_id", "password_temp"),
-        array($user_id,  $tmp_pass),
-        array("=",       "=")
-    );
+    $user = phorum_api_user_get($user_id);
 
     // Validation code correct.
-    if ($user_id) {
-
-        $user = phorum_api_user_get($user_id);
+    if ($user and phorum_db_user_check_login($user['username'], $tmp_pass, true)) {
 
         $moduser=array();
 
