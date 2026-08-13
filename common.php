@@ -85,7 +85,7 @@ function phorum_set_cookie(
 }
 
 // the Phorum version
-define( "PHORUM", "6.0.4" );
+define( "PHORUM", "6.0.5" );
 
 // our database schema version in format of year-month-day-serial
 define( "PHORUM_SCHEMA_VERSION", "2010101500" );
