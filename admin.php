@@ -39,7 +39,15 @@
     }
 
     // determine absolute URI for the admin
-    $PHORUM["admin_http_path"] = phorum_get_current_url(false);
+    // Use the configured http_path setting (matches front-end URL building)
+    // instead of reconstructing from $_SERVER, which can lose the port
+    // behind a reverse proxy (e.g. docker-compose nginx forwarding 8080->80).
+    if (!empty($PHORUM["http_path"])) {
+        $PHORUM["admin_http_path"] = $PHORUM["http_path"] . "/admin." . PHORUM_FILE_EXTENSION;
+    } else {
+        // http_path isn't set yet (fresh install, before settings exist)
+        $PHORUM["admin_http_path"] = phorum_get_current_url(false);
+    }
 
     // determine http_path (at install time; after that it's in the settings)
     if(!isset($PHORUM["http_path"])){
