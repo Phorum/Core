@@ -21,6 +21,8 @@
 
     define("PHORUM_ADMIN", 1);
 
+    define('phorum_page', 'admin');
+
     // set a sane error level for our admin.
     // this will make the coding time faster and
     // the code run faster.
